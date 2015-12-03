@@ -1,0 +1,149 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{93C9E608-A3CB-47C6-92E9-D41720E4BA0F}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>CK.DB.Actor.Tests</RootNamespace>
+    <AssemblyName>CK.DB.Actor.Tests</AssemblyName>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <StartAction>Program</StartAction>
+    <StartProgram>$(SolutionDir)packages\NUnit.Runners.2.6.4\tools\nunit.exe</StartProgram>
+    <StartArguments>CK.DB.Actor.Tests.dll</StartArguments>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Test|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Test\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="CK.Core, Version=4.3.0.0, Culture=neutral, PublicKeyToken=edfa2f62fc978217, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\CK.Core.4.3.0\lib\net45\CK.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="CK.DB.Tests.NUnit, Version=4.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\CK.DB.Tests.NUnit.4.0.0\lib\net45\CK.DB.Tests.NUnit.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="CK.Monitoring, Version=4.3.0.0, Culture=neutral, PublicKeyToken=edfa2f62fc978217, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\CK.Monitoring.4.3.0\lib\net45\CK.Monitoring.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="CK.Reflection, Version=4.3.0.0, Culture=neutral, PublicKeyToken=edfa2f62fc978217, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\CK.Reflection.4.3.0\lib\net45\CK.Reflection.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="CK.Setup.Dependency, Version=4.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\CK.Setup.Dependency.4.0.0\lib\net45\CK.Setup.Dependency.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="CK.Setupable.Engine, Version=4.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\CK.Setupable.Engine.4.0.0\lib\net45\CK.Setupable.Engine.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="CK.Setupable.Model, Version=4.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\CK.Setupable.Model.4.0.0\lib\net45\CK.Setupable.Model.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="CK.Setupable.Runtime, Version=4.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\CK.Setupable.Runtime.4.0.0\lib\net45\CK.Setupable.Runtime.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="CK.SqlServer.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\CK.SqlServer.Core.4.0.0\lib\net45\CK.SqlServer.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="CK.SqlServer.Parser.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\CK.SqlServer.Parser.Model.1.0.1\lib\net45\CK.SqlServer.Parser.Model.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="CK.SqlServer.Setup.Engine, Version=4.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\CK.SqlServer.Setup.Engine.4.0.0\lib\net45\CK.SqlServer.Setup.Engine.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="CK.SqlServer.Setup.Model, Version=4.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\CK.SqlServer.Setup.Model.4.0.0\lib\net45\CK.SqlServer.Setup.Model.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="CK.SqlServer.Setup.Runtime, Version=4.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\CK.SqlServer.Setup.Runtime.4.0.0\lib\net45\CK.SqlServer.Setup.Runtime.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="CK.StObj.Engine, Version=4.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\CK.StObj.Engine.4.0.0\lib\net45\CK.StObj.Engine.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="CK.StObj.Model, Version=4.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\CK.StObj.Model.4.0.0\lib\net45\CK.StObj.Model.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="CK.StObj.Runtime, Version=4.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\CK.StObj.Runtime.4.0.0\lib\net45\CK.StObj.Runtime.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="nunit.framework, Version=2.6.4.14350, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="GroupTests.cs" />
+    <Compile Include="UserTests.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\CK.DB.Actor\CK.DB.Actor.csproj">
+      <Project>{3902b885-ac29-4be3-a83e-184316a09e91}</Project>
+      <Name>CK.DB.Actor</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
