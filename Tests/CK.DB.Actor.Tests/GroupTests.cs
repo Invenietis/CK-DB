@@ -24,7 +24,7 @@ namespace CK.DB.Actor.Tests
                 Assert.That( groupId, Is.GreaterThan( 1 ) );
                 g.Database.AssertScalarEquals( groupId, "select GroupId from CK.tGroup where GroupId = @0", groupId );
 
-                g.DestroyGroup( ctx, groupId, 1 );
+                g.DestroyGroup( ctx, 1, groupId );
 
                 g.Database.AssertEmptyReader( "select * from CK.tGroup where GroupId = @0", groupId );
             }
@@ -89,11 +89,11 @@ namespace CK.DB.Actor.Tests
             {
                 userId = u.CreateUser( ctx, 1, Guid.NewGuid().ToString() );
                 Assert.DoesNotThrow( () => g.AddUser( ctx, 1, 1, userId ) );
-                g.Database.AssertScalarEquals( 1, "select GroupCount from CK.vUser where UserId = @0", userId );
+                g.Database.AssertScalarEquals( 1, "select count(*) from CK.tActorProfile where ActorId = @0 and GroupId <> @0", userId );
                 Assert.DoesNotThrow( () => g.RemoveUser( ctx, 1, 1, userId ) );
-                g.Database.AssertScalarEquals( 0, "select GroupCount from CK.vUser where UserId = @0", userId );
+                g.Database.AssertScalarEquals( 0, "select count(*) from CK.tActorProfile where ActorId = @0 and GroupId <> @0", userId );
                 Assert.DoesNotThrow( () => g.AddUser( ctx, 1, 1, userId ) );
-                g.Database.AssertScalarEquals( 1, "select GroupCount from CK.vUser where UserId = @0", userId );
+                g.Database.AssertScalarEquals( 1, "select count(*) from CK.tActorProfile where ActorId = @0 and GroupId <> @0", userId );
             }
             int userId2;
             int anotherUserId;
@@ -101,19 +101,19 @@ namespace CK.DB.Actor.Tests
             {
                 userId2 = u.CreateUser( ctx, 1, Guid.NewGuid().ToString() );
                 Assert.DoesNotThrow( () => g.AddUser( ctx, 1, 1, userId2 ) );
-                g.Database.AssertScalarEquals( 1, "select GroupCount from CK.vUser where UserId = @0", userId2 );
+                g.Database.AssertScalarEquals( 1, "select count(*) from CK.tActorProfile where ActorId = @0 and GroupId <> @0", userId2 );
                 Assert.DoesNotThrow( () => g.RemoveUser( ctx, 1, 1, userId2 ) );
-                g.Database.AssertScalarEquals( 0, "select GroupCount from CK.vUser where UserId = @0", userId2 );
+                g.Database.AssertScalarEquals( 0, "select count(*) from CK.tActorProfile where ActorId = @0 and GroupId <> @0", userId2 );
                 anotherUserId = u.CreateUser( ctx, 1, Guid.NewGuid().ToString() );
             }
             // Using ActorId = userId2.
             using( var ctx = new SqlStandardCallContext() )
             {
                 Assert.Throws<SqlDetailedException>( () => g.RemoveUser( ctx, userId2, 1, userId ) );
-                g.Database.AssertScalarEquals( 1, "select GroupCount from CK.vUser where UserId = @0", userId );
+                g.Database.AssertScalarEquals( 1, "select count(*) from CK.tActorProfile where ActorId = @0 and GroupId <> @0", userId );
 
                 Assert.Throws<SqlDetailedException>( () => g.AddUser( ctx, userId2, 1, anotherUserId ) );
-                g.Database.AssertScalarEquals( 0, "select GroupCount from CK.vUser where UserId = @0", anotherUserId );
+                g.Database.AssertScalarEquals( 0, "select count(*) from CK.tActorProfile where ActorId = @0 and GroupId <> @0", anotherUserId );
 
                 Assert.Throws<SqlDetailedException>( () => g.RemoveAllUsers( ctx, userId2, 1 ) );
             }

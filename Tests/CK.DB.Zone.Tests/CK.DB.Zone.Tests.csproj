@@ -4,19 +4,19 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{93C9E608-A3CB-47C6-92E9-D41720E4BA0F}</ProjectGuid>
+    <ProjectGuid>{D614B995-1233-44E2-8637-9E25F566A336}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CK.DB.Actor.Tests</RootNamespace>
-    <AssemblyName>CK.DB.Actor.Tests</AssemblyName>
+    <RootNamespace>CK.DB.Zone.Tests</RootNamespace>
+    <AssemblyName>CK.DB.Zone.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+  <PropertyGroup>
     <StartAction>Program</StartAction>
     <StartProgram>$(SolutionDir)packages\NUnit.Runners.2.6.4\tools\nunit.exe</StartProgram>
-    <StartArguments>CK.DB.Actor.Tests.dll</StartArguments>
+    <StartArguments>CK.DB.Zone.Tests.dll</StartArguments>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -126,22 +126,28 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DBSetup.cs" />
-    <Compile Include="GroupTests.cs" />
-    <Compile Include="UserTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\CK.DB.Actor\CK.DB.Actor.csproj">
-      <Project>{3902b885-ac29-4be3-a83e-184316a09e91}</Project>
-      <Name>CK.DB.Actor</Name>
-    </ProjectReference>
+    <Compile Include="ZoneTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\CK.DB.Actor\CK.DB.Actor.csproj">
+      <Project>{3902b885-ac29-4be3-a83e-184316a09e91}</Project>
+      <Name>CK.DB.Actor</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\CK.DB.Zone\CK.DB.Zone.csproj">
+      <Project>{f8f13b52-0c60-499c-baaf-86c01c3f70d2}</Project>
+      <Name>CK.DB.Zone</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="FromActor\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

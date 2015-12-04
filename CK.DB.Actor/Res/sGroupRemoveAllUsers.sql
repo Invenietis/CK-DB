@@ -17,7 +17,8 @@ as begin
 	declare @CUser cursor;
 	set @CUser = cursor local fast_forward for 
 		select ActorId from CK.tActorProfile p 
-						where p.GroupId = @GroupId and p.ActorId <> @GroupId and p.ActorId <> @GroupId;
+						inner join CK.tUser u on u.UserId = p.ActorId
+						where p.GroupId = @GroupId and p.ActorId <> @GroupId;
 	open @CUser;
 	fetch from @CUser into @UserId;
 	while @@FETCH_STATUS = 0

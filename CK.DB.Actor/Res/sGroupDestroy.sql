@@ -5,7 +5,8 @@
 create procedure CK.sGroupDestroy
 (
 	@ActorId int,
-	@GroupId int
+	@GroupId int,
+	@ForceDelete bit = 0
 )
 as begin
     if @ActorId <= 0 raiserror( 'Security.AnonymousNotAllowed', 16, 1 );
@@ -16,6 +17,11 @@ as begin
 	if exists( select * from CK.tActorProfile where GroupId = @GroupId and ActorId <> @GroupId ) raiserror( 'Group.NotEmptyGroup', 16, 1 );
 
 	--<Extension Name="Group.PreDestroy" />
+
+	if @ForceDelete = 1
+	begin
+		exec CK.sGroupRemoveAllUsers @ActorId, @GroupId;
+	end
 
 	delete from CK.tActorProfile where GroupId = @GroupId;
 	delete from CK.tGroup where GroupId = @GroupId;

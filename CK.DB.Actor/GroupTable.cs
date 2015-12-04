@@ -90,7 +90,7 @@ namespace CK.DB.Actor
         /// <param name="groupId">The group identifier.</param>
         /// <param name="userId">The user identifier to remove.</param>
         [SqlProcedureNonQuery( "sGroupUserRemove" )]
-        public abstract Task RemoveUserAsync( ISqlCallContext ctx, int groupId, int userId );
+        public abstract Task RemoveUserAsync( ISqlCallContext ctx, int actorId, int groupId, int userId );
 
         /// <summary>
         /// Removes all users from a group.

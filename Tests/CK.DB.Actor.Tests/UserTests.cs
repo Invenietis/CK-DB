@@ -35,5 +35,35 @@ namespace CK.DB.Actor.Tests
             }
         }
 
+        [Test]
+        public void UserName_is_not_set_by_default_if_another_user_exists_with_the_same_UserName()
+        {
+            var map = TestHelper.StObjMap;
+            var u = map.Default.Obtain<UserTable>();
+
+            string existingName = Guid.NewGuid().ToString();
+            string userName = Guid.NewGuid().ToString();
+
+            using( var ctx = new SqlStandardCallContext() )
+            {
+                int idExist = u.CreateUser( ctx, 1, existingName );
+                int idUser = u.CreateUser( ctx, 1, userName );
+
+                Assert.That( u.UserNameSet( ctx, 1, idUser, existingName )
+                                && u.UserNameSet( ctx, 1, idExist, userName ), 
+                             Is.False,
+                             "No rename on clash." );
+
+                Assert.That( u.UserNameSet( ctx, 1, idUser, userName ) 
+                                && u.UserNameSet( ctx, 1, idExist, existingName ), 
+                             "One can always rename to the current name." );
+
+                u.DestroyUser( ctx, 1, idExist );
+                u.DestroyUser( ctx, 1, idUser );
+
+                u.Database.AssertEmptyReader( "select * from CK.tUser where UserName = @0 or UserName = @1", existingName, userName );
+            }
+        }
+
     }
 }
