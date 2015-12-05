@@ -39,7 +39,7 @@ namespace CK.DB.Zone.Tests
         }
 
         [Test]
-        public void zone_with_multiple_groups_can_be_destroyed()
+        public void zone_with_existing_groups_can_be_destroyed_when_ForceDestroy_is_true()
         {
             var t = TestHelper.StObjMap.Default.Obtain<ZoneTable>();
             var g = TestHelper.StObjMap.Default.Obtain<GroupTable>();
@@ -57,14 +57,15 @@ namespace CK.DB.Zone.Tests
                 g.AddUser( ctx, 1, groupId1, userId );
                 g.AddUser( ctx, 1, groupId2, userId );
 
-                t.DestroyZone( ctx, 1, zoneId );
+                t.DestroyZone( ctx, 1, zoneId, true );
+
                 t.Database.AssertEmptyReader( "select * from CK.tGroup where ZoneId=@0", zoneId );
                 t.Database.AssertEmptyReader( "select * from CK.tZone where ZoneId=@0", zoneId );
             }
         }
 
         [Test]
-        public void zone_create_and_destroy_can_not_be_called_by_anonymous()
+        public void Anonymous_cant_not_create_or_destroy_a_zone()
         {
             var p = TestHelper.StObjMap.Default.Obtain<Zone.Package>();
             using( var ctx = new SqlStandardCallContext() )
@@ -73,6 +74,7 @@ namespace CK.DB.Zone.Tests
 
                 int zoneId = p.ZoneTable.CreateZone( ctx, 1 );
                 Assert.Throws<SqlDetailedException>( () => p.ZoneTable.DestroyZone( ctx, 0, zoneId ) );
+                p.ZoneTable.DestroyZone( ctx, 1, zoneId );
             }
         }
 
@@ -92,16 +94,14 @@ namespace CK.DB.Zone.Tests
                 Assert.DoesNotThrow( () => p.GroupTable.AddUser( ctx, 1, groupId, userId ), "Adding the user to group: now it works." );
 
                 Assert.DoesNotThrow( () => p.GroupTable.AddUser( ctx, 1, groupId, userId ), "If the user already exists in the zone, it is okay." );
-                Assert.DoesNotThrow( () => p.ZoneTable.AddUser( ctx, 1, groupId, userId ), "Just like Groups: adding an already existing user to a Zone is okay." );
+                Assert.DoesNotThrow( () => p.ZoneTable.AddUser( ctx, 1, zoneId, userId ), "Just like Groups: adding an already existing user to a Zone is okay." );
 
-                p.GroupTable.RemoveAllUsers( ctx, 1, groupId );
-                p.GroupTable.DestroyGroup( ctx, 1, groupId );
-                p.ZoneTable.DestroyZone( ctx, 1, zoneId );
+                p.ZoneTable.DestroyZone( ctx, 1, zoneId, true );
             }
         }
 
         [Test]
-        public void destroying_a_zone_with_any_other_group_than_AdministratorsGroup_is_an_error()
+        public void destroying_a_zone_with_any_other_group_than_AdministratorsGroup_is_an_error_by_default()
         {
             var p = TestHelper.StObjMap.Default.Obtain<Zone.Package>();
             using( var ctx = new SqlStandardCallContext() )
@@ -118,7 +118,6 @@ namespace CK.DB.Zone.Tests
             }
         }
 
-
         [Test]
         public void removing_a_user_from_a_Zone_removes_him_from_all_groups()
         {
@@ -134,11 +133,11 @@ namespace CK.DB.Zone.Tests
                 p.GroupTable.AddUser( ctx, 1, groupId1, userId );
                 p.GroupTable.AddUser( ctx, 1, groupId2, userId );
 
-                p.Database.AssertScalarEquals( 3, "select GroupCount from CK.vUser where UserId = @0", userId );
+                p.Database.AssertScalarEquals( 3, "select GroupCount = count(*)-1 from CK.tActorProfile where ActorId = @0", userId );
 
                 p.ZoneTable.RemoveUser( ctx, 1, zoneId, userId );
 
-                p.Database.AssertScalarEquals( 0, "select GroupCount from CK.vUser where UserId = @0", userId );
+                p.Database.AssertScalarEquals( 0, "select GroupCount = count(*)-1 from CK.tActorProfile where ActorId = @0", userId );
 
                 p.GroupTable.DestroyGroup( ctx, 1, groupId1 );
                 p.GroupTable.DestroyGroup( ctx, 1, groupId2 );
@@ -154,7 +153,7 @@ namespace CK.DB.Zone.Tests
             var g = map.Default.Obtain<GroupTable>();
             using( var ctx = new SqlStandardCallContext() )
             {
-                Assert.Throws<SqlDetailedException>( () => g.CreateGroup( ctx, 1 ) );
+                Assert.Throws<SqlDetailedException>( () => g.CreateGroup( ctx, 1, 1 ) );
             }
         }
 

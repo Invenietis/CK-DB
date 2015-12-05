@@ -1,4 +1,4 @@
--- Version = 1.0.0
+-- Version = 15.12.5
 -- Sets the user name. 
 -- There is no guaranty that the actual value will be the same as the one requested (if auto numbering 
 -- is injected for example). 
@@ -11,7 +11,7 @@ create procedure CK.sUserUserNameSet
 	@Done bit output
 )
 as begin
-    if @ActorId <= 0 raiserror( 'Security.AnonymousNotAllowed', 16, 1 );
+    if @ActorId <= 0 throw 50000, 'Security.AnonymousNotAllowed', 1;
 
 	--[beginsp]
 

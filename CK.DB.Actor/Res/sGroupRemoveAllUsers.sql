@@ -1,4 +1,4 @@
--- Version = 1.0.2, Requires={ CK.sGroupUserRemove }
+-- Version = 15.12.5, Requires={ CK.sGroupUserRemove }
 --
 -- Clears a Group.
 --
@@ -8,8 +8,8 @@ create procedure CK.sGroupRemoveAllUsers
 	@GroupId int
 )
 as begin
-    if @ActorId <= 0 raiserror( 'Security.AnonymousNotAllowed', 16, 1 );
-    if @GroupId <= 0 raiserror( 'Group.InvalidGroup', 16, 1 );
+    if @ActorId <= 0 throw 50000, 'Security.AnonymousNotAllowed', 1;
+    if @GroupId <= 0 throw 50000, 'Group.InvalidGroup', 1;
 
 	--[beginsp]
 

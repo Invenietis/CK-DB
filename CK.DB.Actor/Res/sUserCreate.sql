@@ -1,4 +1,4 @@
-﻿-- Version = 1.0.1, Requires = { CK.sActorCreate }
+﻿-- Version = 15.12.5, Requires = { CK.sActorCreate }
 create procedure CK.sUserCreate 
 (
 	@ActorId int,
@@ -7,7 +7,7 @@ create procedure CK.sUserCreate
 )
 as
 begin
-    if @ActorId <= 0 raiserror( 'Security.AnonymousNotAllowed', 16, 1 );
+    if @ActorId <= 0 throw 50000, 'Security.AnonymousNotAllowed', 1;
 
 	--[beginsp]
 	set @UserIdResult = 0;

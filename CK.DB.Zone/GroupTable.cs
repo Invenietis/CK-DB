@@ -7,6 +7,7 @@ using CK.Setup;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
 using CK.SqlServer;
+using System.ComponentModel;
 
 namespace CK.DB.Zone
 {
@@ -23,6 +24,12 @@ namespace CK.DB.Zone
 
         [SqlProcedureNonQuery( "sGroupCreate" )]
         public abstract Task<int> CreateGroupAsync( ISqlCallContext ctx, int actorId, int zoneId );
+
+        //[EditorBrowsable( EditorBrowsableState.Never )]
+        //public override abstract int CreateGroup( ISqlCallContext ctx, int actorId );
+
+        //[EditorBrowsable( EditorBrowsableState.Never )]
+        //public override abstract Task<int> CreateGroupAsync( ISqlCallContext ctx, int actorId );
 
     }
 }

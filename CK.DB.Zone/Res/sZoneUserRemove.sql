@@ -1,4 +1,4 @@
--- Version = 1.0.5
+-- Version = 15.12.5
 --
 -- Removes a User from a Zone.
 --
@@ -9,7 +9,7 @@ alter procedure CK.sZoneUserRemove
 	@UserId int
 )
 as begin
-    if @ActorId <= 0 raiserror( 'Security.AnonymousNotAllowed', 16, 1 );
+    if @ActorId <= 0 throw 50000, 'Security.AnonymousNotAllowed', 1;
 
 	--[beginsp]
 
@@ -21,11 +21,11 @@ as begin
 		begin
 			if not exists( select 1 from CK.tActorProfile p where p.GroupId = 1 and p.ActorId = @ActorId ) 
 			begin
-				raiserror( 'Security.ActorMustBeSytem', 16, 1 );
+				;throw 50000, 'Security.ActorMustBeSytem', 1;
 			end
 		end
 		-- ..and if the ZoneId is actually a Group, this is an error.
-		if not exists (select * from CK.tZone where ZoneId = @ZoneId) raiserror( 'Zone.InvalidId', 16, 1 );
+		if not exists (select * from CK.tZone where ZoneId = @ZoneId) throw 50000, 'Zone.InvalidId', 1;
 
 		--<Extension Name="Zone.PreUserRemove" />
 

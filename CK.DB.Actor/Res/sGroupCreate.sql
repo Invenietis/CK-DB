@@ -1,4 +1,4 @@
--- Version = 1.0.2
+-- Version = 15.12.5
 --
 -- Creates a Group.
 --
@@ -8,7 +8,7 @@ create procedure CK.sGroupCreate
 	@GroupIdResult int output
 )
 as begin
-    if @ActorId <= 0 raiserror( 'Security.AnonymousNotAllowed', 16, 1 );
+    if @ActorId <= 0 throw 50000, 'Security.AnonymousNotAllowed', 1;
 
 	--[beginsp]
 	

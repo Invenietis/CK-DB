@@ -1,4 +1,4 @@
--- Version = 1.1.1, Requires = { CK.sZoneUserAdd }
+-- Version = 15.12.5, Requires = { CK.sZoneUserAdd }
 --
 -- Add a User to a Group.
 --
@@ -10,8 +10,8 @@ alter procedure CK.sGroupUserAdd
 	@UserId int
 )
 as begin
-    if @ActorId <= 0 raiserror( 'Security.AnonymousNotAllowed', 16, 1 );
-	if @GroupId <= 0 raiserror( 'Group.InvalidId', 16, 1 );
+    if @ActorId <= 0 throw 50000, 'Security.AnonymousNotAllowed', 1;
+	if @GroupId <= 0 throw 50000, 'Group.InvalidId', 1;
 
 	-- System is not added to any group.
     if @UserId = 1 return 0;
@@ -40,7 +40,7 @@ as begin
 		
 			if @ZoneId is null 
 			begin 
-				raiserror('Group.UserNotInZone', 16, 1 );
+				;throw 50000, 'Group.UserNotInZone', 1;
 			end
 			--/From: Zone
 					

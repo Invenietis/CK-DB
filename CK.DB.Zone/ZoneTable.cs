@@ -25,10 +25,10 @@ namespace CK.DB.Zone
         public abstract Task<int> CreateZoneAsync( ISqlCallContext ctx, int actorId );
 
         [SqlProcedureNonQuery( "CK.sZoneDestroy" )]
-        public abstract void DestroyZone( ISqlCallContext ctx, int actorId, int zoneId );
+        public abstract void DestroyZone( ISqlCallContext ctx, int actorId, int zoneId, bool forceDestroy = false );
 
         [SqlProcedureNonQuery( "CK.sZoneDestroy" )]
-        public abstract Task DestroyZoneAsync( ISqlCallContext ctx, int actorId, int zoneId );
+        public abstract Task DestroyZoneAsync( ISqlCallContext ctx, int actorId, int zoneId, bool forceDestroy = false );
 
         [SqlProcedureNonQuery( "sZoneUserAdd" )]
         public abstract void AddUser( ISqlCallContext ctx, int actorId, int zoneId, int userId );

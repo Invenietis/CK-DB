@@ -39,18 +39,28 @@ namespace CK.DB.Actor
         /// Idempotent.
         /// </summary>
         /// <param name="ctx">The call context.</param>
-        /// <param name="groupId">The group identifier to destroy. It must be empty otherwise an exception is thrown.</param>
+        /// <param name="actorId">The actor identifier.</param>
+        /// <param name="groupId">
+        /// The group identifier to destroy. 
+        /// If <paramref name="forceDestroy"/> if false, it must be empty otherwise an exception is thrown.
+        /// </param>
+        /// <param name="forceDestroy">True to remove all users before destroying the group.</param>
         [SqlProcedureNonQuery( "sGroupDestroy" )]
-        public abstract void DestroyGroup( ISqlCallContext ctx, int actorId, int groupId );
+        public abstract void DestroyGroup( ISqlCallContext ctx, int actorId, int groupId, bool forceDestroy = false );
 
         /// <summary>
         /// Destroys a Group if and only if there is no more users inside.
         /// Idempotent.
         /// </summary>
         /// <param name="ctx">The call context.</param>
-        /// <param name="groupId">The group identifier to destroy. It must be empty otherwise an exception is thrown.</param>
+        /// <param name="actorId">The actor identifier.</param>
+        /// <param name="groupId">
+        /// The group identifier to destroy. 
+        /// If <paramref name="forceDestroy"/> if false, it must be empty otherwise an exception is thrown.
+        /// </param>
+        /// <param name="forceDestroy">True to remove all users before destroying the group.</param>
         [SqlProcedureNonQuery( "sGroupDestroy" )]
-        public abstract Task DestroyGroupAsync( ISqlCallContext ctx, int actorId, int groupId );
+        public abstract Task DestroyGroupAsync( ISqlCallContext ctx, int actorId, int groupId, bool forceDestroy = false );
 
         /// <summary>
         /// Adds a user into a group.

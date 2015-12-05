@@ -126,6 +126,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DBSetup.cs" />
+    <Compile Include="FromActor\FromActorGroupTests.cs" />
+    <Compile Include="FromActor\FromActorUserTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ZoneTests.cs" />
   </ItemGroup>
@@ -142,13 +144,15 @@
       <Project>{f8f13b52-0c60-499c-baaf-86c01c3f70d2}</Project>
       <Name>CK.DB.Zone</Name>
     </ProjectReference>
+    <ProjectReference Include="..\CK.DB.Actor.Tests\CK.DB.Actor.Tests.csproj">
+      <Project>{93c9e608-a3cb-47c6-92e9-d41720e4ba0f}</Project>
+      <Name>CK.DB.Actor.Tests</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="FromActor\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

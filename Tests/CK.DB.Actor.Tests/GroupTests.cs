@@ -31,7 +31,31 @@ namespace CK.DB.Actor.Tests
         }
 
         [Test]
-        public void groups_can_not_be_destroyed_when_users_exist()
+        public void Anonymous_can_not_create_a_group()
+        {
+            var map = TestHelper.StObjMap;
+            var g = map.Default.Obtain<GroupTable>();
+            using( var ctx = new SqlStandardCallContext() )
+            {
+                Assert.Throws<SqlDetailedException>( () => g.CreateGroup( ctx, 0 ) );
+            }
+        }
+
+        [Test]
+        public void Anonymous_can_not_destroy_a_group()
+        {
+            var map = TestHelper.StObjMap;
+            var g = map.Default.Obtain<GroupTable>();
+            using( var ctx = new SqlStandardCallContext() )
+            {
+                int groupId = g.CreateGroup( ctx, 1 );
+                Assert.Throws<SqlDetailedException>( () => g.DestroyGroup( ctx, 0, groupId ) );
+                g.DestroyGroup( ctx, 1, groupId );
+            }
+        }
+
+        [Test]
+        public void groups_can_not_be_destroyed_when_users_exist_by_default()
         {
             var map = TestHelper.StObjMap;
             var g = map.Default.Obtain<GroupTable>();
@@ -49,6 +73,28 @@ namespace CK.DB.Actor.Tests
                 u.DestroyUser( ctx, 1, userId );
                 g.DestroyGroup( ctx, 1, groupId );
 
+                g.Database.AssertEmptyReader( "select * from CK.tUser where UserId = @0", userId )
+                          .AssertEmptyReader( "select * from CK.tGroup where GroupId = @0", groupId );
+            }
+        }
+
+        [Test]
+        public void groups_are_destroyed_even_when_users_exist_when_ForceDestroy_is_true()
+        {
+            var map = TestHelper.StObjMap;
+            var g = map.Default.Obtain<GroupTable>();
+            var u = map.Default.Obtain<UserTable>();
+
+            using( var ctx = new SqlStandardCallContext() )
+            {
+                int groupId = g.CreateGroup( ctx, 1 );
+                int userId = u.CreateUser( ctx, 1, Guid.NewGuid().ToString() );
+
+                g.AddUser( ctx, 1, groupId, userId );
+
+                Assert.DoesNotThrow( () => g.DestroyGroup( ctx, 1, groupId, true ) );
+
+                u.DestroyUser( ctx, 1, userId );
                 g.Database.AssertEmptyReader( "select * from CK.tUser where UserId = @0", userId )
                           .AssertEmptyReader( "select * from CK.tGroup where GroupId = @0", groupId );
             }

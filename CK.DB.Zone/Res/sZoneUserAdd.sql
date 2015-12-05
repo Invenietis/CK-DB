@@ -1,4 +1,4 @@
--- Version = 1.0.7
+-- Version = 15.12.5
 --
 -- Adds a User to a Zone.
 --
@@ -9,10 +9,12 @@ alter procedure CK.sZoneUserAdd
 	@UserId int
 )
 as begin
-    if @ActorId <= 0 raiserror( 'Security.AnonymousNotAllowed', 16, 1 );
-    if @ZoneId <= 0 raiserror( 'Zone.InvalidId', 16, 1 );
+    if @ActorId <= 0 throw 50000, 'Security.AnonymousNotAllowed', 1;
+    if @ZoneId <= 0 throw 50000, 'Zone.InvalidId', 1;
+	-- ..and if the ZoneId is actually a Group, this is an error.
+	if not exists (select * from CK.tZone where ZoneId = @ZoneId) throw 50000, 'Zone.InvalidId', 1;
 
-	-- System is not added to any group.
+	-- System is, somehow, already in all groups.
     if @UserId = 1 return 0;
 
 	--[beginsp]
@@ -26,11 +28,9 @@ as begin
 		begin
 			if not exists( select 1 from CK.tActorProfile p where p.GroupId = 1 and p.ActorId = @ActorId ) 
 			begin
-				raiserror( 'Security.ActorMustBeSytem', 16, 1 );
+				;throw 50000, 'Security.ActorMustBeSytem', 1;
 			end
 		end
-		-- ..and if the ZoneId is actually a Group, this is an error.
-		if not exists (select * from CK.tZone where ZoneId = @ZoneId) raiserror( 'Zone.InvalidId', 16, 1 );
 
 		--<Extension Name="Zone.PreUserAdd" />
 

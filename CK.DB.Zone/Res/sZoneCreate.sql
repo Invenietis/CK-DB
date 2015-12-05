@@ -1,4 +1,4 @@
--- Version = 1.0.0, Requires = { CK.sGroupUserAdd, CK.sZoneUserAdd }
+-- Version = 15.12.5, Requires = { CK.sGroupUserAdd, CK.sZoneUserAdd }
 create procedure CK.sZoneCreate 
 (
 	@ActorId int,
@@ -6,7 +6,7 @@ create procedure CK.sZoneCreate
 )
 as
 begin
-    if @ActorId <= 0 raiserror( 'Security.AnonymousNotAllowed', 16, 1 );
+    if @ActorId <= 0 throw 50000, 'Security.AnonymousNotAllowed', 1;
 
 	--[beginsp]
 
@@ -35,12 +35,9 @@ begin
 	begin
 		declare @Done bit;
 		-- The current actor becomes a member of the newly created Zone.
-		exec CK.sZoneUserAdd @ActorId, @ZoneIdResult, @ActorId, @Done output;
-		if @Done = 0 raiserror( 'Zone.UnableToAddActorIdInTheCreatedZone', 16, 1 );
-		
+		exec CK.sZoneUserAdd @ActorId, @ZoneIdResult, @ActorId;
 		-- The current actor becomes an administrator of the newly created Zone.
-		exec CK.sGroupUserAdd @ActorId, @AdministratorsGroupId, @ActorId, @Done output;
-		if @Done = 0 raiserror( 'Zone.UnableToAddActorIdInAdministratorsGroup', 16, 1 );
+		exec CK.sGroupUserAdd @ActorId, @AdministratorsGroupId, @ActorId;
 	end
 
 	--<Extension Name="Zone.PostZoneCreate" />

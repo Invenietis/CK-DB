@@ -10,8 +10,8 @@ create procedure CK.sGroupCreate
 )
 as 
 begin
-    if @ActorId <= 0 raiserror( 'Security.AnonymousNotAllowed', 16, 1 );
-    if @ZoneId = 1 raiserror( 'Zone.SystemZoneHasNoGroup', 16, 1 );
+    if @ActorId <= 0 throw 50000, 'Security.AnonymousNotAllowed', 1;
+    if @ZoneId = 1 throw 50000, 'Zone.SystemZoneHasNoGroup', 1;
 
 	--[beginsp]
 	

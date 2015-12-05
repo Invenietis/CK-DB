@@ -1,4 +1,4 @@
--- Version = 1.0.0, Requires={ CK.sUserRemoveFromAllGroups }
+-- Version = 15.12.5, Requires={ CK.sUserRemoveFromAllGroups }
 --
 -- Destroys a User: automatically removes it from any Groups it may belong to.
 --
@@ -8,8 +8,8 @@ create procedure CK.sUserDestroy
 	@UserId int
 )
 as begin
-    if @ActorId <= 0 raiserror( 'Security.AnonymousNotAllowed', 16, 1 );
-    if @UserId <= 1 raiserror( 'User.Undestroyable', 16, 1 );
+    if @ActorId <= 0 throw 50000, 'Security.AnonymousNotAllowed', 1;
+    if @UserId <= 1 throw 50000, 'User.Undestroyable', 1;
 
 	--[beginsp]
 

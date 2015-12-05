@@ -1,4 +1,4 @@
--- Version = 1.0.3
+-- Version = 15.12.5
 --
 -- Add a User to a Group. Does nothing if the User is already in the Group.
 --
@@ -9,10 +9,10 @@ alter procedure CK.sGroupUserAdd
 	@UserId int
 )
 as begin
-    if @ActorId <= 0 raiserror( 'Security.AnonymousNotAllowed', 16, 1 );
-    if @GroupId <= 0 raiserror( 'Group.InvalidId', 16, 1 );
+    if @ActorId <= 0 throw 50000, 'Security.AnonymousNotAllowed', 1;
+    if @GroupId <= 0 throw 50000, 'Group.InvalidId', 1;
 
-	-- System is not added to any group.
+	-- System is, somehow, already in all groups.
     if @UserId = 1 return 0;
 
 	--[beginsp]
@@ -24,7 +24,7 @@ as begin
 		begin
 			if not exists( select 1 from CK.tActorProfile p where p.GroupId = 1 and p.ActorId = @ActorId ) 
 			begin
-				raiserror( 'Security.ActorMustBeSytem', 16, 1 );
+				;throw 50000, 'Security.ActorMustBeSytem', 1;
 			end
 		end
 		--<Extension Name="Group.PreUserAdd" />

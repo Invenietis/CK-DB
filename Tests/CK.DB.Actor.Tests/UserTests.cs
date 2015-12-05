@@ -13,6 +13,18 @@ namespace CK.DB.Actor.Tests
     [TestFixture]
     public class UserTests
     {
+
+        [Test]
+        public void Anonymous_can_not_create_a_user()
+        {
+            var map = TestHelper.StObjMap;
+            var u = map.Default.Obtain<UserTable>();
+            using( var ctx = new SqlStandardCallContext() )
+            {
+                Assert.Throws<SqlDetailedException>( () => u.CreateUser( ctx, 0, Guid.NewGuid().ToString() ) );
+            }
+        }
+
         [Test]
         public void user_can_not_be_created_with_an_already_existing_UserName()
         {
