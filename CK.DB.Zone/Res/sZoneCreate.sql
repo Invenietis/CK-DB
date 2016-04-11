@@ -33,7 +33,6 @@ begin
 
 	if @ActorId > 1
 	begin
-		declare @Done bit;
 		-- The current actor becomes a member of the newly created Zone.
 		exec CK.sZoneUserAdd @ActorId, @ZoneIdResult, @ActorId;
 		-- The current actor becomes an administrator of the newly created Zone.
