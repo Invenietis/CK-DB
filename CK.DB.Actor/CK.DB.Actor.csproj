@@ -15,16 +15,9 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
   </PropertyGroup>
-
-  <PropertyGroup>
-    <AssemblyOriginatorKeyFile>..\SharedKey.snk</AssemblyOriginatorKeyFile>
-    <SignAssembly>true</SignAssembly>
-  </PropertyGroup>
-
   <PropertyGroup Condition=" $(GenerateDocumentation) != '' ">
     <DocumentationFile>bin\$(Configuration)\$(AssemblyName).xml</DocumentationFile>
   </PropertyGroup>
-  
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
@@ -57,15 +50,15 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.Setupable.Model, Version=4.1.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.Setupable.Model.4.1.0-a05\lib\net45\CK.Setupable.Model.dll</HintPath>
+      <HintPath>..\packages\CK.Setupable.Model.4.1.0-a06\lib\net45\CK.Setupable.Model.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.SqlServer.Setup.Model, Version=4.1.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.SqlServer.Setup.Model.4.1.0-a05\lib\net45\CK.SqlServer.Setup.Model.dll</HintPath>
+      <HintPath>..\packages\CK.SqlServer.Setup.Model.4.1.0-a06\lib\net45\CK.SqlServer.Setup.Model.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.StObj.Model, Version=4.1.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.StObj.Model.4.1.0-a05\lib\net45\CK.StObj.Model.dll</HintPath>
+      <HintPath>..\packages\CK.StObj.Model.4.1.0-a06\lib\net45\CK.StObj.Model.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
