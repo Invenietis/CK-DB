@@ -31,7 +31,6 @@ if (!(Test-Path $msbuildExe)) {
     Throw "Could not find msbuild.exe"
 }
 
-
 # Tools directory is for nuget.exe but it may be used to 
 # contain other utilities.
 $toolsDir = Join-Path $builderDir "Tools"

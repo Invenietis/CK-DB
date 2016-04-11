@@ -140,12 +140,12 @@ namespace CodeCake
                     }
                     if( gitInfo.IsValidRelease && gitInfo.PreReleaseName == "" )
                     {
-                        PushNuGetPackages( "NUGET_API_KEY", "https://www.nuget.org/api/v2/package", nugetPackages );
+                        PushNuGetPackages( "INVENIETIS_PROGET_DEFAULT_API_KEY", "http://proget.app.invenietis.net/nuget/Default", nugetPackages );
                     }
                     else
                     {
                         Debug.Assert( gitInfo.IsValidCIBuild || gitInfo.PreReleaseName != "" );
-                        PushNuGetPackages( "MYGET_EXPLORE_API_KEY", "https://www.myget.org/F/invenietis-explore/api/v2/package", nugetPackages );
+                        PushNuGetPackages( "INVENIETIS_PROGET_EXPLORE_API_KEY", "http://proget.app.invenietis.net/nuget/Explore", nugetPackages );
                     }
                 } );
 
