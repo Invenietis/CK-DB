@@ -10,7 +10,7 @@ using CK.SqlServer;
 
 namespace CK.DB.Actor
 {
-    [SqlTable( "tGroup", Package = typeof( Package ) ), Versions( "4.0.0" )]
+    [SqlTable( "tGroup", Package = typeof( Package ) ), Versions( "5.0.0" )]
     [SqlObjectItem( "vGroup" )]
     public abstract class GroupTable : SqlTable
     {

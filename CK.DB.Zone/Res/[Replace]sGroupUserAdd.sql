@@ -1,4 +1,4 @@
--- Version = 15.12.5, Requires = { CK.sZoneUserAdd }
+-- Version = *, Requires = { CK.sZoneUserAdd }
 --
 -- Add a User to a Group.
 --

@@ -1,4 +1,4 @@
-﻿-- Version = 15.12.5, Requires = { CK.sActorCreate }
+﻿-- Version = *, Requires = { CK.sActorCreate }
 create procedure CK.sUserCreate 
 (
 	@ActorId int,

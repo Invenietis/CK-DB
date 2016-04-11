@@ -1,4 +1,4 @@
--- Version = 15.12.5, Requires={ CK.sGroupUserRemove }
+-- Version = *, Requires={ CK.sGroupUserRemove }
 --
 -- Clears a Group.
 --

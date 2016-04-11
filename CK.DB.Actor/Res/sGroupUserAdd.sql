@@ -1,4 +1,4 @@
--- Version = 15.12.5
+-- Version = *
 --
 -- Add a User to a Group. Does nothing if the User is already in the Group.
 --

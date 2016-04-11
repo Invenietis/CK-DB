@@ -10,7 +10,7 @@ using CK.SqlServer;
 
 namespace CK.DB.Zone
 {
-    [SqlTable( "tZone", Package = typeof( Package ) ), Versions( "3.0.0" )]
+    [SqlTable( "tZone", Package = typeof( Package ) ), Versions( "5.0.0" )]
     [SqlObjectItem( "vZone" )]
     public abstract class ZoneTable : SqlTable
     {

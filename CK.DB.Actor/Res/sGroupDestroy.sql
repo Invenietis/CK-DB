@@ -1,4 +1,4 @@
--- Version = 15.12.5
+-- Version = *
 --
 -- Destroys a Group: can work only if there is no Users inside the Group.
 --

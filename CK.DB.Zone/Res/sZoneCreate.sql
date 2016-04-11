@@ -1,4 +1,4 @@
--- Version = 15.12.5, Requires = { CK.sGroupUserAdd, CK.sZoneUserAdd }
+-- Version = *, Requires = { CK.sGroupUserAdd, CK.sZoneUserAdd }
 create procedure CK.sZoneCreate 
 (
 	@ActorId int,
@@ -16,29 +16,11 @@ begin
 	exec CK.sGroupCreate @ActorId, 0, @ZoneIdResult output;
 		
 	-- Do create the Zone
-	insert into CK.tZone( 
-			ZoneId, AdministratorsGroupId 
-		) values ( 
-			@ZoneIdResult, 1 
-		);
+	insert into CK.tZone( ZoneId ) values ( @ZoneIdResult );
 
 	-- The Zone of this group is the Zone itself.
 	update CK.tGroup set ZoneId = @ZoneIdResult where GroupId = @ZoneIdResult;
-
-	-- Creates the first group of the Zone. This group is the Administrators Group of the Zone.
-	declare @AdministratorsGroupId int;
-	exec CK.sGroupCreate @ActorId, @ZoneIdResult, @AdministratorsGroupId output;
 		
-	update CK.tZone set AdministratorsGroupId = @AdministratorsGroupId where ZoneId = @ZoneIdResult;
-
-	if @ActorId > 1
-	begin
-		-- The current actor becomes a member of the newly created Zone.
-		exec CK.sZoneUserAdd @ActorId, @ZoneIdResult, @ActorId;
-		-- The current actor becomes an administrator of the newly created Zone.
-		exec CK.sGroupUserAdd @ActorId, @AdministratorsGroupId, @ActorId;
-	end
-
 	--<Extension Name="Zone.PostZoneCreate" />
 
 	--[endsp]

@@ -15,16 +15,10 @@
     <language>en-US</language>
     <dependencies>
       <dependency id="CK.DB.Actor" version="$version$" />
-
-      <dependency id="CK.Core" version="4.3.0" />
-      <dependency id="CK.Setupable.Model" version="4.1.0-a05" />
-      <dependency id="CK.SqlServer.Setup.Model" version="4.1.0-a05" />
-      <dependency id="CK.StObj.Model" version="4.1.0-a05" />
-
     </dependencies>
   </metadata>
   <files>    
-    <file src="CK.DB.Acl\bin\Release\CK.DB.Acl.dll" target="lib\net45" />
-    <file src="CK.DB.Acl\bin\Release\CK.DB.Acl\Release\CK.DB.Acl.xml" target="lib\net45" />
+    <file src="CK.DB.Acl\bin\{{configuration}}\CK.DB.Acl.dll" target="lib\net45" />
+    <file src="CK.DB.Acl\bin\{{configuration}}\CK.DB.Acl.xml" target="lib\net45" />
   </files>
 </package>

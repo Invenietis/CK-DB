@@ -87,10 +87,10 @@
     <EmbeddedResource Include="Res\[Replace]sGroupUserRemove.sql" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Res\CK.GroupTable-Zone.Install.3.0.0.sql" />
+    <EmbeddedResource Include="Res\CK.GroupTable-Zone.Install.5.0.0.sql" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Res\CK.ZoneTable.Install.3.0.0.sql" />
+    <EmbeddedResource Include="Res\CK.ZoneTable.Install.5.0.0.sql" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Res\sZoneCreate.sql" />
@@ -105,7 +105,6 @@
     <EmbeddedResource Include="Res\sZoneUserRemove.sql" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

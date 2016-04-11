@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace CK.DB.Actor
 {
-    [SqlTable( "tUser", Package = typeof( Package ) ), Versions( "4.0.0" )]
+    [SqlTable( "tUser", Package = typeof( Package ) ), Versions( "5.0.0" )]
     [SqlObjectItem( "vUser" )]
     public abstract class UserTable : SqlTable
     {

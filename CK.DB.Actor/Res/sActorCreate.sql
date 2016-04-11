@@ -1,4 +1,4 @@
-﻿-- Version = 1.0.0
+﻿-- Version = *
 create procedure CK.sActorCreate 
 (
 	@ActorId int,

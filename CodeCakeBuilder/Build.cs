@@ -97,7 +97,12 @@ namespace CodeCake
                .IsDependentOn( "Build" )
                .Does( () =>
                {
-                   Cake.NUnit( "Tests/**/*.Tests/bin/" + configuration + "/*.Tests.dll", new NUnitSettings() { Framework = "v4.5" } );
+                   var testDlls = Cake.ParseSolution( "CK-DB.sln" )
+                                        .Projects
+                                            .Where( p => p.Name.EndsWith( ".Tests" ) )
+                                            .Select( p => p.Path.GetDirectory().CombineWithFilePath( "bin/" + configuration + "/" + p.Name + ".dll" ) );
+                   Cake.Information( "Testing: {0}", string.Join( ", ", testDlls.Select( p => p.GetFilename().ToString() ) ) );
+                   Cake.NUnit( testDlls, new NUnitSettings() { Framework = "v4.5" } );
                } );
 
             Task( "Create-NuGet-Packages" )

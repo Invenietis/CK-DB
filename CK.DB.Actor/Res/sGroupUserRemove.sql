@@ -1,4 +1,4 @@
--- Version = 15.12.5
+-- Version = *
 --
 -- Removes a User from a Group.
 --

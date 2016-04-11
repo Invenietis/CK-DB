@@ -72,12 +72,17 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="Bootstrap.ps1" />
+    <None Include="NuSpec\CK.DB.Zone.Tests.nuspec" />
+    <None Include="NuSpec\CK.DB.Acl.Tests.nuspec" />
+    <None Include="NuSpec\CK.DB.Actor.Tests.nuspec" />
+    <None Include="NuSpec\CK.DB.Zone.nuspec" />
     <None Include="NuSpec\CK.DB.Actor.nuspec" />
     <None Include="NuSpec\nuspec.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="NuSpec\CK.DB.Acl.nuspec" />
     <None Include="packages.config" />
+    <None Include="Run-CodeCake.ps1" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

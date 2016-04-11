@@ -74,16 +74,16 @@
     <Compile Include="UserTable.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Res\CK.ActorProfileTable.Install.4.0.0.sql" />
+    <EmbeddedResource Include="Res\CK.ActorProfileTable.Install.5.0.0.sql" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Res\CK.ActorTable.Install.4.0.0.sql" />
+    <EmbeddedResource Include="Res\CK.ActorTable.Install.5.0.0.sql" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Res\CK.GroupTable.Install.4.0.0.sql" />
+    <EmbeddedResource Include="Res\CK.GroupTable.Install.5.0.0.sql" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Res\CK.UserTable.Install.4.0.0.sql" />
+    <EmbeddedResource Include="Res\CK.UserTable.Install.5.0.0.sql" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Res\sActorCreate.sql" />
@@ -122,7 +122,6 @@
     <EmbeddedResource Include="Res\vGroup.sql" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
