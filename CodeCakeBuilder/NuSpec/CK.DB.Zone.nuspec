@@ -7,7 +7,7 @@
     <owners>Invenietis</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <summary>
-      CK-Database model for Zone model.
+      CK-Database model for Zone model ({{CSemVer}}).
     </summary>
     <description>
       This package defines tZone table.

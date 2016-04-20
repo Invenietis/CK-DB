@@ -7,7 +7,7 @@
     <owners>Invenietis</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <summary>
-      CK-Database Tests for CK.DB.Acl.
+      CK-Database Tests for CK.DB.Acl ({{CSemVer}}).
     </summary>
     <description>
       This package contains tests for CK.DB.Acl (uses CK.DB.Tests.NUnit).

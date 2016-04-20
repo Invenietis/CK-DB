@@ -7,7 +7,7 @@
     <owners>Invenietis</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <summary>
-      CK-Database Tests for CK.DB.Group.SimpleNaming.
+      CK-Database Tests for CK.DB.Group.SimpleNaming ({{CSemVer}}).
     </summary>
     <description>
       This package contains tests for CK.DB.Group.SimpleNaming (uses CK.DB.Tests.NUnit).
@@ -15,7 +15,6 @@
     <language>en-US</language>
     <dependencies>
       <dependency id="CK.DB.Group.SimpleNaming" version="$version$" />
-      <dependency id="CK.DB.Group.SimpleNaming.Tests" version="$version$" />
     </dependencies>
   </metadata>
   <files>

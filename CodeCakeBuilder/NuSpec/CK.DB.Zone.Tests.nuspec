@@ -7,7 +7,7 @@
     <owners>Invenietis</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <summary>
-      CK-Database Tests for CK.DB.Zone.
+      CK-Database Tests for CK.DB.Zone ({{CSemVer}}).
     </summary>
     <description>
       This package contains tests for CK.DB.Zone (uses CK.DB.Tests.NUnit).

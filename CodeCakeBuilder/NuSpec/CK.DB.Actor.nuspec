@@ -10,7 +10,7 @@
       CK-Database model for User/Group kernel model.
     </summary>
     <description>
-      This package defines tActor, tUser and tGroup tables.
+      This package defines tActor, tUser and tGroup tables ({{CSemVer}}).
     </description>
     <language>en-US</language>
     <dependencies>

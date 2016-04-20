@@ -7,7 +7,7 @@
     <owners>Invenietis</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <summary>
-      CK-Database that adds a simple group name.
+      CK-Database that adds a simple group name ({{CSemVer}}).
     </summary>
     <description>
       This package adds CK.tGroup.GrouName column.

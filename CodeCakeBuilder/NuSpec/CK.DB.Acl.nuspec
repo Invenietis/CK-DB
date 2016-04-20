@@ -7,7 +7,7 @@
     <owners>Invenietis</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <summary>
-      CK-Database model for Acl model.
+      CK-Database model for Acl model ({{CSemVer}}).
     </summary>
     <description>
       This package defines tAcl, tAclConfigMemory and tAclConfig tables.
