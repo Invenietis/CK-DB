@@ -1,4 +1,4 @@
--- Version = 15.12.5, Requires={ CK.sUserRemoveFromAllGroups }
+-- Version = *, Requires={ CK.sUserRemoveFromAllGroups }
 --
 -- Destroys a User: automatically removes it from any Groups it may belong to.
 --

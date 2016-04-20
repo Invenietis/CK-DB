@@ -72,6 +72,8 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="Bootstrap.ps1" />
+    <None Include="NuSpec\CK.DB.Group.SimpleNaming.Tests.nuspec" />
+    <None Include="NuSpec\CK.DB.Group.SimpleNaming.nuspec" />
     <None Include="NuSpec\CK.DB.Zone.Tests.nuspec" />
     <None Include="NuSpec\CK.DB.Acl.Tests.nuspec" />
     <None Include="NuSpec\CK.DB.Actor.Tests.nuspec" />

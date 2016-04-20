@@ -19,7 +19,7 @@ create table CK.tAclConfig
 insert into CK.[tAclConfig](AclId,ActorId,GrantLevel) values(0,0,127);
 insert into CK.[tAclConfigMemory](AclId,ActorId,KeyReason,GrantLevel) values(0,0,'CK.StdAcl.Public',127);
 
--- The 1 Acl gives no rights to anybody...except Gods and the Owner: It is the "Owner Only" acl.
+-- The 1 Acl gives no rights to anybody...except Gods.
 
 -- The 2 Acl can be used by anybody...
 insert into CK.[tAclConfig](AclId,ActorId,GrantLevel) values(2,0,8);

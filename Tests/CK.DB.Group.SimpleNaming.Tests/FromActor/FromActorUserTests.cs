@@ -5,10 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CK.DB.Zone.Tests
+namespace CK.DB.Group.SimpleNaming.Tests.FromActor
 {
     [TestFixture]
-    public class DBSetup : CK.DB.Tests.DBSetup
+    public class FromActorUserTests : CK.DB.Actor.Tests.UserTests
     {
     }
 }
