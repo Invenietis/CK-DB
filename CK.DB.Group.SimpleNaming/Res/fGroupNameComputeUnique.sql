@@ -19,7 +19,7 @@ begin
 	while @num < 1000 
 	begin
 		set @proposed = @GroupName + cast(@num as nvarchar(4)) + ')';
-		if not exists( select GroupId from CK.tGroup where GroupName = @proposed ) 
+		if not exists( select GroupId from CK.tGroup where GroupId <> @GroupId and GroupName = @proposed ) 
 			return @proposed;
 		set @num = @num+1;
 	end

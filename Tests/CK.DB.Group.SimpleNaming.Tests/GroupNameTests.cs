@@ -35,6 +35,38 @@ namespace CK.DB.Group.SimpleNaming.Tests
         }
 
         [Test]
+        public void renaming_a_group_with_an_already_conflicting_name_finds_the_hole()
+        {
+            var map = TestHelper.StObjMap;
+            var g = map.Default.Obtain<GroupTable>();
+            var gN = map.Default.Obtain<SimpleNaming.Package>();
+            using( var ctx = new SqlStandardCallContext() )
+            {
+                string uniquifierName = Guid.NewGuid().ToString();
+                string name;
+                int g1 = g.CreateGroup( ctx, 1 );
+                name = gN.GroupRename( ctx, 1, g1, uniquifierName );
+                Assert.That( name, Is.EqualTo( uniquifierName ) );
+                int g2 = g.CreateGroup( ctx, 1 );
+                name = gN.GroupRename( ctx, 1, g2, uniquifierName );
+                Assert.That( name, Is.EqualTo( uniquifierName + " (1)" ) );
+                int g3 = g.CreateGroup( ctx, 1 );
+                name = gN.GroupRename( ctx, 1, g3, uniquifierName );
+                Assert.That( name, Is.EqualTo( uniquifierName + " (2)" ) );
+
+                name = gN.GroupRename( ctx, 1, g3, uniquifierName );
+                Assert.That( name, Is.EqualTo( uniquifierName + " (2)" ), "No change: found the (2) again." );
+
+                g.DestroyGroup( ctx, 1, g2 );
+                name = gN.GroupRename( ctx, 1, g3, uniquifierName );
+                Assert.That( name, Is.EqualTo( uniquifierName + " (1)" ), "The (1) is found." );
+
+                g.DestroyGroup( ctx, 1, g1 );
+                g.DestroyGroup( ctx, 1, g3 );
+            }
+        }
+
+        [Test]
         public void group_names_are_unique_and_clash_are_atomatically_handled()
         {
             var map = TestHelper.StObjMap;
