@@ -15,6 +15,7 @@
     <language>en-US</language>
     <dependencies>
       <dependency id="CK.DB.Group.SimpleNaming" version="$version$" />
+      <dependency id="CK.DB.Actor.Tests" version="$version$" />
     </dependencies>
   </metadata>
   <files>

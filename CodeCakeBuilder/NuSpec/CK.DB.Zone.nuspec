@@ -15,7 +15,6 @@
     <language>en-US</language>
     <dependencies>
       <dependency id="CK.DB.Actor" version="$version$" />
-      <dependency id="CK.SqlServer.Setup.Model" version="4.1.0-a06" />
     </dependencies>
   </metadata>
   
