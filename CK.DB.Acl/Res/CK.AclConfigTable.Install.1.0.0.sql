@@ -15,7 +15,7 @@ create table CK.tAclConfig
 
 --[beginscript]
 
--- The zero Acl gives full rights to anyone
+-- The 0 Acl gives full rights to anyone
 insert into CK.[tAclConfig](AclId,ActorId,GrantLevel) values(0,0,127);
 insert into CK.[tAclConfigMemory](AclId,ActorId,KeyReason,GrantLevel) values(0,0,'CK.StdAcl.Public',127);
 
@@ -44,5 +44,8 @@ insert into CK.[tAclConfigMemory](AclId,ActorId,KeyReason,GrantLevel) values(6,0
 -- The 7 Acl can be safe-administrated by anybody...
 insert into CK.[tAclConfig](AclId,ActorId,GrantLevel) values(7,0,112)
 insert into CK.[tAclConfigMemory](AclId,ActorId,KeyReason,GrantLevel) values(7,0,'CK.StdAcl.SafeAdministrator',112);
+
+-- The 8 Acl is reserved so that normal AclId starts at 9 and not 8.
+-- Like 1, it gives no rights to anybody...except Gods.
 
 --[endscript]

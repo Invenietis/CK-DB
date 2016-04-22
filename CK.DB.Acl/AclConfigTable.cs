@@ -10,7 +10,7 @@ namespace CK.DB.Acl
     [SqlTable( "tAclConfig", Package = typeof( Package ) ), Versions( "1.0.0" )]
     public abstract class AclConfigTable : SqlTable
     {
-        void Construct( AclTable acl, Actor.ActorTable actor )
+        void Construct( AclConfigMemoryTable acl, Actor.ActorTable actor )
         {
         }
     }
