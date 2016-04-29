@@ -1,6 +1,6 @@
 -- Version = *
 --
--- Destroys a Group: can work only if there is no Users inside the Group.
+-- Destroys a Group: can work only if there is no Users inside the Group except if @ForceDestroy = 1.
 --
 create procedure CK.sGroupDestroy
 (

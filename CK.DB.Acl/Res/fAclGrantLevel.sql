@@ -1,10 +1,10 @@
-﻿-- Version = 2.0.0
+﻿-- Version = 2.0.0, Requires = { CK.AclConfigTable }
 create function CK.fAclGrantLevel
 (
-    @ActorId Int,
-    @AclId Int
+    @ActorId int,
+    @AclId int
 )
-returns TinyInt
+returns tinyint with SCHEMABINDING
 as begin
 	return IsNull( -- Is the actor the system or a member of the system group?
 			(select 127 from CK.tActorProfile with(nolock) 
