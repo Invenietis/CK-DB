@@ -46,31 +46,31 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="CK.ActivityMonitor, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.ActivityMonitor.5.0.0-d02\lib\net45\CK.ActivityMonitor.dll</HintPath>
+      <HintPath>..\packages\CK.ActivityMonitor.5.0.0-d03\lib\net45\CK.ActivityMonitor.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.ActivityMonitor.StandardSender, Version=0.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.ActivityMonitor.StandardSender.5.0.0-d02\lib\net45\CK.ActivityMonitor.StandardSender.dll</HintPath>
+      <HintPath>..\packages\CK.ActivityMonitor.StandardSender.5.0.0-d03\lib\net45\CK.ActivityMonitor.StandardSender.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.Core, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.Core.5.0.0-d02\lib\net45\CK.Core.dll</HintPath>
+      <HintPath>..\packages\CK.Core.5.0.0-d03\lib\net45\CK.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.Setupable.Model, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.Setupable.Model.5.0.0-a02\lib\net45\CK.Setupable.Model.dll</HintPath>
+      <HintPath>..\packages\CK.Setupable.Model.5.0.0-a04\lib\net45\CK.Setupable.Model.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.SqlServer.Setup.Model, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.SqlServer.Setup.Model.5.0.0-a02\lib\net45\CK.SqlServer.Setup.Model.dll</HintPath>
+      <HintPath>..\packages\CK.SqlServer.Setup.Model.5.0.0-a04\lib\net45\CK.SqlServer.Setup.Model.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.StObj.Model, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.StObj.Model.5.0.0-a02\lib\net45\CK.StObj.Model.dll</HintPath>
+      <HintPath>..\packages\CK.StObj.Model.5.0.0-a04\lib\net45\CK.StObj.Model.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.Text, Version=1.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.Text.5.0.0-d02\lib\net45\CK.Text.dll</HintPath>
+      <HintPath>..\packages\CK.Text.5.0.0-d03\lib\net45\CK.Text.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
