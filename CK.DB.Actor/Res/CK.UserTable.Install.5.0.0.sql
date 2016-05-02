@@ -5,7 +5,7 @@ create table CK.tUser
 	UserId int not null,
 	-- Note: _BIN2 collations match the behavior of the Ordinal .Net StringComparison. 
 	--       This is NOT an invariant: this can be altered if needed.
-	UserName nvarchar( 127 ) collate Latin1_General_BIN2 not null,
+	UserName nvarchar( 127 ) collate Latin1_General_100_BIN2 not null,
 	CreationDate datetime2(0) not null constraint DF_CK_tUser_CreationDate default( sysutcdatetime() ),
 
 	constraint PK_CK_tUser primary key clustered( UserId ),

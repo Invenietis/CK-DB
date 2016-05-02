@@ -5,10 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CK.DB.Acl.Tests.FromActor
+namespace CK.DB.Acl.AclType.Tests.FromAcl
 {
     [TestFixture]
-    public class FromActorGroupTests : CK.DB.Actor.Tests.GroupTests
+    public class FromAclSimpleTests : CK.DB.Acl.Tests.AclSimpleTests
     {
     }
 }
