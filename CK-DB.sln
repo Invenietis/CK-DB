@@ -22,6 +22,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{036789EF-9DBD-47F3-821E-9478B504FA3C}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
+		appveyor.yml = appveyor.yml
 		nuget.config = nuget.config
 		RepositoryInfo.xml = RepositoryInfo.xml
 		SharedKey.snk = SharedKey.snk
