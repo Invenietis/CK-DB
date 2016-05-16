@@ -1,5 +1,5 @@
 -- Version = *
-alter view CK.vAclActorReason
+alter view CK.vAclActorReason with SCHEMABINDING
 as
 	select 	acl.AclId,
 		ActorId = a.ActorId, 

@@ -1,4 +1,4 @@
--- Version = *, Requires = { CK.sGroupRemoveAllUsers, CK.sGroupDestroy }
+-- Version = *, Requires = { CK.sGroupDestroy }
 create procedure CK.sZoneDestroy
 (
 	@ActorId int,
