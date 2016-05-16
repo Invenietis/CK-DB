@@ -9,7 +9,8 @@ using CK.SqlServer.Setup;
 
 namespace CK.DB.Acl
 {
-    [SqlPackage( FullName="AclPackage", ResourceType = typeof( Package ), Database = typeof( SqlDefaultDatabase ), ResourcePath = "Res", Schema = "CK" ), Versions( "1.0.0" )]
+    [SqlPackage( ResourcePath = "Res", Schema = "CK" )]
+    [Versions( "1.0.0" )]
     [SqlObjectItem( "sUserDestroy, sGroupDestroy" )]
     public abstract class Package : SqlPackage
     {

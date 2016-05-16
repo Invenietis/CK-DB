@@ -1,29 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{3902B885-AC29-4BE3-A83E-184316A09E91}</ProjectGuid>
+    <ProjectGuid>{18FCDA8C-1355-466C-9CA2-8BBC55383980}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CK.DB.Actor</RootNamespace>
-    <AssemblyName>CK.DB.Actor</AssemblyName>
+    <RootNamespace>CK.DB.Acl.AclType</RootNamespace>
+    <AssemblyName>CK.DB.Acl.AclType</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
   </PropertyGroup>
-
-  <PropertyGroup>
-    <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>..\SharedKey.snk</AssemblyOriginatorKeyFile>
-  </PropertyGroup>
-  <PropertyGroup Condition=" $(GenerateDocumentation) != '' ">
-    <DocumentationFile>bin\$(Configuration)\$(AssemblyName).xml</DocumentationFile>
-  </PropertyGroup>
-
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
@@ -41,14 +29,12 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Test|AnyCPU'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\Test\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\SharedKey.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" $(GenerateDocumentation) != '' ">
+    <DocumentationFile>bin\$(Configuration)\$(AssemblyName).xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="CK.ActivityMonitor, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
@@ -81,78 +67,35 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\SharedAssemblyInfo.cs">
-      <Link>Properties\SharedAssemblyInfo.cs</Link>
-    </Compile>
-    <Compile Include="ActorProfileTable.cs" />
-    <Compile Include="ActorTable.cs" />
-    <Compile Include="GroupTable.cs" />
+    <Compile Include="AclTypeGrantLevelTable.cs" />
+    <Compile Include="AclTypeTable.cs" />
     <Compile Include="Package.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UserTable.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Res\CK.ActorProfileTable.Install.5.0.0.sql" />
+    <ProjectReference Include="..\CK.DB.Acl\CK.DB.Acl.csproj">
+      <Project>{fc9114b2-192d-4945-adab-917639ccd5ff}</Project>
+      <Name>CK.DB.Acl</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Res\CK.ActorTable.Install.5.0.0.sql" />
+    <EmbeddedResource Include="Res\CK.AclTypeTable.Install.1.0.0.sql" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Res\CK.GroupTable.Install.5.0.0.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Res\CK.UserTable.Install.5.0.0.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Res\sActorCreate.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Res\sGroupCreate.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Res\sGroupUserAdd.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Res\sGroupUserRemove.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Res\sUserCreate.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Res\sUserDestroy.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Res\sUserUserNameSet.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Res\sGroupDestroy.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Res\sUserRemoveFromAllGroups.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Res\sGroupRemoveAllUsers.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Res\vUser.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Res\vGroup.sql" />
+    <EmbeddedResource Include="Res\CK.AclTypeGrantLevelTable.Install.1.0.0.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="..\packages\SimpleGitVersionTask.0.14.4\build\SimpleGitVersionTask.targets" Condition="Exists('..\packages\SimpleGitVersionTask.0.14.4\build\SimpleGitVersionTask.targets')" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\SimpleGitVersionTask.0.14.4\build\SimpleGitVersionTask.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SimpleGitVersionTask.0.14.4\build\SimpleGitVersionTask.targets'))" />
-  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

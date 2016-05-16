@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CK.DB.Zone.Tests.FromActor
+namespace CK.DB.Acl.Tests.FromActor
 {
     [TestFixture]
     public class FromActorUserTests : CK.DB.Actor.Tests.UserTests

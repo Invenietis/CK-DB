@@ -1,5 +1,5 @@
 -- Version = *, Requires = { CK.vAclActor }
-create view CK.vAclConfig
+create view CK.vAclConfig with SCHEMABINDING
 as 
 select 	ac.AclId, 
 		ac.ActorId, 

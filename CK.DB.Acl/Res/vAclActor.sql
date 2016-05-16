@@ -1,5 +1,5 @@
 -- Version = *
-alter view CK.vAclActor
+alter view CK.vAclActor with SCHEMABINDING
 as
 	select 	
 		acl.AclId,
