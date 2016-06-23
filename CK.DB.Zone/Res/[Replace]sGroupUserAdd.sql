@@ -1,4 +1,5 @@
--- Version = *, Requires = { CK.sZoneUserAdd }
+-- Version = *, AddRequires = { CK.sZoneUserAdd }
+
 --
 -- Add a User to a Group.
 --
@@ -53,3 +54,38 @@ as begin
 	end
 	--[endsp]
 end
+
+/*
+create transformer on CK.sGroupUserAdd
+as
+begin
+	inject "
+			declare @ZoneId int;		
+			-- The user must be registered in the Zone or the Group.ZoneId is 0 (this supports "unzoned" Groups).
+			select @ZoneId = g.ZoneId
+					from CK.tActorProfile a
+					inner join CK.tGroup g on g.ZoneId = a.GroupId 
+					where g.GroupId = @GroupId and (g.ZoneId = 0 or a.ActorId = @UserId);
+		
+			if @ZoneId is null 
+			begin 
+				;throw 50000, 'Group.UserNotInZone', 1;
+			end	" into "PreUserAdd";
+
+	inject "
+		-- if the group is actually a Zone, calls sZoneUserAdd
+		if exists( select * from CK.tZone where ZoneId = @GroupId )
+		begin
+			exec CK.sZoneUserAdd @ActorId, @GroupId, @UserId;
+		end
+		else
+		begin 
+	" before "--<PreUserAdd";
+	
+	inject "
+		end 
+	" after "--<PostUserAdd";
+
+end
+*/
+

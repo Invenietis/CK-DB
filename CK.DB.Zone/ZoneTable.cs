@@ -11,7 +11,7 @@ using CK.SqlServer;
 namespace CK.DB.Zone
 {
     [SqlTable( "tZone", Package = typeof( Package ) ), Versions( "5.0.0" )]
-    [SqlObjectItem( "transform:vZone" )]
+    [SqlObjectItem( "vZone" )]
     public abstract class ZoneTable : SqlTable
     {
         void Construct( Actor.GroupTable group )

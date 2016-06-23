@@ -109,6 +109,9 @@
       <HintPath>..\..\packages\CK.SqlServer.Setup.Runtime.5.0.0-a11-00-develop-0008\lib\net45\CK.SqlServer.Setup.Runtime.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="CK.SqlServer.Transform">
+      <HintPath>..\..\packages\CK.SqlServer.Transform.5.0.0-b06\lib\net45\CK.SqlServer.Transform.dll</HintPath>
+    </Reference>
     <Reference Include="CK.StObj.Engine, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
       <HintPath>..\..\packages\CK.StObj.Engine.5.0.0-a11-00-develop-0008\lib\net45\CK.StObj.Engine.dll</HintPath>
       <Private>True</Private>

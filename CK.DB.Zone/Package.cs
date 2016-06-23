@@ -11,7 +11,6 @@ namespace CK.DB.Zone
 
     [SqlPackage( ResourcePath = "Res", ResourceType = typeof(Package) )]
     [Versions( "5.0.0" )]
-    [SqlObjectItem( "vGroup" )]
     public abstract class Package : Actor.Package
     {
         public new GroupTable GroupTable => (GroupTable)base.GroupTable;

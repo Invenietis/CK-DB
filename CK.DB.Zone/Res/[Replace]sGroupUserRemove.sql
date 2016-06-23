@@ -1,4 +1,4 @@
--- Version = *, Requires = { CK.sZoneUserRemove }
+-- Version = *, AddRequires = { CK.sZoneUserRemove }
 --
 -- Remove a User from a Group.
 --

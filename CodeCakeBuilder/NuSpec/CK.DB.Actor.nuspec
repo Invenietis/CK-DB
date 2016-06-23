@@ -14,7 +14,7 @@
     </description>
     <language>en-US</language>
     <dependencies>
-      <dependency id="CK.SqlServer.Setup.Model" version="5.0.0-a11-00-develop-0006" />
+      <dependency id="CK.SqlServer.Setup.Model" version="5.0.0-a11-00-develop-0008" />
     </dependencies>
   </metadata>
   <files>    
