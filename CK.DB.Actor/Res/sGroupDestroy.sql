@@ -14,7 +14,7 @@ as begin
 
 	--[beginsp]
 	
-	--<Extension Name="Group.PreDestroy" />
+	--<PreDestroy />
 
 	if @ForceDestroy = 1
 	begin
@@ -28,7 +28,7 @@ as begin
 	delete from CK.tGroup where GroupId = @GroupId;
 	delete from CK.tActor where ActorId = @GroupId;
 
-	--<Extension Name="Group.PostDestroy" />
+	--<PostDestroy revert />
 		
 	--[endsp]
 end

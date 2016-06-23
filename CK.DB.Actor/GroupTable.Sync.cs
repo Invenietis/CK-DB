@@ -10,22 +10,15 @@ using CK.SqlServer;
 
 namespace CK.DB.Actor
 {
-    [SqlTable( "tGroup", Package = typeof( Package ) )]
-    [Versions( "5.0.0" )]
-    [SqlObjectItem( "vGroup" )]
     public abstract partial class GroupTable : SqlTable
     {
-        void Construct( ActorTable actor )
-        {
-        }
-
         /// <summary>
         /// Creates a new Group.
         /// </summary>
         /// <param name="ctx">The call context.</param>
         /// <returns>The new group identifier.</returns>
         [SqlProcedureNonQuery( "sGroupCreate" )]
-        public abstract Task<int> CreateGroupAsync( ISqlCallContext ctx, int actorId );
+        public abstract int CreateGroup( ISqlCallContext ctx, int actorId );
 
         /// <summary>
         /// Destroys a Group if and only if there is no more users inside.
@@ -39,7 +32,7 @@ namespace CK.DB.Actor
         /// </param>
         /// <param name="forceDestroy">True to remove all users before destroying the group.</param>
         [SqlProcedureNonQuery( "sGroupDestroy" )]
-        public abstract Task DestroyGroupAsync( ISqlCallContext ctx, int actorId, int groupId, bool forceDestroy = false );
+        public abstract void DestroyGroup( ISqlCallContext ctx, int actorId, int groupId, bool forceDestroy = false );
 
         /// <summary>
         /// Adds a user into a group.
@@ -49,7 +42,7 @@ namespace CK.DB.Actor
         /// <param name="groupId">The group identifier.</param>
         /// <param name="userId">The user identifier to add.</param>
         [SqlProcedureNonQuery( "sGroupUserAdd" )]
-        public abstract Task AddUserAsync( ISqlCallContext ctx, int actorId, int groupId, int userId );
+        public abstract void AddUser( ISqlCallContext ctx, int actorId, int groupId, int userId );
 
         /// <summary>
         /// Removes a user from a group.
@@ -59,7 +52,7 @@ namespace CK.DB.Actor
         /// <param name="groupId">The group identifier.</param>
         /// <param name="userId">The user identifier to remove.</param>
         [SqlProcedureNonQuery( "sGroupUserRemove" )]
-        public abstract Task RemoveUserAsync( ISqlCallContext ctx, int actorId, int groupId, int userId );
+        public abstract void RemoveUser( ISqlCallContext ctx, int actorId, int groupId, int userId );
 
         /// <summary>
         /// Removes all users from a group.
@@ -68,6 +61,7 @@ namespace CK.DB.Actor
         /// <param name="ctx">The call context.</param>
         /// <param name="groupId">The group identifier.</param>
         [SqlProcedureNonQuery( "sGroupRemoveAllUsers" )]
-        public abstract Task RemoveAllUsersAsync( ISqlCallContext ctx, int actorId, int groupId );
+        public abstract void RemoveAllUsers( ISqlCallContext ctx, int actorId, int groupId );
+
     }
 }

@@ -27,11 +27,11 @@ as begin
 				;throw 50000, 'Security.ActorMustBeSytem', 1;
 			end
 		end
-		--<Extension Name="Group.PreUserAdd" />
+		--<PreUserAdd revert />
 
 		insert into CK.tActorProfile( ActorId, GroupId ) values( @UserId, @GroupId );
 
-		--<Extension Name="Group.PostUserAdd" />
+		--<PostUserAdd />
 
 	end
 	--[endsp]

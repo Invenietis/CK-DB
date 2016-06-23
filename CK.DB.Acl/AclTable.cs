@@ -12,6 +12,7 @@ using CK.Core;
 namespace CK.DB.Acl
 {
     [SqlTable( "tAcl", Package = typeof( Package ) ), Versions( "3.0.0" )]
+    [SqlObjectItem( "vAclActor, vAclActorReason" )]
     public abstract class AclTable : SqlTable
     {
         void Construct()

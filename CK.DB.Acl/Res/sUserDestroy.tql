@@ -1,0 +1,8 @@
+-- Version = *
+create transformer on CK.sUserDestroy
+as
+begin
+	inject "
+		delete from CK.tAclConfig where ActorId = @UserId;
+		delete from CK.tAclConfigMemory where ActorId = @UserId;" into "PreDestroy";
+end

@@ -24,11 +24,11 @@ as begin
 				;throw 50000, 'Security.ActorMustBeSytem', 1;
 			end
 		end
-		--<Extension Name="Group.PreUserRemove" />
+		--<PreUserRemove />
 
 		delete from CK.tActorProfile where GroupId = @GroupId and ActorId = @UserId;
 		
-		--<Extension Name="Group.PostUserRemove" />
+		--<PostUserRemove revert />
 	end
 
 	--[endsp]

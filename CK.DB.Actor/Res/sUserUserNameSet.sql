@@ -19,18 +19,18 @@ as begin
 	if exists( select * from CK.tUser where UserName = @UserName and UserId <> @UserId )
 	begin
 		set @Done = 0;
-		--<Extension Name="User.UserNameSetClash" />
+		--<UserNameSetClash />
 	end
 	if @Done = 1
 	begin
-		--<Extension Name="User.PreUserNameSet" />
+		--<PreUserNameSet revert />
 
 		update u 
 			set u.UserName = @UserName
 			from CK.tUser u   
 			where u.UserId = @UserId;
 
-		--<Extension Name="User.PostUserNameSet" />
+		--<PostUserNameSet />
 	end
 
 	--[endsp]

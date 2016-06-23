@@ -11,7 +11,7 @@ namespace CK.DB.Group.SimpleNaming
 {
     [SqlPackage( ResourcePath = "Res", Schema = "CK" )]
     [Versions( "1.0.0" )]
-    [SqlObjectItem( "vGroup" )]
+    [SqlObjectItem( "transform:vGroup" )]
     public abstract class Package : SqlPackage
     {
         void Construct( Actor.Package actorPackage )

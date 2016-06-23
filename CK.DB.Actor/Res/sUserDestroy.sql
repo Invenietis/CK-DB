@@ -15,7 +15,7 @@ as begin
 
 	if exists( select * from CK.tUser where UserId = @UserId )
 	begin
-		--<Extension Name="User.PreDestroy" />
+		--<PreDestroy/>
 
 		exec CK.sUserRemoveFromAllGroups @ActorId, @UserId;
 
@@ -23,8 +23,9 @@ as begin
 		delete from CK.tUser where UserId = @UserId;
 		delete from CK.tActor where ActorId = @UserId;
 
-		--<Extension Name="User.PostDestroy" />
+		--<PostDestroy revert />
 
 	end
+
 	--[endsp]
 end

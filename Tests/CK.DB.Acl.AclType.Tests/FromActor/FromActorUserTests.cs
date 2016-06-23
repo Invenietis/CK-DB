@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 namespace CK.DB.Acl.AclType.Tests.FromActor
 {
     [TestFixture]
+    [CLSCompliant(false)]
     public class FromActorUserTests : CK.DB.Actor.Tests.UserTests
     {
     }

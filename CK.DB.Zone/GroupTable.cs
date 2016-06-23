@@ -19,17 +19,11 @@ namespace CK.DB.Zone
         {
         }
 
-        [SqlProcedureNonQuery( "sGroupCreate" )]
+        [SqlProcedureNonQuery( "transform:sGroupCreate" )]
         public abstract int CreateGroup( ISqlCallContext ctx, int actorId, int zoneId );
 
-        [SqlProcedureNonQuery( "sGroupCreate" )]
+        [SqlProcedureNonQuery( "transform:sGroupCreate" )]
         public abstract Task<int> CreateGroupAsync( ISqlCallContext ctx, int actorId, int zoneId );
-
-        //[EditorBrowsable( EditorBrowsableState.Never )]
-        //public override abstract int CreateGroup( ISqlCallContext ctx, int actorId );
-
-        //[EditorBrowsable( EditorBrowsableState.Never )]
-        //public override abstract Task<int> CreateGroupAsync( ISqlCallContext ctx, int actorId );
 
     }
 }

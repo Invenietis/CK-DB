@@ -1,0 +1,6 @@
+-- Version = *
+create transformer on CK.vGroup
+as 
+begin
+	add column GroupName = g.GroupName;
+end

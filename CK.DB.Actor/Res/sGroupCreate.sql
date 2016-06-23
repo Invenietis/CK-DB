@@ -12,12 +12,12 @@ as begin
 
 	--[beginsp]
 	
-	--<Extension Name="Group.PreCreate" />
+	--<PreCreate revert />
 
 	exec CK.sActorCreate @ActorId, @GroupIdResult output;
 	insert into CK.tGroup( GroupId ) values( @GroupIdResult );
 
-	--<Extension Name="Group.PostCreate" />
+	--<PostCreate />
 
 	--[endsp]
 end

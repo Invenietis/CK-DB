@@ -10,6 +10,7 @@ begin
     if @ActorId <= 0 throw 50000, 'Security.AnonymousNotAllowed', 1;
 
 	--[beginsp]
+
 	set @UserIdResult = 0;
 	if exists( select UserId from CK.tUser where UserName = @UserName )
 	begin
@@ -17,13 +18,14 @@ begin
 	end
 	if @UserIdResult = 0
 	begin
-		--<Extension Name="User.PreCreate" />
+		--<PreCreate revert />
 
 		exec CK.sActorCreate @ActorId, @UserIdResult output;
 		insert into CK.tUser( UserId, UserName ) values ( @UserIdResult, @UserName );
 
-		--<Extension Name="User.PostCreate" />
+		--<PostCreate />
 	end
+	
 	--[endsp]
 end
 
