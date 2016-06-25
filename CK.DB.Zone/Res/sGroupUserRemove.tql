@@ -1,0 +1,19 @@
+-- Version = *, Requires = { CK.sZoneUserRemove }
+create transformer on CK.sGroupUserRemove
+as 
+begin
+	
+	inject "
+	-- if the group is actually a Zone, calls sZoneUserRemove
+	if exists( select * from CK.tZone where ZoneId = @GroupId )
+	begin
+		exec CK.sZoneUserRemove @ActorId, @GroupId, @UserId;
+	end
+	else
+	begin
+	" after single "--[beginsp]";
+
+	inject "
+	end
+	" before single "--[endsp]";
+end
