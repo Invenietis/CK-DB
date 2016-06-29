@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata >
-    <id>CK.DB.Actor</id>
+    <id>CK.DB.Res.Tests</id>
     <version>$version$</version>
     <authors>Invenietis</authors>
     <owners>Invenietis</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <summary>
-      CK-Database model for User/Group kernel model.
+      This package contains tests for CK.DB.Res (uses CK.DB.Tests.NUnit).
     </summary>
     <description>
-      This package defines tActor, tUser and tGroup tables ({{CSemVer}}).
+      CK.DB.Res package defines only CK.tRes table ({{CSemVer}}).
     </description>
     <language>en-US</language>
     <dependencies>
-      <dependency id="CK.SqlServer.Setup.Model" version="5.0.0-a12" />
+      <dependency id="CK.DB.Res" version="$version$" />
+      <dependency id="CK.DB.Tests.NUnit" version="5.0.0-a12" />
     </dependencies>
   </metadata>
-  <files>    
-    <file src="CK.DB.Actor\bin\{{configuration}}\CK.DB.Actor.dll" target="lib\net45" />
-    <file src="CK.DB.Actor\bin\{{configuration}}\CK.DB.Actor.xml" target="lib\net45" />
+  <files>
+    <file src="Tests\CK.DB.Res.Tests\bin\{{configuration}}\CK.DB.Res.Tests.dll" target="lib\net45" />
   </files>
 </package>

@@ -17,8 +17,7 @@ namespace CK.DB.Actor.Tests
         [Test]
         public void Anonymous_can_not_create_a_user()
         {
-            var map = TestHelper.StObjMap;
-            var u = map.Default.Obtain<UserTable>();
+            var u = TestHelper.StObjMap.Default.Obtain<UserTable>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 Assert.Throws<SqlDetailedException>( () => u.CreateUser( ctx, 0, Guid.NewGuid().ToString() ) );
@@ -28,8 +27,7 @@ namespace CK.DB.Actor.Tests
         [Test]
         public void user_can_not_be_created_with_an_already_existing_UserName()
         {
-            var map = TestHelper.StObjMap;
-            var u = map.Default.Obtain<UserTable>();
+            var u = TestHelper.StObjMap.Default.Obtain<UserTable>();
 
             string testName = "user_can_not_be_created_with_an_already_existing_UserName" + Guid.NewGuid().ToString();
 
@@ -50,8 +48,7 @@ namespace CK.DB.Actor.Tests
         [Test]
         public void UserName_is_not_set_by_default_if_another_user_exists_with_the_same_UserName()
         {
-            var map = TestHelper.StObjMap;
-            var u = map.Default.Obtain<UserTable>();
+            var u = TestHelper.StObjMap.Default.Obtain<UserTable>();
 
             string existingName = Guid.NewGuid().ToString();
             string userName = Guid.NewGuid().ToString();

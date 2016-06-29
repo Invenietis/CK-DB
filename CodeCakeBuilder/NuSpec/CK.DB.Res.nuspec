@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata >
-    <id>CK.DB.Actor</id>
+    <id>CK.DB.Res</id>
     <version>$version$</version>
     <authors>Invenietis</authors>
     <owners>Invenietis</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <summary>
-      CK-Database model for User/Group kernel model.
+      CK-Database model for Res(ource) kernel model.
     </summary>
     <description>
-      This package defines tActor, tUser and tGroup tables ({{CSemVer}}).
+      This package defines only CK.tRes table ({{CSemVer}}).
     </description>
     <language>en-US</language>
     <dependencies>
@@ -18,7 +18,7 @@
     </dependencies>
   </metadata>
   <files>    
-    <file src="CK.DB.Actor\bin\{{configuration}}\CK.DB.Actor.dll" target="lib\net45" />
-    <file src="CK.DB.Actor\bin\{{configuration}}\CK.DB.Actor.xml" target="lib\net45" />
+    <file src="CK.DB.Res\bin\{{configuration}}\CK.DB.Res.dll" target="lib\net45" />
+    <file src="CK.DB.Res\bin\{{configuration}}\CK.DB.Res.xml" target="lib\net45" />
   </files>
 </package>
