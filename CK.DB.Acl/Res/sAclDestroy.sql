@@ -1,4 +1,4 @@
-﻿-- Version = 1.0.0
+﻿-- SetupConfig: {}
 alter Procedure CK.sAclDestroy
 (
     @ActorId int,
@@ -10,9 +10,13 @@ as begin
 
 	--[beginsp]
 
+	--<PreDestroy revert />
+
 	delete from CK.tAclConfigMemory where AclId = @AclId;
 	delete from CK.tAclConfig where AclId = @AclId;
 	delete from CK.tAcl where AclId = @AclId;
+
+	--<PostDestroy />
 
 	--[endsp]
 end

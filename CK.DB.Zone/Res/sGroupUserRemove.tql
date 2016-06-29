@@ -1,4 +1,4 @@
--- Version = *, Requires = { CK.sZoneUserRemove }
+-- SetupConfig: { "AddRequires": [ "CK.sZoneUserRemove" ] }
 create transformer on CK.sGroupUserRemove
 as 
 begin

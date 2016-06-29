@@ -1,4 +1,4 @@
--- Version = *
+-- SetupConfig: { "Requires": [ "CK.fGroupNameComputeUnique" ] }
 --
 -- Sets a Group's name.
 --
@@ -13,12 +13,12 @@ as begin
 
 	--[beginsp]
 	
-	--<Extension Name="Group.PreNameSet" />
+	--<PreNameSet revert />
 
 	select @GroupName = CK.fGroupNameComputeUnique( @GroupId, @GroupName );
 	update CK.tGroup set GroupName = @GroupName where GroupId = @GroupId;
 
-	--<Extension Name="Group.PostNameSet" />
+	--<PostNameSet />
 
 	--[endsp]
 end

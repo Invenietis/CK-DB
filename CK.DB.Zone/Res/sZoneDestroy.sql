@@ -1,4 +1,4 @@
--- Version = *, Requires = { CK.sGroupDestroy }
+-- SetupConfig: { "Requires": [ "CK.sGroupDestroy" ] }
 create procedure CK.sZoneDestroy
 (
 	@ActorId int,
@@ -12,7 +12,7 @@ begin
 
 	--[beginsp]
 
-	--<Extension Name="Zone.PreZoneDestroy" />
+	--<PreZoneDestroy revert />
 
 	if @ForceDestroy = 1
 	begin
@@ -35,7 +35,7 @@ begin
 
 	exec CK.sGroupDestroy @ActorId, @ZoneId, @ForceDestroy;
 
-	--<Extension Name="Zone.PostZoneDestroy" />
+	--<PostZoneDestroy />
 	
 	--[endsp]
 end

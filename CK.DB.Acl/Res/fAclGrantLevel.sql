@@ -1,4 +1,4 @@
-﻿-- Version = 2.0.0, Requires = { CK.AclConfigTable }
+﻿-- SetupConfig: {}
 create function CK.fAclGrantLevel
 (
     @ActorId int,

@@ -1,4 +1,4 @@
--- Version = *
+-- SetupConfig: {}
 alter view CK.vAclActor with SCHEMABINDING
 as
 	select 	

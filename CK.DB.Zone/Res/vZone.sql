@@ -1,4 +1,4 @@
--- Version = *
+-- SetupConfig: {"Requires": ["CK.vGroup"] }
 create view CK.vZone
 as
 	select	z.ZoneId, 

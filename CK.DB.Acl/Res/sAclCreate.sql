@@ -1,4 +1,4 @@
-﻿-- Version = *
+﻿-- SetupConfig: {}
 alter Procedure CK.sAclCreate
 (
     @ActorId int,
@@ -6,8 +6,14 @@ alter Procedure CK.sAclCreate
 )
 as begin
 
---[beginsp]
+	--[beginsp]
+
+	--<PreCreate revert />
+
 	insert into CK.tAcl default values;
 	set @AclIdResult = scope_identity();
---[endsp]
+
+	--<PostCreate />
+
+	--[endsp]
 end

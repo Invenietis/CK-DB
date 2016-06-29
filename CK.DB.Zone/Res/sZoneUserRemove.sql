@@ -1,4 +1,4 @@
--- Version = *
+-- SetupConfig: {}
 --
 -- Removes a User from a Zone.
 --
@@ -27,7 +27,7 @@ as begin
 		-- ..and if the ZoneId is actually a Group, this is an error.
 		if not exists (select * from CK.tZone where ZoneId = @ZoneId) throw 50000, 'Zone.InvalidId', 1;
 
-		--<Extension Name="Zone.PreUserRemove" />
+		--<PreUserRemove revert />
 
 		-- Removes the user from all the groups of the security Zone.
 		-- Testing @IsZone here avoids one relay per Zone (preserving the 32 maximum levels of calls).
@@ -58,7 +58,7 @@ as begin
 
 		delete from CK.tActorProfile where GroupId = @ZoneId and ActorId = @UserId;
 
-		--<Extension Name="Zone.PostUserRemove" />
+		--<PostUserRemove />
 	end
 
 	--[endsp]

@@ -1,4 +1,4 @@
--- Version = *
+-- SetupConfig: {}
 -- Sets the user name. 
 -- There is no guaranty that the actual value will be the same as the one requested (if auto numbering 
 -- is injected for example). 

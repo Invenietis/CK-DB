@@ -1,4 +1,4 @@
--- Version = *, Requires={ CK.sUserRemoveFromAllGroups }
+-- SetupConfig: { "Requires": [ "CK.sUserRemoveFromAllGroups" ] }
 --
 -- Destroys a User: automatically removes it from any Groups it may belong to.
 --
@@ -15,7 +15,7 @@ as begin
 
 	if exists( select * from CK.tUser where UserId = @UserId )
 	begin
-		--<PreDestroy/>
+		--<PreDestroy revert />
 
 		exec CK.sUserRemoveFromAllGroups @ActorId, @UserId;
 
@@ -23,7 +23,7 @@ as begin
 		delete from CK.tUser where UserId = @UserId;
 		delete from CK.tActor where ActorId = @UserId;
 
-		--<PostDestroy revert />
+		--<PostDestroy />
 
 	end
 

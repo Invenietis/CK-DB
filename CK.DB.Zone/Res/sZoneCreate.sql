@@ -1,4 +1,4 @@
--- Version = *, Requires = { CK.sGroupUserAdd, CK.sZoneUserAdd }
+-- SetupConfig: { "Requires": [ "CK.sGroupCreate" ] }
 create procedure CK.sZoneCreate 
 (
 	@ActorId int,
@@ -10,7 +10,7 @@ begin
 
 	--[beginsp]
 
-	--<Extension Name="Zone.PreZoneCreate" />
+	--<PreZoneCreate revert />
 
 	-- A Zone is Group.  
 	exec CK.sGroupCreate @ActorId, 0, @ZoneIdResult output;
@@ -21,7 +21,7 @@ begin
 	-- The Zone of this group is the Zone itself.
 	update CK.tGroup set ZoneId = @ZoneIdResult where GroupId = @ZoneIdResult;
 		
-	--<Extension Name="Zone.PostZoneCreate" />
+	--<PostZoneCreate />
 
 	--[endsp]
 end

@@ -1,4 +1,4 @@
--- Version = *, Requires={ CK.sGroupUserRemove }
+-- SetupConfig: { "Requires": [ "CK.sGroupUserRemove" ] }
 --
 -- Removes a User from all the Groups it belongs to.
 --

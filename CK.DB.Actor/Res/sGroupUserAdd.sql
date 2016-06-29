@@ -1,4 +1,4 @@
--- Version = *
+-- SetupConfig: {}
 --
 -- Add a User to a Group. Does nothing if the User is already in the Group.
 --
@@ -27,6 +27,7 @@ as begin
 				;throw 50000, 'Security.ActorMustBeSytem', 1;
 			end
 		end
+
 		--<PreUserAdd revert />
 
 		insert into CK.tActorProfile( ActorId, GroupId ) values( @UserId, @GroupId );

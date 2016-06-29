@@ -1,4 +1,4 @@
--- Version = *
+-- SetupConfig: {}
 alter view CK.vAclActorReason with SCHEMABINDING
 as
 	select 	acl.AclId,

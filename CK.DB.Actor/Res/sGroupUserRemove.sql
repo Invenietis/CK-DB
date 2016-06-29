@@ -1,4 +1,4 @@
--- Version = *
+-- SetupConfig: {}
 --
 -- Removes a User from a Group.
 --
@@ -24,11 +24,12 @@ as begin
 				;throw 50000, 'Security.ActorMustBeSytem', 1;
 			end
 		end
-		--<PreUserRemove />
+
+		--<PreUserRemove revert />
 
 		delete from CK.tActorProfile where GroupId = @GroupId and ActorId = @UserId;
 		
-		--<PostUserRemove revert />
+		--<PostUserRemove />
 	end
 
 	--[endsp]

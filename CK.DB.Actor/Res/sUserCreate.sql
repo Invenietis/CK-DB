@@ -1,4 +1,4 @@
-﻿-- Version = *, Requires = { CK.sActorCreate }
+﻿-- SetupConfig: { "Requires": [ "CK.sActorCreate" ] }
 create procedure CK.sUserCreate 
 (
 	@ActorId int,

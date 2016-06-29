@@ -1,4 +1,4 @@
--- Version = *
+-- SetupConfig: {}
 create transformer on CK.sUserDestroy
 as
 begin

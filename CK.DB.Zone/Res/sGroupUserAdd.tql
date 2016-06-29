@@ -1,4 +1,4 @@
--- Version = *, Requires = { CK.sZoneUserAdd }
+-- SetupConfig: { "AddRequires": [ "CK.sZoneUserAdd" ] }
 
 create transformer on CK.sGroupUserAdd
 as

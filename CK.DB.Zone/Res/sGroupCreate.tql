@@ -1,4 +1,4 @@
--- Version = *
+-- SetupConfig: {}
 create transformer on CK.sGroupCreate
 as
 begin

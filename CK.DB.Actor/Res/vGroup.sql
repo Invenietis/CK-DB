@@ -1,4 +1,4 @@
--- Version = *
+-- SetupConfig: {}
 create view CK.vGroup
 as 
 	select  GroupId,

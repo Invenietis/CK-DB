@@ -1,4 +1,4 @@
--- Version = *, Requires = { CK.vAclActor }
+-- SetupConfig: { "Requires": [ "CK.vAclActor" ] }
 alter view CK.vAclConfigMemory --with SCHEMABINDING
 as 
 select 	ac.AclId, 

@@ -1,4 +1,4 @@
--- Version = *
+-- SetupConfig: {}
 -- The @GroupId parameter must be set to the user identifier in case of a
 -- rename (to handle the case of a rename with the same name). 
 -- Set it to -1 to compute a user name for a new user.

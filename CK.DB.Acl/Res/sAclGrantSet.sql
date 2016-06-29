@@ -1,4 +1,4 @@
-﻿-- Version = *
+﻿-- SetupConfig: {}
 ALTER Procedure CK.sAclGrantSet
 (
     @ActorId int,
@@ -16,6 +16,8 @@ as begin
 
 	if @KeyReason is null set @KeyReason = '';
 
+	--<PreMemoryUpdate revert />
+
 	-- First, update CK.tAclConfigMemory with the new configuration given.
 	merge CK.tAclConfigMemory as target
 		using
@@ -32,6 +34,7 @@ as begin
 	
 	if @@ROWCOUNT > 0
 	begin
+		--<PreConfigUpdate revert />
 		-- The memory drives the content of the AclConfig.
 		merge CK.tAclConfig as target
 			using
@@ -46,6 +49,10 @@ as begin
 			when not matched by target then insert( AclId, ActorId, GrantLevel ) values( @AclId, @ActorIdToGrant, source.MaxGrantLevel )
 			when not matched by source and target.AclId = @AclId and target.ActorId = @ActorIdToGrant then delete 
 			when matched and target.GrantLevel <> source.MaxGrantLevel then update set GrantLevel = source.MaxGrantLevel;		
+		--<PostConfigUpdate />
 	end
+
+	--<PostMemoryUpdate />
+
 	--[endsp]
 end

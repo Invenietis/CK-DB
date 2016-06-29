@@ -1,4 +1,4 @@
--- Version = *
+-- SetupConfig: {}
 create view CK.vUser
 as 
 	select  UserId,

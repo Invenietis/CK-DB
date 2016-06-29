@@ -1,4 +1,4 @@
--- Version = *
+-- SetupConfig: { "Requires": [ "CK.sGroupRemoveAllUsers" ] }
 --
 -- Destroys a Group: can work only if there is no Users inside the Group except if @ForceDestroy = 1.
 --
@@ -14,7 +14,7 @@ as begin
 
 	--[beginsp]
 	
-	--<PreDestroy />
+	--<PreDestroy revert />
 
 	if @ForceDestroy = 1
 	begin
@@ -28,7 +28,7 @@ as begin
 	delete from CK.tGroup where GroupId = @GroupId;
 	delete from CK.tActor where ActorId = @GroupId;
 
-	--<PostDestroy revert />
+	--<PostDestroy />
 		
 	--[endsp]
 end

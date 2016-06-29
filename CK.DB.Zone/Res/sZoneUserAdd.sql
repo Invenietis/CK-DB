@@ -1,4 +1,4 @@
--- Version = *
+-- SetupConfig: {}
 --
 -- Adds a User to a Zone.
 --

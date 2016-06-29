@@ -1,4 +1,4 @@
--- Version = *, Requires={ CK.sGroupUserRemove }
+-- SetupConfig: { "Requires": [ "CK.sGroupUserRemove" ] }
 --
 -- Clears a Group.
 --

@@ -1,4 +1,4 @@
--- Version = *
+-- SetupConfig: { "Requires": [ "CK.sActorCreate" ] }
 --
 -- Creates a Group.
 --
