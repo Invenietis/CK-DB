@@ -17,7 +17,7 @@ namespace CK.DB.Actor
         /// </summary>
         /// <param name="ctx">The call context.</param>
         /// <returns>The new group identifier.</returns>
-        [SqlProcedureNonQuery( "sGroupCreate" )]
+        [SqlProcedure( "sGroupCreate" )]
         public abstract int CreateGroup( ISqlCallContext ctx, int actorId );
 
         /// <summary>
@@ -31,7 +31,7 @@ namespace CK.DB.Actor
         /// If <paramref name="forceDestroy"/> if false, it must be empty otherwise an exception is thrown.
         /// </param>
         /// <param name="forceDestroy">True to remove all users before destroying the group.</param>
-        [SqlProcedureNonQuery( "sGroupDestroy" )]
+        [SqlProcedure( "sGroupDestroy" )]
         public abstract void DestroyGroup( ISqlCallContext ctx, int actorId, int groupId, bool forceDestroy = false );
 
         /// <summary>
@@ -41,7 +41,7 @@ namespace CK.DB.Actor
         /// <param name="ctx">The call context.</param>
         /// <param name="groupId">The group identifier.</param>
         /// <param name="userId">The user identifier to add.</param>
-        [SqlProcedureNonQuery( "sGroupUserAdd" )]
+        [SqlProcedure( "sGroupUserAdd" )]
         public abstract void AddUser( ISqlCallContext ctx, int actorId, int groupId, int userId );
 
         /// <summary>
@@ -51,7 +51,7 @@ namespace CK.DB.Actor
         /// <param name="ctx">The call context.</param>
         /// <param name="groupId">The group identifier.</param>
         /// <param name="userId">The user identifier to remove.</param>
-        [SqlProcedureNonQuery( "sGroupUserRemove" )]
+        [SqlProcedure( "sGroupUserRemove" )]
         public abstract void RemoveUser( ISqlCallContext ctx, int actorId, int groupId, int userId );
 
         /// <summary>
@@ -60,7 +60,7 @@ namespace CK.DB.Actor
         /// </summary>
         /// <param name="ctx">The call context.</param>
         /// <param name="groupId">The group identifier.</param>
-        [SqlProcedureNonQuery( "sGroupRemoveAllUsers" )]
+        [SqlProcedure( "sGroupRemoveAllUsers" )]
         public abstract void RemoveAllUsers( ISqlCallContext ctx, int actorId, int groupId );
 
     }

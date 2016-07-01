@@ -19,7 +19,7 @@ namespace CK.DB.Res
         /// </summary>
         /// <param name="ctx">The required call context.</param>
         /// <returns>The resource identifier.</returns>
-        [SqlProcedureNonQuery( "sResCreate" )]
+        [SqlProcedure( "sResCreate" )]
         public abstract Task<int> CreateAsync( ISqlCallContext ctx );
 
         /// <summary>
@@ -28,7 +28,7 @@ namespace CK.DB.Res
         /// <param name="ctx">The required call context.</param>
         /// <param name="resId">The resource identifier.</param>
         /// <returns>The awaitable.</returns>
-        [SqlProcedureNonQuery( "sResDestroy" )]
+        [SqlProcedure( "sResDestroy" )]
         public abstract Task DestroyAsync( ISqlCallContext ctx, int resId );
 
         /// <summary>
@@ -36,7 +36,7 @@ namespace CK.DB.Res
         /// </summary>
         /// <param name="ctx">The required call context.</param>
         /// <returns>The resource identifier.</returns>
-        [SqlProcedureNonQuery( "sResCreate" )]
+        [SqlProcedure( "sResCreate" )]
         public abstract int Create( ISqlCallContext ctx );
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace CK.DB.Res
         /// </summary>
         /// <param name="ctx">The required call context.</param>
         /// <param name="resId">The resource identifier.</param>
-        [SqlProcedureNonQuery( "sResDestroy" )]
+        [SqlProcedure( "sResDestroy" )]
         public abstract void Destroy( ISqlCallContext ctx, int resId );
 
     }

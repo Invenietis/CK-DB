@@ -103,7 +103,7 @@ namespace CodeCake
                                                             && p.Name != "CK.DB.Acl.AclType.Tests" )
                                             .Select( p => p.Path.GetDirectory().CombineWithFilePath( "bin/" + configuration + "/" + p.Name + ".dll" ) );
                    Cake.Information( "Testing: {0}", string.Join( ", ", testDlls.Select( p => p.GetFilename().ToString() ) ) );
-                   Cake.NUnit( testDlls, new NUnitSettings() { Framework = "v4.5" } );
+                   Cake.NUnit( testDlls, new NUnitSettings() { Framework = "v4.5"  } );
                } );
 
             Task( "Create-NuGet-Packages" )

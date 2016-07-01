@@ -11,16 +11,16 @@ namespace CK.DB.Actor
 {
     public abstract partial class UserTable : SqlTable
     {        
-        [SqlProcedureNonQuery( "sUserCreate" )]
+        [SqlProcedure( "sUserCreate" )]
         public abstract int CreateUser( ISqlCallContext ctx, int actorId, string userName );
 
-        [SqlProcedureNonQuery( "sUserUserNameSet" )]
+        [SqlProcedure( "sUserUserNameSet" )]
         public abstract bool UserNameSet( ISqlCallContext ctx, int actorId, int userId, string userName );
 
-        [SqlProcedureNonQuery( "sUserDestroy" )]
+        [SqlProcedure( "sUserDestroy" )]
         public abstract void DestroyUser( ISqlCallContext ctx, int actorId, int userId );
 
-        [SqlProcedureNonQuery( "sUserRemoveFromAllGroups" )]
+        [SqlProcedure( "sUserRemoveFromAllGroups" )]
         public abstract void RemoveFromAllGroups( ISqlCallContext ctx, int actorId, int userId );
     }
 }

@@ -46,7 +46,7 @@ namespace CK.DB.Group.SimpleNaming
         /// <param name="groupId">The group identifier.</param>
         /// <param name="groupName">The new group name.</param>
         /// <returns>The group name or an automatically suffixed version that has been set.</returns>
-        [SqlProcedureNonQuery( "sGroupNameSet" )]
+        [SqlProcedure( "sGroupNameSet" )]
         public abstract string GroupRename( ISqlCallContext ctx, int actorId, int groupId, string groupName );
 
     }

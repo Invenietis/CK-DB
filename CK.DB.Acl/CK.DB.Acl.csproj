@@ -52,15 +52,15 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.Setupable.Model, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.Setupable.Model.5.0.0-a12\lib\net45\CK.Setupable.Model.dll</HintPath>
+      <HintPath>..\packages\CK.Setupable.Model.5.0.0-a12-00-develop-0008\lib\net45\CK.Setupable.Model.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.SqlServer.Setup.Model, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.SqlServer.Setup.Model.5.0.0-a12\lib\net45\CK.SqlServer.Setup.Model.dll</HintPath>
+      <HintPath>..\packages\CK.SqlServer.Setup.Model.5.0.0-a12-00-develop-0008\lib\net45\CK.SqlServer.Setup.Model.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.StObj.Model, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.StObj.Model.5.0.0-a12\lib\net45\CK.StObj.Model.dll</HintPath>
+      <HintPath>..\packages\CK.StObj.Model.5.0.0-a12-00-develop-0008\lib\net45\CK.StObj.Model.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.Text, Version=1.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
@@ -92,9 +92,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Res\CK.AclConfigMemoryTable.Install.1.0.0.sql" />
-    <EmbeddedResource Include="Res\CK.AclConfigTable.Install.1.0.0.sql" />
-    <EmbeddedResource Include="Res\CK.AclTable.Install.3.0.0.sql" />
+    <EmbeddedResource Include="Res\Model\CK.AclConfigMemoryTable.Install.1.0.0.sql" />
+    <EmbeddedResource Include="Res\Model\CK.AclConfigTable.Install.1.0.0.sql" />
+    <EmbeddedResource Include="Res\Model\CK.AclTable.Install.3.0.0.sql" />
     <EmbeddedResource Include="Res\fAclGrantLevel.sql" />
     <EmbeddedResource Include="Res\sAclCreate.sql" />
     <EmbeddedResource Include="Res\sAclDestroy.sql" />
@@ -112,6 +112,7 @@
       <Name>CK.DB.Actor</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\SimpleGitVersionTask.0.18.0\build\SimpleGitVersionTask.targets" Condition="Exists('..\packages\SimpleGitVersionTask.0.18.0\build\SimpleGitVersionTask.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

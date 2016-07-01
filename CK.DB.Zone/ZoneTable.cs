@@ -18,28 +18,28 @@ namespace CK.DB.Zone
         {
         }
 
-        [SqlProcedureNonQuery( "CK.sZoneCreate" )]
+        [SqlProcedure( "CK.sZoneCreate" )]
         public abstract int CreateZone( ISqlCallContext ctx, int actorId );
 
-        [SqlProcedureNonQuery( "CK.sZoneCreate" )]
+        [SqlProcedure( "CK.sZoneCreate" )]
         public abstract Task<int> CreateZoneAsync( ISqlCallContext ctx, int actorId );
 
-        [SqlProcedureNonQuery( "CK.sZoneDestroy" )]
+        [SqlProcedure( "CK.sZoneDestroy" )]
         public abstract void DestroyZone( ISqlCallContext ctx, int actorId, int zoneId, bool forceDestroy = false );
 
-        [SqlProcedureNonQuery( "CK.sZoneDestroy" )]
+        [SqlProcedure( "CK.sZoneDestroy" )]
         public abstract Task DestroyZoneAsync( ISqlCallContext ctx, int actorId, int zoneId, bool forceDestroy = false );
 
-        [SqlProcedureNonQuery( "sZoneUserAdd" )]
+        [SqlProcedure( "sZoneUserAdd" )]
         public abstract void AddUser( ISqlCallContext ctx, int actorId, int zoneId, int userId );
 
-        [SqlProcedureNonQuery( "sZoneUserAdd" )]
+        [SqlProcedure( "sZoneUserAdd" )]
         public abstract Task AddUserAsync( ISqlCallContext ctx, int actorId, int zoneId, int userId );
 
-        [SqlProcedureNonQuery( "sZoneUserRemove" )]
+        [SqlProcedure( "sZoneUserRemove" )]
         public abstract void RemoveUser( ISqlCallContext ctx, int actorId, int zoneId, int userId );
 
-        [SqlProcedureNonQuery( "sZoneUserRemove" )]
+        [SqlProcedure( "sZoneUserRemove" )]
         public abstract Task RemoveUserAsync( ISqlCallContext ctx, int actorId, int zoneId, int userId );
     }
 }

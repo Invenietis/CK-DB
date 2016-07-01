@@ -18,16 +18,16 @@ namespace CK.DB.Actor
         {
         }
         
-        [SqlProcedureNonQuery( "sUserCreate" )]
+        [SqlProcedure( "sUserCreate" )]
         public abstract Task<int> CreateUserAsync( ISqlCallContext ctx, int actorId, string userName );
 
-        [SqlProcedureNonQuery( "sUserUserNameSet" )]
+        [SqlProcedure( "sUserUserNameSet" )]
         public abstract Task<bool> UserNameSetAsync( ISqlCallContext ctx, int actorId, int userId, string userName );
 
-        [SqlProcedureNonQuery( "sUserDestroy" )]
+        [SqlProcedure( "sUserDestroy" )]
         public abstract Task DestroyUserAsync( ISqlCallContext ctx, int actorId, int userId );
 
-        [SqlProcedureNonQuery( "sUserRemoveFromAllGroups" )]
+        [SqlProcedure( "sUserRemoveFromAllGroups" )]
         public abstract Task RemoveFromAllGroupsAsync( ISqlCallContext ctx, int actorId, int userId );
     }
 }
