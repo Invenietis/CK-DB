@@ -50,7 +50,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.DB.Tests.NUnit, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CK.DB.Tests.NUnit.5.0.0-a14\lib\net45\CK.DB.Tests.NUnit.dll</HintPath>
+      <HintPath>..\..\packages\CK.DB.Tests.NUnit.5.0.0-a16\lib\net45\CK.DB.Tests.NUnit.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.Monitoring, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
@@ -62,27 +62,27 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.Setup.Dependency, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CK.Setup.Dependency.5.0.0-a14\lib\net45\CK.Setup.Dependency.dll</HintPath>
+      <HintPath>..\..\packages\CK.Setup.Dependency.5.0.0-a16\lib\net45\CK.Setup.Dependency.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.Setupable.Engine, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CK.Setupable.Engine.5.0.0-a14\lib\net45\CK.Setupable.Engine.dll</HintPath>
+      <HintPath>..\..\packages\CK.Setupable.Engine.5.0.0-a16\lib\net45\CK.Setupable.Engine.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.Setupable.Model, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CK.Setupable.Model.5.0.0-a14\lib\net45\CK.Setupable.Model.dll</HintPath>
+      <HintPath>..\..\packages\CK.Setupable.Model.5.0.0-a16\lib\net45\CK.Setupable.Model.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.Setupable.Runtime, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CK.Setupable.Runtime.5.0.0-a14\lib\net45\CK.Setupable.Runtime.dll</HintPath>
+      <HintPath>..\..\packages\CK.Setupable.Runtime.5.0.0-a16\lib\net45\CK.Setupable.Runtime.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.SqlServer.Core, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CK.SqlServer.Core.5.0.0-a14\lib\net45\CK.SqlServer.Core.dll</HintPath>
+      <HintPath>..\..\packages\CK.SqlServer.Core.5.0.0-a16\lib\net45\CK.SqlServer.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.SqlServer.Parser, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CK.SqlServer.Parser.5.0.0\lib\net45\CK.SqlServer.Parser.dll</HintPath>
+      <HintPath>..\..\packages\CK.SqlServer.Parser.5.0.2\lib\net45\CK.SqlServer.Parser.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.SqlServer.Parser.Model, Version=3.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
@@ -90,31 +90,31 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.SqlServer.Setup.Engine, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CK.SqlServer.Setup.Engine.5.0.0-a14\lib\net45\CK.SqlServer.Setup.Engine.dll</HintPath>
+      <HintPath>..\..\packages\CK.SqlServer.Setup.Engine.5.0.0-a16\lib\net45\CK.SqlServer.Setup.Engine.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.SqlServer.Setup.Model, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CK.SqlServer.Setup.Model.5.0.0-a14\lib\net45\CK.SqlServer.Setup.Model.dll</HintPath>
+      <HintPath>..\..\packages\CK.SqlServer.Setup.Model.5.0.0-a16\lib\net45\CK.SqlServer.Setup.Model.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.SqlServer.Setup.Runtime, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CK.SqlServer.Setup.Runtime.5.0.0-a14\lib\net45\CK.SqlServer.Setup.Runtime.dll</HintPath>
+      <HintPath>..\..\packages\CK.SqlServer.Setup.Runtime.5.0.0-a16\lib\net45\CK.SqlServer.Setup.Runtime.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.SqlServer.Transform, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CK.SqlServer.Transform.5.0.0\lib\net45\CK.SqlServer.Transform.dll</HintPath>
+      <HintPath>..\..\packages\CK.SqlServer.Transform.5.0.2\lib\net45\CK.SqlServer.Transform.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.StObj.Engine, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CK.StObj.Engine.5.0.0-a14\lib\net45\CK.StObj.Engine.dll</HintPath>
+      <HintPath>..\..\packages\CK.StObj.Engine.5.0.0-a16\lib\net45\CK.StObj.Engine.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.StObj.Model, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CK.StObj.Model.5.0.0-a14\lib\net45\CK.StObj.Model.dll</HintPath>
+      <HintPath>..\..\packages\CK.StObj.Model.5.0.0-a16\lib\net45\CK.StObj.Model.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.StObj.Runtime, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CK.StObj.Runtime.5.0.0-a14\lib\net45\CK.StObj.Runtime.dll</HintPath>
+      <HintPath>..\..\packages\CK.StObj.Runtime.5.0.0-a16\lib\net45\CK.StObj.Runtime.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.Text, Version=1.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">

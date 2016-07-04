@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{18FCDA8C-1355-466C-9CA2-8BBC55383980}</ProjectGuid>
+    <ProjectGuid>{5656A5C9-87C9-4CE6-BF7B-AC70A5B292C1}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CK.DB.Acl.AclType</RootNamespace>
-    <AssemblyName>CK.DB.Acl.AclType</AssemblyName>
+    <RootNamespace>CK.DB.Res.ResName</RootNamespace>
+    <AssemblyName>CK.DB.Res.ResName</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <NuGetPackageImportStamp>
@@ -30,10 +30,6 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup>
-    <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>..\SharedKey.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition=" $(GenerateDocumentation) != '' ">
     <DocumentationFile>bin\$(Configuration)\$(AssemblyName).xml</DocumentationFile>
@@ -80,25 +76,53 @@
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="AclTypeGrantLevelTable.cs" />
-    <Compile Include="AclTypeTable.cs" />
     <Compile Include="Package.cs" />
+    <Compile Include="ResNameTable.Sync.cs" />
+    <Compile Include="ResNameTable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CK.DB.Acl\CK.DB.Acl.csproj">
-      <Project>{fc9114b2-192d-4945-adab-917639ccd5ff}</Project>
-      <Name>CK.DB.Acl</Name>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Res\vRes.tql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Res\Model.CK.ResNameTable.Install.1.0.0.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CK.DB.Res\CK.DB.Res.csproj">
+      <Project>{0b78d5d9-8ef4-48c4-81d4-d85535ec385c}</Project>
+      <Name>CK.DB.Res</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Res\Model\CK.AclTypeTable.Install.1.0.0.sql" />
+    <EmbeddedResource Include="Res\sResDestroy.tql" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Res\Model\CK.AclTypeGrantLevelTable.Install.1.0.0.sql" />
+    <EmbeddedResource Include="Res\fResNamePrefixes.sql" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <EmbeddedResource Include="Res\sResNameCreate.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Res\sResNameDestroy.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Res\sResDestroyByResNamePrefix.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Res\sResDestroyResNameChildren.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Res\sResDestroyWithResNameChildren.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Res\sResNameRename.sql" />
+    <EmbeddedResource Include="Res\sResCreateWithResName.sql" />
+    <EmbeddedResource Include="Res\vResName_AllChildren.sql" />
+    <EmbeddedResource Include="Res\vResName_DirectChildren.sql" />
+    <EmbeddedResource Include="Res\vResName_ParentPrefixes.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\SimpleGitVersionTask.0.18.0\build\SimpleGitVersionTask.targets" Condition="Exists('..\packages\SimpleGitVersionTask.0.18.0\build\SimpleGitVersionTask.targets')" />

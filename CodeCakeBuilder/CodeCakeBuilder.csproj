@@ -76,6 +76,8 @@
     <None Include="NuSpec\CK.DB.Res.nuspec" />
     <None Include="NuSpec\CK.DB.Group.SimpleNaming.Tests.nuspec" />
     <None Include="NuSpec\CK.DB.Group.SimpleNaming.nuspec" />
+    <None Include="NuSpec\CK.DB.Res.ResName.nuspec" />
+    <None Include="NuSpec\CK.DB.Res.ResName.Tests.nuspec" />
     <None Include="NuSpec\CK.DB.Zone.Tests.nuspec" />
     <None Include="NuSpec\CK.DB.Acl.Tests.nuspec" />
     <None Include="NuSpec\CK.DB.Actor.Tests.nuspec" />
