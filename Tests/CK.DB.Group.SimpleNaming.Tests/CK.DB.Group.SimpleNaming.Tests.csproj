@@ -50,7 +50,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.DB.Tests.NUnit, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CK.DB.Tests.NUnit.5.0.0-a16\lib\net45\CK.DB.Tests.NUnit.dll</HintPath>
+      <HintPath>..\..\packages\CK.DB.Tests.NUnit.5.0.0-a18\lib\net45\CK.DB.Tests.NUnit.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.Monitoring, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
@@ -62,23 +62,23 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.Setup.Dependency, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CK.Setup.Dependency.5.0.0-a16\lib\net45\CK.Setup.Dependency.dll</HintPath>
+      <HintPath>..\..\packages\CK.Setup.Dependency.5.0.0-a18\lib\net45\CK.Setup.Dependency.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.Setupable.Engine, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CK.Setupable.Engine.5.0.0-a16\lib\net45\CK.Setupable.Engine.dll</HintPath>
+      <HintPath>..\..\packages\CK.Setupable.Engine.5.0.0-a18\lib\net45\CK.Setupable.Engine.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.Setupable.Model, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CK.Setupable.Model.5.0.0-a16\lib\net45\CK.Setupable.Model.dll</HintPath>
+      <HintPath>..\..\packages\CK.Setupable.Model.5.0.0-a18\lib\net45\CK.Setupable.Model.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.Setupable.Runtime, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CK.Setupable.Runtime.5.0.0-a16\lib\net45\CK.Setupable.Runtime.dll</HintPath>
+      <HintPath>..\..\packages\CK.Setupable.Runtime.5.0.0-a18\lib\net45\CK.Setupable.Runtime.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.SqlServer.Core, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CK.SqlServer.Core.5.0.0-a16\lib\net45\CK.SqlServer.Core.dll</HintPath>
+      <HintPath>..\..\packages\CK.SqlServer.Core.5.0.0-a18\lib\net45\CK.SqlServer.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.SqlServer.Parser, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
@@ -90,15 +90,15 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.SqlServer.Setup.Engine, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CK.SqlServer.Setup.Engine.5.0.0-a16\lib\net45\CK.SqlServer.Setup.Engine.dll</HintPath>
+      <HintPath>..\..\packages\CK.SqlServer.Setup.Engine.5.0.0-a18\lib\net45\CK.SqlServer.Setup.Engine.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.SqlServer.Setup.Model, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CK.SqlServer.Setup.Model.5.0.0-a16\lib\net45\CK.SqlServer.Setup.Model.dll</HintPath>
+      <HintPath>..\..\packages\CK.SqlServer.Setup.Model.5.0.0-a18\lib\net45\CK.SqlServer.Setup.Model.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.SqlServer.Setup.Runtime, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CK.SqlServer.Setup.Runtime.5.0.0-a16\lib\net45\CK.SqlServer.Setup.Runtime.dll</HintPath>
+      <HintPath>..\..\packages\CK.SqlServer.Setup.Runtime.5.0.0-a18\lib\net45\CK.SqlServer.Setup.Runtime.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.SqlServer.Transform, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -106,15 +106,15 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.StObj.Engine, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CK.StObj.Engine.5.0.0-a16\lib\net45\CK.StObj.Engine.dll</HintPath>
+      <HintPath>..\..\packages\CK.StObj.Engine.5.0.0-a18\lib\net45\CK.StObj.Engine.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.StObj.Model, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CK.StObj.Model.5.0.0-a16\lib\net45\CK.StObj.Model.dll</HintPath>
+      <HintPath>..\..\packages\CK.StObj.Model.5.0.0-a18\lib\net45\CK.StObj.Model.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.StObj.Runtime, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CK.StObj.Runtime.5.0.0-a16\lib\net45\CK.StObj.Runtime.dll</HintPath>
+      <HintPath>..\..\packages\CK.StObj.Runtime.5.0.0-a18\lib\net45\CK.StObj.Runtime.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.Text, Version=1.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
@@ -137,6 +137,10 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="Yodii.Script, Version=0.2.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Yodii.Script.0.2.0\lib\net45\Yodii.Script.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\SharedAssemblyInfo.cs">
@@ -170,12 +174,12 @@
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="..\..\packages\SimpleGitVersionTask.0.18.0\Build\SimpleGitVersionTask.targets" Condition="Exists('..\..\packages\SimpleGitVersionTask.0.18.0\Build\SimpleGitVersionTask.targets')" />
+  <Import Project="..\..\packages\SimpleGitVersionTask.0.19.0\build\SimpleGitVersionTask.targets" Condition="Exists('..\..\packages\SimpleGitVersionTask.0.19.0\build\SimpleGitVersionTask.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\..\packages\SimpleGitVersionTask.0.18.0\Build\SimpleGitVersionTask.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\SimpleGitVersionTask.0.18.0\Build\SimpleGitVersionTask.targets'))" />
+    <Error Condition="!Exists('..\..\packages\SimpleGitVersionTask.0.19.0\build\SimpleGitVersionTask.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\SimpleGitVersionTask.0.19.0\build\SimpleGitVersionTask.targets'))" />
   </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

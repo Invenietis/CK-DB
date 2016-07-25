@@ -1,0 +1,8 @@
+﻿-- SetupConfig: {}
+create transformer on CK.sResDestroy
+as
+begin
+	
+	inject "delete from CK.tResText where ResId = @ResId;" into "PreDestroy";
+
+end
