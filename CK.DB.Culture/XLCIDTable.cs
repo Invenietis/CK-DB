@@ -11,7 +11,7 @@ namespace CK.DB.Culture
     [SqlTable( "tXLCID", Package = typeof( Package ) )]
     [Versions( "1.0.0" )]
     [SqlObjectItem( "vXLCID" )]
-    public abstract class XLCIDTable : SqlTable
+    public class XLCIDTable : SqlTable
     {
     }
 }

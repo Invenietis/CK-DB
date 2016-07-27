@@ -9,7 +9,7 @@ using CK.SqlServer.Setup;
 namespace CK.DB.Culture
 {
     [SqlTable( "tXLCIDMap", Package = typeof( Package ) ), Versions( "1.0.0" )]
-    public abstract class XLCIDMapTable : SqlTable
+    public class XLCIDMapTable : SqlTable
     {
         void Construct( XLCIDTable xlcid, LCIDTable lcid )
         {

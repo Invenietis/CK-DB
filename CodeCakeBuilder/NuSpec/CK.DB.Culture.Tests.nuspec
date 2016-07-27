@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata >
+    <id>CK.DB.Culture.Tests</id>
+    <version>$version$</version>
+    <authors>Invenietis</authors>
+    <owners>Invenietis</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <summary>
+      This package contains tests for CK.DB.Culture (uses CK.DB.Tests.NUnit).
+    </summary>
+    <description>
+      This package defines tXLCID, tLCID tables ({{CSemVer}}).
+    </description>
+    <language>en-US</language>
+    <dependencies>
+      <dependency id="CK.DB.Culture" version="$version$" />
+      <dependency id="CK.DB.Tests.NUnit" version="5.0.0-a18" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="Tests\CK.DB.Culture.Tests\bin\{{configuration}}\CK.DB.Culture.Tests.dll" target="lib\net45" />
+  </files>
+</package>

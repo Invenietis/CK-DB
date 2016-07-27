@@ -30,14 +30,15 @@ namespace CK.DB.Res.ResString.Tests
         }
 
         [Test]
-        public void negative_resource_0_and_1_can_not_be_changed()
+        public void negative_resource_and_0_can_not_be_changed()
         {
             var t = TestHelper.StObjMap.Default.Obtain<ResStringTable>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 Assert.Throws<SqlDetailedException>( () => t.SetString( ctx, -1, "No way" ) );
                 Assert.Throws<SqlDetailedException>( () => t.SetString( ctx, 0, "No way" ) );
-                Assert.Throws<SqlDetailedException>( () => t.SetString( ctx, 1, "No way" ) );
+                Assert.DoesNotThrow( () => t.SetString( ctx, 1, "Le Système" ) );
+                t.SetString( ctx, 1, "System" );
             }
         }
     }

@@ -1,19 +1,28 @@
 ﻿-- SetupConfig: {}
 --
--- Registers a new Culture. The @ParentLCID must already be registered.
+-- Updates or creates an actual Culture.
+-- When creating a new culture, its fallbacks are by default the english ones
+-- and this newcomer is added as the last fallback to any existing XLCID.
+-- @Name, @EnglishName and @NativeName must not be empty nor contain comma (,) or pipe (|).
 --
 create procedure CK.sCultureRegister
 (
 	@LCID int,
 	@Name varchar(20),
 	@EnglishName varchar(50),
-	@NativeName nvarchar(50),
-	@ParentLCID int
+	@NativeName nvarchar(50)
 )
 as
 begin
-	if @LCID <= 0 or @LCID = 127 or @LCID > 0xFFFF throw 50000, 'Res.LCIDMustBeBetween0And0xFFFFAndNot127', 1;
-	if @ParentLCID = 127 set @ParentLCID = 0;
+	if @LCID <= 0 or @LCID >= 0xFFFF throw 50000, 'Culture.LCIDMustBeBetween0And0xFFFF', 1;
+	select @Name = rtrim(ltrim(@Name)), 
+			@EnglishName = rtrim(ltrim(@EnglishName)), 
+			@NativeName = rtrim(ltrim(@NativeName))
+		where charIndex( @Name, ',' ) = 0 and charIndex( @Name, '|' ) = 0 
+				and charIndex( @EnglishName, ',' ) = 0 and charIndex( @EnglishName, '|' ) = 0
+				and charIndex( @NativeName, N',' ) = 0 and charIndex( @NativeName, N'|' ) = 0 ;
+	if @Name is null or @EnglishName is null or @NativeName is null 
+		throw 50000, 'Culture.InvalidCultureName', 1;
 
 	--[beginsp]
 	
@@ -29,8 +38,8 @@ begin
 	merge CK.tLCID as target
 		using ( select LCID = @LCID ) 
 		as source on source.LCID = target.LCID
-		when matched then update set Name = @Name, EnglishName = @EnglishName, NativeName = @NativeName, ParentLCID = @ParentLCID
-		when not matched by target then insert( LCID, Name, EnglishName, NativeName, ParentLCID ) values( source.LCID, @Name, @EnglishName, @NativeName, @ParentLCID );
+		when matched then update set Name = @Name, EnglishName = @EnglishName, NativeName = @NativeName
+		when not matched by target then insert( LCID, Name, EnglishName, NativeName, XLCIDCount ) values( source.LCID, @Name, @EnglishName, @NativeName, 0 );
 	if @NewOne = 1 
 	begin
 		insert into CK.tXLCIDMap( XLCID, Idx, LCID )

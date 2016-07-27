@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CK.DB.Culture.Tests
+namespace CK.DB.Culture.Tests.From
 {
     [TestFixture]
     public class DBSetup : CK.DB.Tests.DBSetup

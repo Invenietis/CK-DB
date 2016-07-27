@@ -11,7 +11,7 @@ create procedure CK.sResStringSet
 as
 begin
 	set nocount on;
-	if @ResId <= 1 throw 50000, 'Res.ImmutableResource', 1;
+	if @ResId <= 0 throw 50000, 'Res.InvalidResId', 1;
 	merge CK.tResString as target
 		using( select ResId = @ResId ) 
 		as source on source.ResId = target.ResId

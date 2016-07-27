@@ -1,4 +1,5 @@
-﻿using CK.SqlServer.Setup;
+﻿using CK.Setup;
+using CK.SqlServer.Setup;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,5 +11,10 @@ namespace CK.DB.Res
     [SqlPackage( Schema = "CK", ResourcePath = "Res" )]
     public class Package : SqlPackage
     {
+        /// <summary>
+        /// Gets the tRes table from this package.
+        /// </summary>
+        [InjectContract]
+        public ResTable ResTable { get; protected set; }
     }
 }

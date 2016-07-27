@@ -72,9 +72,28 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="Bootstrap.ps1" />
+    <None Include="NuSpec\CK.DB.Culture.Tests.nuspec" />
     <None Include="NuSpec\CK.DB.Culture.nuspec">
       <SubType>Designer</SubType>
     </None>
+    <None Include="NuSpec\CK.DB.Res.MCResHtml.nuspec" />
+    <None Include="NuSpec\CK.DB.Res.MCResText.nuspec" />
+    <None Include="NuSpec\CK.DB.Res.MCResHtml.Tests.nuspec">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="NuSpec\CK.DB.Res.MCResText.Tests.nuspec">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="NuSpec\CK.DB.Res.ResHtml.nuspec" />
+    <None Include="NuSpec\CK.DB.Res.ResHtml.Tests.nuspec" />
+    <None Include="NuSpec\CK.DB.Res.MCResString.nuspec" />
+    <None Include="NuSpec\CK.DB.Res.MCResString.Tests.nuspec">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="NuSpec\CK.DB.Res.ResText.Tests.nuspec" />
+    <None Include="NuSpec\CK.DB.Res.ResString.Tests.nuspec" />
+    <None Include="NuSpec\CK.DB.Res.ResText.nuspec" />
+    <None Include="NuSpec\CK.DB.Res.ResString.nuspec" />
     <None Include="NuSpec\CK.DB.Res.Tests.nuspec" />
     <None Include="NuSpec\CK.DB.Res.nuspec" />
     <None Include="NuSpec\CK.DB.Group.SimpleNaming.Tests.nuspec" />

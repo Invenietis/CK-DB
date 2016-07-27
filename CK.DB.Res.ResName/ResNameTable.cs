@@ -23,6 +23,10 @@ namespace CK.DB.Res.ResName
         /// <param name="ctx">The call context.</param>
         /// <param name="resId">The resource identifier to rename.</param>
         /// <param name="newName">The new resource name.</param>
+        /// <param name="withChildren">
+        /// False to rename only this resource and not its children: children
+        /// names are left as-is as "orphans".
+        /// </param>
         /// <returns>The awaitable.</returns>
         [SqlProcedure("sResNameRename")]
         public abstract Task RenameAsync( ISqlCallContext ctx, int resId, string newName, bool withChildren = true );
@@ -59,7 +63,7 @@ namespace CK.DB.Res.ResName
         /// <summary>
         /// Destroys all ressources which ResName start with <paramref name="resNamePrefix"/> + '.'.
         /// Since this method works on resource name, <paramref param name="resNameOnly"/> defaults to true
-        /// but this can ba apllied to the whole resources.
+        /// but this can be applied to the whole resources.
         /// </summary>
         /// <param name="ctx">The call context.</param>
         /// <param name="resNamePrefix">Prefix of the resources to destroy.</param>

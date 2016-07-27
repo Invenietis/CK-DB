@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata >
+    <id>CK.DB.Res.MCResText</id>
+    <version>$version$</version>
+    <authors>Invenietis</authors>
+    <owners>Invenietis</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <summary>
+      CK-Database model for MCResText ({{CSemVer}}).
+    </summary>
+    <description>
+      This package defines CK.tMCResText table with its procedures, functions and views.
+    </description>
+    <language>en-US</language>
+    <dependencies>
+      <dependency id="CK.DB.Culture" version="$version$" />
+      <dependency id="CK.DB.Res" version="$version$" />
+    </dependencies>
+  </metadata>
+  
+  <files>    
+    <file src="CK.DB.Res.MCResText\bin\{{configuration}}\CK.DB.Res.MCResText.dll" target="lib\net45" />
+    <file src="CK.DB.Res.MCResText\bin\{{configuration}}\CK.DB.Res.MCResText.xml" target="lib\net45" />
+  </files>
+  
+</package>

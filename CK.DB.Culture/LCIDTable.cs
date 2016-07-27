@@ -12,19 +12,11 @@ namespace CK.DB.Culture
     [SqlTable( "tLCID", Package = typeof( Package ) )]
     [Versions( "1.0.1" )]
     [SqlObjectItem( "vLCID" )]
-    public abstract class LCIDTable : SqlTable
+    public class LCIDTable : SqlTable
     {
         void Construct( XLCIDTable xlcid )
         {
         }
-
-        [SqlProcedure( "sCultureRegister" )]
-        public abstract void RegisterCulture( ISqlCallContext ctx, int lcid, string name, string englishName, string nativeName, int parentLCID );
-
-        [SqlProcedure( "sCultureDestroy" )]
-        public abstract void DestroyCulture( ISqlCallContext ctx, int lcid );
-
-
 
     }
 }
