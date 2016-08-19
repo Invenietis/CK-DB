@@ -22,8 +22,14 @@ namespace CK.DB.Acl
         [SqlProcedure( "sAclCreate" )]
         public abstract int CreateAcl( ISqlCallContext ctx, int actorId );
 
+        [SqlProcedure( "sAclCreate" )]
+        public abstract Task<int> CreateAclAsync( ISqlCallContext ctx, int actorId );
+
         [SqlProcedure( "sAclDestroy" )]
         public abstract void DestroyAcl( ISqlCallContext ctx, int actorId, int aclId );
+
+        [SqlProcedure( "sAclDestroy" )]
+        public abstract Task DestroyAclAsync( ISqlCallContext ctx, int actorId, int aclId );
 
         [SqlProcedure( "sAclGrantSet" )]
         public abstract void AclGrantSet( ISqlCallContext ctx, int actorId, int aclId, int actorIdToGrant, string keyReason, byte grantLevel );
