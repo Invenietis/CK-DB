@@ -81,6 +81,7 @@
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="AclTypeGrantLevelTable.cs" />
+    <Compile Include="AclTypeTable.Sync.cs" />
     <Compile Include="AclTypeTable.cs" />
     <Compile Include="Package.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -99,6 +100,22 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <EmbeddedResource Include="Res\sAclGrantSet.tql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Res\sAclTypeCreate.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Res\sAclTypeDestroy.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Res\sAclTypeConstrainedGrantLevelSet.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Res\sAclTypeGrantLevelSet.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Res\sAclCreate.tql" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\SimpleGitVersionTask.0.20.0\Build\SimpleGitVersionTask.targets" Condition="Exists('..\packages\SimpleGitVersionTask.0.20.0\Build\SimpleGitVersionTask.targets')" />

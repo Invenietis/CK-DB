@@ -5,26 +5,19 @@ using System.Threading.Tasks;
 
 namespace CK.DB.Acl.AclType
 {
-    [SqlTable( "tAclType", Package = typeof( Package ) )]
-    [Versions( "1.0.0" )]
-    [SqlObjectItem( "transform:sAclGrantSet" )]
     public abstract partial class AclTypeTable : SqlTable
     {
-        void Construct( AclTable acl )
-        {
-        }
-
         [SqlProcedure( "sAclTypeCreate" )]
-        public abstract Task<int> CreateAclTypeAsync( ISqlCallContext ctx, int actorId );
+        public abstract int CreateAclType( ISqlCallContext ctx, int actorId );
 
         [SqlProcedure( "sAclTypeDestroy" )]
-        public abstract Task DestroyAclTypeAsync( ISqlCallContext ctx, int actorId, int aclTypeId );
+        public abstract void DestroyAclType( ISqlCallContext ctx, int actorId, int aclTypeId );
 
         [SqlProcedure( "sAclTypeConstrainedGrantLevelSet" )]
-        public abstract Task SetConstrainedGrantLevelAsync( ISqlCallContext ctx, int actorId, int aclTypeId, bool set );
+        public abstract void SetConstrainedGrantLevel( ISqlCallContext ctx, int actorId, int aclTypeId, bool set );
 
         [SqlProcedure( "sAclTypeGrantLevelSet" )]
-        public abstract Task SetGrantLevelAsync( ISqlCallContext ctx, int actorId, int aclTypeId, byte grantLevel, bool set );
+        public abstract void SetGrantLevel( ISqlCallContext ctx, int actorId, int aclTypeId, byte grantLevel, bool set );
 
         /// <summary>
         /// Creates a typed acl.
@@ -34,7 +27,7 @@ namespace CK.DB.Acl.AclType
         /// <param name="aclTypeId">The acl type identifier.</param>
         /// <returns>A new Acl identifier that is bound to the Acl type.</returns>
         [SqlProcedure( "transform:sAclCreate" )]
-        public abstract Task<int> CreateAclAsync( ISqlCallContext ctx, int actorId, int aclTypeId );
+        public abstract int CreateAcl( ISqlCallContext ctx, int actorId, int aclTypeId );
 
     }
 }

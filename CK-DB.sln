@@ -34,7 +34,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CK.DB.Group.SimpleNaming.Te
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CK.DB.Acl.AclType", "CK.DB.Acl.AclType\CK.DB.Acl.AclType.csproj", "{18FCDA8C-1355-466C-9CA2-8BBC55383980}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CK.DB.Acl.AclType.Tests.WIP", "Tests\CK.DB.Acl.AclType.Tests\CK.DB.Acl.AclType.Tests.WIP.csproj", "{EBB74416-3E11-40C1-BCC7-41F285DF00C5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CK.DB.Acl.AclType.Tests", "Tests\CK.DB.Acl.AclType.Tests\CK.DB.Acl.AclType.Tests.csproj", "{EBB74416-3E11-40C1-BCC7-41F285DF00C5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CK.DB.Res", "CK.DB.Res\CK.DB.Res.csproj", "{0B78D5D9-8EF4-48C4-81D4-D85535EC385C}"
 EndProject

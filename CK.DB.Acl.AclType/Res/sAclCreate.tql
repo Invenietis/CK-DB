@@ -1,0 +1,10 @@
+﻿-- SetupConfig: {}
+create transformer on CK.sAclCreate
+as 
+begin
+	add parameter @AclTypeId int = 0;
+	in single part {insert into CK.tAcl}
+	begin
+		add column AclTypeId = @AclTypeId;
+	end
+end

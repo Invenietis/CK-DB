@@ -10,5 +10,6 @@ namespace CK.DB.Acl.AclType
         void Construct( AclTypeTable acl )
         {
         }
+
     }
 }

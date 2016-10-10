@@ -82,7 +82,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.SqlServer.Parser, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CK.SqlServer.Parser.5.0.4\lib\net45\CK.SqlServer.Parser.dll</HintPath>
+      <HintPath>..\..\packages\CK.SqlServer.Parser.5.0.5\lib\net45\CK.SqlServer.Parser.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.SqlServer.Parser.Model, Version=3.1.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
@@ -102,7 +102,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.SqlServer.Transform, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CK.SqlServer.Transform.5.0.4\lib\net45\CK.SqlServer.Transform.dll</HintPath>
+      <HintPath>..\..\packages\CK.SqlServer.Transform.5.0.5\lib\net45\CK.SqlServer.Transform.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.StObj.Engine, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
@@ -161,6 +161,14 @@
     <ProjectReference Include="..\..\CK.DB.Acl.AclType\CK.DB.Acl.AclType.csproj">
       <Project>{18fcda8c-1355-466c-9ca2-8bbc55383980}</Project>
       <Name>CK.DB.Acl.AclType</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\CK.DB.Acl\CK.DB.Acl.csproj">
+      <Project>{fc9114b2-192d-4945-adab-917639ccd5ff}</Project>
+      <Name>CK.DB.Acl</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\CK.DB.Actor\CK.DB.Actor.csproj">
+      <Project>{3902b885-ac29-4be3-a83e-184316a09e91}</Project>
+      <Name>CK.DB.Actor</Name>
     </ProjectReference>
     <ProjectReference Include="..\CK.DB.Acl.Tests\CK.DB.Acl.Tests.csproj">
       <Project>{e9f1270e-c629-4b4e-890e-64549624f004}</Project>

@@ -2,13 +2,13 @@
 
 create table CK.tAclType
 (
-	AclTypeId int not null,
+	AclTypeId int not null identity (0, 1),
 	ConstrainedGrantLevel bit not null,
 	constraint PK_CK_tAclType primary key clustered ( AclTypeId )
 );
 
 -- The 0 AclType is not constrained.     
-insert into CK.tAclType( AclTypeId, ConstrainedGrantLevel ) values( 0, 0 );
+insert into CK.tAclType( ConstrainedGrantLevel ) values( 0 );
 
 --[endscript]
 

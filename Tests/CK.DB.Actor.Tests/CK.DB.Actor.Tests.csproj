@@ -92,7 +92,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.SqlServer.Parser, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CK.SqlServer.Parser.5.0.4\lib\net45\CK.SqlServer.Parser.dll</HintPath>
+      <HintPath>..\..\packages\CK.SqlServer.Parser.5.0.5\lib\net45\CK.SqlServer.Parser.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.SqlServer.Parser.Model, Version=3.1.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
@@ -112,7 +112,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.SqlServer.Transform, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CK.SqlServer.Transform.5.0.4\lib\net45\CK.SqlServer.Transform.dll</HintPath>
+      <HintPath>..\..\packages\CK.SqlServer.Transform.5.0.5\lib\net45\CK.SqlServer.Transform.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.StObj.Engine, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
