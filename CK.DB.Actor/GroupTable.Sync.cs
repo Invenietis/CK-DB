@@ -10,7 +10,7 @@ using CK.SqlServer;
 
 namespace CK.DB.Actor
 {
-    public abstract partial class GroupTable : SqlTable
+    public abstract partial class GroupTable
     {
         /// <summary>
         /// Creates a new Group.

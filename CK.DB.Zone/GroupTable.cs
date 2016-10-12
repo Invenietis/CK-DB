@@ -12,18 +12,18 @@ using System.ComponentModel;
 namespace CK.DB.Zone
 {
     [SqlTable( "tGroup", Package = typeof( Package ) ), Versions( "5.0.0" )]
-    [SqlObjectItem( "transform:sGroupUserAdd, transform:sGroupUserRemove, transform:vGroup" )]
-    public abstract class GroupTable : Actor.GroupTable
+    [SqlObjectItem( "transform:sGroupUserRemove, transform:vGroup" )]
+    public abstract partial class GroupTable : Actor.GroupTable
     {
-        void Construct( ZoneTable Zone )
+        void Construct( ZoneTable zoneTable )
         {
         }
 
         [SqlProcedure( "transform:sGroupCreate" )]
-        public abstract int CreateGroup( ISqlCallContext ctx, int actorId, int zoneId );
-
-        [SqlProcedure( "transform:sGroupCreate" )]
         public abstract Task<int> CreateGroupAsync( ISqlCallContext ctx, int actorId, int zoneId );
+
+        [SqlProcedure( "transform:sGroupUserAdd" )]
+        public abstract Task AddUserAsync( ISqlCallContext ctx, int actorId, int groupId, int userId, bool autoAddUserInZone = false );
 
     }
 }

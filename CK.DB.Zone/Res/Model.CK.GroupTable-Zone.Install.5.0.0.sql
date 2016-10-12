@@ -1,16 +1,16 @@
 ﻿--[beginscript]
 
 alter table CK.tGroup add 
-	ZoneId int not null constraint DF_CK_tGroup_ZoneId default(0);
+	ZoneId int not null constraint DF_TEMP0 default(0);
+
+alter table CK.tGroup drop constraint DF_TEMP0;
 
 --[endscript]
 
 --[beginscript]
 
-update CK.tGroup set ZoneId = 1 where GroupId = 1;
 alter table CK.tGroup add 
 	constraint FK_CK_tGroup_ZoneId foreign key (ZoneId) references CK.tZone( ZoneId );
-
 
 exec CKCore.sInvariantRegister 'Group.UserNotInZone', N'
 	from CK.tUser u

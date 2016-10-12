@@ -3,6 +3,8 @@
 create transformer on CK.sGroupUserAdd
 as
 begin
+	add parameter @AutoAddUserInZone bit = 0;
+
 	inject "
 		-- if the group is actually a Zone, calls sZoneUserAdd
 		if exists( select * from CK.tZone where ZoneId = @GroupId )
@@ -11,24 +13,37 @@ begin
 		end
 		else
 		begin 
-	" before single "--<PreUserAdd";
+	" 
+	before single "--<PreUserAdd";
 	
 	inject "
 			declare @ZoneId int;		
-			-- The user must be registered in the Zone or the Group.ZoneId is 0 (this supports ""unzoned"" Groups).
-			select @ZoneId = g.ZoneId
-					from CK.tActorProfile a
-					inner join CK.tGroup g on g.ZoneId = a.GroupId 
-					where g.GroupId = @GroupId and (g.ZoneId = 0 or a.ActorId = @UserId);
+			declare @IsUserInZone bit;		
+			-- Gets the Zone of the group and whether the user is registered in the Zone.
+			-- When the Group.ZoneId is 0, we considered it registered (this supports ""unzoned"" Groups
+			-- without requiring to store all [0,UserId] in tActorProfile).
+			select @ZoneId = g.ZoneId, @IsUserInZone = case when a.GroupId is null then 0 else 1 end
+					from CK.tGroup g
+					left outer join CK.tActorProfile a on a.GroupId = g.ZoneId and (g.ZoneId = 0 or a.ActorId = @UserId)
+					where g.GroupId = @GroupId;
 		
-			if @ZoneId is null 
-			begin 
-				;throw 50000, 'Group.UserNotInZone', 1;
-			end	" into "PreUserAdd";
+			if @IsUserInZone = 0 
+			begin
+				if @AutoAddUserInZone = 1
+				begin
+					exec CK.sZoneUserAdd @ActorId, @ZoneId, @UserId;
+				end
+				else
+				begin
+					;throw 50000, 'Group.UserNotInZone', 1;
+				end
+			end	" 
+	into "PreUserAdd";
 
 	inject "
 		end 
-	" after single "--<PostUserAdd";
+	" 
+	after single "--<PostUserAdd";
 
 end
 

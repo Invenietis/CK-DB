@@ -19,7 +19,7 @@ begin
 		-- Removes all groups owned by the zone
 		declare @GroupId int;
 		declare @CGroup cursor;
-		set @CGroup = cursor local fast_forward for select GroupId from CK.tGroup p where p.ZoneId = @ZoneId and p.GroupId <> @ZoneId;
+		set @CGroup = cursor local fast_forward for select GroupId from CK.tGroup p with(serializable) where p.ZoneId = @ZoneId and p.GroupId <> @ZoneId;
 		open @CGroup;
 		fetch from @CGroup into @GroupId;
 		while @@FETCH_STATUS = 0

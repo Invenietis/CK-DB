@@ -101,7 +101,7 @@ namespace CK.DB.Zone.Tests
         }
 
         [Test]
-        public void destroying_a_zone_with_any_other_group_than_AdministratorsGroup_is_an_error_by_default()
+        public void destroying_a_zone_that_has_a_group_is_an_error_by_default_ie_when_ForceDestroy_is_false()
         {
             var p = TestHelper.StObjMap.Default.Obtain<Zone.Package>();
             using( var ctx = new SqlStandardCallContext() )

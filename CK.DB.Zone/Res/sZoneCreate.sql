@@ -12,15 +12,13 @@ begin
 
 	--<PreZoneCreate revert />
 
-	-- A Zone is Group.  
+	-- A Zone is a Group whose ZoneId is 0. Whenever Zone become hierarchical, the Group.ZoneId 
+	-- of a Zone must be the parent zone.
 	exec CK.sGroupCreate @ActorId, 0, @ZoneIdResult output;
 		
 	-- Do create the Zone
 	insert into CK.tZone( ZoneId ) values ( @ZoneIdResult );
-
-	-- The Zone of this group is the Zone itself.
-	update CK.tGroup set ZoneId = @ZoneIdResult where GroupId = @ZoneIdResult;
-		
+			
 	--<PostZoneCreate />
 
 	--[endsp]
