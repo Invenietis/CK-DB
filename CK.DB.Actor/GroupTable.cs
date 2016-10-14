@@ -11,7 +11,7 @@ using CK.SqlServer;
 namespace CK.DB.Actor
 {
     [SqlTable( "tGroup", Package = typeof( Package ) )]
-    [Versions( "5.0.0" )]
+    [Versions( "5.0.0, 5.0.1" )]
     [SqlObjectItem( "vGroup" )]
     public abstract partial class GroupTable : SqlTable
     {

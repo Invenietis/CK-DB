@@ -23,5 +23,8 @@ namespace CK.DB.HZone
         [SqlProcedure( "transform:sZoneUserRemove" )]
         public abstract void RemoveUser( ISqlCallContext ctx, int actorId, int zoneId, int userId, bool autoRemoveUserFromChildZone = true );
 
+        [SqlProcedure( "sZoneMove" )]
+        public abstract void MoveZone( ISqlCallContext ctx, int actorId, int zoneId, int newParentZoneId, int nextSiblingId = 0 );
+
     }
 }

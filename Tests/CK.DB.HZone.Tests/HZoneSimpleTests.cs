@@ -27,11 +27,11 @@ namespace CK.DB.HZone.Tests
             {
                 int idUser1 = user.CreateUser( ctx, 1, Guid.NewGuid().ToString() );
                 int idUser2 = user.CreateUser( ctx, 1, Guid.NewGuid().ToString() );
-                FIFOBuffer<int> allZones = new FIFOBuffer<int>( 100 );
-                allZones.Push( zone.CreateZone( ctx, 1 ) );
-                allZones.Push( zone.CreateZone( ctx, 1, allZones[0] ) );
-                allZones.Push( zone.CreateZone( ctx, 1, allZones[1] ) );
-                allZones.Push( zone.CreateZone( ctx, 1, allZones[2] ) );
+                var allZones = new List<int>();
+                allZones.Add( zone.CreateZone( ctx, 1 ) );
+                allZones.Add( zone.CreateZone( ctx, 1, allZones[0] ) );
+                allZones.Add( zone.CreateZone( ctx, 1, allZones[1] ) );
+                allZones.Add( zone.CreateZone( ctx, 1, allZones[2] ) );
                 int idGroup = group.CreateGroup( ctx, 1, allZones[3] );
 
                 Assert.Throws<SqlDetailedException>( () => zone.AddUser( ctx, 1, allZones[3], idUser1, autoAddUserInParentZone: false ) );
@@ -59,11 +59,11 @@ namespace CK.DB.HZone.Tests
             {
                 int idUser1 = user.CreateUser( ctx, 1, Guid.NewGuid().ToString() );
                 int idUser2 = user.CreateUser( ctx, 1, Guid.NewGuid().ToString() );
-                FIFOBuffer<int> allZones = new FIFOBuffer<int>( 100 );
-                allZones.Push( zone.CreateZone( ctx, 1 ) );
-                allZones.Push( zone.CreateZone( ctx, 1, allZones[0] ) );
-                allZones.Push( zone.CreateZone( ctx, 1, allZones[1] ) );
-                allZones.Push( zone.CreateZone( ctx, 1, allZones[2] ) );
+                var allZones = new List<int>();
+                allZones.Add( zone.CreateZone( ctx, 1 ) );
+                allZones.Add( zone.CreateZone( ctx, 1, allZones[0] ) );
+                allZones.Add( zone.CreateZone( ctx, 1, allZones[1] ) );
+                allZones.Add( zone.CreateZone( ctx, 1, allZones[2] ) );
                 int idGroup = group.CreateGroup( ctx, 1, allZones[3] );
 
                 zone.AddUser( ctx, 1, allZones[3], idUser1, autoAddUserInParentZone: true );
@@ -96,27 +96,57 @@ namespace CK.DB.HZone.Tests
 
             using( var ctx = new SqlStandardCallContext() )
             {
-                FIFOBuffer<int> allZones = new FIFOBuffer<int>( 100 );
-                FIFOBuffer<int> allGroups = new FIFOBuffer<int>( 100 );
-                allZones.Push( zone.CreateZone( ctx, 1 ) );
-                allZones.Push( zone.CreateZone( ctx, 1, allZones[0] ) );
-                allZones.Push( zone.CreateZone( ctx, 1, allZones[0] ) );
-                allZones.Push( zone.CreateZone( ctx, 1, allZones[1] ) );
-                allZones.Push( zone.CreateZone( ctx, 1, allZones[1] ) );
-                allZones.Push( zone.CreateZone( ctx, 1, allZones[3] ) );
-                allZones.Push( zone.CreateZone( ctx, 1, allZones[3] ) );
-                allZones.Push( zone.CreateZone( ctx, 1, allZones[4] ) );
-                allZones.Push( zone.CreateZone( ctx, 1, allZones[4] ) );
-                allZones.Push( zone.CreateZone( ctx, 1, allZones[4] ) );
-                allZones.Push( zone.CreateZone( ctx, 1, allZones[4] ) );
+                var allZones = new List<int>();
+                var allGroups = new List<int>();
+                allZones.Add( zone.CreateZone( ctx, 1 ) );
+                allZones.Add( zone.CreateZone( ctx, 1, allZones[0] ) );
+                allZones.Add( zone.CreateZone( ctx, 1, allZones[0] ) );
+                allZones.Add( zone.CreateZone( ctx, 1, allZones[1] ) );
+                allZones.Add( zone.CreateZone( ctx, 1, allZones[1] ) );
+                allZones.Add( zone.CreateZone( ctx, 1, allZones[3] ) );
+                allZones.Add( zone.CreateZone( ctx, 1, allZones[3] ) );
+                allZones.Add( zone.CreateZone( ctx, 1, allZones[4] ) );
+                allZones.Add( zone.CreateZone( ctx, 1, allZones[4] ) );
+                allZones.Add( zone.CreateZone( ctx, 1, allZones[4] ) );
+                allZones.Add( zone.CreateZone( ctx, 1, allZones[4] ) );
                 foreach( var idZone in allZones )
                 {
-                    allGroups.Push( group.CreateGroup( ctx, 1, idZone ) );
+                    allGroups.Add( group.CreateGroup( ctx, 1, idZone ) );
                 }
                 Assert.Throws<SqlDetailedException>( () => zone.DestroyZone( ctx, 1, allZones[0], forceDestroy: false ) );
                 zone.DestroyZone( ctx, 1, allZones[0], forceDestroy: true );
             }
         }
 
+        [Test]
+        public void moving_a_zone_in_the_tree()
+        {
+            var map = TestHelper.StObjMap;
+            var zone = map.Default.Obtain<ZoneTable>();
+
+            using( var ctx = new SqlStandardCallContext() )
+            {
+                var allZones = new List<int>();
+                for( int i = 0; i < 10; ++i ) allZones.Add( zone.CreateZone( ctx, 1 ) );
+                // 0 
+                // | 1
+                // | 2
+                // | 3
+                // | 4
+                zone.MoveZone( ctx, 1, allZones[1], allZones[0] );
+                zone.MoveZone( ctx, 1, allZones[2], allZones[0] );
+                zone.MoveZone( ctx, 1, allZones[3], allZones[0] );
+                zone.MoveZone( ctx, 1, allZones[4], allZones[0] );
+                // 5 
+                // | 7
+                // | 6
+                // | 9
+                // | 8
+                zone.MoveZone( ctx, 1, allZones[6], allZones[5] );
+                zone.MoveZone( ctx, 1, allZones[7], allZones[5], allZones[6] );
+                zone.MoveZone( ctx, 1, allZones[8], allZones[5] );
+                zone.MoveZone( ctx, 1, allZones[9], allZones[5], allZones[8] );
+            }
+        }
     }
 }

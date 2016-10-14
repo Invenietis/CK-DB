@@ -98,10 +98,7 @@
     <EmbeddedResource Include="Res\Model\CK.ActorProfileTable.Install.5.0.0.sql" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Res\Model\CK.ActorTable.Install.5.0.0.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Res\Model\CK.GroupTable.Install.5.0.0.sql" />
+    <EmbeddedResource Include="Res\Model\CK.GroupTable.Install.5.0.1.sql" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Res\Model\CK.UserTable.Install.5.0.0.sql" />
@@ -144,6 +141,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Res\Model\CK.GroupTable.Install.5.0.0.to.5.0.1.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Res\Model\CK.ActorTable.Install.5.0.0.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\SimpleGitVersionTask.0.20.0\Build\SimpleGitVersionTask.targets" Condition="Exists('..\packages\SimpleGitVersionTask.0.20.0\Build\SimpleGitVersionTask.targets')" />

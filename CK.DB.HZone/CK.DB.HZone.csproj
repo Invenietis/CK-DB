@@ -110,6 +110,18 @@
     <EmbeddedResource Include="Res\Model\CK.ZoneTable-HZone.Install.1.0.0.sql" />
     <EmbeddedResource Include="Res\sZoneCreate.tql" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Res\vZone.tql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Res\sZoneMove.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Res\vZoneAllChildren.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Res\vZoneDirectChildren.sql" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\SimpleGitVersionTask.0.20.0\Build\SimpleGitVersionTask.targets" Condition="Exists('..\packages\SimpleGitVersionTask.0.20.0\Build\SimpleGitVersionTask.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
