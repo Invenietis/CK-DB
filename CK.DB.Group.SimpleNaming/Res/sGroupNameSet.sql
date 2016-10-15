@@ -15,7 +15,16 @@ as begin
 	--[beginsp]
 	
 	declare @GroupNameCorrected nvarchar(128);
-	select @GroupNameCorrected = CK.fGroupNameComputeUnique( @GroupId, @GroupName );
+	-- Use exec to call a function: this enables default parameters 
+	-- to be applied without writing DEFAULT for each of them...
+	-- Default parameters at the function call site should be handled by the 
+	-- global resolution. Once available, this should be rewritten with the  
+	-- more usual and standard syntax:
+	--		select @GroupNameCorrected = CK.fGroupNameComputeUnique( @GroupId, @GroupName );
+	-- That should be changed by CK-Database into:
+	--		select @GroupNameCorrected = CK.fGroupNameComputeUnique( @GroupId, @GroupName, DEFAULT );
+	-- (With as much DEFAULT as needed.)
+	exec @GroupNameCorrected = CK.fGroupNameComputeUnique @GroupId, @GroupName;
 
 	--<PreNameSet revert />
 

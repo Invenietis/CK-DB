@@ -9,20 +9,8 @@ using System.Threading.Tasks;
 
 namespace CK.DB.Group.SimpleNaming
 {
-    [SqlPackage( ResourcePath = "Res", Schema = "CK" )]
-    [Versions( "1.0.0,1.0.1" )]
-    [SqlObjectItem( "transform:vGroup" )]
     public abstract partial class Package : SqlPackage
     {
-        void Construct( Actor.Package actorPackage )
-        {
-        }
-
-        /// <summary>
-        /// Gets the maximum number of tries before giving up.
-        /// This is the maximum " (number)" suffix that can be appended.
-        /// </summary>
-        public int MaxClashNumber { get; } = 99;
 
         /// <summary>
         /// Checks a new group name for a given group by returning it unchanged
@@ -34,7 +22,7 @@ namespace CK.DB.Group.SimpleNaming
         /// <param name="groupName">The new group name.</param>
         /// <returns>The group name or an automatically suffixed version.</returns>
         [SqlScalarFunction( "fGroupNameComputeUnique" )]
-        public abstract Task<string> CheckUniqueNameAsync( ISqlCallContext ctx, int groupId, string groupName );
+        public abstract string CheckUniqueName( ISqlCallContext ctx, int groupId, string groupName );
 
         /// <summary>
         /// Checks a new group name by returning it unchanged
@@ -44,7 +32,7 @@ namespace CK.DB.Group.SimpleNaming
         /// <param name="ctx">The call context.</param>
         /// <param name="groupName">A new group name.</param>
         /// <returns>The group name or an automatically suffixed version.</returns>
-        public Task<string> CheckUniqueNameForNewGroupAsync( ISqlCallContext ctx, string groupName ) => CheckUniqueNameAsync( ctx, -1, groupName );
+        public string CheckUniqueNameForNewGroup( ISqlCallContext ctx, string groupName ) => CheckUniqueName( ctx, -1, groupName );
 
         /// <summary>
         /// Renames a group.
@@ -55,7 +43,7 @@ namespace CK.DB.Group.SimpleNaming
         /// <param name="groupName">The new group name.</param>
         /// <returns>The group name or an automatically suffixed version that has been set.</returns>
         [SqlProcedure( "sGroupNameSet" )]
-        public abstract Task<string> GroupRenameAsync( ISqlCallContext ctx, int actorId, int groupId, string groupName );
+        public abstract string GroupRename( ISqlCallContext ctx, int actorId, int groupId, string groupName );
 
     }
 }

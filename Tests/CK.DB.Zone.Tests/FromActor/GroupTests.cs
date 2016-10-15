@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace CK.DB.Zone.Tests.FromActor
 {
     [TestFixture]
-    public class FromActorUserTests : CK.DB.Actor.Tests.UserTests
+    public class GroupTests : CK.DB.Actor.Tests.GroupTests
     {
     }
 }

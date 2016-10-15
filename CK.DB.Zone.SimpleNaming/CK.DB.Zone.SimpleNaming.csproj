@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{90F8BC5E-C38A-4A9D-8A0A-FBC3D77F42A6}</ProjectGuid>
+    <ProjectGuid>{A007FEFF-CE49-47C1-B456-7D7D7B8E6C5B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CK.DB.Group.SimpleNaming</RootNamespace>
-    <AssemblyName>CK.DB.Group.SimpleNaming</AssemblyName>
+    <RootNamespace>CK.DB.Zone.SimpleNaming</RootNamespace>
+    <AssemblyName>CK.DB.Zone.SimpleNaming</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <NuGetPackageImportStamp>
@@ -89,24 +89,23 @@
       <Project>{3902b885-ac29-4be3-a83e-184316a09e91}</Project>
       <Name>CK.DB.Actor</Name>
     </ProjectReference>
+    <ProjectReference Include="..\CK.DB.Group.SimpleNaming\CK.DB.Group.SimpleNaming.csproj">
+      <Project>{90f8bc5e-c38a-4a9d-8a0a-fbc3d77f42a6}</Project>
+      <Name>CK.DB.Group.SimpleNaming</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CK.DB.Zone\CK.DB.Zone.csproj">
+      <Project>{f8f13b52-0c60-499c-baaf-86c01c3f70d2}</Project>
+      <Name>CK.DB.Zone</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Res\vGroup.tql" />
+    <EmbeddedResource Include="Res\Model.CK.DB.Zone.SimpleNaming.Package.Install.1.0.0.sql" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Res\Model.CK.DB.Group.SimpleNaming.Package.Install.1.0.1.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Res\sGroupNameSet.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Res\fGroupNameComputeUnique.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Res\Model.CK.DB.Group.SimpleNaming.Package.Install.1.0.0.to.1.0.1.sql" />
+    <EmbeddedResource Include="Res\fGroupNameComputeUnique.tql" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\SimpleGitVersionTask.0.20.0\Build\SimpleGitVersionTask.targets" Condition="Exists('..\packages\SimpleGitVersionTask.0.20.0\Build\SimpleGitVersionTask.targets')" />
