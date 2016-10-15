@@ -1,7 +1,7 @@
 ﻿--[beginscript]
 
 alter table CK.tGroup add  
-	GroupName nvarchar(128) collate Latin1_General_100_CI_AI not null constraint DF_CK_tGroup_GrouName default( newid() ),
+	GroupName nvarchar(128) collate Latin1_General_100_CI_AI not null constraint DF_CK_tGroup_GroupName default( newid() ),
 	constraint UK_CK_tGroup_GroupName unique( GroupName );
 
 --[endscript]

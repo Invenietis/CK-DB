@@ -10,8 +10,12 @@ create Function CK.fGroupNameComputeUnique
 returns nvarchar(128) with SCHEMABINDING
 as 
 begin
-	if not exists( select GroupId from CK.tGroup where GroupId <> @GroupId and GroupName = @GroupName ) 
+	if not exists( select GroupId 
+						from CK.tGroup 
+						where GroupId <> @GroupId and GroupName = @GroupName ) 
+	begin
 		return @GroupName;
+	end
 	if len(@GroupName) > 122 set @GroupName = left( @GroupName, 122 );
 	set @GroupName = @GroupName + ' (';
 	declare @proposed nvarchar(128);
@@ -19,8 +23,12 @@ begin
 	while @num < 1000 
 	begin
 		set @proposed = @GroupName + cast(@num as nvarchar(4)) + ')';
-		if not exists( select GroupId from CK.tGroup where GroupId <> @GroupId and GroupName = @proposed ) 
+		if not exists( select GroupId 
+							from CK.tGroup 
+							where GroupId <> @GroupId and GroupName = @proposed ) 
+		begin
 			return @proposed;
+		end
 		set @num = @num+1;
 	end
 	return @proposed

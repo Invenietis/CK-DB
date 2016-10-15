@@ -13,10 +13,12 @@ as begin
 
 	--[beginsp]
 	
+	declare @GroupNameCorrected nvarchar(128);
+	select @GroupNameCorrected = CK.fGroupNameComputeUnique( @GroupId, @GroupName );
+
 	--<PreNameSet revert />
 
-	select @GroupName = CK.fGroupNameComputeUnique( @GroupId, @GroupName );
-	update CK.tGroup set GroupName = @GroupName where GroupId = @GroupId;
+	update CK.tGroup set GroupName = @GroupNameCorrected where GroupId = @GroupId;
 
 	--<PostNameSet />
 
