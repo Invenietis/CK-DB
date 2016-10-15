@@ -139,7 +139,7 @@ namespace CK.DB.Group.SimpleNaming.Tests
             using( var ctx = new SqlStandardCallContext() )
             {
                 string theGroupName = new string( '-', 127 ) + 'X';
-                string theConflictNameRoot = new string( '-', 122 );
+                string theConflictNameRoot = new string( '-', 123 );
 
                 int groupId = g.CreateGroup( ctx, 1 );
                 gN.GroupRename( ctx, 1, groupId, theGroupName );
@@ -152,6 +152,33 @@ namespace CK.DB.Group.SimpleNaming.Tests
 
                 newName = gN.CheckUniqueNameForNewGroup( ctx, theGroupName );
                 Assert.That( newName, Is.EqualTo( theGroupName ) );
+            }
+        }
+
+        [Test]
+        public void when_there_is_no_more_room_for_rename_checking_group_name_returns_null()
+        {
+            var map = TestHelper.StObjMap;
+            var g = map.Default.Obtain<GroupTable>();
+            var gN = map.Default.Obtain<SimpleNaming.Package>();
+            using( var ctx = new SqlStandardCallContext() )
+            {
+                string theGroupName = Guid.NewGuid().ToString();
+                int idMain = g.CreateGroup( ctx, 1 );
+                Assert.That( gN.GroupRename( ctx, 1, idMain, theGroupName ), Is.EqualTo( theGroupName ) );
+                var others = new List<int>();
+                for( int i = 0; i < gN.MaxClashNumber; ++i )
+                {
+                    int id = g.CreateGroup( ctx, 1 );
+                    string corrected = gN.GroupRename( ctx, 1, id, theGroupName );
+                    Assert.That( corrected, Is.Not.EqualTo( theGroupName ) );
+                    others.Add( id );
+                }
+                string clash = gN.CheckUniqueNameForNewGroup( ctx, theGroupName );
+                Assert.That( clash, Is.Null );
+                int idTooMuch = g.CreateGroup( ctx, 1 );
+                Assert.Throws<SqlDetailedException>( () => gN.GroupRename( ctx, 1, idTooMuch, theGroupName ) );
+
             }
         }
     }

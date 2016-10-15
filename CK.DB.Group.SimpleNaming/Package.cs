@@ -19,6 +19,12 @@ namespace CK.DB.Group.SimpleNaming
         }
 
         /// <summary>
+        /// Gets the maximum number of tries before giving up.
+        /// This is the maximum " (number)" suffix that can be appended.
+        /// </summary>
+        public int MaxClashNumber { get; } = 99;
+
+        /// <summary>
         /// Checks a new group name for a given group by returning it unchanged
         /// or an automatically suffixed version " (1)", " (2)", etc. if name already exists.
         /// </summary>

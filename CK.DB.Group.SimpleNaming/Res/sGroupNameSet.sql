@@ -10,6 +10,7 @@ create procedure CK.sGroupNameSet
 )
 as begin
     if @ActorId <= 0 throw 50000, 'Security.AnonymousNotAllowed', 1;
+    if @GroupName is null throw 50000, 'GroupName.CanNotBeNull', 1;
 
 	--[beginsp]
 	
@@ -18,9 +19,12 @@ as begin
 
 	--<PreNameSet revert />
 
+	if @GroupNameCorrected is null throw 50000, 'GroupName.NameClash', 1;
 	update CK.tGroup set GroupName = @GroupNameCorrected where GroupId = @GroupId;
 
 	--<PostNameSet />
+
+	set @GroupName = @GroupNameCorrected;
 
 	--[endsp]
 end

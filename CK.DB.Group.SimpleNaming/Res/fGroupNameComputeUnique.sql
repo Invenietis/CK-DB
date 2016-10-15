@@ -16,11 +16,11 @@ begin
 	begin
 		return @GroupName;
 	end
-	if len(@GroupName) > 122 set @GroupName = left( @GroupName, 122 );
+	if len(@GroupName) > 123 set @GroupName = left( @GroupName, 123 );
 	set @GroupName = @GroupName + ' (';
 	declare @proposed nvarchar(128);
 	declare @num int = 1;
-	while @num < 1000 
+	while @num <= 99 
 	begin
 		set @proposed = @GroupName + cast(@num as nvarchar(4)) + ')';
 		if not exists( select GroupId 
@@ -31,5 +31,5 @@ begin
 		end
 		set @num = @num+1;
 	end
-	return @proposed
+	return null;
 end
