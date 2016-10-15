@@ -157,5 +157,35 @@ namespace CK.DB.Zone.Tests
             }
         }
 
+        [Test]
+        public void groups_can_be_moved_from_its_zone_to_another_one()
+        {
+            var map = TestHelper.StObjMap;
+            var g = map.Default.Obtain<GroupTable>();
+            var z = map.Default.Obtain<ZoneTable>();
+            using( var ctx = new SqlStandardCallContext() )
+            {
+                int idGroup = g.CreateGroup( ctx, 1 );
+                int idZone1 = z.CreateZone( ctx, 1 );
+                int idZone2 = z.CreateZone( ctx, 1 );
+
+                g.Database.AssertScalarEquals( 0, "select ZoneId from CK.vGroup where GroupId=@0", idGroup );
+
+                g.MoveGroup( ctx, 1, idGroup, idZone1 );
+                g.Database.AssertScalarEquals( idZone1, "select ZoneId from CK.vGroup where GroupId=@0", idGroup );
+
+                g.MoveGroup( ctx, 1, idGroup, idZone2 );
+                g.Database.AssertScalarEquals( idZone2, "select ZoneId from CK.vGroup where GroupId=@0", idGroup );
+
+                g.MoveGroup( ctx, 1, idGroup, 0 );
+                g.Database.AssertScalarEquals( 0, "select ZoneId from CK.vGroup where GroupId=@0", idGroup );
+
+                g.DestroyGroup( ctx, 1, idGroup );
+                z.DestroyZone( ctx, 1, idZone1 );
+                z.DestroyZone( ctx, 1, idZone2 );
+            }
+        }
+
+
     }
 }

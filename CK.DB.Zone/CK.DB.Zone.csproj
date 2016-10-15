@@ -131,6 +131,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Res\vGroup.tql" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Res\sGroupMove.sql" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\SimpleGitVersionTask.0.20.0\Build\SimpleGitVersionTask.targets" Condition="Exists('..\packages\SimpleGitVersionTask.0.20.0\Build\SimpleGitVersionTask.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

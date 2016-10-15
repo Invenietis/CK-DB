@@ -11,6 +11,7 @@ namespace CK.DB.Zone.SimpleNaming
 {
     [SqlPackage( ResourceType = typeof(Package) )]
     [Versions( "1.0.0" )]
+    [SqlObjectItem( "transform:sGroupMove" )]
     public abstract partial class Package : Group.SimpleNaming.Package
     {
         void Construct( Zone.Package zonePackage )

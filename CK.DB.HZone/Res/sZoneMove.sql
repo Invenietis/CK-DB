@@ -1,4 +1,4 @@
-﻿-- SetupConfig: {}
+﻿-- SetupConfig: { "Requires": [ "CK.sGroupMove" ] }
 create procedure CK.sZoneMove
 (
 	@ActorId int,        
@@ -42,7 +42,7 @@ as begin
 
 	update CK.tZone set HierarchicalId = HierarchicalId.GetReparentedValue(@ZoneHId, @NewHId)
         where HierarchicalId.IsDescendantOf(@ZoneHId) = 1;
-	update CK.tGroup set ZoneId = @NewParentZoneId where GroupId = @ZoneId;
+	exec CK.sGroupMove @ActorId, @ZoneId, @NewParentZoneId;
 
 	--<PostZoneMove />
 

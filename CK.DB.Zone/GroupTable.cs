@@ -19,6 +19,9 @@ namespace CK.DB.Zone
         {
         }
 
+        [SqlProcedure( "sGroupMove" )]
+        public abstract Task MoveGroupAsync( ISqlCallContext ctx, int actorId, int groupId, int newZoneId );
+
         [SqlProcedure( "transform:sGroupCreate" )]
         public abstract Task<int> CreateGroupAsync( ISqlCallContext ctx, int actorId, int zoneId );
 

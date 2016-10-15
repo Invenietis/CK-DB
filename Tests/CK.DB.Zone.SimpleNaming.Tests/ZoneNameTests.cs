@@ -40,5 +40,24 @@ namespace CK.DB.Zone.SimpleNaming.Tests
             }
         }
 
+        [Test]
+        public void when_groups_are_moved_name_clash_are_automatically_handled()
+        {
+            var map = TestHelper.StObjMap;
+            var z = map.Default.Obtain<ZoneTable>();
+            var g = map.Default.Obtain<GroupTable>();
+            var gN = map.Default.Obtain<SimpleNaming.Package>();
+            using( var ctx = new SqlStandardCallContext() )
+            {
+                int idZone1 = z.CreateZone( ctx, 1 );
+                int idZone2 = z.CreateZone( ctx, 1 );
+                int idGIn1 = g.CreateGroup( ctx, 1, idZone1 );
+                gN.GroupRename( ctx, 1, idGIn1, "Test" );
+                int idGIn2 = g.CreateGroup( ctx, 1, idZone2 );
+                gN.GroupRename( ctx, 1, idGIn2, "Test" );
+                g.MoveGroup( ctx, 1, idGIn1, idZone2 );
+                g.Database.AssertScalarEquals( "Test (1)", "select GroupName from CK.vGroup where GroupId = @0", idGIn1 );
+            }
+        }
     }
 }
