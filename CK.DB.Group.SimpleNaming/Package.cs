@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace CK.DB.Group.SimpleNaming
 {
     [SqlPackage( ResourcePath = "Res", Schema = "CK" )]
-    [Versions( "1.0.0" )]
+    [Versions( "1.0.0,1.0.1" )]
     [SqlObjectItem( "transform:vGroup" )]
     public abstract class Package : SqlPackage
     {
