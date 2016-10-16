@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata >
+    <id>CK.DB.Zone.SimpleNaming.Tests</id>
+    <version>$version$</version>
+    <authors>Invenietis</authors>
+    <owners>Invenietis</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <summary>
+      CK-Database Tests for CK.DB.Group.SimpleNaming ({{CSemVer}}).
+    </summary>
+    <description>
+      This package contains tests for CK.DB.Group.SimpleNaming (uses CK.DB.Tests.NUnit).
+    </description>
+    <language>en-US</language>
+    <dependencies>
+      <dependency id="CK.DB.Zone.SimpleNaming" version="$version$" />
+      <dependency id="CK.DB.Group.SimpleNaming.Tests" version="$version$" />
+      <dependency id="CK.DB.Zone.Tests" version="$version$" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="Tests\CK.DB.Zone.SimpleNaming.Tests\bin\{{configuration}}\CK.DB.Zone.SimpleNaming.Tests.dll" target="lib\net45" />
+  </files>
+</package>

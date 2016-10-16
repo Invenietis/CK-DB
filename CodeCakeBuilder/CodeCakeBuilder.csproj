@@ -78,6 +78,8 @@
     <None Include="NuSpec\CK.DB.Culture.nuspec">
       <SubType>Designer</SubType>
     </None>
+    <None Include="NuSpec\CK.DB.Zone.SimpleNaming.nuspec" />
+    <None Include="NuSpec\CK.DB.Zone.SimpleNaming.Tests.nuspec" />
     <None Include="NuSpec\CK.DB.HZone.nuspec" />
     <None Include="NuSpec\CK.DB.HZone.Tests.nuspec" />
     <None Include="NuSpec\CK.DB.Res.MCResHtml.nuspec" />
