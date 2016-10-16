@@ -3,8 +3,8 @@
 create table CK.tLCID
 (
 	LCID int not null,
-	Name varchar(20) collate LATIN1_General_BIN2 not null,
-	EnglishName varchar(50) collate LATIN1_General_BIN2 not null,
+	Name varchar(20) collate LATIN1_General_100_BIN2 not null,
+	EnglishName varchar(50) collate LATIN1_General_100_BIN2 not null,
 	NativeName nvarchar(50) not null,
 	-- Total count of pure XLCID created so far with this LCID as the primary LCID.
 	XLCIDCount smallint not null,

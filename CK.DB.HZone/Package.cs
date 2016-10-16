@@ -11,7 +11,7 @@ namespace CK.DB.HZone
 {
     [SqlPackage( ResourcePath = "Res", ResourceType = typeof( Package ) ) ]
     [Versions( "1.0.0" )]
-    [SqlObjectItem( "transform:sGroupUserAdd, transform:vZone" )]
+    [SqlObjectItem( "transform:sGroupUserAdd, transform:sGroupMove, transform:vZone" )]
     [SqlObjectItem( "vZoneDirectChildren, vZoneAllChildren" )]
     public abstract class Package : Zone.Package
     {

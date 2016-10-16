@@ -82,7 +82,7 @@ namespace CK.DB.Acl.AclType.Tests
         }
 
         [Test]
-        public void typed_acl_with_constrained_levels()
+        public void typed_acl_with_constrained_levels_control_their_grant_levels()
         {
             var map = TestHelper.StObjMap;
             var user = map.Default.Obtain<UserTable>();

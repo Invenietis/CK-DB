@@ -17,4 +17,10 @@ alter table CK.tZone alter column HierarchicalId hierarchyid not null;
 
 create unique index IX_CK_tZone_HierarchicalId on CK.tZone(HierarchicalId);
 
+exec CKCore.sInvariantRegister 'HZone.HierarchicalIdAndZoneIdMismatch', N'
+	from CK.tZone z
+	inner join CK.tGroup g on g.GroupId = z.ZoneId
+	inner join CK.tZone zParent on zParent.ZoneId = g.ZoneId
+	where z.HierarchicalId.GetAncestor(1) <> zParent.HierarchicalId';
+
 --[endscript]

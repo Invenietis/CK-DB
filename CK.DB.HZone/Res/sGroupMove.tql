@@ -1,0 +1,27 @@
+-- SetupConfig: {}
+create transformer on CK.sGroupMove
+as 
+begin
+	inject "
+		--<BeginHZoneWrapperHeader />
+		declare @ThisGroupZoneHId hierarchyid;
+		select @ThisGroupZoneHId = HierarchicalId from CK.tZone where ZoneId = @GroupId;
+		-- If the HiearchicalId exists, we are on a Zone, and if it is not already correctly set, 
+		-- we need to call sZoneMove that will call us back.
+		if @ThisGroupZoneHId is not null
+			and not exists( select 1 from CK.tZone where ZoneId = @NewZoneId and @ThisGroupZoneHId.GetAncestor(1) = HierarchicalId )
+		begin
+			exec CK.sZoneMove @ActorId, @GroupId, @NewZoneId, 0;
+		end
+		else
+		begin
+				--<EndHZoneWrapperHeader />
+	" before single "--<PreGroupMove";
+
+	inject "
+				--<BeginHZoneWrapperFooter />
+		end
+		--<EndHZoneWrapperFooter />
+	" after single "--<PostGroupMove";
+
+end

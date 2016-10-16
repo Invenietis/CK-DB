@@ -1,5 +1,5 @@
 -- SetupConfig: {}
-create view CK.vResName_DirectChildren
+create view CK.vResNameDirectChildren
 as
 select  ResId = r.ResId,
 		ResName = r.ResName,

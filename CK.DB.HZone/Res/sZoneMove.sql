@@ -20,7 +20,8 @@ as begin
 	select @ZoneHId = HierarchicalId from CK.tZone with(serializable) where ZoneId = @ZoneId;
 	if @ZoneHId is null throw 50000, 'Zone.InvalidZoneId', 1;
 	select @ParentHId = HierarchicalId from CK.tZone with(serializable)  where ZoneId = @NewParentZoneId;
-	if @ParentHId is null throw 50000, 'Zone.InvalidNewParentZoneId', 1;
+	if @ParentHId is null throw 50000, 'HZone.InvalidNewParentZoneId', 1;
+	if @ParentHId.IsDescendantOf(@ZoneHId) = 1 throw 50000, 'HZone.MovingZoneIntoOwnChild', 1;
 	if @NextSiblingId = 0
 	begin
 		select @LastHId = max(HierarchicalId) 
@@ -30,14 +31,13 @@ as begin
 	else
 	begin
 		select @NextSiblingHId = HierarchicalId from CK.tZone with(serializable) where ZoneId = @NextSiblingId;
-		if @NextSiblingHId is null throw 50000, 'Zone.InvalidNextSiblingId', 1;
-		if @NextSiblingHId.GetAncestor(1) <> @ParentHId throw 50000, 'Zone.NextSiblingIdIsNotInNewParentZoneId', 1;
+		if @NextSiblingHId is null throw 50000, 'HZone.InvalidNextSiblingId', 1;
+		if @NextSiblingHId.GetAncestor(1) <> @ParentHId throw 50000, 'HZone.NextSiblingIdIsNotInNewParentZoneId', 1;
 		select @LastHId = max(HierarchicalId) 
 			from CK.tZone with(serializable) 
 			where HierarchicalId.GetAncestor(1) = @ParentHId and HierarchicalId < @NextSiblingHId;
 	end
 	select @NewHId = @ParentHId.GetDescendant(@LastHId, @NextSiblingHId);
-
 	--<PreZoneMove revert />
 
 	update CK.tZone set HierarchicalId = HierarchicalId.GetReparentedValue(@ZoneHId, @NewHId)

@@ -1,10 +1,12 @@
 ﻿using CK.Core;
+using CK.Text;
 using CK.DB.Actor;
 using CK.DB.HZone;
 using CK.SqlServer;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,6 +16,11 @@ namespace CK.DB.HZone.Tests
     [TestFixture]
     public class HZoneSimpleTests
     {
+        [TearDown]
+        public void CheckCKCoreInvariant()
+        {
+            TestHelper.StObjMap.Default.Obtain<ActorTable>().Database.AssertAllCKCoreInvariant();
+        }
 
         [Test]
         public void adding_a_user_in_a_child_zone_support_AutoAddUserInParentZone()
@@ -119,33 +126,85 @@ namespace CK.DB.HZone.Tests
         }
 
         [Test]
-        public void moving_a_zone_in_the_tree()
+        public void moving_a_zone_in_the_tree_can_specify_the_next_sibling_id()
         {
             var map = TestHelper.StObjMap;
             var zone = map.Default.Obtain<ZoneTable>();
 
             using( var ctx = new SqlStandardCallContext() )
             {
-                var allZones = new List<int>();
-                for( int i = 0; i < 10; ++i ) allZones.Add( zone.CreateZone( ctx, 1 ) );
-                // 0 
-                // | 1
-                // | 2
-                // | 3
-                // | 4
-                zone.MoveZone( ctx, 1, allZones[1], allZones[0] );
-                zone.MoveZone( ctx, 1, allZones[2], allZones[0] );
-                zone.MoveZone( ctx, 1, allZones[3], allZones[0] );
-                zone.MoveZone( ctx, 1, allZones[4], allZones[0] );
-                // 5 
-                // | 7
-                // | 6
-                // | 9
-                // | 8
-                zone.MoveZone( ctx, 1, allZones[6], allZones[5] );
-                zone.MoveZone( ctx, 1, allZones[7], allZones[5], allZones[6] );
-                zone.MoveZone( ctx, 1, allZones[8], allZones[5] );
-                zone.MoveZone( ctx, 1, allZones[9], allZones[5], allZones[8] );
+                var z = new List<int>();
+                for( int i = 0; i < 10; ++i ) z.Add( zone.CreateZone( ctx, 1 ) );
+                zone.MoveZone( ctx, 1, z[1], z[0] );
+                zone.MoveZone( ctx, 1, z[2], z[0] );
+                zone.MoveZone( ctx, 1, z[3], z[0] );
+                zone.MoveZone( ctx, 1, z[4], z[0] );
+                zone.CheckTree( ctx, z[0], $@"
+                                {z[0]}
+                                +{z[1]}
+                                +{z[2]}
+                                +{z[3]}
+                                +{z[4]}
+                                " );
+                zone.MoveZone( ctx, 1, z[6], z[5] );
+                zone.MoveZone( ctx, 1, z[7], z[5], nextSiblingId: z[6] );
+                zone.MoveZone( ctx, 1, z[8], z[5] );
+                zone.MoveZone( ctx, 1, z[9], z[5], nextSiblingId: z[8] );
+                zone.CheckTree( ctx, z[5], $@"
+                                {z[5]}
+                                +{z[7]}
+                                +{z[6]}
+                                +{z[9]}
+                                +{z[8]}
+                                " );
+            }
+        }
+
+        [Test]
+        public void GroupMove_can_safely_be_called_instead_of_ZoneMove()
+        {
+            var map = TestHelper.StObjMap;
+            var zone = map.Default.Obtain<ZoneTable>();
+            var group = map.Default.Obtain<Zone.GroupTable>();
+
+            using( var ctx = new SqlStandardCallContext() )
+            {
+                var z = new List<int>();
+                for( int i = 0; i < 5; ++i ) z.Add( zone.CreateZone( ctx, 1 ) );
+                group.MoveGroup( ctx, 1, z[1], z[0] );
+                group.MoveGroup( ctx, 1, z[4], z[0] );
+                group.MoveGroup( ctx, 1, z[2], z[0] );
+                group.MoveGroup( ctx, 1, z[3], z[0] );
+                zone.CheckTree( ctx, z[0], $@"
+                                {z[0]}
+                                +{z[4]}
+                                +{z[1]}
+                                +{z[2]}
+                                +{z[3]}
+                                " );
+                group.MoveGroup( ctx, 1, z[3], z[2] );
+                group.MoveGroup( ctx, 1, z[4], z[3] );
+                zone.CheckTree( ctx, z[0], $@"
+                                {z[0]}
+                                +{z[1]}
+                                +{z[2]}
+                                ++{z[3]}
+                                +++{z[4]}
+                                " );
+            }
+        }
+
+        [Test]
+        public void moving_a_zone_in_a_child_zone_is_an_error()
+        {
+            var map = TestHelper.StObjMap;
+            var zone = map.Default.Obtain<ZoneTable>();
+            using( var ctx = new SqlStandardCallContext() )
+            {
+                int idZone1 = zone.CreateZone( ctx, 1 );
+                int idZone2 = zone.CreateZone( ctx, 1, idZone1 );
+
+                Assert.Throws<SqlDetailedException>( () => zone.MoveZone( ctx, 1, idZone1, idZone2 ) );
             }
         }
     }

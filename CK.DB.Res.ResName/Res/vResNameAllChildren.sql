@@ -1,6 +1,5 @@
 -- SetupConfig: {}
---
-create view CK.vResName_AllChildren
+create view CK.vResNameAllChildren
 as
 select  ResId = r.ResId,
 		ResName = r.ResName,

@@ -1,5 +1,5 @@
 -- SetupConfig: { "Requires": [ "CK.fResNamePrefixes" ] }
-create view CK.vResName_ParentPrefixes 
+create view CK.vResNameParentPrefixes 
 as 
 	select  r.ResId,
 			r.ResName,

@@ -10,10 +10,10 @@ using System.Threading.Tasks;
 namespace CK.DB.Res.ResName
 {
     [SqlTable( "tResName", Package = typeof( Package ) )]
-    [Versions( "1.0.0" )]
+    [Versions( "1.0.0, 1.0.1" )]
     [SqlObjectItem( "transform:vRes, transform:sResDestroy" )]
     [SqlObjectItem( "fResNamePrefixes" )]
-    [SqlObjectItem( "vResName_AllChildren, vResName_DirectChildren, vResName_ParentPrefixes" )]
+    [SqlObjectItem( "vResNameAllChildren, vResNameDirectChildren, vResNameParentPrefixes" )]
     public abstract partial class ResNameTable : SqlTable
     {
         /// <summary>

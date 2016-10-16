@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace CK.DB.Culture
 {
     [SqlTable( "tLCID", Package = typeof( Package ) )]
-    [Versions( "1.0.1" )]
+    [Versions( "1.0.1, 1.0.2" )]
     [SqlObjectItem( "vLCID" )]
     public class LCIDTable : SqlTable
     {

@@ -13,6 +13,6 @@ returns table with schemabinding
 						select top(len(@ResName)) n = row_number() over (order by  (select null) desc)-1 from E2
 					) 
 		select	ParentLevel = row_number() over (order by  (select null) desc), 
-				ParentPrefix = SUBSTRING(@ResName, 0, len(@ResName)-T.n ) collate Latin1_General_BIN2
+				ParentPrefix = SUBSTRING(@ResName, 0, len(@ResName)-T.n ) collate Latin1_General_100_BIN2
 			from T
 			where len(@ResName) > 1 and SUBSTRING(@ResName, len(@ResName)-T.n, 1 ) = '.';
