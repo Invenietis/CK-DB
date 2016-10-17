@@ -10,6 +10,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CK.SqlServer.Setup;
 
 namespace CK.DB.HZone.Tests
 {
@@ -19,7 +20,7 @@ namespace CK.DB.HZone.Tests
         [TearDown]
         public void CheckCKCoreInvariant()
         {
-            TestHelper.StObjMap.Default.Obtain<ActorTable>().Database.AssertAllCKCoreInvariant();
+            TestHelper.StObjMap.Default.Obtain<SqlDefaultDatabase>().AssertCKCoreInvariants();
         }
 
         [Test]

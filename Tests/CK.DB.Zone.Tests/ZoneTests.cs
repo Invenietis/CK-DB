@@ -8,12 +8,19 @@ using CK.Core;
 using CK.DB.Actor;
 using CK.SqlServer;
 using NUnit.Framework;
+using CK.SqlServer.Setup;
 
 namespace CK.DB.Zone.Tests
 {
     [TestFixture]
     public class ZoneTests
     {
+        [TearDown]
+        public void CheckInvariants()
+        {
+            TestHelper.StObjMap.Default.Obtain<SqlDefaultDatabase>().AssertCKCoreInvariants();
+        }
+
         [Test]
         public void zone_0_and_1_can_not_be_destroyed()
         {
@@ -52,7 +59,7 @@ namespace CK.DB.Zone.Tests
                 int groupId1 = g.CreateGroup( ctx, zoneId );
                 int groupId2 = g.CreateGroup( ctx, zoneId );
 
-                int userId = u.CreateUser( ctx, 1, Guid.NewGuid().ToString("N") );
+                int userId = u.CreateUser( ctx, 1, Guid.NewGuid().ToString( "N" ) );
                 t.AddUser( ctx, 1, zoneId, userId );
                 g.AddUser( ctx, 1, groupId1, userId );
                 g.AddUser( ctx, 1, groupId2, userId );
@@ -186,6 +193,28 @@ namespace CK.DB.Zone.Tests
             }
         }
 
+        [Test]
+        public void when_a_group_is_moved_all_of_its_users_must_be_already_registered_in_the_target_zone()
+        {
+            var map = TestHelper.StObjMap;
+            var g = map.Default.Obtain<GroupTable>();
+            var z = map.Default.Obtain<ZoneTable>();
+            var u = map.Default.Obtain<UserTable>();
+            using( var ctx = new SqlStandardCallContext() )
+            {
+                int idUser = u.CreateUser( ctx, 1, Guid.NewGuid().ToString() );
+                int idGroup = g.CreateGroup( ctx, 1 );
+                int idZoneEmpty = z.CreateZone( ctx, 1 );
+                int idZoneOK = z.CreateZone( ctx, 1 );
 
+                g.AddUser( ctx, 1, idGroup, idUser );
+                z.AddUser( ctx, 1, idZoneOK, idUser );
+                // This works since the user is in the zone.
+                g.MoveGroup( ctx, 1, idGroup, idZoneOK );
+                // This does not.
+                g.MoveGroup( ctx, 1, idGroup, idZoneEmpty );
+                //Assert.Throws<SqlDetailedException>( () => g.MoveGroup( ctx, 1, idGroup, idZoneEmpty ) );
+            }
+        }
     }
 }

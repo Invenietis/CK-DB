@@ -11,7 +11,8 @@ using System.ComponentModel;
 
 namespace CK.DB.Zone
 {
-    [SqlTable( "tGroup", Package = typeof( Package ) ), Versions( "5.0.0" )]
+    [SqlTable( "tGroup", Package = typeof( Package ) )]
+    [Versions( "5.0.0, 5.0.1" )]
     [SqlObjectItem( "transform:sGroupUserRemove, transform:vGroup" )]
     public abstract partial class GroupTable : Actor.GroupTable
     {
