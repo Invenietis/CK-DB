@@ -14,7 +14,7 @@ namespace CK.DB.Zone
     public abstract partial class GroupTable 
     {
         [SqlProcedure( "sGroupMove" )]
-        public abstract void MoveGroup( ISqlCallContext ctx, int actorId, int groupId, int newZoneId );
+        public abstract void MoveGroup( ISqlCallContext ctx, int actorId, int groupId, int newZoneId, GroupMoveOption option = GroupMoveOption.None );
 
         [SqlProcedure( "transform:sGroupCreate" )]
         public abstract int CreateGroup( ISqlCallContext ctx, int actorId, int zoneId );

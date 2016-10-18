@@ -108,7 +108,7 @@ namespace CK.DB.Zone.Tests
         }
 
         [Test]
-        public void destroying_a_zone_that_has_a_group_is_an_error_by_default_ie_when_ForceDestroy_is_false()
+        public void by_default_destroying_a_zone_that_has_a_group_is_an_error_ie_when_ForceDestroy_is_false()
         {
             var p = TestHelper.StObjMap.Default.Obtain<Zone.Package>();
             using( var ctx = new SqlStandardCallContext() )
@@ -194,7 +194,7 @@ namespace CK.DB.Zone.Tests
         }
 
         [Test]
-        public void when_a_group_is_moved_all_of_its_users_must_be_already_registered_in_the_target_zone()
+        public void by_default_when_a_group_is_moved_all_of_its_users_must_be_already_registered_in_the_target_zone()
         {
             var map = TestHelper.StObjMap;
             var g = map.Default.Obtain<GroupTable>();
@@ -209,12 +209,85 @@ namespace CK.DB.Zone.Tests
 
                 g.AddUser( ctx, 1, idGroup, idUser );
                 z.AddUser( ctx, 1, idZoneOK, idUser );
-                // This works since the user is in the zone.
+                // This works since the user is in the zoneOK.
                 g.MoveGroup( ctx, 1, idGroup, idZoneOK );
-                // This does not.
-                g.MoveGroup( ctx, 1, idGroup, idZoneEmpty );
-                //Assert.Throws<SqlDetailedException>( () => g.MoveGroup( ctx, 1, idGroup, idZoneEmpty ) );
+                // User is in the Group and in the ZoneOK.
+                u.Database.AssertScalarEquals( idUser, $"select ActorId from CK.tActorProfile where GroupId = {idGroup} and ActorId = {idUser}" );
+                u.Database.AssertScalarEquals( idUser, $"select ActorId from CK.tActorProfile where GroupId = {idZoneOK} and ActorId = {idUser}" );
+
+                // This does not: ZoneEmpty does not contain the user.
+                // This uses the default option: GroupMoveOption.None.
+                Assert.Throws<SqlDetailedException>( () => g.MoveGroup( ctx, 1, idGroup, idZoneEmpty ) );
+                // User is still in the Group.
+                u.Database.AssertScalarEquals( idUser, $"select ActorId from CK.tActorProfile where GroupId = {idGroup} and ActorId = {idUser}" );
+                // ...and still not in the ZoneEmpty.
+                u.Database.AssertEmptyReader( $"select ActorId from CK.tActorProfile where GroupId = {idZoneEmpty} and ActorId = {idUser}" );
             }
         }
+
+        [Test]
+        public void with_option_Intersect_when_a_group_is_moved_its_users_not_already_registered_in_the_target_zone_are_removed()
+        {
+            var map = TestHelper.StObjMap;
+            var g = map.Default.Obtain<GroupTable>();
+            var z = map.Default.Obtain<ZoneTable>();
+            var u = map.Default.Obtain<UserTable>();
+            using( var ctx = new SqlStandardCallContext() )
+            {
+                int idUser = u.CreateUser( ctx, 1, Guid.NewGuid().ToString() );
+                int idGroup = g.CreateGroup( ctx, 1 );
+                int idZoneEmpty = z.CreateZone( ctx, 1 );
+                int idZoneOK = z.CreateZone( ctx, 1 );
+
+                g.AddUser( ctx, 1, idGroup, idUser );
+                z.AddUser( ctx, 1, idZoneOK, idUser );
+                // This works since the user is in the zoneOK (Intersect does nothing).
+                g.MoveGroup( ctx, 1, idGroup, idZoneOK, GroupMoveOption.Intersect );
+                // User is in the Group and in the ZoneOK.
+                u.Database.AssertScalarEquals( idUser, $"select ActorId from CK.tActorProfile where GroupId = {idGroup} and ActorId = {idUser}" );
+                u.Database.AssertScalarEquals( idUser, $"select ActorId from CK.tActorProfile where GroupId = {idZoneOK} and ActorId = {idUser}" );
+
+                // This does work... But the user is removed from the group
+                // to preserve the 'Group.UserNotInZone' invariant.
+                g.MoveGroup( ctx, 1, idGroup, idZoneEmpty, GroupMoveOption.Intersect );
+                // User is no more in the Group: it has been removed.
+                u.Database.AssertEmptyReader( $"select ActorId from CK.tActorProfile where GroupId = {idGroup} and ActorId = {idUser}" );
+                // ...and still not in the ZoneEmpty.
+                u.Database.AssertEmptyReader( $"select ActorId from CK.tActorProfile where GroupId = {idZoneEmpty} and ActorId = {idUser}" );
+            }
+        }
+
+        [Test]
+        public void with_option_AutoUserRegistration_when_a_group_is_moved_its_users_not_already_registered_in_the_target_zone_are_automatically_registered()
+        {
+            var map = TestHelper.StObjMap;
+            var g = map.Default.Obtain<GroupTable>();
+            var z = map.Default.Obtain<ZoneTable>();
+            var u = map.Default.Obtain<UserTable>();
+            using( var ctx = new SqlStandardCallContext() )
+            {
+                int idUser = u.CreateUser( ctx, 1, Guid.NewGuid().ToString() );
+                int idGroup = g.CreateGroup( ctx, 1 );
+                int idZoneEmpty = z.CreateZone( ctx, 1 );
+                int idZoneOK = z.CreateZone( ctx, 1 );
+
+                g.AddUser( ctx, 1, idGroup, idUser );
+                z.AddUser( ctx, 1, idZoneOK, idUser );
+                // This works since the user is in the zoneOK (Intersect does nothing).
+                g.MoveGroup( ctx, 1, idGroup, idZoneOK, GroupMoveOption.AutoUserRegistration );
+                // User is in the Group and in the ZoneOK.
+                u.Database.AssertScalarEquals( idUser, $"select ActorId from CK.tActorProfile where GroupId = {idGroup} and ActorId = {idUser}" );
+                u.Database.AssertScalarEquals( idUser, $"select ActorId from CK.tActorProfile where GroupId = {idZoneOK} and ActorId = {idUser}" );
+
+                // This does work: and the user is automatically added to the target Zone!
+                // (the 'Group.UserNotInZone' invariant is preserved).
+                g.MoveGroup( ctx, 1, idGroup, idZoneEmpty, GroupMoveOption.AutoUserRegistration );
+                // User is no more in the Group: it has been removed.
+                u.Database.AssertScalarEquals( idUser, $"select ActorId from CK.tActorProfile where GroupId = {idGroup} and ActorId = {idUser}" );
+                // ...and still not in the ZoneEmpty.
+                u.Database.AssertScalarEquals( idUser, $"select ActorId from CK.tActorProfile where GroupId = {idZoneEmpty} and ActorId = {idUser}" );
+            }
+        }
+
     }
 }

@@ -16,7 +16,7 @@ namespace CK.DB.Culture.Tests
     public class CultureTests
     {
         [Test]
-        public void French_and_English_are_defined_by_default_but_may_be_updated()
+        public void by_default_French_and_English_are_defined_but_may_be_updated()
         {
             var p = TestHelper.StObjMap.Default.Obtain<Package>();
             using( var ctx = new SqlStandardCallContext() )

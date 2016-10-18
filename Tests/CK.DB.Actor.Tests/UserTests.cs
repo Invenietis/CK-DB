@@ -46,7 +46,7 @@ namespace CK.DB.Actor.Tests
         }
 
         [Test]
-        public void UserName_is_not_set_by_default_if_another_user_exists_with_the_same_UserName()
+        public void UserName_is_not_set_if_another_user_exists_with_the_same_UserName()
         {
             var u = TestHelper.StObjMap.Default.Obtain<UserTable>();
 

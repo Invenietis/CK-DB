@@ -55,7 +55,7 @@ namespace CK.DB.Actor.Tests
         }
 
         [Test]
-        public void groups_can_not_be_destroyed_when_users_exist_by_default()
+        public void by_default_groups_can_not_be_destroyed_when_users_exist()
         {
             var map = TestHelper.StObjMap;
             var g = map.Default.Obtain<GroupTable>();
