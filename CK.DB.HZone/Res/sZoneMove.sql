@@ -4,6 +4,7 @@ create procedure CK.sZoneMove
 	@ActorId int,        
     @ZoneId int,  
     @NewParentZoneId int,
+ 	@Option int, -- not null enum { "None": 0, "Intersect": 1, "AutoUserRegistration": 2 }
     @NextSiblingId int = 0 
 )
 as begin
@@ -42,7 +43,7 @@ as begin
 
 	update CK.tZone set HierarchicalId = HierarchicalId.GetReparentedValue(@ZoneHId, @NewHId)
         where HierarchicalId.IsDescendantOf(@ZoneHId) = 1;
-	exec CK.sGroupMove @ActorId, @ZoneId, @NewParentZoneId;
+	exec CK.sGroupMove @ActorId, @ZoneId, @NewParentZoneId, @Option;
 
 	--<PostZoneMove />
 

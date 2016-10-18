@@ -17,7 +17,7 @@ begin
 	if @CurrentZoneId is not null and @CurrentZoneId <> @NewZoneId
 	begin
 
-		--<PreGroupMoveCheck revert />
+		--<PreCheckGroupMove revert />
 		if @Option = 0
 		begin
 			if exists( select p.ActorId from CK.tActorProfile p where p.GroupId = @GroupId and p.ActorId <> p.GroupId
@@ -52,7 +52,7 @@ begin
 			deallocate @CUserToRemove;
 		end
 		else throw 50000, 'ArgumentNotSupported', 1;
-		--<PostGroupMoveCheck />
+		--<PostCheckGroupMove />
 
 		--<PreGroupMove revert />
 
