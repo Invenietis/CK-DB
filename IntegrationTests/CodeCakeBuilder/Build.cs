@@ -44,7 +44,6 @@ namespace CodeCake
                 .IsDependentOn( "Restore-NuGet-Packages" )
                 .Does( () =>
                 {
-                    Cake.Information( "Building all existing .sln files at the root level with '{0}' configuration (excluding this builder application).", configuration );
                     using( var tempSln = Cake.CreateTemporarySolutionFile( solutionFile ) )
                     {
                         // Excludes "CodeCakeBuilder" itself from compilation!
@@ -56,7 +55,7 @@ namespace CodeCake
                 } );
 
             Task( "Unit-Testing" )
-               //.IsDependentOn( "Build" )
+               .IsDependentOn( "Build" )
                .Does( () =>
                {
                    var testDlls = solution.Projects

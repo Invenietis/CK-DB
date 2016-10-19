@@ -132,6 +132,7 @@ namespace CodeCake
 
             Task( "Unit-Testing" )
                .IsDependentOn( "Build" )
+                .WithCriteria( () => gitInfo.IsValidRelease )
                .Does( () =>
                {
                    var testDlls = solution.Projects
@@ -168,7 +169,8 @@ namespace CodeCake
                                             || Cake.ReadInteractiveOption( "Run integration tests?", 'Y', 'N' ) == 'Y' )
                     .Does( () =>
                     {
-                        var integration = Cake.ParseSolution( "IntegrationTests/IntegrationTests.sln" );
+                        var integrationSolution = "IntegrationTests/IntegrationTests.sln";
+                        var integration = Cake.ParseSolution( integrationSolution );
                         var packageConfigFiles = solution.Projects
                                                     .Where( p => p.Name != "CodeCakeBuilder" )
                                                     .Select( p => p.Path.GetDirectory().CombineWithFilePath( "packages.config" ).FullPath )
@@ -193,8 +195,13 @@ namespace CodeCake
                                 doc.Save( config );
                             }
                         }
-                        var bootstrap = Cake.Environment.WorkingDirectory.CombineWithFilePath( "IntegrationTests/CodeCakeBuilder/Bootstrap.ps1" );
-                        Cake.StartProcess( bootstrap );
+                        Cake.NuGetRestore( integrationSolution );
+                        Cake.MSBuild( "IntegrationTests/CodeCakeBuilder/CodeCakeBuilder.csproj", settings =>
+                        {
+                            settings.Configuration = configuration;
+                            settings.Verbosity = Verbosity.Minimal;
+                        } );
+                        Cake.StartProcess( $"IntegrationTests/CodeCakeBuilder/bin/{configuration}/CodeCakeBuilder.exe", "-" + InteractiveAliases.NoInteractionArgument );
                     } );
 
             Task( "Push-NuGet-Packages" )
