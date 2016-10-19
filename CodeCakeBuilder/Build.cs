@@ -171,7 +171,7 @@ namespace CodeCake
                     {
                         var integrationSolution = "IntegrationTests/IntegrationTests.sln";
                         var integration = Cake.ParseSolution( integrationSolution );
-                        var packageConfigFiles = solution.Projects
+                        var packageConfigFiles = integration.Projects
                                                     .Where( p => p.Name != "CodeCakeBuilder" )
                                                     .Select( p => p.Path.GetDirectory().CombineWithFilePath( "packages.config" ).FullPath )
                                                     .Where( p => System.IO.File.Exists( p ) );
@@ -183,7 +183,7 @@ namespace CodeCake
                             foreach( var p in doc.Root.Elements( "package" ) )
                             {
                                 if( projectNames.Contains( p.Attribute("id").Value ) 
-                                    && p.Attribute( "id" ).Value != gitInfo.NuGetVersion )
+                                    && p.Attribute( "version" ).Value != gitInfo.NuGetVersion )
                                 {
                                     p.SetAttributeValue( "version", gitInfo.NuGetVersion );
                                     ++countRef;
@@ -244,7 +244,7 @@ namespace CodeCake
                         }
                     } );
 
-            //Task( "Default" ).IsDependentOn( "Push-NuGet-Packages" );
+            //Task( "Default" ).IsDependentOn( "Run-IntegrationTests" );
             Task( "Default" ).IsDependentOn( "Push-NuGet-Packages" );
         }
 
