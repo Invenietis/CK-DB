@@ -14,8 +14,8 @@
     </description>
     <language>en-US</language>
     <dependencies>
+      <dependency id="CK.DB.Acl.AclType" version="$version$" />
       <dependency id="CK.DB.Acl.Tests" version="$version$" />
-      <dependency id="CK.DB.Actor.Tests" version="$version$" />
     </dependencies>
   </metadata>
   <files>
