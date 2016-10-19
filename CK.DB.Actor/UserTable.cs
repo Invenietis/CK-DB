@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace CK.DB.Actor
 {
     [SqlTable( "tUser", Package = typeof( Package ) )]
-    [Versions( "5.0.0, 5.0.1" )]
+    [Versions( "5.0.0, 5.0.1, 5.0.2" )]
     [SqlObjectItem( "vUser" )]
     public abstract partial class UserTable : SqlTable
     {
