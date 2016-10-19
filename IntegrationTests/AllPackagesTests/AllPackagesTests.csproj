@@ -42,8 +42,52 @@
       <HintPath>..\..\packages\CK.Core.5.0.0\lib\net45\CK.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="CK.DB.Acl, Version=1.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
+      <HintPath>..\packages\CK.DB.Acl.1.0.0-b04-00-develop-0001\lib\net45\CK.DB.Acl.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="CK.DB.Acl.AclType.Tests, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\CK.DB.Acl.AclType.Tests.1.0.0-b04-00-develop-0001\lib\net45\CK.DB.Acl.AclType.Tests.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="CK.DB.Acl.Tests, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\CK.DB.Acl.Tests.1.0.0-b04-00-develop-0001\lib\net45\CK.DB.Acl.Tests.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="CK.DB.Actor, Version=1.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
+      <HintPath>..\packages\CK.DB.Actor.1.0.0-b04-00-develop-0001\lib\net45\CK.DB.Actor.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="CK.DB.Actor.Tests, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\CK.DB.Actor.Tests.1.0.0-b04-00-develop-0001\lib\net45\CK.DB.Actor.Tests.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="CK.DB.Group.SimpleNaming, Version=1.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
+      <HintPath>..\packages\CK.DB.Group.SimpleNaming.1.0.0-b04-00-develop-0001\lib\net45\CK.DB.Group.SimpleNaming.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="CK.DB.Group.SimpleNaming.Tests, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\CK.DB.Group.SimpleNaming.Tests.1.0.0-b04-00-develop-0001\lib\net45\CK.DB.Group.SimpleNaming.Tests.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="CK.DB.Tests.NUnit, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\CK.DB.Tests.NUnit.5.0.0-a24\lib\net45\CK.DB.Tests.NUnit.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="CK.DB.Zone, Version=1.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
+      <HintPath>..\packages\CK.DB.Zone.1.0.0-b04-00-develop-0001\lib\net45\CK.DB.Zone.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="CK.DB.Zone.SimpleNaming, Version=1.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
+      <HintPath>..\packages\CK.DB.Zone.SimpleNaming.1.0.0-b04-00-develop-0001\lib\net45\CK.DB.Zone.SimpleNaming.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="CK.DB.Zone.SimpleNaming.Tests, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\CK.DB.Zone.SimpleNaming.Tests.1.0.0-b04-00-develop-0001\lib\net45\CK.DB.Zone.SimpleNaming.Tests.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="CK.DB.Zone.Tests, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\CK.DB.Zone.Tests.1.0.0-b04-00-develop-0001\lib\net45\CK.DB.Zone.Tests.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.Monitoring, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
@@ -136,7 +180,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
+    <Compile Include="DBSetup.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

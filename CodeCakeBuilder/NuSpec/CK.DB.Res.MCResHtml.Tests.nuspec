@@ -14,7 +14,7 @@
     </description>
     <language>en-US</language>
     <dependencies>
-      <dependency id="CK.DB.MCResHtml" version="$version$" />
+      <dependency id="CK.DB.Res.MCResHtml" version="$version$" />
       <dependency id="CK.DB.Culture.Tests" version="$version$" />
       <dependency id="CK.DB.Res.Tests" version="$version$" />
     </dependencies>
