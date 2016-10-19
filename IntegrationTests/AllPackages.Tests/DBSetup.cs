@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AllPackagesTests
+namespace AllPackages.Tests
 {
     [TestFixture]
     public class DBSetup : CK.DB.Tests.DBSetup

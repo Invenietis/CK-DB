@@ -15,7 +15,7 @@
     <language>en-US</language>
     <dependencies>
       <dependency id="CK.DB.Culture" version="$version$" />
-      <dependency id="CK.DB.Tests.NUnit" version="5.0.0-a24" />
+      <dependency id="CK.DB.Tests.NUnit" version="{{CKDatabaseVersion}}" />
     </dependencies>
   </metadata>
   <files>
