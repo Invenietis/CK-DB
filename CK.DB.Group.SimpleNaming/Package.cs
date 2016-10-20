@@ -9,6 +9,11 @@ using System.Threading.Tasks;
 
 namespace CK.DB.Group.SimpleNaming
 {
+    /// <summary>
+    /// This package adds a unique GroupName column to the <see cref="Actor.GroupTable"/> table.
+    /// Group names are automatically numbered on clashes up to the <see cref="MaxClashNumber"/>
+    /// limit.
+    /// </summary>
     [SqlPackage( ResourcePath = "Res", Schema = "CK" )]
     [Versions( "1.0.0,1.0.1" )]
     [SqlObjectItem( "transform:vGroup" )]

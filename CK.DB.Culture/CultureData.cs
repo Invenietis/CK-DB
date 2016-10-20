@@ -56,12 +56,12 @@ namespace CK.DB.Culture
         public string Name { get; }
 
         /// <summary>
-        /// Gets or sets the english name, ie. "French".
+        /// Gets the english name, ie. "French".
         /// </summary>
         public string EnglishName { get; }
 
         /// <summary>
-        /// Gets or sets the native name, ie. "Français".
+        /// Gets the native name, ie. "Français".
         /// </summary>
         public string NativeName { get; }
     }

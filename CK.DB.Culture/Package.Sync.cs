@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 
 namespace CK.DB.Culture
 {
-    [SqlPackage( Schema = "CK", ResourcePath = "Res" )]
     public abstract partial class Package : SqlPackage
     {
         /// <summary>
@@ -49,6 +48,12 @@ namespace CK.DB.Culture
             SetLCIDFallbaks( ctx, lcid, string.Join( ",", fallbacks ) );
         }
 
+        /// <summary>
+        /// Protected.
+        /// </summary>
+        /// <param name="ctx"></param>
+        /// <param name="lcid"></param>
+        /// <param name="fallbacksLCID"></param>
         [SqlProcedure( "sCultureFallbackSet" )]
         internal protected abstract void SetLCIDFallbaks( ISqlCallContext ctx, int lcid, string fallbacksLCID );
 

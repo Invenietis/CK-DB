@@ -38,6 +38,7 @@ begin
 		on target.XLCID = @LCID and target.LCID = source.LCID
 		when matched then update set Idx = source.Idx
 		when not matched then insert( XLCID, Idx, LCID ) values( @LCID, source.Idx, source.LCID );
+
 	--[endsp]
 end
 

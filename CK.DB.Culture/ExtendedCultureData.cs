@@ -42,7 +42,7 @@ namespace CK.DB.Culture
         /// <summary>
         /// Gets the extended culture identifier. Always greater than 0 and not equal to 0xFFFF. 
         /// </summary>
-        public int XLCID { get; set; }
+        public int XLCID { get; }
 
         /// <summary>
         /// Gets the primary culture: it is the first of the <see cref="Fallbacks"/>.

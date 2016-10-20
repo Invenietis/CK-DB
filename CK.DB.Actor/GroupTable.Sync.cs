@@ -16,7 +16,8 @@ namespace CK.DB.Actor
         /// Creates a new Group.
         /// </summary>
         /// <param name="ctx">The call context.</param>
-        /// <returns>The new group identifier.</returns>
+        /// <param name="actorId">The acting actor identifier.</param>
+        /// <returns>A new group identifier.</returns>
         [SqlProcedure( "sGroupCreate" )]
         public abstract int CreateGroup( ISqlCallContext ctx, int actorId );
 
@@ -25,7 +26,7 @@ namespace CK.DB.Actor
         /// Idempotent.
         /// </summary>
         /// <param name="ctx">The call context.</param>
-        /// <param name="actorId">The actor identifier.</param>
+        /// <param name="actorId">The acting actor identifier.</param>
         /// <param name="groupId">
         /// The group identifier to destroy. 
         /// If <paramref name="forceDestroy"/> if false, it must be empty otherwise an exception is thrown.
@@ -39,6 +40,7 @@ namespace CK.DB.Actor
         /// Idempotent.
         /// </summary>
         /// <param name="ctx">The call context.</param>
+        /// <param name="actorId">The acting actor identifier.</param>
         /// <param name="groupId">The group identifier.</param>
         /// <param name="userId">The user identifier to add.</param>
         [SqlProcedure( "sGroupUserAdd" )]
@@ -49,6 +51,7 @@ namespace CK.DB.Actor
         /// Idempotent.
         /// </summary>
         /// <param name="ctx">The call context.</param>
+        /// <param name="actorId">The acting actor identifier.</param>
         /// <param name="groupId">The group identifier.</param>
         /// <param name="userId">The user identifier to remove.</param>
         [SqlProcedure( "sGroupUserRemove" )]
@@ -59,7 +62,8 @@ namespace CK.DB.Actor
         /// Idempotent.
         /// </summary>
         /// <param name="ctx">The call context.</param>
-        /// <param name="groupId">The group identifier.</param>
+        /// <param name="actorId">The acting actor identifier.</param>
+        /// <param name="groupId">The group identifier to clear.</param>
         [SqlProcedure( "sGroupRemoveAllUsers" )]
         public abstract void RemoveAllUsers( ISqlCallContext ctx, int actorId, int groupId );
 

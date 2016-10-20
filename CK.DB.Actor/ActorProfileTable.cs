@@ -8,6 +8,9 @@ using CK.SqlServer.Setup;
 
 namespace CK.DB.Actor
 {
+    /// <summary>
+    /// Internal Actor x Group relation.
+    /// </summary>
     [SqlTable( "tActorProfile", Package = typeof( Package ) )]
     [Versions( "5.0.0" )]
     public abstract class ActorProfileTable : SqlTable
