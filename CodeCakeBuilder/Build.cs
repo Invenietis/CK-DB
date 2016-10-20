@@ -19,6 +19,7 @@ using Cake.Common.Text;
 using Cake.Core.IO;
 using System.Diagnostics;
 using System.Xml.Linq;
+using System.Reflection;
 
 namespace CodeCake
 {
@@ -67,7 +68,7 @@ namespace CodeCake
                 var multiVersions = byPackage.Where( g => g.GroupBy( x => x.Version ).Count() > 1 );
                 if( multiVersions.Any() )
                 {
-                    var conflicts = multiVersions.Select( e => Environment.NewLine + " - " + e.Key + ":" + Environment.NewLine + "    - " + string.Join( Environment.NewLine + "    - ", e.GroupBy( x => x.Version ).Select( x => x.Key + " in " + string.Join(", ", x.Select( xN => xN.ProjectName ) ) ) ) );
+                    var conflicts = multiVersions.Select( e => Environment.NewLine + " - " + e.Key + ":" + Environment.NewLine + "    - " + string.Join( Environment.NewLine + "    - ", e.GroupBy( x => x.Version ).Select( x => x.Key + " in " + string.Join( ", ", x.Select( xN => xN.ProjectName ) ) ) ) );
                     Cake.TerminateWithError( $"Dependency versions differ for:{Environment.NewLine}{string.Join( Environment.NewLine, conflicts )}" );
                 }
             } );
@@ -163,49 +164,94 @@ namespace CodeCake
                 } );
 
             Task( "Run-IntegrationTests" )
-                    .IsDependentOn( "Create-NuGet-Packages" )
-                    .WithCriteria( () => gitInfo.IsValid )
-                    .WithCriteria( () => !Cake.IsInteractiveMode() 
-                                            || Cake.ReadInteractiveOption( "Run integration tests?", 'Y', 'N' ) == 'Y' )
-                    .Does( () =>
+        .IsDependentOn( "Create-NuGet-Packages" )
+        .WithCriteria( () => gitInfo.IsValid )
+        .WithCriteria( () => !Cake.IsInteractiveMode()
+                                || Cake.ReadInteractiveOption( "Run integration tests?", 'Y', 'N' ) == 'Y' )
+        .Does( () =>
+        {
+            var integrationSolution = "IntegrationTests/IntegrationTests.sln";
+            var integration = Cake.ParseSolution( integrationSolution );
+            var projects = integration.Projects
+                                        .Where( p => p.Name != "CodeCakeBuilder" )
+                                        .Select( p => new
+                                        {
+                                            CSProj = p.Path.FullPath,
+                                            ConfigFile = p.Path.GetDirectory().CombineWithFilePath( "packages.config" ).FullPath
+                                        } )
+                                        .Where( p => System.IO.File.Exists( p.ConfigFile ) );
+            var projectNames = new HashSet<string>( solution.Projects.Select( pub => pub.Name ) );
+            foreach( var config in projects.Select( p => p.ConfigFile ) )
+            {
+                XDocument doc = XDocument.Load( config );
+                int countRef = 0;
+                foreach( var p in doc.Root.Elements( "package" ) )
+                {
+                    if( projectNames.Contains( p.Attribute( "id" ).Value )
+                        && p.Attribute( "version" ).Value != gitInfo.NuGetVersion )
                     {
-                        var integrationSolution = "IntegrationTests/IntegrationTests.sln";
-                        var integration = Cake.ParseSolution( integrationSolution );
-                        var packageConfigFiles = integration.Projects
-                                                    .Where( p => p.Name != "CodeCakeBuilder" )
-                                                    .Select( p => p.Path.GetDirectory().CombineWithFilePath( "packages.config" ).FullPath )
-                                                    .Where( p => System.IO.File.Exists( p ) );
-                        var projectNames = new HashSet<string>( solution.Projects.Select( pub => pub.Name ) );
-                        foreach( var config in packageConfigFiles )
-                        {
-                            XDocument doc = XDocument.Load( config );
-                            int countRef = 0;
-                            foreach( var p in doc.Root.Elements( "package" ) )
-                            {
-                                if( projectNames.Contains( p.Attribute("id").Value ) 
-                                    && p.Attribute( "version" ).Value != gitInfo.NuGetVersion )
-                                {
-                                    p.SetAttributeValue( "version", gitInfo.NuGetVersion );
-                                    ++countRef;
-                                }
-                            }
-                            if( countRef > 0 )
-                            {
-                                Cake.Information( $"Updated {countRef} in file {config}." );
-                                doc.Save( config );
-                            }
-                        }
-                        Cake.NuGetRestore( integrationSolution );
-                        Cake.MSBuild( "IntegrationTests/CodeCakeBuilder/CodeCakeBuilder.csproj", settings =>
-                        {
-                            settings.Configuration = configuration;
-                            settings.Verbosity = Verbosity.Minimal;
-                        } );
-                        if( Cake.StartProcess( $"IntegrationTests/CodeCakeBuilder/bin/{configuration}/CodeCakeBuilder.exe", "-" + InteractiveAliases.NoInteractionArgument ) != 0 )
-                        {
-                            Cake.TerminateWithError( "Error in IntegrationTests." );
-                        }
-                    } );
+                        p.SetAttributeValue( "version", gitInfo.NuGetVersion );
+                        ++countRef;
+                    }
+                }
+                if( countRef > 0 )
+                {
+                    Cake.Information( $"Updated {countRef} in file {config}." );
+                    doc.Save( config );
+                }
+            }
+            XNamespace msBuild = "http://schemas.microsoft.com/developer/msbuild/2003";
+            foreach( var csproj in projects.Select( p => p.CSProj ) )
+            {
+                XDocument doc = XDocument.Load( csproj );
+                int countRef = 0;
+                var projection = doc.Root.Descendants( msBuild + "Reference" )
+                                        .Select( e => new
+                                        {
+                                            Reference = e,
+                                            IncludeAttr = e.Attribute( "Include" ),
+                                            HintPathElement = e.Element( msBuild + "HintPath" ),
+                                        } );
+                var filtered = projection.Where( e => e.HintPathElement != null
+                                                        && e.IncludeAttr != null
+                                                        && e.HintPathElement.Value.StartsWith( @"..\packages\" ) );
+                var final = filtered.Select( e => new
+                {
+                    E = e,
+                    ProjectName = new AssemblyName( e.IncludeAttr.Value ).Name
+                } )
+                                     .Where( e => projectNames.Contains( e.ProjectName ) );
+
+                foreach( var p in final )
+                {
+                    var path = p.E.HintPathElement.Value.Split( '\\' );
+                    var newFolder = p.ProjectName + '.' + gitInfo.NuGetVersion;
+                    if( path[2] != newFolder )
+                    {
+                        path[2] = newFolder;
+                        p.E.HintPathElement.Value = string.Join( "\\", path );
+                        ++countRef;
+                    }
+                }
+                if( countRef > 0 )
+                {
+                    Cake.Information( $"Updated {countRef} references in file {csproj}." );
+                    doc.Save( csproj );
+                }
+            }
+
+            Cake.NuGetRestore( integrationSolution );
+            Cake.MSBuild( "IntegrationTests/CodeCakeBuilder/CodeCakeBuilder.csproj", settings =>
+            {
+                settings.Configuration = configuration;
+                settings.Verbosity = Verbosity.Minimal;
+            } );
+            if( Cake.StartProcess( $"IntegrationTests/CodeCakeBuilder/bin/{configuration}/CodeCakeBuilder.exe", "-" + InteractiveAliases.NoInteractionArgument ) != 0 )
+            {
+                Cake.TerminateWithError( "Error in IntegrationTests." );
+            }
+        } );
+
 
             Task( "Push-NuGet-Packages" )
                     .IsDependentOn( "Create-NuGet-Packages" )
@@ -236,8 +282,8 @@ namespace CodeCake
                             }
                             else
                             {
-                            // An alpha, beta, delta, epsilon, gamma, kappa goes to invenietis-preview.
-                            PushNuGetPackages( "MYGET_PREVIEW_API_KEY", "https://www.myget.org/F/invenietis-preview/api/v2/package", nugetPackages );
+                                // An alpha, beta, delta, epsilon, gamma, kappa goes to invenietis-preview.
+                                PushNuGetPackages( "MYGET_PREVIEW_API_KEY", "https://www.myget.org/F/invenietis-preview/api/v2/package", nugetPackages );
                             }
                         }
                         else
@@ -247,7 +293,6 @@ namespace CodeCake
                         }
                     } );
 
-            //Task( "Default" ).IsDependentOn( "Run-IntegrationTests" );
             Task( "Default" ).IsDependentOn( "Push-NuGet-Packages" );
         }
 
