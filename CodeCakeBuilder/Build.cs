@@ -201,7 +201,10 @@ namespace CodeCake
                             settings.Configuration = configuration;
                             settings.Verbosity = Verbosity.Minimal;
                         } );
-                        Cake.StartProcess( $"IntegrationTests/CodeCakeBuilder/bin/{configuration}/CodeCakeBuilder.exe", "-" + InteractiveAliases.NoInteractionArgument );
+                        if( Cake.StartProcess( $"IntegrationTests/CodeCakeBuilder/bin/{configuration}/CodeCakeBuilder.exe", "-" + InteractiveAliases.NoInteractionArgument ) != 0 )
+                        {
+                            Cake.TerminateWithError( "Error in IntegrationTests." );
+                        }
                     } );
 
             Task( "Push-NuGet-Packages" )
