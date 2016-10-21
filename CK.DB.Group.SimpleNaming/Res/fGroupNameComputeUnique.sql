@@ -8,7 +8,7 @@ create Function CK.fGroupNameComputeUnique
 		@GroupId	int,
 		@GroupName	nvarchar(128)
 	)
-returns nvarchar(128) with SCHEMABINDING
+returns nvarchar(128) -- with SCHEMABINDING
 as 
 begin
 	if not exists( select '?' 

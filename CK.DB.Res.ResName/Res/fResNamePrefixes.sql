@@ -2,7 +2,7 @@
 -- Inline Table Value Function (ITVF) version to get the parent ResNames from a ResName.
 -- This is the fastest implementation I can achieve.
 create function CK.fResNamePrefixes( @ResName varchar(128) )
-returns table with schemabinding
+returns table -- with schemabinding
  return
 		with E1(n) as ( select 1 union all select 1 union all select 1 union all select 1 union all
 						select 1 union all select 1 union all select 1 union all select 1 union all 

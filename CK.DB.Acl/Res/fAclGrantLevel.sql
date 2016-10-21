@@ -4,7 +4,7 @@ create function CK.fAclGrantLevel
     @ActorId int,
     @AclId int
 )
-returns tinyint with SCHEMABINDING
+returns tinyint -- with SCHEMABINDING
 as begin
 	return IsNull( -- Is the actor the system or a member of the system group?
 			(select 127 from CK.tActorProfile with(nolock) 

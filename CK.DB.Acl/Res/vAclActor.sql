@@ -1,6 +1,6 @@
 -- SetupConfig: {}
 -- Kernel view for Acl that evaluates for each Actor and each Acl the resulting GrantLevel.
-alter view CK.vAclActor with SCHEMABINDING
+alter view CK.vAclActor -- with SCHEMABINDING
 as
 	select 	
 		acl.AclId,

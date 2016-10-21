@@ -2,7 +2,7 @@
 -- Kernel Acl view that gives for each Actor and each Acl the ActorId (GroupId or UserId) that
 -- is responsible for the actual GrantLevel.
 -- The ReasonId (that is the ActorId) is positive for a Grant and negative for a Deny.
-alter view CK.vAclActorReason with SCHEMABINDING
+alter view CK.vAclActorReason -- with SCHEMABINDING
 as
 	select 	acl.AclId,
 		ActorId = a.ActorId, 
