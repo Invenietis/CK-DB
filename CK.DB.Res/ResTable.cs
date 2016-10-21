@@ -9,6 +9,10 @@ using System.Threading.Tasks;
 
 namespace CK.DB.Res
 {
+    /// <summary>
+    /// This table holds the resource name.
+    /// Resource names implement a path-based hierarchy.
+    /// </summary>
     [SqlTable( "tRes", Package = typeof( Package ) )]
     [Versions( "1.0.0" )]
     [SqlObjectItem( "vRes" )]

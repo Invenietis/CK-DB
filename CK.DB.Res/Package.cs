@@ -8,11 +8,14 @@ using System.Threading.Tasks;
 
 namespace CK.DB.Res
 {
+    /// <summary>
+    /// This package brings in the fundamental resource table.
+    /// </summary>
     [SqlPackage( Schema = "CK", ResourcePath = "Res" )]
     public class Package : SqlPackage
     {
         /// <summary>
-        /// Gets the tRes table from this package.
+        /// Gets the CK.tRes table from this package.
         /// </summary>
         [InjectContract]
         public ResTable ResTable { get; protected set; }

@@ -85,6 +85,13 @@ namespace CK.DB.Culture
             return AssumeXLCIDAsync( ctx, string.Join( ",", fallbacks ), allowLCIDMapping );
         }
 
+        /// <summary>
+        /// Protected method: <see cref="AssumeXLCIDAsync(ISqlCallContext, IEnumerable{int}, bool)"/> does the job.
+        /// </summary>
+        /// <param name="ctx"></param>
+        /// <param name="fallbacksLCID"></param>
+        /// <param name="allowLCIDMapping"></param>
+        /// <returns></returns>
         [SqlProcedure( "sCultureAssumeXLCID" )]
         internal protected abstract Task<int> AssumeXLCIDAsync( ISqlCallContext ctx, string fallbacksLCID, bool allowLCIDMapping );
 

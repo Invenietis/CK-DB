@@ -74,7 +74,7 @@ namespace CK.DB.HZone
         /// <param name="actorId">The acting actor identifier.</param>
         /// <param name="zoneId">The Zone identifier to move.</param>
         /// <param name="newParentZoneId">The target Zone identifier.</param>
-        /// <param name="option">Options that control the move. See <see cref="GroupMoveOption"/>.</param>
+        /// <param name="option">Options that control the move. See <see cref="Zone.GroupMoveOption"/>.</param>
         /// <param name="nextSiblingId">
         /// Optional identifier of a child zone in the target zone.
         /// When not specified, the zone is moved at the end of the existing child ot the target zone.

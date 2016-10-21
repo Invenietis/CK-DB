@@ -77,6 +77,13 @@ namespace CK.DB.Culture
             return AssumeXLCID( ctx, string.Join( ",", fallbacks ), allowLCIDMapping );
         }
 
+        /// <summary>
+        /// Protected method: <see cref="AssumeXLCIDAsync(ISqlCallContext, IEnumerable{int}, bool)"/> does the job.
+        /// </summary>
+        /// <param name="ctx"></param>
+        /// <param name="fallbacksLCID"></param>
+        /// <param name="allowLCIDMapping"></param>
+        /// <returns></returns>
         [SqlProcedure( "sCultureAssumeXLCID" )]
         internal protected abstract int AssumeXLCID( ISqlCallContext ctx, string fallbacksLCID, bool allowLCIDMapping );
 
@@ -102,7 +109,7 @@ namespace CK.DB.Culture
         /// Gets the <see cref="ExtendedCultureData"/> for a given extended culture identifier.
         /// </summary>
         /// <param name="ctx">The call context to use.</param>
-        /// <param name="lcid">The extended culture identifier (greater than 0 and not equal to 0xFFFF).</param>
+        /// <param name="xlcid">The extended culture identifier (greater than 0 and not equal to 0xFFFF).</param>
         /// <returns>The extended culture data or null.</returns>
         public ExtendedCultureData GetExtendedCulture( ISqlCallContext ctx, int xlcid )
         {

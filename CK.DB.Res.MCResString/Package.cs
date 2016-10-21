@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace CK.DB.Res.MCResString
 {
+    /// <summary>
+    /// Package that brings in string value (type is nvarchar(400)) for resources and cultures. 
+    /// </summary>
     [SqlPackage( Schema = "CK", ResourcePath = "Res" )]
     public class Package : SqlPackage
     {

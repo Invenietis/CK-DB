@@ -187,11 +187,22 @@ namespace CodeCake
                 int countRef = 0;
                 foreach( var p in doc.Root.Elements( "package" ) )
                 {
-                    if( projectNames.Contains( p.Attribute( "id" ).Value )
-                        && p.Attribute( "version" ).Value != gitInfo.NuGetVersion )
+                    string packageName = p.Attribute( "id" ).Value;
+                    if( projectNames.Contains( packageName ) )
                     {
-                        p.SetAttributeValue( "version", gitInfo.NuGetVersion );
-                        ++countRef;
+                        if( p.Attribute( "version" ).Value != gitInfo.NuGetVersion )
+                        {
+                            p.SetAttributeValue( "version", gitInfo.NuGetVersion );
+                            ++countRef;
+                        }
+                        else
+                        {
+                            // Removes the corresponding package directory otherwise since the version did not change,
+                            // the possibly new packages content are not restored.
+                            string toRemove = "IntegrationTests/packages/" + packageName + "." + gitInfo.NuGetVersion;
+                            Cake.Information( "Removing " + toRemove );
+                            Cake.DeleteDirectory( toRemove, true );
+                        }
                     }
                 }
                 if( countRef > 0 )
@@ -216,11 +227,11 @@ namespace CodeCake
                                                         && e.IncludeAttr != null
                                                         && e.HintPathElement.Value.StartsWith( @"..\packages\" ) );
                 var final = filtered.Select( e => new
-                {
-                    E = e,
-                    ProjectName = new AssemblyName( e.IncludeAttr.Value ).Name
-                } )
-                                     .Where( e => projectNames.Contains( e.ProjectName ) );
+                                {
+                                    E = e,
+                                    ProjectName = new AssemblyName( e.IncludeAttr.Value ).Name
+                                } )
+                                .Where( e => projectNames.Contains( e.ProjectName ) );
 
                 foreach( var p in final )
                 {

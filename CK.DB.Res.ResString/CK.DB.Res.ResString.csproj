@@ -77,6 +77,7 @@
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Package.cs" />
+    <Compile Include="ResStringTable.Sync.cs" />
     <Compile Include="ResStringTable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

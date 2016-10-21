@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace CK.DB.Res.MCResHtml
 {
+    /// <summary>
+    /// Package that brings in html value (type is nvarchar(max)) for resources and cultures. 
+    /// </summary>
     [SqlPackage( Schema = "CK", ResourcePath = "Res" )]
     public class Package : SqlPackage
     {

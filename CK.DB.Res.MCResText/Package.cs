@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace CK.DB.Res.MCResText
 {
+    /// <summary>
+    /// This package brings culture support (XLCID and LCID).
+    /// </summary>
     [SqlPackage( Schema = "CK", ResourcePath = "Res" )]
     public class Package : SqlPackage
     {

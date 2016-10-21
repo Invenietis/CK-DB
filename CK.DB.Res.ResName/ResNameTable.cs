@@ -9,6 +9,10 @@ using System.Threading.Tasks;
 
 namespace CK.DB.Res.ResName
 {
+    /// <summary>
+    /// This table holds the resource name.
+    /// Resource names implement a path-based hierarchy.
+    /// </summary>
     [SqlTable( "tResName", Package = typeof( Package ) )]
     [Versions( "1.0.0, 1.0.1" )]
     [SqlObjectItem( "transform:vRes, transform:sResDestroy" )]
@@ -62,7 +66,7 @@ namespace CK.DB.Res.ResName
 
         /// <summary>
         /// Destroys all ressources which ResName start with <paramref name="resNamePrefix"/> + '.'.
-        /// Since this method works on resource name, <paramref param name="resNameOnly"/> defaults to true
+        /// Since this method works on resource name, <paramref name="resNameOnly"/> defaults to true
         /// but this can be applied to the whole resources.
         /// </summary>
         /// <param name="ctx">The call context.</param>

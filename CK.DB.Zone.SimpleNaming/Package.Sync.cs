@@ -29,7 +29,7 @@ namespace CK.DB.Zone.SimpleNaming
         /// <summary>
         /// Checks a new group name in a Zone by returning it unchanged
         /// or an automatically suffixed version " (1)", " (2)", etc. if name already exists
-        /// up to <see cref="MaxClashNumber"/>.
+        /// up to <see cref="Group.SimpleNaming.Package.MaxClashNumber"/>.
         /// </summary>
         /// <param name="ctx">The call context.</param>
         /// <param name="zoneId">The zone identifier (the parent) of the future group.</param>

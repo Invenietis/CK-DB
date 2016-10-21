@@ -76,6 +76,7 @@
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="MCResHtmlTable.Sync.cs" />
     <Compile Include="Package.cs" />
     <Compile Include="MCResHtmlTable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

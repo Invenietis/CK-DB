@@ -78,6 +78,7 @@
     </Compile>
     <Compile Include="Package.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ResTextTable.Sync.cs" />
     <Compile Include="ResTextTable.cs" />
   </ItemGroup>
   <ItemGroup>

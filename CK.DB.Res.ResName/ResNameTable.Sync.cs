@@ -54,7 +54,7 @@ namespace CK.DB.Res.ResName
 
         /// <summary>
         /// Destroys all ressources which ResName start with <paramref name="resNamePrefix"/> + '.'.
-        /// Since this method works on resource name, <paramref param name="resNameOnly"/> defaults to true
+        /// Since this method works on resource name, <paramref name="resNameOnly"/> defaults to true
         /// but this can be applied to the whole resources.
         /// </summary>
         /// <param name="ctx">The call context.</param>
