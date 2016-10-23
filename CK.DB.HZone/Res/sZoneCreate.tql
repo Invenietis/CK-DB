@@ -2,7 +2,7 @@
 create transformer on CK.sZoneCreate 
 as
 begin
-	add parameter @ParentZoneId int = 0 before @ZoneIdResult;
+	add parameter @ParentZoneId int = 0;
 	
 	inject "
 	declare @ParentHId hierarchyid;
@@ -21,7 +21,7 @@ begin
 
 	in single statement {exec CK.sGroupCreate}
 	begin
-		replace first {0} with "@ParentZoneId";
+		replace first {@ZoneId = 0} with "@ZoneId = @ParentZoneId";
 	end
 
 	in single part {insert into CK.tZone}

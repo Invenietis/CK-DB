@@ -2,7 +2,7 @@
 create transformer on CK.sGroupCreate
 as
 begin
-	add parameter @ZoneId int = 0 before @GroupIdResult;
+	add parameter @ZoneId int = 0;
 
 	inject "
 	if @ZoneId = 1 throw 50000, 'Zone.SystemZoneHasNoGroup', 1;

@@ -2,7 +2,7 @@
 create transformer on CK.sZoneDestroy
 as
 begin
-	add parameter @DestroySubZone bit = null after @ForceDestroy;
+	add parameter @DestroySubZone bit = null;
 
 	inject "
 		if @DestroySubZone is null set @DestroySubZone = @ForceDestroy;

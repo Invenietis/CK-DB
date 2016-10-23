@@ -14,7 +14,7 @@ begin
 
 	-- A Zone is a Group whose ZoneId is 0. Whenever Zone become hierarchical, the Group.ZoneId 
 	-- of a Zone must be the parent zone.
-	exec CK.sGroupCreate @ActorId, 0, @ZoneIdResult output;
+	exec CK.sGroupCreate @ActorId, @ZoneIdResult output, @ZoneId = 0;
 		
 	-- Do create the Zone
 	insert into CK.tZone( ZoneId ) values ( @ZoneIdResult );
