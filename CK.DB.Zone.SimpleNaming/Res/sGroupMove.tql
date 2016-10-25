@@ -8,7 +8,7 @@ begin
 		declare @GroupName nvarchar(128);
 		select @GroupName = GroupName from CK.tGroup where GroupId = @GroupId;
 		declare @GroupNameCorrected nvarchar(128);
-		exec @GroupNameCorrected = CK.fGroupNameComputeUnique -1, @GroupName, @NewZoneId;
+		exec @GroupNameCorrected = CK.fGroupGroupNameComputeUnique -1, @GroupName, @NewZoneId;
 		if @GroupNameCorrected is null throw 50000, 'GroupName.NameClash', 1;
 	" into "PreGroupMove";
 

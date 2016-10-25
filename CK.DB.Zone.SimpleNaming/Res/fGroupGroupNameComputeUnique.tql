@@ -1,5 +1,5 @@
 -- SetupConfig: {}
-create transformer on CK.fGroupNameComputeUnique
+create transformer on CK.fGroupGroupNameComputeUnique
 as 
 begin
 	add parameter @ZoneId int = -1;

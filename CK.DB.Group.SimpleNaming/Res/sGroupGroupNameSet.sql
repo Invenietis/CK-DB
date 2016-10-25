@@ -1,8 +1,8 @@
--- SetupConfig: { "Requires": [ "CK.fGroupNameComputeUnique" ] }
+-- SetupConfig: { "Requires": [ "CK.fGroupGroupNameComputeUnique" ] }
 --
 -- Sets a Group's name.
 --
-create procedure CK.sGroupNameSet
+create procedure CK.sGroupGroupNameSet
 (
 	@ActorId int,
 	@GroupId int,
@@ -20,11 +20,11 @@ as begin
 	-- Default parameters at the function call site should be handled by the 
 	-- global resolution. Once available, this should be rewritten with the  
 	-- more usual and standard syntax:
-	--		select @GroupNameCorrected = CK.fGroupNameComputeUnique( @GroupId, @GroupName );
+	--		select @GroupNameCorrected = CK.fGroupGroupNameComputeUnique( @GroupId, @GroupName );
 	-- That should be changed by CK-Database into:
-	--		select @GroupNameCorrected = CK.fGroupNameComputeUnique( @GroupId, @GroupName, DEFAULT );
+	--		select @GroupNameCorrected = CK.fGroupGroupNameComputeUnique( @GroupId, @GroupName, DEFAULT );
 	-- (With as much DEFAULT as needed.)
-	exec @GroupNameCorrected = CK.fGroupNameComputeUnique @GroupId, @GroupName;
+	exec @GroupNameCorrected = CK.fGroupGroupNameComputeUnique @GroupId, @GroupName;
 
 	--<PreNameSet revert />
 

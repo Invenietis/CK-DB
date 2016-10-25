@@ -100,10 +100,10 @@
     <EmbeddedResource Include="Res\Model.CK.DB.Group.SimpleNaming.Package.Install.1.0.1.sql" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Res\sGroupNameSet.sql" />
+    <EmbeddedResource Include="Res\sGroupGroupNameSet.sql" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Res\fGroupNameComputeUnique.sql" />
+    <EmbeddedResource Include="Res\fGroupGroupNameComputeUnique.sql" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Res\Model.CK.DB.Group.SimpleNaming.Package.Install.1.0.0.to.1.0.1.sql" />

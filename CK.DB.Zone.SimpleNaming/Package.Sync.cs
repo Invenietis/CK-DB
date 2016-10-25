@@ -23,7 +23,7 @@ namespace CK.DB.Zone.SimpleNaming
         /// <param name="groupName">The new group name.</param>
         /// <param name="zoneId">The zone should only be provided by <see cref="CheckUniqueNameForNewGroup(ISqlCallContext,int,string)"/>.</param>
         /// <returns>The group name or an automatically suffixed version.</returns>
-        [SqlScalarFunction( "transform:fGroupNameComputeUnique" )]
+        [SqlScalarFunction( "transform:fGroupGroupNameComputeUnique" )]
         protected abstract string CheckUniqueName( ISqlCallContext ctx, int groupId, string groupName, int zoneId );
 
         /// <summary>

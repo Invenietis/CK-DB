@@ -3,7 +3,7 @@
 -- rename (to handle the case of a rename with the same name). 
 -- Set it to -1 to compute a group name for a new group.
 -- When no unique name can be computed null is returned.
-create Function CK.fGroupNameComputeUnique
+create Function CK.fGroupGroupNameComputeUnique
 	(
 		@GroupId	int,
 		@GroupName	nvarchar(128)

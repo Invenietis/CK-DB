@@ -38,7 +38,7 @@ namespace CK.DB.Group.SimpleNaming
         /// <param name="groupId">The group identifier.</param>
         /// <param name="groupName">The new group name.</param>
         /// <returns>The group name or an automatically suffixed version.</returns>
-        [SqlScalarFunction( "fGroupNameComputeUnique" )]
+        [SqlScalarFunction( "fGroupGroupNameComputeUnique" )]
         public abstract Task<string> CheckUniqueNameAsync( ISqlCallContext ctx, int groupId, string groupName );
 
         /// <summary>
@@ -59,7 +59,7 @@ namespace CK.DB.Group.SimpleNaming
         /// <param name="groupId">The group identifier.</param>
         /// <param name="groupName">The new group name.</param>
         /// <returns>The group name or an automatically suffixed version that has been set.</returns>
-        [SqlProcedure( "sGroupNameSet" )]
+        [SqlProcedure( "sGroupGroupNameSet" )]
         public abstract Task<string> GroupRenameAsync( ISqlCallContext ctx, int actorId, int groupId, string groupName );
 
     }
