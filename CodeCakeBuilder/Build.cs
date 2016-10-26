@@ -180,7 +180,7 @@ namespace CodeCake
                                             ConfigFile = p.Path.GetDirectory().CombineWithFilePath( "packages.config" ).FullPath
                                         } )
                                         .Where( p => System.IO.File.Exists( p.ConfigFile ) );
-            var projectNames = new HashSet<string>( solution.Projects.Select( pub => pub.Name ) );
+            var ckDBProjectNames = new HashSet<string>( solution.Projects.Select( pub => pub.Name ) );
             foreach( var config in projects.Select( p => p.ConfigFile ) )
             {
                 XDocument doc = XDocument.Load( config );
@@ -188,7 +188,8 @@ namespace CodeCake
                 foreach( var p in doc.Root.Elements( "package" ) )
                 {
                     string packageName = p.Attribute( "id" ).Value;
-                    if( projectNames.Contains( packageName ) )
+                    bool isCKDB = ckDBProjectNames.Contains( packageName );
+                    if( isCKDB )
                     {
                         if( p.Attribute( "version" ).Value != gitInfo.NuGetVersion )
                         {
@@ -200,8 +201,11 @@ namespace CodeCake
                             // Removes the corresponding package directory otherwise since the version did not change,
                             // the possibly new packages content are not restored.
                             string toRemove = "IntegrationTests/packages/" + packageName + "." + gitInfo.NuGetVersion;
-                            Cake.Information( "Removing " + toRemove );
-                            Cake.DeleteDirectory( toRemove, true );
+                            if( System.IO.Directory.Exists( toRemove ) )
+                            {
+                                Cake.Information( "Removing " + toRemove );
+                                Cake.DeleteDirectory( toRemove, true );
+                            }
                         }
                     }
                 }
@@ -231,7 +235,7 @@ namespace CodeCake
                                     E = e,
                                     ProjectName = new AssemblyName( e.IncludeAttr.Value ).Name
                                 } )
-                                .Where( e => projectNames.Contains( e.ProjectName ) );
+                                .Where( e => ckDBProjectNames.Contains( e.ProjectName ) );
 
                 foreach( var p in final )
                 {
