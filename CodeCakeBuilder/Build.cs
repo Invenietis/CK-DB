@@ -31,6 +31,8 @@ namespace CodeCake
     [AddPath( "packages/**/tools*" )]
     public class Build : CodeCakeHost
     {
+        XNamespace msBuild = "http://schemas.microsoft.com/developer/msbuild/2003";
+
         public Build()
         {
             var releasesDir = Cake.Directory( "CodeCakeBuilder/Releases" );
@@ -38,14 +40,16 @@ namespace CodeCake
             string configuration = null;
             SimpleRepositoryInfo gitInfo = null;
             var solution = Cake.ParseSolution( "CK-DB.sln" );
-
+            var CKDBProjectNames = new HashSet<string>( solution.Projects.Where( p => p.Name.StartsWith( "CK." ) ).Select( pub => pub.Name ) );
             string CKDatabaseVersion = null;
+            Dictionary<string, string> DependentPackages = null;
+            Dictionary<string, string> IntegrationDependentPackages = null;
 
             Task( "Check-Dependencies" )
             .Does( () =>
             {
                 var allPackages = solution.Projects
-                                    .Where( p => p.Name != "CodeCakeBuilder" )
+                                    .Where( p => p.Name.StartsWith( "CK." ) )
                                     .Select( p => new
                                     {
                                         Project = p,
@@ -64,13 +68,17 @@ namespace CodeCake
                                                   ProjectName = e.Annotation<SolutionProject>().Name,
                                                   Version = e.Attribute( "version" ).Value
                                               } );
-                CKDatabaseVersion = byPackage.Single( e => e.Key == "CK.StObj.Model" ).First().Version;
                 var multiVersions = byPackage.Where( g => g.GroupBy( x => x.Version ).Count() > 1 );
                 if( multiVersions.Any() )
                 {
                     var conflicts = multiVersions.Select( e => Environment.NewLine + " - " + e.Key + ":" + Environment.NewLine + "    - " + string.Join( Environment.NewLine + "    - ", e.GroupBy( x => x.Version ).Select( x => x.Key + " in " + string.Join( ", ", x.Select( xN => xN.ProjectName ) ) ) ) );
                     Cake.TerminateWithError( $"Dependency versions differ for:{Environment.NewLine}{string.Join( Environment.NewLine, conflicts )}" );
                 }
+                CKDatabaseVersion = byPackage.Single( e => e.Key == "CK.StObj.Model" ).First().Version;
+                // Use Tests/CK.DB.Actor.Tests/packages.config for packages' versions that are not the CK-DB ones.
+                XDocument aclPackagesConfig = XDocument.Load( "Tests/CK.DB.Actor.Tests/packages.config" );
+                var pp = aclPackagesConfig.Root.Descendants( "package" ).Where( e => !CKDBProjectNames.Contains( (string)e.Attribute( "id" ) ) );
+                DependentPackages = pp.ToDictionary( e => (string)e.Attribute( "id" ), e => (string)e.Attribute( "version" ) );
             } );
 
             Task( "Check-Repository" )
@@ -86,6 +94,11 @@ namespace CodeCake
                             Cake.Warning( "GitInfo is not valid, but you choose to continue..." );
                         }
                         else throw new Exception( "Repository is not ready to be published." );
+                    }
+                    IntegrationDependentPackages = new Dictionary<string, string>( DependentPackages );
+                    foreach( var n in CKDBProjectNames )
+                    {
+                        IntegrationDependentPackages.Add( n, gitInfo.NuGetVersion );
                     }
                     configuration = gitInfo.IsValidRelease && gitInfo.PreReleaseName.Length == 0 ? "Release" : "Debug";
                     Cake.Information( "Publishing {0} in {1}.", gitInfo.SemVer, configuration );
@@ -180,7 +193,10 @@ namespace CodeCake
                                             ConfigFile = p.Path.GetDirectory().CombineWithFilePath( "packages.config" ).FullPath
                                         } )
                                         .Where( p => System.IO.File.Exists( p.ConfigFile ) );
-            var ckDBProjectNames = new HashSet<string>( solution.Projects.Select( pub => pub.Name ) );
+            // Cleans all the existing IntegrationTests/packages.
+            // The CokaCakeBuilder restore will get them (from Release for CK-DB packages).
+            Cake.CleanDirectory( "IntegrationTests/packages" );
+
             foreach( var config in projects.Select( p => p.ConfigFile ) )
             {
                 XDocument doc = XDocument.Load( config );
@@ -188,24 +204,13 @@ namespace CodeCake
                 foreach( var p in doc.Root.Elements( "package" ) )
                 {
                     string packageName = p.Attribute( "id" ).Value;
-                    bool isCKDB = ckDBProjectNames.Contains( packageName );
-                    if( isCKDB )
+                    if( IntegrationDependentPackages.ContainsKey( packageName ) )
                     {
-                        if( p.Attribute( "version" ).Value != gitInfo.NuGetVersion )
+                        string depVersion = IntegrationDependentPackages[packageName];
+                        if( p.Attribute( "version" ).Value != depVersion )
                         {
-                            p.SetAttributeValue( "version", gitInfo.NuGetVersion );
+                            p.SetAttributeValue( "version", depVersion );
                             ++countRef;
-                        }
-                        else
-                        {
-                            // Removes the corresponding package directory otherwise since the version did not change,
-                            // the possibly new packages content are not restored.
-                            string toRemove = "IntegrationTests/packages/" + packageName + "." + gitInfo.NuGetVersion;
-                            if( System.IO.Directory.Exists( toRemove ) )
-                            {
-                                Cake.Information( "Removing " + toRemove );
-                                Cake.DeleteDirectory( toRemove, true );
-                            }
                         }
                     }
                 }
@@ -215,7 +220,6 @@ namespace CodeCake
                     doc.Save( config );
                 }
             }
-            XNamespace msBuild = "http://schemas.microsoft.com/developer/msbuild/2003";
             foreach( var csproj in projects.Select( p => p.CSProj ) )
             {
                 XDocument doc = XDocument.Load( csproj );
@@ -235,12 +239,13 @@ namespace CodeCake
                                     E = e,
                                     ProjectName = new AssemblyName( e.IncludeAttr.Value ).Name
                                 } )
-                                .Where( e => ckDBProjectNames.Contains( e.ProjectName ) );
+                                .Where( e => IntegrationDependentPackages.ContainsKey( e.ProjectName ) );
 
                 foreach( var p in final )
                 {
+                    var version = IntegrationDependentPackages[p.ProjectName];
                     var path = p.E.HintPathElement.Value.Split( '\\' );
-                    var newFolder = p.ProjectName + '.' + gitInfo.NuGetVersion;
+                    var newFolder = p.ProjectName + '.' + version;
                     if( path[2] != newFolder )
                     {
                         path[2] = newFolder;
