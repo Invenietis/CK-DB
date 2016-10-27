@@ -13,7 +13,7 @@ namespace CK.DB.Actor
     /// The UserTable kernel.
     /// </summary>
     [SqlTable( "tUser", Package = typeof( Package ) )]
-    [Versions( "5.0.0, 5.0.1, 5.0.2" )]
+    [Versions( "5.0.0, 5.0.1, 5.0.2, 5.0.3" )]
     [SqlObjectItem( "vUser" )]
     public abstract partial class UserTable : SqlTable
     {
