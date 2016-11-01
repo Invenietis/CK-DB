@@ -194,7 +194,7 @@ namespace CodeCake
                                         } )
                                         .Where( p => System.IO.File.Exists( p.ConfigFile ) );
             // Cleans all the existing IntegrationTests/packages.
-            // The CokaCakeBuilder restore will get them (from Release for CK-DB packages).
+            // The CodeCakeBuilder restore will get them (from Release for CK-DB packages).
             Cake.CleanDirectory( "IntegrationTests/packages" );
 
             foreach( var config in projects.Select( p => p.ConfigFile ) )
