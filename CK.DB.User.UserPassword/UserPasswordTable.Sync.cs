@@ -12,44 +12,8 @@ using CK.SqlServer.Setup;
 namespace CK.DB.User.UserPassword
 {
 
-    /// <summary>
-    /// Holds password hashes for users and offer standard strong hash implementation:
-    /// PBKDF2 with HMAC-SHA256, 128-bit salt, 256-bit subkey, with a default to 10000 iterations.
-    /// Static <see cref="HashIterationCount"/> may be changed (typically at starting time).
-    /// </summary>
-    [SqlTable("tUserPassword", Package = typeof(Package))]
-    [Versions("1.0.0")]
-    [SqlObjectItem("transform:sUserDestroy")]
     public abstract partial class UserPasswordTable : SqlTable
     {
-        static int _iterationCount;
-
-        /// <summary>
-        /// Current iteration count.
-        /// Should be changed only at start and only if you know what you are doing.
-        /// It can not be less than 1000 and defaults to <see cref="DefaultHashIterationCount"/> = 10000.
-        /// </summary>
-        static public int HashIterationCount
-        {
-            get { return _iterationCount; }
-            set
-            {
-                if( value < 1000 ) throw new ArgumentException( "HashIterationCount must be at the very least 1000." );
-                _iterationCount = value;
-            }
-        }
-
-        /// <summary>
-        /// The default <see cref="HashIterationCount"/> is 10000.
-        /// </summary>
-        public static readonly int DefaultHashIterationCount;
-
-        static UserPasswordTable()
-        {
-            DefaultHashIterationCount = 10000;
-            _iterationCount = DefaultHashIterationCount;
-        }
-
         /// <summary>
         /// Associates a PasswordUser to an existing user.
         /// </summary>
@@ -57,12 +21,11 @@ namespace CK.DB.User.UserPassword
         /// <param name="actorId">The acting actor identifier.</param>
         /// <param name="userId">The user identifier that must have a password.</param>
         /// <param name="password">The initial password. Can not be null nor empty.</param>
-        /// <returns>The awaitable.</returns>
-        public Task CreatePasswordUserAsync(ISqlCallContext ctx, int actorId, int userId, string password)
+        public void CreatePasswordUser( ISqlCallContext ctx, int actorId, int userId, string password )
         {
             if( string.IsNullOrEmpty( password ) ) throw new ArgumentNullException( nameof( password ) );
-            PasswordHasher p = new PasswordHasher(HashIterationCount);
-            return CreatePasswordUserWithRawPwdHashAsync( ctx, actorId, userId, p.HashPassword( password ) ); 
+            PasswordHasher p = new PasswordHasher( HashIterationCount );
+            CreatePasswordUserWithPwdRawHash( ctx, actorId, userId, p.HashPassword( password ) );
         }
 
         /// <summary>
@@ -73,11 +36,11 @@ namespace CK.DB.User.UserPassword
         /// <param name="userId">The user identifier that must have a password.</param>
         /// <param name="password">The new password to set. Can not be null nor empty.</param>
         /// <returns>The awaitable.</returns>
-        public Task SetPasswordAsync( ISqlCallContext ctx, int actorId, int userId, string password )
+        public void SetPassword( ISqlCallContext ctx, int actorId, int userId, string password )
         {
             if( string.IsNullOrEmpty( password ) ) throw new ArgumentNullException( nameof( password ) );
             PasswordHasher p = new PasswordHasher( HashIterationCount );
-            return SetPwdRawHashAsync( ctx, actorId, userId, p.HashPassword( password ) );
+            SetPwdRawHash( ctx, actorId, userId, p.HashPassword( password ) );
         }
 
         /// <summary>
@@ -89,12 +52,12 @@ namespace CK.DB.User.UserPassword
         /// <param name="userId">The user identifier.</param>
         /// <param name="password">The password to challenge.</param>
         /// <returns>True on success, false if the password does not match.</returns>
-        public Task<bool> VerifyAsync(ISqlCallContext ctx, int userId, string password)
+        public bool Verify( ISqlCallContext ctx, int userId, string password )
         {
-            using (var c = new SqlCommand($"select PwdHash, @UserId from CK.tUserPassword where UserId=@UserId"))
+            using( var c = new SqlCommand( $"select PwdHash, @UserId from CK.tUserPassword where UserId=@UserId" ) )
             {
-                c.Parameters.AddWithValue("@UserId", userId);
-                return DoVerifyAsync(ctx, c, password);
+                c.Parameters.AddWithValue( "@UserId", userId );
+                return DoVerify( ctx, c, password );
             }
         }
 
@@ -107,39 +70,39 @@ namespace CK.DB.User.UserPassword
         /// <param name="userName">The user name.</param>
         /// <param name="password">The password to challenge.</param>
         /// <returns>True on success, false if the password does not match.</returns>
-        public Task<bool> VerifyAsync(ISqlCallContext ctx, string userName, string password)
+        public bool Verify( ISqlCallContext ctx, string userName, string password )
         {
-            using (var c = new SqlCommand($"select p.PwdHash, p.UserId from CK.tUserPassword p inner join CK.tUser u on u.UserId = p.UserId where u.UserName=@UserName"))
+            using( var c = new SqlCommand( $"select p.PwdHash, p.UserId from CK.tUserPassword p inner join CK.tUser u on u.UserId = p.UserId where u.UserName=@UserName" ) )
             {
-                c.Parameters.AddWithValue("@UserName", userName);
-                return DoVerifyAsync(ctx, c, password);
+                c.Parameters.AddWithValue( "@UserName", userName );
+                return DoVerify( ctx, c, password );
             }
         }
 
-        async Task<bool> DoVerifyAsync(ISqlCallContext ctx, SqlCommand hashReader, string password )
+        bool DoVerify( ISqlCallContext ctx, SqlCommand hashReader, string password )
         {
             if( string.IsNullOrEmpty( password ) ) return false;
 
             // 1 - Get the PwdHash.
-            object[] hashAndUserId = await ctx.Executor.GetProvider( Database.ConnectionString ).ReadFirstRowAsync( hashReader );
+            object[] hashAndUserId = ctx.Executor.GetProvider( Database.ConnectionString ).ReadFirstRow( hashReader );
             byte[] hash = (byte[])hashAndUserId[0];
 
             // 2 - Check it.
-            PasswordHasher p = new PasswordHasher(HashIterationCount);
-            var result = p.VerifyHashedPassword(hash, password);
-            switch (result)
+            PasswordHasher p = new PasswordHasher( HashIterationCount );
+            var result = p.VerifyHashedPassword( hash, password );
+            switch( result )
             {
                 case PasswordVerificationResult.Failed: return false;
                 case PasswordVerificationResult.SuccessRehashNeeded:
                     {
                         // 3 - Rehash the password and update the database.
                         int userId = (int)hashAndUserId[1];
-                        await SetPwdRawHashAsync(ctx, 1, userId, p.HashPassword(password)); 
+                        SetPwdRawHash( ctx, 1, userId, p.HashPassword( password ) );
                         return true;
                     }
                 default:
                     {
-                        Debug.Assert(result == PasswordVerificationResult.Success);
+                        Debug.Assert( result == PasswordVerificationResult.Success );
                         return true;
                     }
             }
@@ -151,9 +114,8 @@ namespace CK.DB.User.UserPassword
         /// <param name="ctx">The call context to use.</param>
         /// <param name="actorId">The acting actor identifier.</param>
         /// <param name="userId">The user identifier to destroy.</param>
-        /// <returns>The awaitable.</returns>
-        [SqlProcedure("sUserPasswordDestroy")]
-        public abstract Task DestroyPasswordUserAsync(ISqlCallContext ctx, int actorId, int userId);
+        [SqlProcedure( "sUserPasswordDestroy" )]
+        public abstract void DestroyPasswordUser( ISqlCallContext ctx, int actorId, int userId );
 
         /// <summary>
         /// Creates a PasswordUser with an initial raw hash for an existing user.
@@ -164,9 +126,8 @@ namespace CK.DB.User.UserPassword
         /// <param name="actorId">The acting actor identifier.</param>
         /// <param name="userId">The user identifier for wich a PassworUser must be created.</param>
         /// <param name="pwdHash">The initial raw hash (no more than 64 bytes).</param>
-        /// <returns>The awaitable.</returns>
-        [SqlProcedure("sUserPasswordCreate")]
-        public abstract Task CreatePasswordUserWithRawPwdHashAsync( ISqlCallContext ctx, int actorId, int userId, byte[] pwdHash);
+        [SqlProcedure( "sUserPasswordCreate" )]
+        public abstract void CreatePasswordUserWithPwdRawHash( ISqlCallContext ctx, int actorId, int userId, byte[] pwdHash );
 
         /// <summary>
         /// Sets a raw hash to a PasswordUser.
@@ -177,8 +138,7 @@ namespace CK.DB.User.UserPassword
         /// <param name="actorId">The acting actor identifier.</param>
         /// <param name="userId">The user identifier for wich a raw hash must be set.</param>
         /// <param name="pwdHash">The raw hash to set (no more than 64 bytes).</param>
-        /// <returns>The awaitable.</returns>
-        [SqlProcedure("sUserPasswordPwdHashSet")]
-        public abstract Task SetPwdRawHashAsync( ISqlCallContext ctx, int actorId, int userId, byte[] pwdHash);
+        [SqlProcedure( "sUserPasswordPwdHashSet" )]
+        public abstract void SetPwdRawHash( ISqlCallContext ctx, int actorId, int userId, byte[] pwdHash );
     }
 }
