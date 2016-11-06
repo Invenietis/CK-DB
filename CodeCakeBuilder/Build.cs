@@ -41,7 +41,8 @@ namespace CodeCake
             SimpleRepositoryInfo gitInfo = null;
             var solution = Cake.ParseSolution( "CK-DB.sln" );
             var CKDBProjectNames = new HashSet<string>( solution.Projects.Where( p => p.Name.StartsWith( "CK." ) ).Select( pub => pub.Name ) );
-            string CKDatabaseVersion = null;
+            string VersionCKDatabase = null;
+            string VersionMicrosoftAspNetCoreCryptographyKeyDerivation = null;
             Dictionary<string, string> DependentPackages = null;
             Dictionary<string, string> IntegrationDependentPackages = null;
 
@@ -74,7 +75,10 @@ namespace CodeCake
                     var conflicts = multiVersions.Select( e => Environment.NewLine + " - " + e.Key + ":" + Environment.NewLine + "    - " + string.Join( Environment.NewLine + "    - ", e.GroupBy( x => x.Version ).Select( x => x.Key + " in " + string.Join( ", ", x.Select( xN => xN.ProjectName ) ) ) ) );
                     Cake.TerminateWithError( $"Dependency versions differ for:{Environment.NewLine}{string.Join( Environment.NewLine, conflicts )}" );
                 }
-                CKDatabaseVersion = byPackage.Single( e => e.Key == "CK.StObj.Model" ).First().Version;
+                // This is ugly... But it works.
+                VersionCKDatabase = byPackage.Single( e => e.Key == "CK.StObj.Model" ).First().Version;
+                VersionMicrosoftAspNetCoreCryptographyKeyDerivation = byPackage.Single( e => e.Key == "Microsoft.AspNetCore.Cryptography.KeyDerivation" ).First().Version;
+
                 // Use Tests/CK.DB.Actor.Tests/packages.config for packages' versions that are not the CK-DB ones.
                 XDocument aclPackagesConfig = XDocument.Load( "Tests/CK.DB.Actor.Tests/packages.config" );
                 var pp = aclPackagesConfig.Root.Descendants( "package" ).Where( e => !CKDBProjectNames.Contains( (string)e.Attribute( "id" ) ) );
@@ -170,7 +174,7 @@ namespace CodeCake
                     Cake.CopyFiles( "CodeCakeBuilder/NuSpec/*.nuspec", releasesDir );
                     foreach( var nuspec in Cake.GetFiles( releasesDir.Path + "/*.nuspec" ) )
                     {
-                        TransformText( nuspec, configuration, gitInfo, CKDatabaseVersion );
+                        TransformText( nuspec, configuration, gitInfo, VersionCKDatabase, VersionMicrosoftAspNetCoreCryptographyKeyDerivation );
                         Cake.NuGetPack( nuspec, settings );
                     }
                     Cake.DeleteFiles( releasesDir.Path + "/*.nuspec" );
@@ -316,13 +320,19 @@ namespace CodeCake
             Task( "Default" ).IsDependentOn( "Push-NuGet-Packages" );
         }
 
-        private void TransformText( FilePath textFilePath, string configuration, SimpleRepositoryInfo gitInfo, string ckDatabaseVersion )
+        private void TransformText( 
+            FilePath textFilePath, 
+            string configuration, 
+            SimpleRepositoryInfo gitInfo, 
+            string vCKDatabase,
+            string vMicrosoftAspNetCoreCryptographyKeyDerivation )
         {
             Cake.TransformTextFile( textFilePath, "{{", "}}" )
                     .WithToken( "configuration", configuration )
                     .WithToken( "NuGetVersion", gitInfo.NuGetVersion )
-                    .WithToken( "CKDatabaseVersion", ckDatabaseVersion )
                     .WithToken( "CSemVer", gitInfo.SemVer )
+                    .WithToken( "VersionCKDatabase", vCKDatabase )
+                    .WithToken( "VersionMicrosoftAspNetCoreCryptographyKeyDerivation", vMicrosoftAspNetCoreCryptographyKeyDerivation )
                     .Save( textFilePath );
         }
 

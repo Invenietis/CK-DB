@@ -48,135 +48,143 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.DB.Acl, Version=1.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.DB.Acl.1.0.0-d05\lib\net45\CK.DB.Acl.dll</HintPath>
+      <HintPath>..\packages\CK.DB.Acl.1.0.0-d05-00-develop-0005\lib\net45\CK.DB.Acl.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.DB.Acl.AclType, Version=1.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.DB.Acl.AclType.1.0.0-d05\lib\net45\CK.DB.Acl.AclType.dll</HintPath>
+      <HintPath>..\packages\CK.DB.Acl.AclType.1.0.0-d05-00-develop-0005\lib\net45\CK.DB.Acl.AclType.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.DB.Acl.AclType.Tests, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.DB.Acl.AclType.Tests.1.0.0-d05\lib\net45\CK.DB.Acl.AclType.Tests.dll</HintPath>
+      <HintPath>..\packages\CK.DB.Acl.AclType.Tests.1.0.0-d05-00-develop-0005\lib\net45\CK.DB.Acl.AclType.Tests.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.DB.Acl.Tests, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.DB.Acl.Tests.1.0.0-d05\lib\net45\CK.DB.Acl.Tests.dll</HintPath>
+      <HintPath>..\packages\CK.DB.Acl.Tests.1.0.0-d05-00-develop-0005\lib\net45\CK.DB.Acl.Tests.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.DB.Actor, Version=1.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.DB.Actor.1.0.0-d05\lib\net45\CK.DB.Actor.dll</HintPath>
+      <HintPath>..\packages\CK.DB.Actor.1.0.0-d05-00-develop-0005\lib\net45\CK.DB.Actor.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.DB.Actor.Tests, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.DB.Actor.Tests.1.0.0-d05\lib\net45\CK.DB.Actor.Tests.dll</HintPath>
+      <HintPath>..\packages\CK.DB.Actor.Tests.1.0.0-d05-00-develop-0005\lib\net45\CK.DB.Actor.Tests.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.DB.Culture, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.DB.Culture.1.0.0-d05\lib\net45\CK.DB.Culture.dll</HintPath>
+      <HintPath>..\packages\CK.DB.Culture.1.0.0-d05-00-develop-0005\lib\net45\CK.DB.Culture.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.DB.Culture.Tests, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.DB.Culture.Tests.1.0.0-d05\lib\net45\CK.DB.Culture.Tests.dll</HintPath>
+      <HintPath>..\packages\CK.DB.Culture.Tests.1.0.0-d05-00-develop-0005\lib\net45\CK.DB.Culture.Tests.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.DB.Group.SimpleNaming, Version=1.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.DB.Group.SimpleNaming.1.0.0-d05\lib\net45\CK.DB.Group.SimpleNaming.dll</HintPath>
+      <HintPath>..\packages\CK.DB.Group.SimpleNaming.1.0.0-d05-00-develop-0005\lib\net45\CK.DB.Group.SimpleNaming.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.DB.Group.SimpleNaming.Tests, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.DB.Group.SimpleNaming.Tests.1.0.0-d05\lib\net45\CK.DB.Group.SimpleNaming.Tests.dll</HintPath>
+      <HintPath>..\packages\CK.DB.Group.SimpleNaming.Tests.1.0.0-d05-00-develop-0005\lib\net45\CK.DB.Group.SimpleNaming.Tests.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.DB.HZone, Version=1.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.DB.HZone.1.0.0-d05\lib\net45\CK.DB.HZone.dll</HintPath>
+      <HintPath>..\packages\CK.DB.HZone.1.0.0-d05-00-develop-0005\lib\net45\CK.DB.HZone.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.DB.HZone.Tests, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.DB.HZone.Tests.1.0.0-d05\lib\net45\CK.DB.HZone.Tests.dll</HintPath>
+      <HintPath>..\packages\CK.DB.HZone.Tests.1.0.0-d05-00-develop-0005\lib\net45\CK.DB.HZone.Tests.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.DB.Res, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.DB.Res.1.0.0-d05\lib\net45\CK.DB.Res.dll</HintPath>
+      <HintPath>..\packages\CK.DB.Res.1.0.0-d05-00-develop-0005\lib\net45\CK.DB.Res.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.DB.Res.MCResHtml, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.DB.Res.MCResHtml.1.0.0-d05\lib\net45\CK.DB.Res.MCResHtml.dll</HintPath>
+      <HintPath>..\packages\CK.DB.Res.MCResHtml.1.0.0-d05-00-develop-0005\lib\net45\CK.DB.Res.MCResHtml.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.DB.Res.MCResHtml.Tests, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.DB.Res.MCResHtml.Tests.1.0.0-d05\lib\net45\CK.DB.Res.MCResHtml.Tests.dll</HintPath>
+      <HintPath>..\packages\CK.DB.Res.MCResHtml.Tests.1.0.0-d05-00-develop-0005\lib\net45\CK.DB.Res.MCResHtml.Tests.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.DB.Res.MCResString, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.DB.Res.MCResString.1.0.0-d05\lib\net45\CK.DB.Res.MCResString.dll</HintPath>
+      <HintPath>..\packages\CK.DB.Res.MCResString.1.0.0-d05-00-develop-0005\lib\net45\CK.DB.Res.MCResString.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.DB.Res.MCResString.Tests, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.DB.Res.MCResString.Tests.1.0.0-d05\lib\net45\CK.DB.Res.MCResString.Tests.dll</HintPath>
+      <HintPath>..\packages\CK.DB.Res.MCResString.Tests.1.0.0-d05-00-develop-0005\lib\net45\CK.DB.Res.MCResString.Tests.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.DB.Res.MCResText, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.DB.Res.MCResText.1.0.0-d05\lib\net45\CK.DB.Res.MCResText.dll</HintPath>
+      <HintPath>..\packages\CK.DB.Res.MCResText.1.0.0-d05-00-develop-0005\lib\net45\CK.DB.Res.MCResText.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.DB.Res.MCResText.Tests, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.DB.Res.MCResText.Tests.1.0.0-d05\lib\net45\CK.DB.Res.MCResText.Tests.dll</HintPath>
+      <HintPath>..\packages\CK.DB.Res.MCResText.Tests.1.0.0-d05-00-develop-0005\lib\net45\CK.DB.Res.MCResText.Tests.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.DB.Res.ResHtml, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.DB.Res.ResHtml.1.0.0-d05\lib\net45\CK.DB.Res.ResHtml.dll</HintPath>
+      <HintPath>..\packages\CK.DB.Res.ResHtml.1.0.0-d05-00-develop-0005\lib\net45\CK.DB.Res.ResHtml.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.DB.Res.ResHtml.Tests, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.DB.Res.ResHtml.Tests.1.0.0-d05\lib\net45\CK.DB.Res.ResHtml.Tests.dll</HintPath>
+      <HintPath>..\packages\CK.DB.Res.ResHtml.Tests.1.0.0-d05-00-develop-0005\lib\net45\CK.DB.Res.ResHtml.Tests.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.DB.Res.ResName, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.DB.Res.ResName.1.0.0-d05\lib\net45\CK.DB.Res.ResName.dll</HintPath>
+      <HintPath>..\packages\CK.DB.Res.ResName.1.0.0-d05-00-develop-0005\lib\net45\CK.DB.Res.ResName.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.DB.Res.ResName.Tests, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.DB.Res.ResName.Tests.1.0.0-d05\lib\net45\CK.DB.Res.ResName.Tests.dll</HintPath>
+      <HintPath>..\packages\CK.DB.Res.ResName.Tests.1.0.0-d05-00-develop-0005\lib\net45\CK.DB.Res.ResName.Tests.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.DB.Res.ResString, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.DB.Res.ResString.1.0.0-d05\lib\net45\CK.DB.Res.ResString.dll</HintPath>
+      <HintPath>..\packages\CK.DB.Res.ResString.1.0.0-d05-00-develop-0005\lib\net45\CK.DB.Res.ResString.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.DB.Res.ResString.Tests, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.DB.Res.ResString.Tests.1.0.0-d05\lib\net45\CK.DB.Res.ResString.Tests.dll</HintPath>
+      <HintPath>..\packages\CK.DB.Res.ResString.Tests.1.0.0-d05-00-develop-0005\lib\net45\CK.DB.Res.ResString.Tests.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.DB.Res.ResText, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.DB.Res.ResText.1.0.0-d05\lib\net45\CK.DB.Res.ResText.dll</HintPath>
+      <HintPath>..\packages\CK.DB.Res.ResText.1.0.0-d05-00-develop-0005\lib\net45\CK.DB.Res.ResText.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.DB.Res.ResText.Tests, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.DB.Res.ResText.Tests.1.0.0-d05\lib\net45\CK.DB.Res.ResText.Tests.dll</HintPath>
+      <HintPath>..\packages\CK.DB.Res.ResText.Tests.1.0.0-d05-00-develop-0005\lib\net45\CK.DB.Res.ResText.Tests.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.DB.Res.Tests, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.DB.Res.Tests.1.0.0-d05\lib\net45\CK.DB.Res.Tests.dll</HintPath>
+      <HintPath>..\packages\CK.DB.Res.Tests.1.0.0-d05-00-develop-0005\lib\net45\CK.DB.Res.Tests.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.DB.Tests.NUnit, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.DB.Tests.NUnit.5.0.0-a30\lib\net45\CK.DB.Tests.NUnit.dll</HintPath>
+      <HintPath>..\packages\CK.DB.Tests.NUnit.5.0.0-a34\lib\net45\CK.DB.Tests.NUnit.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="CK.DB.User.UserPassword, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\CK.DB.User.UserPassword.1.0.0-d05-00-develop-0005\lib\net45\CK.DB.User.UserPassword.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="CK.DB.User.UserPassword.Tests, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\CK.DB.User.UserPassword.Tests.1.0.0-d05-00-develop-0005\lib\net45\CK.DB.User.UserPassword.Tests.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.DB.Zone, Version=1.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.DB.Zone.1.0.0-d05\lib\net45\CK.DB.Zone.dll</HintPath>
+      <HintPath>..\packages\CK.DB.Zone.1.0.0-d05-00-develop-0005\lib\net45\CK.DB.Zone.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.DB.Zone.SimpleNaming, Version=1.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.DB.Zone.SimpleNaming.1.0.0-d05\lib\net45\CK.DB.Zone.SimpleNaming.dll</HintPath>
+      <HintPath>..\packages\CK.DB.Zone.SimpleNaming.1.0.0-d05-00-develop-0005\lib\net45\CK.DB.Zone.SimpleNaming.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.DB.Zone.SimpleNaming.Tests, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.DB.Zone.SimpleNaming.Tests.1.0.0-d05\lib\net45\CK.DB.Zone.SimpleNaming.Tests.dll</HintPath>
+      <HintPath>..\packages\CK.DB.Zone.SimpleNaming.Tests.1.0.0-d05-00-develop-0005\lib\net45\CK.DB.Zone.SimpleNaming.Tests.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.DB.Zone.Tests, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.DB.Zone.Tests.1.0.0-d05\lib\net45\CK.DB.Zone.Tests.dll</HintPath>
+      <HintPath>..\packages\CK.DB.Zone.Tests.1.0.0-d05-00-develop-0005\lib\net45\CK.DB.Zone.Tests.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.Monitoring, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
@@ -188,27 +196,27 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.Setup.Dependency, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.Setup.Dependency.5.0.0-a30\lib\net45\CK.Setup.Dependency.dll</HintPath>
+      <HintPath>..\packages\CK.Setup.Dependency.5.0.0-a34\lib\net45\CK.Setup.Dependency.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.Setupable.Engine, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.Setupable.Engine.5.0.0-a30\lib\net45\CK.Setupable.Engine.dll</HintPath>
+      <HintPath>..\packages\CK.Setupable.Engine.5.0.0-a34\lib\net45\CK.Setupable.Engine.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.Setupable.Model, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.Setupable.Model.5.0.0-a30\lib\net45\CK.Setupable.Model.dll</HintPath>
+      <HintPath>..\packages\CK.Setupable.Model.5.0.0-a34\lib\net45\CK.Setupable.Model.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.Setupable.Runtime, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.Setupable.Runtime.5.0.0-a30\lib\net45\CK.Setupable.Runtime.dll</HintPath>
+      <HintPath>..\packages\CK.Setupable.Runtime.5.0.0-a34\lib\net45\CK.Setupable.Runtime.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.SqlServer.Core, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.SqlServer.Core.5.0.0-a30\lib\net45\CK.SqlServer.Core.dll</HintPath>
+      <HintPath>..\packages\CK.SqlServer.Core.5.0.0-a34\lib\net45\CK.SqlServer.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.SqlServer.Parser, Version=5.1.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.SqlServer.Parser.5.1.0\lib\net45\CK.SqlServer.Parser.dll</HintPath>
+      <HintPath>..\packages\CK.SqlServer.Parser.5.1.1\lib\net45\CK.SqlServer.Parser.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.SqlServer.Parser.Model, Version=3.2.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
@@ -216,35 +224,43 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.SqlServer.Setup.Engine, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.SqlServer.Setup.Engine.5.0.0-a30\lib\net45\CK.SqlServer.Setup.Engine.dll</HintPath>
+      <HintPath>..\packages\CK.SqlServer.Setup.Engine.5.0.0-a34\lib\net45\CK.SqlServer.Setup.Engine.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.SqlServer.Setup.Model, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.SqlServer.Setup.Model.5.0.0-a30\lib\net45\CK.SqlServer.Setup.Model.dll</HintPath>
+      <HintPath>..\packages\CK.SqlServer.Setup.Model.5.0.0-a34\lib\net45\CK.SqlServer.Setup.Model.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.SqlServer.Setup.Runtime, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.SqlServer.Setup.Runtime.5.0.0-a30\lib\net45\CK.SqlServer.Setup.Runtime.dll</HintPath>
+      <HintPath>..\packages\CK.SqlServer.Setup.Runtime.5.0.0-a34\lib\net45\CK.SqlServer.Setup.Runtime.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.SqlServer.Transform, Version=5.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.SqlServer.Transform.5.1.0\lib\net45\CK.SqlServer.Transform.dll</HintPath>
+      <HintPath>..\packages\CK.SqlServer.Transform.5.1.1\lib\net45\CK.SqlServer.Transform.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.StObj.Engine, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.StObj.Engine.5.0.0-a30\lib\net45\CK.StObj.Engine.dll</HintPath>
+      <HintPath>..\packages\CK.StObj.Engine.5.0.0-a34\lib\net45\CK.StObj.Engine.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.StObj.Model, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.StObj.Model.5.0.0-a30\lib\net45\CK.StObj.Model.dll</HintPath>
+      <HintPath>..\packages\CK.StObj.Model.5.0.0-a34\lib\net45\CK.StObj.Model.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.StObj.Runtime, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.StObj.Runtime.5.0.0-a30\lib\net45\CK.StObj.Runtime.dll</HintPath>
+      <HintPath>..\packages\CK.StObj.Runtime.5.0.0-a34\lib\net45\CK.StObj.Runtime.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.Text, Version=1.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
       <HintPath>..\..\packages\CK.Text.5.0.0\lib\net45\CK.Text.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.Cryptography.Internal, Version=1.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNetCore.Cryptography.Internal.1.0.0\lib\net451\Microsoft.AspNetCore.Cryptography.Internal.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.Cryptography.KeyDerivation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNetCore.Cryptography.KeyDerivation.1.0.0\lib\net451\Microsoft.AspNetCore.Cryptography.KeyDerivation.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="nunit.framework, Version=2.6.4.14350, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
@@ -252,8 +268,8 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Collections.Immutable, Version=1.1.37.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.Collections.Immutable.1.1.37\lib\dotnet\System.Collections.Immutable.dll</HintPath>
+    <Reference Include="System.Collections.Immutable, Version=1.2.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Collections.Immutable.1.2.0\lib\portable-net45+win8+wp8+wpa81\System.Collections.Immutable.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Core" />
@@ -270,6 +286,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DBSetup.cs" />
+    <Compile Include="From\FromUser.cs" />
     <Compile Include="From\FromRes.cs" />
     <Compile Include="From\FromActorGroupZoneTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

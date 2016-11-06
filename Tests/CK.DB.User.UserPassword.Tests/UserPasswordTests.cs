@@ -42,8 +42,8 @@ namespace CK.DB.User.UserPassword.Tests
             var u = TestHelper.StObjMap.Default.Obtain<UserPasswordTable>();
             using( var ctx = new SqlStandardCallContext() )
             {
-                Assert.Throws<SqlException>( () => u.CreatePasswordUser( ctx, 1, 0, "x" ) );
-                Assert.Throws<SqlException>( () => u.CreatePasswordUser( ctx, 0, 1, "toto" ) );
+                Assert.Throws<SqlDetailedException>( () => u.CreatePasswordUser( ctx, 1, 0, "x" ) );
+                Assert.Throws<SqlDetailedException>( () => u.CreatePasswordUser( ctx, 0, 1, "toto" ) );
             }
         }
 
@@ -62,7 +62,7 @@ namespace CK.DB.User.UserPassword.Tests
 
         [TestCase( "p" )]
         [TestCase( "deefzrfgebhntjuykilompo^ùp$*pù^mlkjhgf250258p" )]
-        public void Changing_iteration_count_updates_automatically_the_hash( string pwd )
+        public void changing_iteration_count_updates_automatically_the_hash( string pwd )
         {
             var u = TestHelper.StObjMap.Default.Obtain<UserPasswordTable>();
             var user = TestHelper.StObjMap.Default.Obtain<UserTable>();

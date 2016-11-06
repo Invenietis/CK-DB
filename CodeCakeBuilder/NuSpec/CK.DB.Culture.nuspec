@@ -14,7 +14,7 @@
     </description>
     <language>en-US</language>
     <dependencies>
-      <dependency id="CK.SqlServer.Setup.Model" version="{{CKDatabaseVersion}}" />
+      <dependency id="CK.SqlServer.Setup.Model" version="{{VersionCKDatabase}}" />
     </dependencies>
   </metadata>
   <files>    
