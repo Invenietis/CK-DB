@@ -98,9 +98,13 @@ namespace CK.DB.Culture
             using( var c = new SqlCommand( $"select Name, EnglishName, NativeName from CK.tLCID where LCID=@LCID" ) )
             {
                 c.Parameters.AddWithValue( "@LCID", lcid );
-                var p = ctx.Executor.GetProvider( Database.ConnectionString );
-                object[] data = p.ReadFirstRow( c );
-                return data == null ? null : new CultureData( lcid, (string)data[0], (string)data[1], (string)data[2] );
+                c.Connection = ctx[ Database.ConnectionString ];
+                using( c.Connection.EnsureOpen() )
+                using( var r = c.ExecuteReader() )
+                {
+                    if( !r.Read() ) return null;
+                    return new CultureData( lcid, r.GetString(0), r.GetString(1), r.GetString(2) );
+                }
             }
         }
 
@@ -116,10 +120,13 @@ namespace CK.DB.Culture
             using( var c = new SqlCommand( $"select Fallbacks from CK.vXLCID where XLCID=@XLCID" ) )
             {
                 c.Parameters.AddWithValue( "@XLCID", xlcid );
-                var p = ctx.Executor.GetProvider( Database.ConnectionString );
-                string s = (string)p.ExecuteScalar( c );
-                if( s == null ) return null;
-                string[] f = s.Split( CultureData._separators );
+                string[] f;
+                using( (c.Connection = ctx[Database]).EnsureOpen() )
+                {
+                    string s = (string)c.ExecuteScalar();
+                    if( s == null ) return null;
+                    f = s.Split( CultureData._separators );
+                }
                 CultureData[] d = new CultureData[f.Length / 4];
                 int idx = 0;
                 for( int i = 0; i < d.Length; ++i )

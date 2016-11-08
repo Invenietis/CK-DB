@@ -84,8 +84,15 @@ namespace CK.DB.User.UserPassword
             if( string.IsNullOrEmpty( password ) ) return false;
 
             // 1 - Get the PwdHash.
-            object[] hashAndUserId = ctx.Executor.GetProvider( Database.ConnectionString ).ReadFirstRow( hashReader );
-            byte[] hash = (byte[])hashAndUserId[0];
+            byte[] hash;
+            int userId;
+            using( ( hashReader.Connection = ctx[Database] ).EnsureOpen() )
+            using( var r = hashReader.ExecuteReader( System.Data.CommandBehavior.SingleRow ) )
+            {
+                if( !r.Read() ) return false;
+                hash = r.GetSqlBytes( 0 ).Buffer;
+                userId = r.GetInt32( 1 );
+            }
 
             // 2 - Check it.
             PasswordHasher p = new PasswordHasher( HashIterationCount );
@@ -96,7 +103,6 @@ namespace CK.DB.User.UserPassword
                 case PasswordVerificationResult.SuccessRehashNeeded:
                     {
                         // 3 - Rehash the password and update the database.
-                        int userId = (int)hashAndUserId[1];
                         SetPwdRawHash( ctx, 1, userId, p.HashPassword( password ) );
                         return true;
                     }
