@@ -55,7 +55,7 @@ namespace CK.DB.User.UserPassword.Tests
             using( var ctx = new SqlStandardCallContext() )
             {
                 int userId = user.CreateUser( ctx, 1, Guid.NewGuid().ToString() );
-                u.CreatePasswordUserAsync( ctx, 1, userId, "pwd" );
+                u.CreatePasswordUser( ctx, 1, userId, "pwd" );
                 user.DestroyUser( ctx, 1, userId );
             }
         }

@@ -6,6 +6,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CK.DB.Actor", "CK.DB.Actor\CK.DB.Actor.csproj", "{3902B885-AC29-4BE3-A83E-184316A09E91}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{736EF2A7-661B-4D52-AD22-8349C71ACB50}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\all.nunit = Tests\all.nunit
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CK.DB.Actor.Tests", "Tests\CK.DB.Actor.Tests\CK.DB.Actor.Tests.csproj", "{93C9E608-A3CB-47C6-92E9-D41720E4BA0F}"
 EndProject

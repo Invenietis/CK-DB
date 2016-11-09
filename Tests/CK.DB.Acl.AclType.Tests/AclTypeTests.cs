@@ -47,13 +47,13 @@ namespace CK.DB.Acl.AclType.Tests
                 await aclType.SetGrantLevelAsync( ctx, 1, id, 1, false );
                 aclType.Database.AssertScalarEquals( 4, "select count(*) from CK.tAclTypeGrantLevel where AclTypeId = @0", id );
                 // ...except if it is 0 or 127.
-                Assert.Throws<SqlException>( async () => await aclType.SetGrantLevelAsync( ctx, 1, id, 0, false ) );
-                Assert.Throws<SqlException>( async () => await aclType.SetGrantLevelAsync( ctx, 1, id, 127, false ) );
+                Assert.Throws<SqlDetailedException>( async () => await aclType.SetGrantLevelAsync( ctx, 1, id, 0, false ) );
+                Assert.Throws<SqlDetailedException>( async () => await aclType.SetGrantLevelAsync( ctx, 1, id, 127, false ) );
 
                 // Configured GrantLevel must not be deny level:
-                Assert.Throws<SqlException>( async () => await aclType.SetGrantLevelAsync( ctx, 1, id, 128, true ) );
-                Assert.Throws<SqlException>( async () => await aclType.SetGrantLevelAsync( ctx, 1, id, 255, true ) );
-                Assert.Throws<SqlException>( async () => await aclType.SetGrantLevelAsync( ctx, 1, id, 255, false ) );
+                Assert.Throws<SqlDetailedException>( async () => await aclType.SetGrantLevelAsync( ctx, 1, id, 128, true ) );
+                Assert.Throws<SqlDetailedException>( async () => await aclType.SetGrantLevelAsync( ctx, 1, id, 255, true ) );
+                Assert.Throws<SqlDetailedException>( async () => await aclType.SetGrantLevelAsync( ctx, 1, id, 255, false ) );
 
                 await aclType.SetGrantLevelAsync( ctx, 1, id, 87, false );
                 aclType.Database.AssertScalarEquals( 3, "select count(*) from CK.tAclTypeGrantLevel where AclTypeId = @0", id );
@@ -75,7 +75,7 @@ namespace CK.DB.Acl.AclType.Tests
                 int idType = await aclType.CreateAclTypeAsync( ctx, 1 );
                 int idAcl = await aclType.CreateAclAsync( ctx, 1, idType );
                 aclType.Database.AssertScalarEquals( idType, "select AclTypeId from CK.tAcl where AclId = @0", idAcl );
-                Assert.Throws<SqlException>( async () => await aclType.DestroyAclTypeAsync( ctx, 1, idType ) );
+                Assert.Throws<SqlDetailedException>( async () => await aclType.DestroyAclTypeAsync( ctx, 1, idType ) );
                 acl.DestroyAcl( ctx, 1, idAcl );
                 await aclType.DestroyAclTypeAsync( ctx, 1, idType );
             }

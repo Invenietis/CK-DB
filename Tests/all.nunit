@@ -1,0 +1,23 @@
+﻿<NUnitProject>
+  <Settings activeconfig="Default" processModel="Multiple" domainUsage="Default" />
+  <Config name="Default" binpathtype="Auto">
+    <assembly path="CK.DB.Acl.AclType.Tests\bin\Debug\CK.DB.Acl.AclType.Tests.dll" />
+    <assembly path="CK.DB.Acl.Tests\bin\Debug\CK.DB.Acl.Tests.dll" />
+    <assembly path="CK.DB.Actor.Tests\bin\Debug\CK.DB.Actor.Tests.dll" />
+    <assembly path="CK.DB.Culture.Tests\bin\Debug\CK.DB.Culture.Tests.dll" />
+    <assembly path="CK.DB.Group.SimpleNaming.Tests\bin\Debug\CK.DB.Group.SimpleNaming.Tests.dll" />
+    <assembly path="CK.DB.HZone.Tests\bin\Debug\CK.DB.HZone.Tests.dll" />
+    <assembly path="CK.DB.Res.MCResHtml.Tests\bin\Debug\CK.DB.Res.MCResHtml.Tests.dll" />
+    <assembly path="CK.DB.Res.MCResString.Tests\bin\Debug\CK.DB.Res.MCResString.Tests.dll" />
+    <assembly path="CK.DB.Res.MCResText.Tests\bin\Debug\CK.DB.Res.MCResText.Tests.dll" />
+    <assembly path="CK.DB.Res.ResHtml.Tests\bin\Debug\CK.DB.Res.ResHtml.Tests.dll" />
+    <assembly path="CK.DB.Res.ResName.Tests\bin\Debug\CK.DB.Res.ResName.Tests.dll" />
+    <assembly path="CK.DB.Res.ResString.Tests\bin\Debug\CK.DB.Res.ResString.Tests.dll" />
+    <assembly path="CK.DB.Res.ResText.Tests\bin\Debug\CK.DB.Res.ResText.Tests.dll" />
+    <assembly path="CK.DB.Res.Tests\bin\Debug\CK.DB.Res.Tests.dll" />
+    <assembly path="CK.DB.User.UserPassword.Tests\bin\Debug\CK.DB.User.UserPassword.Tests.dll" />
+    <assembly path="CK.DB.Zone.SimpleNaming.Tests\bin\Debug\CK.DB.Zone.SimpleNaming.Tests.dll" />
+    <assembly path="CK.DB.Zone.Tests\bin\Debug\CK.DB.Zone.Tests.dll" />
+  </Config>
+  <Config name="Release" />
+</NUnitProject>
