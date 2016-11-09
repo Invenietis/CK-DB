@@ -120,10 +120,16 @@ namespace CK.DB.User.UserPassword
         {
             if( string.IsNullOrEmpty( password ) ) return false;
 
-            // 1 - Get the PwdHash.
-            object[] hashAndUserId = await ctx.Executor.GetProvider( Database.ConnectionString ).ReadFirstRowAsync( hashReader );
-            byte[] hash = (byte[])hashAndUserId[0];
-
+            // 1 - Get the PwdHash and UserId.
+            byte[] hash;
+            int userId;
+            using( await (hashReader.Connection = ctx[Database]).EnsureOpenAsync() )
+            using( var r = await hashReader.ExecuteReaderAsync( System.Data.CommandBehavior.SingleRow ) )
+            {
+                if( !await r.ReadAsync() ) return false;
+                hash = r.GetSqlBytes( 0 ).Buffer;
+                userId = r.GetInt32( 1 );
+            }
             // 2 - Check it.
             PasswordHasher p = new PasswordHasher(HashIterationCount);
             var result = p.VerifyHashedPassword(hash, password);
@@ -133,7 +139,6 @@ namespace CK.DB.User.UserPassword
                 case PasswordVerificationResult.SuccessRehashNeeded:
                     {
                         // 3 - Rehash the password and update the database.
-                        int userId = (int)hashAndUserId[1];
                         await SetPwdRawHashAsync(ctx, 1, userId, p.HashPassword(password)); 
                         return true;
                     }

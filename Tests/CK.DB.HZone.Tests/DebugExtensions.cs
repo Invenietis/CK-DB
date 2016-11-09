@@ -15,9 +15,9 @@ namespace CK.DB.HZone.Tests
     {
         static public string DumpTree( this ZoneTable @this, ISqlCallContext ctx, int zoneId )
         {
-            using( var c = new SqlConnectionProvider( @this.Database.ConnectionString ) )
             using( var cmd = new SqlCommand( $"select ChildId, ChildDepth from CK.vZoneAllChildren where ZoneId={zoneId} order by ChildOrderByKey" ) )
-            using( var r = c.AcquireReader( cmd ) )
+            using( (cmd.Connection = ctx[@this.Database]).EnsureOpen() )
+            using( var r = cmd.ExecuteReader() )
             {
                 StringBuilder b = new StringBuilder();
                 int firstDepth = -1;
