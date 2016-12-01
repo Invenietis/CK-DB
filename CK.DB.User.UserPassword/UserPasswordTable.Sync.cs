@@ -119,7 +119,7 @@ namespace CK.DB.User.UserPassword
         /// </summary>
         /// <param name="ctx">The call context to use.</param>
         /// <param name="actorId">The acting actor identifier.</param>
-        /// <param name="userId">The user identifier to destroy.</param>
+        /// <param name="userId">The user identifier for which Password information must be destroyed.</param>
         [SqlProcedure( "sUserPasswordDestroy" )]
         public abstract void DestroyPasswordUser( ISqlCallContext ctx, int actorId, int userId );
 

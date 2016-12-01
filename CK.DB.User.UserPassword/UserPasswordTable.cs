@@ -89,12 +89,12 @@ namespace CK.DB.User.UserPassword
         /// <param name="userId">The user identifier.</param>
         /// <param name="password">The password to challenge.</param>
         /// <returns>True on success, false if the password does not match.</returns>
-        public Task<bool> VerifyAsync(ISqlCallContext ctx, int userId, string password)
+        public Task<bool> VerifyAsync( ISqlCallContext ctx, int userId, string password )
         {
-            using (var c = new SqlCommand($"select PwdHash, @UserId from CK.tUserPassword where UserId=@UserId"))
+            using( var c = new SqlCommand( $"select PwdHash, @UserId from CK.tUserPassword where UserId=@UserId" ) )
             {
-                c.Parameters.AddWithValue("@UserId", userId);
-                return DoVerifyAsync(ctx, c, password);
+                c.Parameters.AddWithValue( "@UserId", userId );
+                return DoVerifyAsync( ctx, c, password );
             }
         }
 
@@ -107,44 +107,44 @@ namespace CK.DB.User.UserPassword
         /// <param name="userName">The user name.</param>
         /// <param name="password">The password to challenge.</param>
         /// <returns>True on success, false if the password does not match.</returns>
-        public Task<bool> VerifyAsync(ISqlCallContext ctx, string userName, string password)
+        public Task<bool> VerifyAsync( ISqlCallContext ctx, string userName, string password )
         {
-            using (var c = new SqlCommand($"select p.PwdHash, p.UserId from CK.tUserPassword p inner join CK.tUser u on u.UserId = p.UserId where u.UserName=@UserName"))
+            using( var c = new SqlCommand( $"select p.PwdHash, p.UserId from CK.tUserPassword p inner join CK.tUser u on u.UserId = p.UserId where u.UserName=@UserName" ) )
             {
-                c.Parameters.AddWithValue("@UserName", userName);
-                return DoVerifyAsync(ctx, c, password);
+                c.Parameters.AddWithValue( "@UserName", userName );
+                return DoVerifyAsync( ctx, c, password );
             }
         }
 
-        async Task<bool> DoVerifyAsync(ISqlCallContext ctx, SqlCommand hashReader, string password )
+        async Task<bool> DoVerifyAsync( ISqlCallContext ctx, SqlCommand hashReader, string password )
         {
             if( string.IsNullOrEmpty( password ) ) return false;
 
             // 1 - Get the PwdHash and UserId.
             byte[] hash;
             int userId;
-            using( await (hashReader.Connection = ctx[Database]).EnsureOpenAsync() )
-            using( var r = await hashReader.ExecuteReaderAsync( System.Data.CommandBehavior.SingleRow ) )
+            using( await (hashReader.Connection = ctx[Database]).EnsureOpenAsync().ConfigureAwait( false ) )
+            using( var r = await hashReader.ExecuteReaderAsync( System.Data.CommandBehavior.SingleRow ).ConfigureAwait( false ) )
             {
-                if( !await r.ReadAsync() ) return false;
+                if( !await r.ReadAsync().ConfigureAwait( false ) ) return false;
                 hash = r.GetSqlBytes( 0 ).Buffer;
                 userId = r.GetInt32( 1 );
             }
             // 2 - Check it.
-            PasswordHasher p = new PasswordHasher(HashIterationCount);
-            var result = p.VerifyHashedPassword(hash, password);
-            switch (result)
+            PasswordHasher p = new PasswordHasher( HashIterationCount );
+            var result = p.VerifyHashedPassword( hash, password );
+            switch( result )
             {
                 case PasswordVerificationResult.Failed: return false;
                 case PasswordVerificationResult.SuccessRehashNeeded:
                     {
                         // 3 - Rehash the password and update the database.
-                        await SetPwdRawHashAsync(ctx, 1, userId, p.HashPassword(password)); 
+                        await SetPwdRawHashAsync( ctx, 1, userId, p.HashPassword( password ) ).ConfigureAwait( false );
                         return true;
                     }
                 default:
                     {
-                        Debug.Assert(result == PasswordVerificationResult.Success);
+                        Debug.Assert( result == PasswordVerificationResult.Success );
                         return true;
                     }
             }
@@ -155,14 +155,14 @@ namespace CK.DB.User.UserPassword
         /// </summary>
         /// <param name="ctx">The call context to use.</param>
         /// <param name="actorId">The acting actor identifier.</param>
-        /// <param name="userId">The user identifier to destroy.</param>
+        /// <param name="userId">The user identifier for which Password information must be destroyed.</param>
         /// <returns>The awaitable.</returns>
-        [SqlProcedure("sUserPasswordDestroy")]
-        public abstract Task DestroyPasswordUserAsync(ISqlCallContext ctx, int actorId, int userId);
+        [SqlProcedure( "sUserPasswordDestroy" )]
+        public abstract Task DestroyPasswordUserAsync( ISqlCallContext ctx, int actorId, int userId );
 
         /// <summary>
         /// Creates a PasswordUser with an initial raw hash for an existing user.
-        /// This method should be used only if the standard password hasher and verfication 
+        /// This method should be used only if the standard password hasher and verification 
         /// mechanism is not used.
         /// </summary>
         /// <param name="ctx">The call context to use.</param>
