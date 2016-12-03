@@ -2,7 +2,7 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyTitle("CK.DB.User.UserGoogle.Tests")]
+[assembly: AssemblyTitle("CK.DB.Actor.ActorEMail")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyCulture("")]
 
@@ -12,4 +12,4 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("f714086c-1328-4eea-b689-d6d16f7b2be1")]
+[assembly: Guid("f0063671-47f7-410b-b799-1a78e3d1d88b")]

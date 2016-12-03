@@ -72,6 +72,8 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="Bootstrap.ps1" />
+    <None Include="NuSpec\CK.DB.Actor.ActorEMails.Tests.nuspec" />
+    <None Include="NuSpec\CK.DB.Actor.ActorEMail.nuspec" />
     <None Include="NuSpec\CK.DB.User.UserPassword.Tests.nuspec" />
     <None Include="NuSpec\CK.DB.User.UserPassword.nuspec" />
     <None Include="NuSpec\CK.DB.Acl.AclType.nuspec" />

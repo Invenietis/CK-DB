@@ -3,6 +3,7 @@
   <Config name="Default" binpathtype="Auto">
     <assembly path="CK.DB.Acl.AclType.Tests\bin\Debug\CK.DB.Acl.AclType.Tests.dll" />
     <assembly path="CK.DB.Acl.Tests\bin\Debug\CK.DB.Acl.Tests.dll" />
+    <assembly path="CK.DB.Actor.ActorEMail.Tests\bin\Debug\CK.DB.Actor.ActorEMail.Tests.dll" />
     <assembly path="CK.DB.Actor.Tests\bin\Debug\CK.DB.Actor.Tests.dll" />
     <assembly path="CK.DB.Culture.Tests\bin\Debug\CK.DB.Culture.Tests.dll" />
     <assembly path="CK.DB.Group.SimpleNaming.Tests\bin\Debug\CK.DB.Group.SimpleNaming.Tests.dll" />

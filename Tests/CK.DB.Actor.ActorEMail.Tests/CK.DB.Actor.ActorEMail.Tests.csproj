@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{CD5E1A87-B423-4C71-8D46-248C3D4163CD}</ProjectGuid>
+    <ProjectGuid>{9ACAE169-07F4-499B-8804-60E980A6CC00}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CK.DB.User.UserPassword.Tests</RootNamespace>
-    <AssemblyName>CK.DB.User.UserPassword.Tests</AssemblyName>
+    <RootNamespace>CK.DB.Actor.ActorEMail.Tests</RootNamespace>
+    <AssemblyName>CK.DB.Actor.ActorEMail.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <NuGetPackageImportStamp>
@@ -34,7 +34,7 @@
   <PropertyGroup>
     <StartAction>Program</StartAction>
     <StartProgram>$(SolutionDir)packages\NUnit.Runners.Net4.2.6.4\tools\nunit.exe</StartProgram>
-    <StartArguments>CK.DB.User.UserPassword.Tests.dll</StartArguments>
+    <StartArguments>CK.DB.Actor.ActorEMail.Tests.dll</StartArguments>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="CK.ActivityMonitor, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
@@ -50,7 +50,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.DB.Tests.NUnit, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CK.DB.Tests.NUnit.5.0.0-a35-00-develop-0010\lib\net45\CK.DB.Tests.NUnit.dll</HintPath>
+      <HintPath>..\..\packages\CK.DB.Tests.NUnit.5.0.0-a35-00-develop-0012\lib\net45\CK.DB.Tests.NUnit.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.Monitoring, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
@@ -62,23 +62,23 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.Setup.Dependency, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CK.Setup.Dependency.5.0.0-a35-00-develop-0010\lib\net45\CK.Setup.Dependency.dll</HintPath>
+      <HintPath>..\..\packages\CK.Setup.Dependency.5.0.0-a35-00-develop-0012\lib\net45\CK.Setup.Dependency.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.Setupable.Engine, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CK.Setupable.Engine.5.0.0-a35-00-develop-0010\lib\net45\CK.Setupable.Engine.dll</HintPath>
+      <HintPath>..\..\packages\CK.Setupable.Engine.5.0.0-a35-00-develop-0012\lib\net45\CK.Setupable.Engine.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.Setupable.Model, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CK.Setupable.Model.5.0.0-a35-00-develop-0010\lib\net45\CK.Setupable.Model.dll</HintPath>
+      <HintPath>..\..\packages\CK.Setupable.Model.5.0.0-a35-00-develop-0012\lib\net45\CK.Setupable.Model.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.Setupable.Runtime, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CK.Setupable.Runtime.5.0.0-a35-00-develop-0010\lib\net45\CK.Setupable.Runtime.dll</HintPath>
+      <HintPath>..\..\packages\CK.Setupable.Runtime.5.0.0-a35-00-develop-0012\lib\net45\CK.Setupable.Runtime.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.SqlServer.Core, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CK.SqlServer.Core.5.0.0-a35-00-develop-0010\lib\net45\CK.SqlServer.Core.dll</HintPath>
+      <HintPath>..\..\packages\CK.SqlServer.Core.5.0.0-a35-00-develop-0012\lib\net45\CK.SqlServer.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.SqlServer.Parser, Version=5.1.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
@@ -90,15 +90,15 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.SqlServer.Setup.Engine, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CK.SqlServer.Setup.Engine.5.0.0-a35-00-develop-0010\lib\net45\CK.SqlServer.Setup.Engine.dll</HintPath>
+      <HintPath>..\..\packages\CK.SqlServer.Setup.Engine.5.0.0-a35-00-develop-0012\lib\net45\CK.SqlServer.Setup.Engine.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.SqlServer.Setup.Model, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CK.SqlServer.Setup.Model.5.0.0-a35-00-develop-0010\lib\net45\CK.SqlServer.Setup.Model.dll</HintPath>
+      <HintPath>..\..\packages\CK.SqlServer.Setup.Model.5.0.0-a35-00-develop-0012\lib\net45\CK.SqlServer.Setup.Model.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.SqlServer.Setup.Runtime, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CK.SqlServer.Setup.Runtime.5.0.0-a35-00-develop-0010\lib\net45\CK.SqlServer.Setup.Runtime.dll</HintPath>
+      <HintPath>..\..\packages\CK.SqlServer.Setup.Runtime.5.0.0-a35-00-develop-0012\lib\net45\CK.SqlServer.Setup.Runtime.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.SqlServer.Transform, Version=5.1.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -106,15 +106,15 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.StObj.Engine, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CK.StObj.Engine.5.0.0-a35-00-develop-0010\lib\net45\CK.StObj.Engine.dll</HintPath>
+      <HintPath>..\..\packages\CK.StObj.Engine.5.0.0-a35-00-develop-0012\lib\net45\CK.StObj.Engine.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.StObj.Model, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CK.StObj.Model.5.0.0-a35-00-develop-0010\lib\net45\CK.StObj.Model.dll</HintPath>
+      <HintPath>..\..\packages\CK.StObj.Model.5.0.0-a35-00-develop-0012\lib\net45\CK.StObj.Model.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.StObj.Runtime, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CK.StObj.Runtime.5.0.0-a35-00-develop-0010\lib\net45\CK.StObj.Runtime.dll</HintPath>
+      <HintPath>..\..\packages\CK.StObj.Runtime.5.0.0-a35-00-develop-0012\lib\net45\CK.StObj.Runtime.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.Text, Version=5.1.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
@@ -146,10 +146,10 @@
     <Compile Include="..\..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="ActorEMailTests.cs" />
     <Compile Include="DBSetup.cs" />
     <Compile Include="From\FromActorGroupTests.cs" />
     <Compile Include="From\FromActorUserTests.cs" />
-    <Compile Include="UserPasswordTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -157,13 +157,13 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\CK.DB.Actor\CK.DB.Actor.csproj">
-      <Project>{3902B885-AC29-4BE3-A83E-184316A09E91}</Project>
-      <Name>CK.DB.Actor</Name>
+    <ProjectReference Include="..\..\CK.DB.Actor.ActorEmail\CK.DB.Actor.ActorEMail.csproj">
+      <Project>{f0063671-47f7-410b-b799-1a78e3d1d88b}</Project>
+      <Name>CK.DB.Actor.ActorEMail</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\CK.DB.User.UserPassword\CK.DB.User.UserPassword.csproj">
-      <Project>{5E1212FD-292F-48A6-B8D3-A31E750A99DD}</Project>
-      <Name>CK.DB.User.UserPassword</Name>
+    <ProjectReference Include="..\..\CK.DB.Actor\CK.DB.Actor.csproj">
+      <Project>{3902b885-ac29-4be3-a83e-184316a09e91}</Project>
+      <Name>CK.DB.Actor</Name>
     </ProjectReference>
     <ProjectReference Include="..\CK.DB.Actor.Tests\CK.DB.Actor.Tests.csproj">
       <Project>{93c9e608-a3cb-47c6-92e9-d41720e4ba0f}</Project>
