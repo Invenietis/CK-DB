@@ -14,8 +14,15 @@ namespace CK.DB.User.UserPassword
     [SqlPackage( Schema = "CK", ResourcePath = "Res" )]
     public class Package : SqlPackage
     {
-        void Construct(Actor.Package resource)
+        void Construct( Actor.Package actorPackage )
         {
         }
+
+        /// <summary>
+        /// Gets or sets an optional <see cref="IUserPasswordMigrator"/>
+        /// that will be used to migrate from previous password management 
+        /// implementations.
+        /// </summary>
+        public IUserPasswordMigrator PasswordMigrator { get; set; }
     }
 }

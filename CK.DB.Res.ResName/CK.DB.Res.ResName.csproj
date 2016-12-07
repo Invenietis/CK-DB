@@ -48,15 +48,15 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.Setupable.Model, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.Setupable.Model.5.0.0-a35-00-develop-0010\lib\net45\CK.Setupable.Model.dll</HintPath>
+      <HintPath>..\packages\CK.Setupable.Model.5.0.0-a35-00-develop-0014\lib\net45\CK.Setupable.Model.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.SqlServer.Setup.Model, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.SqlServer.Setup.Model.5.0.0-a35-00-develop-0010\lib\net45\CK.SqlServer.Setup.Model.dll</HintPath>
+      <HintPath>..\packages\CK.SqlServer.Setup.Model.5.0.0-a35-00-develop-0014\lib\net45\CK.SqlServer.Setup.Model.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.StObj.Model, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.StObj.Model.5.0.0-a35-00-develop-0010\lib\net45\CK.StObj.Model.dll</HintPath>
+      <HintPath>..\packages\CK.StObj.Model.5.0.0-a35-00-develop-0014\lib\net45\CK.StObj.Model.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.Text, Version=5.1.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
@@ -89,7 +89,7 @@
     <EmbeddedResource Include="Res\vRes.tql" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Res\Model.CK.ResNameTable.Install.1.0.1.sql" />
+    <EmbeddedResource Include="Res\Model.CK.ResNameTable.Install.1.0.2.sql" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CK.DB.Res\CK.DB.Res.csproj">
@@ -127,6 +127,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Res\Model.CK.ResNameTable.Install.1.0.0.to.1.0.1.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Res\Model.CK.ResNameTable.Install.1.0.1.to.1.0.2.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\SimpleGitVersionTask.0.21.0\Build\SimpleGitVersionTask.targets" Condition="Exists('..\packages\SimpleGitVersionTask.0.21.0\Build\SimpleGitVersionTask.targets')" />

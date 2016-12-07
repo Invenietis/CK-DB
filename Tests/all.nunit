@@ -5,6 +5,7 @@
     <assembly path="CK.DB.Acl.Tests\bin\Debug\CK.DB.Acl.Tests.dll" />
     <assembly path="CK.DB.Actor.ActorEMail.Tests\bin\Debug\CK.DB.Actor.ActorEMail.Tests.dll" />
     <assembly path="CK.DB.Actor.Tests\bin\Debug\CK.DB.Actor.Tests.dll" />
+    <assembly path="CK.DB.Auth.Tests\bin\Debug\CK.DB.Auth.Tests.dll" />
     <assembly path="CK.DB.Culture.Tests\bin\Debug\CK.DB.Culture.Tests.dll" />
     <assembly path="CK.DB.Group.SimpleNaming.Tests\bin\Debug\CK.DB.Group.SimpleNaming.Tests.dll" />
     <assembly path="CK.DB.HZone.Tests\bin\Debug\CK.DB.HZone.Tests.dll" />

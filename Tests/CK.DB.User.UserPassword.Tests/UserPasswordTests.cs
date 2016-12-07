@@ -89,5 +89,91 @@ namespace CK.DB.User.UserPassword.Tests
 
             }
         }
+
+        class MigrationSupport : IUserPasswordMigrator
+        {
+            readonly int _userIdToMigrate;
+            readonly string _pwd;
+
+            public bool MigrationDoneCalled;
+
+            public MigrationSupport( int userIdToMigrate, string pwd )
+            {
+                _userIdToMigrate = userIdToMigrate;
+                _pwd = pwd;
+            }
+
+            public void MigrationDone( ISqlCallContext ctx, int userId ) => MigrationDoneCalled = true;
+
+            public bool VerifyPassword( ISqlCallContext ctx, int userId, string password )
+            {
+                return userId == _userIdToMigrate && _pwd == password; 
+            }
+        }
+
+        [Test]
+        public void password_migration_is_supported_by_user_id_and_user_name()
+        {
+            var p = TestHelper.StObjMap.Default.Obtain<Package>();
+            var u = TestHelper.StObjMap.Default.Obtain<UserPasswordTable>();
+            var user = TestHelper.StObjMap.Default.Obtain<UserTable>();
+            using( var ctx = new SqlStandardCallContext() )
+            {
+                // By identifier
+                {
+                    string userName = Guid.NewGuid().ToString();
+                    var idU = user.CreateUser( ctx, 1, userName );
+                    p.PasswordMigrator = new MigrationSupport( idU, "toto" );
+                    Assert.That( u.Verify( ctx, idU, "failed" ), Is.False );
+                    p.Database.AssertEmptyReader( $"select 1 from CK.tUserPassword where UserId={idU}" );
+                    Assert.That( u.Verify( ctx, idU, "toto" ) );
+                    p.Database.AssertScalarEquals( 1, $"select 1 from CK.tUserPassword where UserId={idU}" );
+                    Assert.That( u.Verify( ctx, idU, "toto" ) );
+                }
+                // By user name
+                {
+                    string userName = Guid.NewGuid().ToString();
+                    var idU = user.CreateUser( ctx, 1, userName );
+                    p.PasswordMigrator = new MigrationSupport( idU, "toto" );
+                    Assert.That( u.Verify( ctx, userName, "failed" ), Is.False );
+                    p.Database.AssertEmptyReader( $"select 1 from CK.tUserPassword where UserId={idU}" );
+                    Assert.That( u.Verify( ctx, userName, "toto" ) );
+                    p.Database.AssertScalarEquals( 1, $"select 1 from CK.tUserPassword where UserId={idU}" );
+                    Assert.That( u.Verify( ctx, userName, "toto" ) );
+                }
+            }
+        }
+        [Test]
+        public async Task password_migration_is_supported_by_user_id_and_user_name_async()
+        {
+            var p = TestHelper.StObjMap.Default.Obtain<Package>();
+            var u = TestHelper.StObjMap.Default.Obtain<UserPasswordTable>();
+            var user = TestHelper.StObjMap.Default.Obtain<UserTable>();
+            using( var ctx = new SqlStandardCallContext() )
+            {
+                // By identifier
+                {
+                    string userName = Guid.NewGuid().ToString();
+                    var idU = await user.CreateUserAsync( ctx, 1, userName );
+                    p.PasswordMigrator = new MigrationSupport( idU, "toto" );
+                    Assert.That( await u.VerifyAsync( ctx, idU, "failed" ), Is.False );
+                    p.Database.AssertEmptyReader( $"select 1 from CK.tUserPassword where UserId={idU}" );
+                    Assert.That( await u.VerifyAsync( ctx, idU, "toto" ) );
+                    p.Database.AssertScalarEquals( 1, $"select 1 from CK.tUserPassword where UserId={idU}" );
+                    Assert.That( await u.VerifyAsync( ctx, idU, "toto" ) );
+                }
+                // By user name
+                {
+                    string userName = Guid.NewGuid().ToString();
+                    var idU = await user.CreateUserAsync( ctx, 1, userName );
+                    p.PasswordMigrator = new MigrationSupport( idU, "toto" );
+                    Assert.That( await u.VerifyAsync( ctx, userName, "failed" ), Is.False );
+                    p.Database.AssertEmptyReader( $"select 1 from CK.tUserPassword where UserId={idU}" );
+                    Assert.That( await u.VerifyAsync( ctx, userName, "toto" ) );
+                    p.Database.AssertScalarEquals( 1, $"select 1 from CK.tUserPassword where UserId={idU}" );
+                    Assert.That( await u.VerifyAsync( ctx, userName, "toto" ) );
+                }
+            }
+        }
     }
 }

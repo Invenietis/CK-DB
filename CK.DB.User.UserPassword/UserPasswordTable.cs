@@ -22,6 +22,9 @@ namespace CK.DB.User.UserPassword
     [SqlObjectItem("transform:sUserDestroy")]
     public abstract partial class UserPasswordTable : SqlTable
     {
+        Package _package;
+        Actor.UserTable _userTable;
+
         static int _iterationCount;
 
         /// <summary>
@@ -50,6 +53,21 @@ namespace CK.DB.User.UserPassword
             _iterationCount = DefaultHashIterationCount;
         }
 
+        void Construct( Actor.UserTable userTable )
+        {
+            _userTable = userTable;
+        }
+
+        /// <summary>
+        /// Gets the User password package.
+        /// </summary>
+        [InjectContract]
+        public Package UserPasswordPackage
+        {
+            get { return _package; }
+            protected set { _package = value; }
+        }
+
         /// <summary>
         /// Associates a PasswordUser to an existing user.
         /// </summary>
@@ -58,11 +76,11 @@ namespace CK.DB.User.UserPassword
         /// <param name="userId">The user identifier that must have a password.</param>
         /// <param name="password">The initial password. Can not be null nor empty.</param>
         /// <returns>The awaitable.</returns>
-        public Task CreatePasswordUserAsync(ISqlCallContext ctx, int actorId, int userId, string password)
+        public Task CreatePasswordUserAsync( ISqlCallContext ctx, int actorId, int userId, string password )
         {
             if( string.IsNullOrEmpty( password ) ) throw new ArgumentNullException( nameof( password ) );
-            PasswordHasher p = new PasswordHasher(HashIterationCount);
-            return CreatePasswordUserWithRawPwdHashAsync( ctx, actorId, userId, p.HashPassword( password ) ); 
+            PasswordHasher p = new PasswordHasher( HashIterationCount );
+            return CreatePasswordUserWithRawPwdHashAsync( ctx, actorId, userId, p.HashPassword( password ) );
         }
 
         /// <summary>
@@ -94,7 +112,7 @@ namespace CK.DB.User.UserPassword
             using( var c = new SqlCommand( $"select PwdHash, @UserId from CK.tUserPassword where UserId=@UserId" ) )
             {
                 c.Parameters.AddWithValue( "@UserId", userId );
-                return DoVerifyAsync( ctx, c, password );
+                return DoVerifyAsync( ctx, c, password, userId );
             }
         }
 
@@ -112,34 +130,72 @@ namespace CK.DB.User.UserPassword
             using( var c = new SqlCommand( $"select p.PwdHash, p.UserId from CK.tUserPassword p inner join CK.tUser u on u.UserId = p.UserId where u.UserName=@UserName" ) )
             {
                 c.Parameters.AddWithValue( "@UserName", userName );
-                return DoVerifyAsync( ctx, c, password );
+                return DoVerifyAsync( ctx, c, password, userName );
             }
         }
 
-        async Task<bool> DoVerifyAsync( ISqlCallContext ctx, SqlCommand hashReader, string password )
+        async Task<bool> DoVerifyAsync( ISqlCallContext ctx, SqlCommand hashReader, string password, object objectKey )
         {
             if( string.IsNullOrEmpty( password ) ) return false;
-
             // 1 - Get the PwdHash and UserId.
-            byte[] hash;
-            int userId;
+            //     hash is null if the user is not a UserPassword: we'll try to migrate it.
+            byte[] hash = null;
+            int userId = 0;
             using( await (hashReader.Connection = ctx[Database]).EnsureOpenAsync().ConfigureAwait( false ) )
             using( var r = await hashReader.ExecuteReaderAsync( System.Data.CommandBehavior.SingleRow ).ConfigureAwait( false ) )
             {
-                if( !await r.ReadAsync().ConfigureAwait( false ) ) return false;
-                hash = r.GetSqlBytes( 0 ).Buffer;
-                userId = r.GetInt32( 1 );
+                if( await r.ReadAsync().ConfigureAwait( false ) )
+                {
+                    hash = r.GetSqlBytes( 0 ).Buffer;
+                    userId = r.GetInt32( 1 );
+                    if( userId == 0 ) return false;
+                }
             }
-            // 2 - Check it.
-            PasswordHasher p = new PasswordHasher( HashIterationCount );
-            var result = p.VerifyHashedPassword( hash, password );
+            PasswordVerificationResult result = PasswordVerificationResult.Failed;
+            PasswordHasher p = null;
+            IUserPasswordMigrator migrator = null;
+            // 2 - Handle external password migration or check the hash.
+            if( hash == null )
+            {
+                migrator = _package.PasswordMigrator;
+                if( migrator != null  )
+                {
+                    if( objectKey is int )
+                    {
+                        userId = (int)objectKey;
+                    }
+                    else
+                    {
+                        Debug.Assert( objectKey is string );
+                        userId = _userTable.FindByName( ctx, (string)objectKey );
+                        if( userId == 0 ) return false;
+                    }
+                    if( migrator.VerifyPassword( ctx, userId, password ) )
+                    {
+                        result = PasswordVerificationResult.SuccessRehashNeeded;
+                        p = new PasswordHasher( HashIterationCount );
+                    }
+                }
+            }
+            else
+            {
+                p = new PasswordHasher( HashIterationCount );
+                result = p.VerifyHashedPassword( hash, password );
+            }
+            // 3 - Handle result.
             switch( result )
             {
                 case PasswordVerificationResult.Failed: return false;
                 case PasswordVerificationResult.SuccessRehashNeeded:
                     {
-                        // 3 - Rehash the password and update the database.
-                        await SetPwdRawHashAsync( ctx, 1, userId, p.HashPassword( password ) ).ConfigureAwait( false );
+                        // 4 - If migration occurred, create the user with its password.
+                        //     Else rehash the password and update the database.
+                        if( migrator != null )
+                        {
+                            await CreatePasswordUserAsync( ctx, 1, userId, password ).ConfigureAwait( false );
+                            migrator.MigrationDone( ctx, userId );
+                        }
+                        else await SetPwdRawHashAsync( ctx, 1, userId, p.HashPassword( password ) ).ConfigureAwait( false );
                         return true;
                     }
                 default:

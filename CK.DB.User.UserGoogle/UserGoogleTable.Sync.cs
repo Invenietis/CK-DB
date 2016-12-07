@@ -68,11 +68,8 @@ namespace CK.DB.User.UserGoogle
         internal T FindByGoogleAccountId<T>( ISqlCallContext ctx, string fieldName, string googleAccountId )
         {
             using( var c = new SqlCommand( $"select {fieldName} from CK.tUserGoogle where GoogleAccountId=@A" ) )
-            using( (c.Connection = ctx[Database]).EnsureOpen() )
             {
-                c.Parameters.AddWithValue( "@A", googleAccountId );
-                var o = c.ExecuteScalar();
-                return o != DBNull.Value ? (T)o : default(T);
+                return c.ExecuteScalar<T>( ctx[Database] );
             }
         }
 
@@ -86,11 +83,8 @@ namespace CK.DB.User.UserGoogle
         public UserGoogleInfo FindUserInfo( ISqlCallContext ctx, string googleAccountId )
         {
             using( var c = CreateReaderCommand( googleAccountId ) )
-            using( (c.Connection = ctx[Database]).EnsureOpen() )
-            using( var r = c.ExecuteReader( System.Data.CommandBehavior.SingleRow ) )
             {
-                if( !r.Read() ) return null;
-                return CreateUserUnfo( googleAccountId, r );
+                return c.ExecuteRow( ctx[Database], r => r == null ? null : CreateUserUnfo( googleAccountId, r ) );
             }
         }
 

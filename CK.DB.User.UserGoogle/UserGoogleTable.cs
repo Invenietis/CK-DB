@@ -78,14 +78,12 @@ namespace CK.DB.User.UserGoogle
             return ScalarByGoogleAccountIdAsync<int>( ctx, "UserId", googleAccountId, cancellationToken );
         }
 
-        internal async Task<T> ScalarByGoogleAccountIdAsync<T>( ISqlCallContext ctx, string fieldName, string googleAccountId, CancellationToken cancellationToken )
+        internal Task<T> ScalarByGoogleAccountIdAsync<T>( ISqlCallContext ctx, string fieldName, string googleAccountId, CancellationToken cancellationToken )
         {
             using( var c = new SqlCommand( $"select {fieldName} from CK.tUserGoogle where GoogleAccountId=@A" ) )
-            using( await (c.Connection = ctx[Database]).EnsureOpenAsync().ConfigureAwait( false ) )
             {
                 c.Parameters.AddWithValue( "@A", googleAccountId );
-                var o = await c.ExecuteScalarAsync().ConfigureAwait( false );
-                return o != DBNull.Value ? (T)o : default(T);
+                return c.ExecuteScalarAsync<T>( ctx[Database] );
             }
         }
 
@@ -97,14 +95,11 @@ namespace CK.DB.User.UserGoogle
         /// <param name="googleAccountId">The google account identifier.</param>
         /// <param name="cancellationToken">Optional cancellation token.</param>
         /// <returns>A <see cref="UserGoogleInfo"/> object or null if not found.</returns>
-        public async Task<UserGoogleInfo> FindUserInfoAsync( ISqlCallContext ctx, string googleAccountId, CancellationToken cancellationToken = default( CancellationToken ) )
+        public Task<UserGoogleInfo> FindUserInfoAsync( ISqlCallContext ctx, string googleAccountId, CancellationToken cancellationToken = default( CancellationToken ) )
         {
             using( var c = CreateReaderCommand( googleAccountId ) )
-            using( await (c.Connection = ctx[Database]).EnsureOpenAsync().ConfigureAwait( false ) )
-            using( var r = await c.ExecuteReaderAsync( System.Data.CommandBehavior.SingleRow ).ConfigureAwait( false ) )
             {
-                if( !await r.ReadAsync().ConfigureAwait( false ) ) return null;
-                return CreateUserUnfo( googleAccountId, r );
+                return c.ExecuteRowAsync( ctx[Database], r => r == null ? null : CreateUserUnfo( googleAccountId, r ) );
             }
         }
 
@@ -130,7 +125,7 @@ namespace CK.DB.User.UserGoogle
 
         /// <summary>
         /// Creates a reader command parametized with the Google account identifier.
-        /// Sinlge-row returned columns must be in this order: 
+        /// Single-row returned columns must be in this order: 
         /// UserId, RefreshToken, LastRefreshTokenTime, AccessToken, AccessTokenExpirationTime
         /// </summary>
         /// <param name="googleAccountId">Google account identifier to look for.</param>
