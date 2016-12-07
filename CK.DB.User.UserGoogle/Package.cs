@@ -1,4 +1,5 @@
 ﻿using CK.Core;
+using CK.DB.Auth;
 using CK.Setup;
 using CK.SqlServer;
 using CK.SqlServer.Setup;
@@ -21,6 +22,9 @@ namespace CK.DB.User.UserGoogle
     [SqlPackage( Schema = "CK", ResourcePath = "Res" )]
     public class Package : SqlPackage
     {
+        Auth.Package _authPackage;
+        Task<int> _defaultScopeSetId;
+
         /// <summary>
         /// Google token endpoint.
         /// </summary>
@@ -28,8 +32,9 @@ namespace CK.DB.User.UserGoogle
 
         HttpClient _client;
 
-        void Construct(Actor.Package resource)
+        void Construct( Actor.Package actorPackage, Auth.Package authPackage )
         {
+            _authPackage = authPackage;
         }
 
         static HttpClient CreateHttpClient( string baseAddress )
@@ -62,32 +67,16 @@ namespace CK.DB.User.UserGoogle
         public UserGoogleTable UserGoogleTable { get; protected set; }
 
         /// <summary>
-        /// Gets the default scopes that are required for all users.
+        /// Gets the default scope set identifier used as a template for new users.
         /// </summary>
         /// <param name="ctx">The call context to use.</param>
         /// <param name="cancellationToken">Optional cancellation token.</param>
-        /// <returns>The <see cref="SimpleScopes"/> for all users.</returns>
-        public async Task<SimpleScopes> GetDefaultScopesAsync( ISqlCallContext ctx, CancellationToken cancellationToken = default( CancellationToken ) )
+        /// <returns>The identifier of the default scope set for new users.</returns>
+        public Task<int> GetDefaultScopeSetIdAsync( ISqlCallContext ctx, CancellationToken cancellationToken = default( CancellationToken ) )
         {
-            return new SimpleScopes( await UserGoogleTable.ScalarByGoogleAccountIdAsync<string>( ctx, "Scopes", string.Empty, cancellationToken ).ConfigureAwait( false ) );
-        }
-
-        /// <summary>
-        /// Sets the default scopes that are required for all users.
-        /// </summary>
-        /// <param name="ctx">The call context to use.</param>
-        /// <param name="scopes">The scopes to set (must be valid).</param>
-        /// <param name="cancellationToken">Optional cancellation token.</param>
-        /// <returns>The awaitable.</returns>
-        public async Task SetDefaultScopesAsync( ISqlCallContext ctx, SimpleScopes scopes, CancellationToken cancellationToken = default( CancellationToken ) )
-        {
-            if( !scopes.IsValid ) throw new ArgumentException( "Scopes must be valid." );
-            using( var c = new SqlCommand( $"update CK.tUserGoogle set Scopes=@S where GoogleAccountId=''" ) )
-            using( await (c.Connection = ctx[Database]).EnsureOpenAsync().ConfigureAwait( false ) )
-            {
-                c.Parameters.AddWithValue( "@S", scopes.Scopes );
-                await c.ExecuteNonQueryAsync().ConfigureAwait( false );
-            }
+            return _defaultScopeSetId == null
+                    ? (_defaultScopeSetId = UserGoogleTable.ScalarByGoogleAccountIdAsync<int>( ctx, "ScopeSetId", string.Empty, cancellationToken ))
+                    : _defaultScopeSetId;
         }
 
         /// <summary>
@@ -95,49 +84,55 @@ namespace CK.DB.User.UserGoogle
         /// On success, the database is updated.
         /// </summary>
         /// <param name="ctx">The call context to use.</param>
-        /// <param name="monitor">Monitor that will receive error details.</param>
         /// <param name="user">
         /// The user must not be null and <see cref="UserGoogleInfo.IsValid"/> must be true.
         /// </param>
         /// <param name="cancellationToken">Optional cancellation token.</param>
-        /// <returns></returns>
-        public async Task<bool> RefreshAccessTokenAsync( ISqlCallContext ctx, IActivityMonitor monitor, UserGoogleInfo user, CancellationToken cancellationToken = default( CancellationToken ) )
+        /// <returns>True on success, false on error.</returns>
+        public async Task<bool> RefreshAccessTokenAsync( ISqlCallContext ctx, UserGoogleInfo user, CancellationToken cancellationToken = default( CancellationToken ) )
         {
             if( ctx == null ) throw new ArgumentNullException( nameof( ctx ) );
-            if( monitor == null ) throw new ArgumentNullException( nameof( monitor ) );
             if( user == null ) throw new ArgumentNullException( nameof( user ) );
             if( !user.IsValid ) throw new ArgumentException( "User info is not valid." );
-            var c = _client ?? (_client = CreateHttpClient( TokenEndpoint ));
-            var parameters = new Dictionary<string, string>
+            try
             {
-                { "grant_type", "refresh_token" },
-                { "refresh_token", user.RefreshToken },
-                { "client_id", ClientId },
-                { "client_secret", ClientSecret },
-            };
-            var response = await c.PostAsync( string.Empty, new FormUrlEncodedContent( parameters ), cancellationToken ).ConfigureAwait( false );
-            var content = await response.Content.ReadAsStringAsync().ConfigureAwait( false );
-            List<KeyValuePair<string, object>> token = null;
-            if( response.IsSuccessStatusCode )
-            {
-                var m = new StringMatcher( content );
-                object tok;
-                if( m.MatchJSONObject( out tok ) ) token = tok as List<KeyValuePair<string, object>>;
-            }
-            if( token == null )
-            {
-                using( monitor.OpenError().Send( $"Unable to refresh token for UserId = {user.UserId}." ) )
+                var c = _client ?? (_client = CreateHttpClient( TokenEndpoint ));
+                var parameters = new Dictionary<string, string>
                 {
-                    monitor.Trace().Send( $"Status: {response.StatusCode}, Reason: {response.ReasonPhrase}" );
-                    monitor.Trace().Send( content );
+                    { "grant_type", "refresh_token" },
+                    { "refresh_token", user.RefreshToken },
+                    { "client_id", ClientId },
+                    { "client_secret", ClientSecret },
+                };
+                var response = await c.PostAsync( string.Empty, new FormUrlEncodedContent( parameters ), cancellationToken ).ConfigureAwait( false );
+                var content = await response.Content.ReadAsStringAsync().ConfigureAwait( false );
+                List<KeyValuePair<string, object>> token = null;
+                if( response.IsSuccessStatusCode )
+                {
+                    var m = new StringMatcher( content );
+                    object tok;
+                    if( m.MatchJSONObject( out tok ) ) token = tok as List<KeyValuePair<string, object>>;
                 }
+                if( token == null )
+                {
+                    using( ctx.Monitor.OpenError().Send( $"Unable to refresh token for UserId = {user.UserId}." ) )
+                    {
+                        ctx.Monitor.Trace().Send( $"Status: {response.StatusCode}, Reason: {response.ReasonPhrase}" );
+                        ctx.Monitor.Trace().Send( content );
+                    }
+                    return false;
+                }
+                user.AccessToken = (string)token.Single( kv => kv.Key == "access_token" ).Value;
+                double exp = (double)token.FirstOrDefault( kv => kv.Key == "expires_in" ).Value;
+                user.AccessTokenExpirationTime = exp != 0 ? (DateTime?)DateTime.UtcNow.AddSeconds( exp ) : null;
+                // Creates or updates the user (ignoring the created/updated returned value).
+                await UserGoogleTable.CreateOrUpdateGoogleUserAsync( ctx, user.UserId, user, cancellationToken ).ConfigureAwait( false );
+            }
+            catch( Exception ex )
+            {
+                ctx.Monitor.Error().Send( ex, $"Unable to refresh token for UserId = {user.UserId}." );
                 return false;
             }
-            user.AccessToken = (string)token.Single( kv => kv.Key == "access_token" ).Value;
-            double exp = (double)token.FirstOrDefault( kv => kv.Key == "expires_in" ).Value;
-            user.AccessTokenExpirationTime = exp != 0 ? (DateTime?)DateTime.UtcNow.AddSeconds( exp ) : null;
-            // Creates or updates the user (ignoring the created/updated returned value).
-            await UserGoogleTable.CreateOrUpdateGoogleUserAsync( ctx, user.UserId, user, cancellationToken );
             return true;
         }
 

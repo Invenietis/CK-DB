@@ -22,11 +22,6 @@ namespace CK.DB.User.UserGoogle
         public string GoogleAccountId { get; set; }
 
         /// <summary>
-        /// Gets or sets the <see cref="SimpleScopes"/> helper that holds the scopes.
-        /// </summary>
-        public SimpleScopes Scopes { get; set; }
-
-        /// <summary>
         /// Gets or sets the access token.
         /// </summary>
         public string AccessToken { get; set; }
@@ -42,8 +37,14 @@ namespace CK.DB.User.UserGoogle
         public string RefreshToken { get; set; }
 
         /// <summary>
+        /// Gets or sets the scope set identifier for this user.
+        /// This is meaningful only when reading from the database and is ignored when writing.
+        /// </summary>
+        public int ScopeSetId { get; set; }
+
+        /// <summary>
         /// Gets or sets the last time the refresh token has been updated.
-        /// This is meaningful when reading from the database.
+        /// This is meaningful only when reading from the database and is ignored when writing.
         /// </summary>
         public DateTime LastRefreshTokenTime { get; set; }
 

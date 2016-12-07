@@ -17,7 +17,7 @@ namespace CK.DB.Auth
     /// </summary>
     [SqlTable( "tAuthScopeSet", Package = typeof( Package ) )]
     [Versions( "1.0.0" )]
-    [SqlObjectItem( "vAuthScopeSet, vAuthScopeSetContent" )]
+    [SqlObjectItem( "vAuthScopeSet, vAuthScopeSetContent, sAuthScopeSetCopy" )]
     public abstract partial class AuthScopeSetTable : SqlTable
     {
         void Construct( AuthScopeTable scopes )
@@ -182,9 +182,9 @@ namespace CK.DB.Auth
         /// <param name="scopeSetId">The target scope set identifier.</param>
         /// <param name="scopes">Scopes to set.</param>
         /// <returns>The awaitable.</returns>
-        public virtual Task SetScopesAsync( ISqlCallContext ctx, int actorId, int scopeSetId, AuthScopeSet scopes )
+        public virtual Task SetScopesAsync( ISqlCallContext ctx, int actorId, int scopeSetId, IEnumerable<AuthScope> scopes )
         {
-            return DoAddScopesAsync( ctx, actorId, scopeSetId, scopes.ToString(), true, 'W', true );
+            return DoAddScopesAsync( ctx, actorId, scopeSetId, ToString( scopes ), true, 'W', true );
         }
 
         /// <summary>

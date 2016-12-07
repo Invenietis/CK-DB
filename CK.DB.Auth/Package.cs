@@ -17,5 +17,10 @@ namespace CK.DB.Auth
         void Construct( Actor.Package actorPackage )
         {
         }
+
+        /// <summary>
+        /// Gets the <see cref="AuthScopeSetTable"/> table.
+        /// </summary>
+        public AuthScopeSetTable AuthScopeSetTable { get; protected set; }
     }
 }

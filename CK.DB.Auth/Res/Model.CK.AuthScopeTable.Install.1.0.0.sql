@@ -2,7 +2,7 @@
 --
 -- Holds the scopes: these are non null nvarchar(255) without space in them.
 -- Collation is strict (EMAIL is not the same scope as email) to honor any potential case
--- sensitivity of authentication provider.
+-- sensitivity of authentication provider (the RFC 6749 states that scopes are case sensitive).
 -- Note that ScopeId = 0 does not exist: scopes are used as value types from scope sets,
 -- the "empty" scope is not relevant.
 -- 

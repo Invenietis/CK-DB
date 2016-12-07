@@ -29,14 +29,13 @@ namespace CK.DB.User.UserGoogle
         /// <param name="actorId">The acting actor identifier.</param>
         /// <param name="userId">The user identifier for which a Google account must be created or updated.</param>
         /// <param name="googleAccountId">The Google account identifier.</param>
-        /// <param name="scopes">Validated scopes for the Google account.</param>
         /// <param name="accessToken">The access token. Can be null: an empty string is stored.</param>
         /// <param name="accessTokenExpirationTime">Access token expiration time. Can be null (the largest datetime2(2) = '9999-12-31T23:59:59.99' is used).</param>
         /// <param name="refreshToken">The obtained refresh token. Can be null: an empty string is stored on creation and current refresh token is not touched on update.</param>
         /// <param name="cancellationToken">Optional cancellation token.</param>
         /// <returns>True if the Google user has been created, false if it has been updated.</returns>
         [SqlProcedure( "sUserGoogleCreateOrUpdate" )]
-        public abstract Task<bool> CreateOrUpdateGoogleUserAsync( ISqlCallContext ctx, int actorId, int userId, string googleAccountId, string scopes, string accessToken, DateTime? accessTokenExpirationTime, string refreshToken, CancellationToken cancellationToken = default( CancellationToken ) );
+        public abstract Task<bool> CreateOrUpdateGoogleUserAsync( ISqlCallContext ctx, int actorId, int userId, string googleAccountId, string accessToken, DateTime? accessTokenExpirationTime, string refreshToken, CancellationToken cancellationToken = default( CancellationToken ) );
 
         /// <summary>
         /// Associates a GoogleUser to an existing user.
@@ -51,7 +50,7 @@ namespace CK.DB.User.UserGoogle
         /// <returns>True if the Google user has been created, false if it has been updated.</returns>
         public Task<bool> CreateOrUpdateGoogleUserAsync( ISqlCallContext ctx, int actorId, [ParameterSource]UserGoogleInfo info, CancellationToken cancellationToken = default( CancellationToken ) )
         {
-            return CreateOrUpdateGoogleUserAsync( ctx, actorId, info.UserId, info.GoogleAccountId, info.Scopes, info.AccessToken, info.AccessTokenExpirationTime, info.RefreshToken, cancellationToken );
+            return CreateOrUpdateGoogleUserAsync( ctx, actorId, info.UserId, info.GoogleAccountId, info.AccessToken, info.AccessTokenExpirationTime, info.RefreshToken, cancellationToken );
         }
 
         /// <summary>
@@ -115,7 +114,7 @@ namespace CK.DB.User.UserGoogle
             {
                 UserId = r.GetInt32( 0 ),
                 GoogleAccountId = googleAccountId,
-                Scopes = r.GetString( 1 ),
+                ScopeSetId = r.GetInt32( 1 ),
                 AccessToken = r.GetString( 2 ),
                 AccessTokenExpirationTime = r.GetDateTime( 3 ),
                 RefreshToken = r.GetString( 4 ),
@@ -132,7 +131,7 @@ namespace CK.DB.User.UserGoogle
         /// <returns>A ready to use reader command.</returns>
         protected virtual SqlCommand CreateReaderCommand( string googleAccountId )
         {
-            var c = new SqlCommand( $"select UserId, Scopes, AccessToken, AccessTokenExpirationTime, RefreshToken, LastRefreshTokenTime from CK.tUserGoogle where GoogleAccountId=@A" );
+            var c = new SqlCommand( $"select UserId, ScopeSetId, AccessToken, AccessTokenExpirationTime, RefreshToken, LastRefreshTokenTime from CK.tUserGoogle where GoogleAccountId=@A" );
             c.Parameters.Add( new SqlParameter( "@A", googleAccountId ) );
             return c;
         }

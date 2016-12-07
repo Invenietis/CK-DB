@@ -63,13 +63,13 @@ namespace CK.DB.Auth.Tests
             var scopes = TestHelper.StObjMap.Default.Obtain<AuthScopeSetTable>();
             using( var ctx = new SqlStandardCallContext() )
             {
-                var set = new AuthScopeSet() {
+                var set = new AuthScopeSet( new[] {
                     new AuthScope( "A", ScopeWARStatus.Accepted ),
                     new AuthScope( "B", ScopeWARStatus.Waiting ),
                     new AuthScope( "C", ScopeWARStatus.Rejected )
-                };
+                } );
 
-                var id = await scopes.CreateScopeSetAsync( ctx, 1, set );
+                var id = await scopes.CreateScopeSetAsync( ctx, 1, set.Scopes );
                 scopes.Database.AssertScalarEquals( "[A]A [W]B [R]C", $"select ScopesWithStatus from CK.vAuthScopeSet where ScopeSetId = {id}" );
 
                 var readSet = await scopes.ReadAuthScopeSetAsync( ctx, id );
@@ -77,17 +77,17 @@ namespace CK.DB.Auth.Tests
 
                 set.Add( new AuthScope( "B", ScopeWARStatus.Accepted ) );
                 set.Add( new AuthScope( "D", ScopeWARStatus.Waiting ) );
-                await scopes.AddScopesAsync( ctx, 1, id, set );
+                await scopes.AddScopesAsync( ctx, 1, id, set.Scopes );
                 readSet = await scopes.ReadAuthScopeSetAsync( ctx, id );
                 Assert.That( readSet.ToString(), Is.EqualTo( "[A]A [A]B [R]C [W]D" ) );
 
                 set.Remove( "B" );
                 set.Remove( "C" );
-                await scopes.AddScopesAsync( ctx, 1, id, set );
+                await scopes.AddScopesAsync( ctx, 1, id, set.Scopes );
                 readSet = await scopes.ReadAuthScopeSetAsync( ctx, id );
                 Assert.That( readSet.ToString(), Is.EqualTo( "[A]A [A]B [R]C [W]D" ) );
 
-                await scopes.SetScopesAsync( ctx, 1, id, set );
+                await scopes.SetScopesAsync( ctx, 1, id, set.Scopes );
                 readSet = await scopes.ReadAuthScopeSetAsync( ctx, id );
                 Assert.That( readSet.ToString(), Is.EqualTo( "[A]A [W]D" ) );
 

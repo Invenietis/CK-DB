@@ -20,13 +20,12 @@ namespace CK.DB.User.UserGoogle
         /// <param name="actorId">The acting actor identifier.</param>
         /// <param name="userId">The user identifier for which a Google account must be created or updated.</param>
         /// <param name="googleAccountId">The Google account identifier.</param>
-        /// <param name="scopes">Validated scopes for the Google account.</param>
         /// <param name="accessToken">The access token. Can be null: an empty string is stored.</param>
         /// <param name="accessTokenExpirationTime">Access token expiration time. Can be null (the largest datetime2(2) = '9999-12-31T23:59:59.99' is used).</param>
         /// <param name="refreshToken">The obtained refresh token. Can be null: an empty string is stored on creation and current refresh token is not touched on update.</param>
         /// <returns>True if the Google user has been created, false if it has been updated.</returns>
         [SqlProcedure( "sUserGoogleCreateOrUpdate" )]
-        public abstract bool CreateOrUpdateGoogleUser( ISqlCallContext ctx, int actorId, int userId, string googleAccountId, string scopes, string accessToken, DateTime? accessTokenExpirationTime, string refreshToken );
+        public abstract bool CreateOrUpdateGoogleUser( ISqlCallContext ctx, int actorId, int userId, string googleAccountId, string accessToken, DateTime? accessTokenExpirationTime, string refreshToken );
 
         /// <summary>
         /// Associates a GoogleUser to an existing user.
@@ -40,7 +39,7 @@ namespace CK.DB.User.UserGoogle
         /// <returns>True if the Google user has been created, false if it has been updated.</returns>
         public bool CreateOrUpdateGoogleUser( ISqlCallContext ctx, int actorId, [ParameterSource]UserGoogleInfo info )
         {
-            return CreateOrUpdateGoogleUser( ctx, actorId, info.UserId, info.GoogleAccountId, info.Scopes, info.AccessToken, info.AccessTokenExpirationTime, info.RefreshToken );
+            return CreateOrUpdateGoogleUser( ctx, actorId, info.UserId, info.GoogleAccountId, info.AccessToken, info.AccessTokenExpirationTime, info.RefreshToken );
         }
 
         /// <summary>

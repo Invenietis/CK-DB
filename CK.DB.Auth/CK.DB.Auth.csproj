@@ -120,6 +120,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Res\vAuthScopeSetContent.sql" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Res\sAuthScopeSetCopy.sql" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\SimpleGitVersionTask.0.21.0\Build\SimpleGitVersionTask.targets" Condition="Exists('..\packages\SimpleGitVersionTask.0.21.0\Build\SimpleGitVersionTask.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

@@ -13,16 +13,40 @@ namespace CK.DB.Auth
     /// Helper class to manipulate <see cref="AuthScope"/>. 
     /// This set guaranties unicity of <see cref="AuthScope.ScopeName"/>.
     /// </summary>
-    public class AuthScopeSet : IReadOnlyCollection<AuthScope>
+    public class AuthScopeSet 
     {
-        readonly Dictionary<string,AuthScope> _scopes;
+        class Wrapper : IReadOnlyCollection<AuthScope>
+        {
+            public readonly Dictionary<string,AuthScope> Scopes;
+
+            public Wrapper( IEnumerable<AuthScope> scopes )
+            {
+                Scopes = new Dictionary<string, AuthScope>();
+                if( scopes != null )
+                {
+                    foreach( var s in scopes ) Scopes[s.ScopeName] = s;
+                }
+            }
+
+
+            public int Count => Scopes.Count;
+
+            public IEnumerator<AuthScope> GetEnumerator() => Scopes.Values.GetEnumerator();
+
+            IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+            public override string ToString() => Scopes.Values.OrderBy( s => s.ScopeName ).Select( s => s.ToString() ).Concatenate( " " );
+
+        }
+
+        readonly Wrapper _wrapper;
 
         /// <summary>
         /// Initializes a new empty <see cref="AuthScopeSet"/>.
         /// </summary>
         public AuthScopeSet()
         {
-            _scopes = new Dictionary<string, AuthScope>();
+            _wrapper = new Wrapper( null );
         }
 
         /// <summary>
@@ -33,8 +57,19 @@ namespace CK.DB.Auth
             : this()
         {
             if( scopes == null ) throw new ArgumentNullException( nameof( scopes ) );
-            foreach( var s in scopes ) _scopes[ s.ScopeName ] = s;
+            _wrapper = new Wrapper( scopes );
         }
+
+        /// <summary>
+        /// Gets the scopes.
+        /// </summary>
+        public IReadOnlyCollection<AuthScope> Scopes => _wrapper;
+
+        /// <summary>
+        /// Clones a new <see cref="AuthScopeSet"/> with the same scopes as this one.
+        /// </summary>
+        /// <returns>A clone of this set.</returns>
+        public AuthScopeSet Clone() => new AuthScopeSet( Scopes );
 
         /// <summary>
         /// Checks that all scope names exists and have the given status.
@@ -58,7 +93,7 @@ namespace CK.DB.Auth
         /// <summary>
         /// Gets the count of <see cref="AuthScope"/> this set contains.
         /// </summary>
-        public int Count => _scopes.Count;
+        public int Count => _wrapper.Count;
 
         /// <summary>
         /// Adds a <see cref="AuthScope"/>. Existing scope with the same <see cref="AuthScope.ScopeName"/> is replaced.
@@ -67,33 +102,28 @@ namespace CK.DB.Auth
         public void Add( AuthScope scope )
         {
             if( scope == null ) throw new ArgumentNullException( nameof(scope) );
-            _scopes[ scope.ScopeName ] = scope;
+            _wrapper.Scopes[ scope.ScopeName ] = scope;
         }
 
         /// <summary>
         /// Clears this set.
         /// </summary>
-        public void Clear() => _scopes.Clear();
+        public void Clear() => _wrapper.Scopes.Clear();
 
         /// <summary>
         /// Gets whether this set contains a scope with the given name.
+        /// Use the indexer <see cref="this[string]"/> to retrieve it.
         /// </summary>
         /// <param name="name">Scope name.</param>
         /// <returns>True if found, false otherwise.</returns>
-        public bool Contains( string name ) => _scopes.ContainsKey( name );
+        public bool Contains( string name ) => _wrapper.Scopes.ContainsKey( name );
 
         /// <summary>
         /// Gets the named <see cref="AuthScope"/> if it exists.
         /// </summary>
         /// <param name="name">Scope name.</param>
         /// <returns>The scope or null.</returns>
-        public AuthScope this[ string name ] => _scopes.GetValueWithDefault( name, null );
-
-        /// <summary>
-        /// Creates an enumerator.
-        /// </summary>
-        /// <returns>The enumerator.</returns>
-        public IEnumerator<AuthScope> GetEnumerator() => _scopes.Values.GetEnumerator();
+        public AuthScope this[ string name ] => _wrapper.Scopes.GetValueWithDefault( name, null );
 
         /// <summary>
         /// Removes the scope with the same <see cref="AuthScope.ScopeName"/> and <see cref="AuthScope.Status"/>.
@@ -104,7 +134,7 @@ namespace CK.DB.Auth
         {
             if( scope == null ) throw new ArgumentNullException( nameof( scope ) );
             AuthScope s;
-            return _scopes.TryGetValue( scope.ScopeName, out s ) && s.Status == scope.Status && _scopes.Remove( scope.ScopeName );
+            return _wrapper.Scopes.TryGetValue( scope.ScopeName, out s ) && s.Status == scope.Status && _wrapper.Scopes.Remove( scope.ScopeName );
         }
 
         /// <summary>
@@ -112,16 +142,14 @@ namespace CK.DB.Auth
         /// </summary>
         /// <param name="name">The scope name to remove.</param>
         /// <returns>True on success, false if not found.</returns>
-        public bool Remove( string name ) => _scopes.Remove( name );
+        public bool Remove( string name ) => _wrapper.Scopes.Remove( name );
 
         /// <summary>
         /// Overridden to return a whitespace separated string of scopes prefixed with their status.
         /// Scopes are ordered by their <see cref="AuthScope.ScopeName"/>.
         /// </summary>
         /// <returns>The scopes with their status.</returns>
-        public override string ToString() => _scopes.Values.OrderBy( s => s.ScopeName ).Select( s => s.ToString() ).Concatenate( " " );
-
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        public override string ToString() => _wrapper.ToString();
 
     }
 }

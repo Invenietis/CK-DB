@@ -30,7 +30,7 @@ namespace CK.DB.Auth
         public readonly DateTime StatusLastWriteTime;
 
         /// <summary>
-        /// Initializes a new <see cref="AuthScope"/> (<see cref="StatusLastWriteTime"/> is set to <see cref="Util.UtcMinValue"/>).
+        /// Initializes a new immutable <see cref="AuthScope"/> (<see cref="StatusLastWriteTime"/> is set to <see cref="Util.UtcMinValue"/>).
         /// </summary>
         /// <param name="scopeName">The scope name. Can not be empty.</param>
         /// <param name="status">The WAR status.</param>
