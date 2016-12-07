@@ -36,7 +36,7 @@ namespace CK.DB.Actor
         /// Idempotent.
         /// </summary>
         /// <param name="ctx">The call context.</param>
-        /// <param name="actorId">The actor identifier.</param>
+        /// <param name="actorId">The acting actor identifier.</param>
         /// <param name="groupId">
         /// The group identifier to destroy. 
         /// If <paramref name="forceDestroy"/> if false, it must be empty otherwise an exception is thrown.

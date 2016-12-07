@@ -6,6 +6,7 @@ using CK.SqlServer.Setup;
 using CK.Setup;
 using CK.SqlServer;
 using System.Threading.Tasks;
+using System.Data.SqlClient;
 
 namespace CK.DB.Actor
 {
@@ -49,5 +50,21 @@ namespace CK.DB.Actor
         /// <param name="userId">The user identifier that must be removed from all its groups.</param>
         [SqlProcedure( "sUserRemoveFromAllGroups" )]
         public abstract void RemoveFromAllGroups( ISqlCallContext ctx, int actorId, int userId );
+
+        /// <summary>
+        /// Finds the user identifier given its user name.
+        /// </summary>
+        /// <param name="ctx">The call context.</param>
+        /// <param name="userName">The user name to lookup.</param>
+        /// <returns>The user identifier or 0 if not found.</returns>
+        public int FindByName( ISqlCallContext ctx, string userName )
+        {
+            using( var cmd = new SqlCommand( "select UserId from CK.tUser where UserName=@Key" ) )
+            {
+                cmd.Parameters.AddWithValue( "@Key", userName );
+                return cmd.ExecuteScalar( ctx[Database], 0 );
+            }
+        }
+
     }
 }

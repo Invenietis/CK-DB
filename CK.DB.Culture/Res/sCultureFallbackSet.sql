@@ -17,7 +17,7 @@ as
 begin
 	if @LCID <= 0 or @LCID > 0xFFFF throw 50000, 'Culture.InvalidLCID', 1;
 	declare @Fallbacks table( Idx int not null identity(0,1), LCID int not null);
-	declare @xml xml = '<t>' + REPLACE( @FallbacksLCID, ',', '</t><t>') + '</t>'
+	declare @xml xml = '<t>' + REPLACE( @FallbacksLCID, ',', '</t><t>') + '</t>';
 	-- No distinct here since this will sort the identifiers...
 	-- Duplicates will result in a merge error: The MERGE statement attempted to UPDATE or DELETE the same row more than once.
 	insert into @Fallbacks(LCID) select r.value('.','int') from @xml.nodes('/t') as records(r);

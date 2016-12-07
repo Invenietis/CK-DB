@@ -14,7 +14,7 @@ namespace CK.DB.Res.ResName
     /// Resource names implement a path-based hierarchy.
     /// </summary>
     [SqlTable( "tResName", Package = typeof( Package ) )]
-    [Versions( "1.0.0, 1.0.1" )]
+    [Versions( "1.0.0, 1.0.1, 1.0.2" )]
     [SqlObjectItem( "transform:vRes, transform:sResDestroy" )]
     [SqlObjectItem( "fResNamePrefixes" )]
     [SqlObjectItem( "vResNameAllChildren, vResNameDirectChildren, vResNameParentPrefixes" )]

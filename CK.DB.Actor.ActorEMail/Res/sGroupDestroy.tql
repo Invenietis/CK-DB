@@ -1,0 +1,7 @@
+-- SetupConfig: {}
+create transformer on CK.sGroupDestroy
+as
+begin
+	inject "
+		delete from CK.tActorEMail where ActorId = @GroupId;" into "PreDestroy";
+end

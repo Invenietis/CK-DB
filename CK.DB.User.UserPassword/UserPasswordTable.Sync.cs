@@ -57,7 +57,7 @@ namespace CK.DB.User.UserPassword
             using( var c = new SqlCommand( $"select PwdHash, @UserId from CK.tUserPassword where UserId=@UserId" ) )
             {
                 c.Parameters.AddWithValue( "@UserId", userId );
-                return DoVerify( ctx, c, password );
+                return DoVerify( ctx, c, password, userId );
             }
         }
 
@@ -75,35 +75,72 @@ namespace CK.DB.User.UserPassword
             using( var c = new SqlCommand( $"select p.PwdHash, p.UserId from CK.tUserPassword p inner join CK.tUser u on u.UserId = p.UserId where u.UserName=@UserName" ) )
             {
                 c.Parameters.AddWithValue( "@UserName", userName );
-                return DoVerify( ctx, c, password );
+                return DoVerify( ctx, c, password, userName );
             }
         }
 
-        bool DoVerify( ISqlCallContext ctx, SqlCommand hashReader, string password )
+        bool DoVerify( ISqlCallContext ctx, SqlCommand hashReader, string password, object objectKey )
         {
             if( string.IsNullOrEmpty( password ) ) return false;
-
-            // 1 - Get the PwdHash.
-            byte[] hash;
-            int userId;
-            using( ( hashReader.Connection = ctx[Database] ).EnsureOpen() )
+            // 1 - Get the PwdHash and UserId.
+            //     hash is null if the user is not a UserPassword: we'll try to migrate it.
+            byte[] hash = null;
+            int userId = 0;
+            using( (hashReader.Connection = ctx[Database] ).EnsureOpen() )
             using( var r = hashReader.ExecuteReader( System.Data.CommandBehavior.SingleRow ) )
             {
-                if( !r.Read() ) return false;
-                hash = r.GetSqlBytes( 0 ).Buffer;
-                userId = r.GetInt32( 1 );
+                if( r.Read() )
+                {
+                    hash = r.GetSqlBytes( 0 ).Buffer;
+                    userId = r.GetInt32( 1 );
+                    if( userId == 0 ) return false;
+                }
             }
-
-            // 2 - Check it.
-            PasswordHasher p = new PasswordHasher( HashIterationCount );
-            var result = p.VerifyHashedPassword( hash, password );
+            PasswordVerificationResult result = PasswordVerificationResult.Failed;
+            PasswordHasher p = null;
+            IUserPasswordMigrator migrator = null;
+            // 2 - Handle external password migration or check the hash.
+            if( hash == null )
+            {
+                migrator = _package.PasswordMigrator;
+                if( migrator != null )
+                {
+                    if( objectKey is int )
+                    {
+                        userId = (int)objectKey;
+                    }
+                    else
+                    {
+                        Debug.Assert( objectKey is string );
+                        userId = _userTable.FindByName( ctx, (string)objectKey );
+                        if( userId == 0 ) return false;
+                    }
+                    if( migrator.VerifyPassword( ctx, userId, password ) )
+                    {
+                        result = PasswordVerificationResult.SuccessRehashNeeded;
+                        p = new PasswordHasher( HashIterationCount );
+                    }
+                }
+            }
+            else
+            {
+                p = new PasswordHasher( HashIterationCount );
+                result = p.VerifyHashedPassword( hash, password );
+            }
+            // 3 - Handle result.
             switch( result )
             {
                 case PasswordVerificationResult.Failed: return false;
                 case PasswordVerificationResult.SuccessRehashNeeded:
                     {
-                        // 3 - Rehash the password and update the database.
-                        SetPwdRawHash( ctx, 1, userId, p.HashPassword( password ) );
+                        // 4 - If migration occurred, create the user with its password.
+                        //     Else rehash the password and update the database.
+                        if( migrator != null )
+                        {
+                            CreatePasswordUser( ctx, 1, userId, password );
+                            migrator.MigrationDone( ctx, userId );
+                        }
+                        else SetPwdRawHash( ctx, 1, userId, p.HashPassword( password ) );
                         return true;
                     }
                 default:
@@ -119,7 +156,7 @@ namespace CK.DB.User.UserPassword
         /// </summary>
         /// <param name="ctx">The call context to use.</param>
         /// <param name="actorId">The acting actor identifier.</param>
-        /// <param name="userId">The user identifier to destroy.</param>
+        /// <param name="userId">The user identifier for which Password information must be destroyed.</param>
         [SqlProcedure( "sUserPasswordDestroy" )]
         public abstract void DestroyPasswordUser( ISqlCallContext ctx, int actorId, int userId );
 

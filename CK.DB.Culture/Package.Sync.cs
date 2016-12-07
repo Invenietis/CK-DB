@@ -98,8 +98,7 @@ namespace CK.DB.Culture
             using( var c = new SqlCommand( $"select Name, EnglishName, NativeName from CK.tLCID where LCID=@LCID" ) )
             {
                 c.Parameters.AddWithValue( "@LCID", lcid );
-                c.Connection = ctx[ Database.ConnectionString ];
-                using( c.Connection.EnsureOpen() )
+                using( (c.Connection = ctx[Database.ConnectionString]).EnsureOpen() )
                 using( var r = c.ExecuteReader() )
                 {
                     if( !r.Read() ) return null;
