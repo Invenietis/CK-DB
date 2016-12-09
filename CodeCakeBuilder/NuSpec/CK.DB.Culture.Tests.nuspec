@@ -10,7 +10,7 @@
       This package contains tests for CK.DB.Culture (uses CK.DB.Tests.NUnit).
     </summary>
     <description>
-      This package defines tXLCID, tLCID tables ({{CSemVer}}).
+      Tests for CK.DB.Culture ({{CSemVer}}).
     </description>
     <language>en-US</language>
     <dependencies>

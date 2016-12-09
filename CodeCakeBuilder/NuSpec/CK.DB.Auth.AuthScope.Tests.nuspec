@@ -10,6 +10,7 @@
       This package contains tests for CK.DB.Auth.AuthScope (uses CK.DB.Tests.NUnit).
     </summary>
     <description>
+      Tests for CK.DB.Auth.AuthScope ({{CSemVer}}).
     </description>
     <language>en-US</language>
     <dependencies>
