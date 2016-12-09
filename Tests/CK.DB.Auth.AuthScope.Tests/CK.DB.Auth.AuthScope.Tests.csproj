@@ -155,7 +155,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\CK.DB.Auth\CK.DB.Auth.AuthScope.csproj">
+    <ProjectReference Include="..\..\CK.DB.Auth.AuthScope\CK.DB.Auth.AuthScope.csproj">
       <Project>{c5f7e85f-5472-4ab3-8344-49963da2d860}</Project>
       <Name>CK.DB.Auth.AuthScope</Name>
     </ProjectReference>

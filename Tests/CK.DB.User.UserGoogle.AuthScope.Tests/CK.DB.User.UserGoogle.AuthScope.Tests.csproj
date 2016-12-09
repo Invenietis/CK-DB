@@ -156,7 +156,7 @@
       <Project>{3902b885-ac29-4be3-a83e-184316a09e91}</Project>
       <Name>CK.DB.Actor</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\CK.DB.Auth\CK.DB.Auth.AuthScope.csproj">
+    <ProjectReference Include="..\..\CK.DB.Auth.AuthScope\CK.DB.Auth.AuthScope.csproj">
       <Project>{c5f7e85f-5472-4ab3-8344-49963da2d860}</Project>
       <Name>CK.DB.Auth.AuthScope</Name>
     </ProjectReference>
@@ -168,7 +168,7 @@
       <Project>{b956c628-8b62-4687-9e96-de3d2e4fd78f}</Project>
       <Name>CK.DB.User.UserGoogle</Name>
     </ProjectReference>
-    <ProjectReference Include="..\CK.DB.Auth.Tests\CK.DB.Auth.AuthScope.Tests.csproj">
+    <ProjectReference Include="..\CK.DB.Auth.AuthScope.Tests\CK.DB.Auth.AuthScope.Tests.csproj">
       <Project>{1cc5e2a0-ddae-43a9-94d0-72a511212c8c}</Project>
       <Name>CK.DB.Auth.AuthScope.Tests</Name>
     </ProjectReference>
