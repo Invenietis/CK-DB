@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata >
+    <id>CK.DB.Auth.AuthScope.Tests</id>
+    <version>$version$</version>
+    <authors>Invenietis</authors>
+    <owners>Invenietis</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <summary>
+      This package contains tests for CK.DB.Auth.AuthScope (uses CK.DB.Tests.NUnit).
+    </summary>
+    <description>
+    </description>
+    <language>en-US</language>
+    <dependencies>
+      <dependency id="CK.DB.Auth.AuthScope" version="$version$" />
+      <dependency id="CK.DB.Tests.NUnit" version="{{VersionCKDatabase}}" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="Tests\CK.DB.Auth.AuthScope.Tests\bin\{{configuration}}\CK.DB.Auth.AuthScope.Tests.dll" target="lib\net45" />
+  </files>
+</package>

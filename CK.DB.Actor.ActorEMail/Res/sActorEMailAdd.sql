@@ -26,7 +26,7 @@ begin
 	if @IsPrimary = 1 set @NewPrimaryEMail = @EMail;
 	else set @NewPrimaryEMail = @ExistingPrimaryEMail;
 
-	--<PreEMailAdd reverse />
+	--<PreEMailAdd revert />
 
 	-- Update or insert the @EMail.
 	merge CK.tActorEMail as target

@@ -5,14 +5,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CK.DB.Auth
+namespace CK.DB.Auth.AuthScope
 {
     /// <summary>
     /// Immutable object that holds a scope name, its status and, when read from the database,
     /// its <see cref="StatusLastWriteTime"/>.
-    /// Two AuthScope are equal when their <see cref="ScopeName"/> and <see cref="Status"/> are equal.
+    /// Two AuthScopeItem are equal when their <see cref="ScopeName"/> and <see cref="Status"/> are equal.
     /// </summary>
-    public class AuthScope : IEquatable<AuthScope>
+    public class AuthScopeItem : IEquatable<AuthScopeItem>
     {
         /// <summary>
         /// The scope name.
@@ -30,22 +30,22 @@ namespace CK.DB.Auth
         public readonly DateTime StatusLastWriteTime;
 
         /// <summary>
-        /// Initializes a new immutable <see cref="AuthScope"/> (<see cref="StatusLastWriteTime"/> is set to <see cref="Util.UtcMinValue"/>).
+        /// Initializes a new immutable <see cref="AuthScopeItem"/> (<see cref="StatusLastWriteTime"/> is set to <see cref="Util.UtcMinValue"/>).
         /// </summary>
         /// <param name="scopeName">The scope name. Can not be empty.</param>
         /// <param name="status">The WAR status.</param>
-        public AuthScope( string scopeName, ScopeWARStatus status = ScopeWARStatus.Waiting )
+        public AuthScopeItem( string scopeName, ScopeWARStatus status = ScopeWARStatus.Waiting )
             : this( scopeName, status, Util.UtcMinValue )
         {
         }
 
         /// <summary>
-        /// Initializes a new <see cref="AuthScope"/>.
+        /// Initializes a new <see cref="AuthScopeItem"/>.
         /// </summary>
         /// <param name="scopeName">The scope name. Can not be empty.</param>
         /// <param name="status">The WAR status.</param>
         /// <param name="statusLastWriteTime">The last write time of the status.</param>
-        public AuthScope( string scopeName, ScopeWARStatus status, DateTime statusLastWriteTime )
+        public AuthScopeItem( string scopeName, ScopeWARStatus status, DateTime statusLastWriteTime )
         {
             if( string.IsNullOrWhiteSpace( scopeName ) ) throw new ArgumentException( "Scope name can not be empty." );
             ScopeName = scopeName;
@@ -58,14 +58,14 @@ namespace CK.DB.Auth
         /// </summary>
         /// <param name="other">Other scope to test.</param>
         /// <returns>True if the scopes are considered equal, false otherwise.</returns>
-        public bool Equals( AuthScope other ) => ScopeName == other.ScopeName && Status == other.Status;
+        public bool Equals( AuthScopeItem other ) => ScopeName == other.ScopeName && Status == other.Status;
 
         /// <summary>
-        /// Overridden to call <see cref="Equals(AuthScope)"/>.
+        /// Overridden to call <see cref="Equals(AuthScopeItem)"/>.
         /// </summary>
         /// <param name="obj">The object to caompare to.</param>
         /// <returns>True if the scopes are considered equal, false otherwise.</returns>
-        public override sealed bool Equals( object obj ) => obj is AuthScope && Equals( (AuthScope)obj );
+        public override sealed bool Equals( object obj ) => obj is AuthScopeItem && Equals( (AuthScopeItem)obj );
 
         /// <summary>
         /// Overridden to compute a has based on <see cref="ScopeName"/> and <see cref="Status"/>.

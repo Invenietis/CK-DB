@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata >
+    <id>CK.DB.Auth.AuthScope</id>
+    <version>$version$</version>
+    <authors>Invenietis</authors>
+    <owners>Invenietis</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <summary>
+      CK-Database model for Athentication scopes model.
+    </summary>
+    <description>
+      This package defines tAuthScopeSet, tAuthScope and tAuthScopeSetContent tables ({{CSemVer}}).
+    </description>
+    <language>en-US</language>
+    <dependencies>
+      <dependency id="CK.SqlServer.Setup.Model" version="{{VersionCKDatabase}}" />
+    </dependencies>
+  </metadata>
+  <files>    
+    <file src="CK.DB.Auth.AuthScope\bin\{{configuration}}\CK.DB.Auth.AuthScope.dll" target="lib\net45" />
+    <file src="CK.DB.Auth.AuthScope\bin\{{configuration}}\CK.DB.Auth.AuthScope.xml" target="lib\net45" />
+  </files>
+</package>

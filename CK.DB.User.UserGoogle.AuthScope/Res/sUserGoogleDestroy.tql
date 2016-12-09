@@ -1,0 +1,13 @@
+﻿-- SetupConfig: {}
+--
+create transformer on CK.sUserGoogleDestroy
+as
+begin
+	inject "
+	declare @ScopeSetId int;
+	select @ScopeSetId = ScopeSetId from CK.tUserGoogle where UserId = @UserId;" 
+	into "PreDestroy";
+	
+	inject "exec CK.sAuthScopeSetDestroy @ActorId, @ScopeSetId;" 
+	into "PostDestroy";
+end

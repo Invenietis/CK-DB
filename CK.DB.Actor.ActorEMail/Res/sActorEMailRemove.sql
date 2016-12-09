@@ -25,7 +25,7 @@ begin
 	select @IsPrimary = IsPrimary from CK.tActorEMail where ActorId = @UserOrGroupId and EMail = @EMail;
 	if @IsPrimary is not null
 	begin
-		--<PreDelete reverse />
+		--<PreDelete revert />
 		delete CK.tActorEMail where ActorId = @UserOrGroupId and EMail = @EMail;
 		if @IsPrimary = 1
 		begin
@@ -34,7 +34,7 @@ begin
 			if @@RowCount = 1 set @SetNewPrimary = 1 else set @SetNewPrimary = 0;
 			-- Injected code here may decide to throw if @SetNewPrimary is 0
 			-- if a primary email must always exist (this check may also be done in PreDelete above).		
-			--<PreSetNewPrimary reverse />
+			--<PreSetNewPrimary revert />
 			if @SetNewPrimary = 1
 			begin
 				exec CK.sActorEMailAdd @ActorId, @UserOrGroupId, @EMail, @IsPrimary = 1; 

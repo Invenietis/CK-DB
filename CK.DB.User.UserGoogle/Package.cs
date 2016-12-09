@@ -22,19 +22,20 @@ namespace CK.DB.User.UserGoogle
     [SqlPackage( Schema = "CK", ResourcePath = "Res" )]
     public class Package : SqlPackage
     {
-        Auth.Package _authPackage;
-        Task<int> _defaultScopeSetId;
+        /// <summary>
+        /// Google api url (https://www.googleapis.com).
+        /// </summary>
+        public static readonly string ApiUrl = "https://www.googleapis.com";
 
         /// <summary>
-        /// Google token endpoint.
+        /// Google token endpoint (/oauth2/v4/token).
         /// </summary>
-        public static readonly string TokenEndpoint = "https://www.googleapis.com/oauth2/v4/token";
+        public static readonly string TokenEndpoint = "/oauth2/v4/token";
 
         HttpClient _client;
 
-        void Construct( Actor.Package actorPackage, Auth.Package authPackage )
+        void Construct( Actor.Package actorPackage )
         {
-            _authPackage = authPackage;
         }
 
         static HttpClient CreateHttpClient( string baseAddress )
@@ -67,19 +68,6 @@ namespace CK.DB.User.UserGoogle
         public UserGoogleTable UserGoogleTable { get; protected set; }
 
         /// <summary>
-        /// Gets the default scope set identifier used as a template for new users.
-        /// </summary>
-        /// <param name="ctx">The call context to use.</param>
-        /// <param name="cancellationToken">Optional cancellation token.</param>
-        /// <returns>The identifier of the default scope set for new users.</returns>
-        public Task<int> GetDefaultScopeSetIdAsync( ISqlCallContext ctx, CancellationToken cancellationToken = default( CancellationToken ) )
-        {
-            return _defaultScopeSetId == null
-                    ? (_defaultScopeSetId = UserGoogleTable.ScalarByGoogleAccountIdAsync<int>( ctx, "ScopeSetId", string.Empty, cancellationToken ))
-                    : _defaultScopeSetId;
-        }
-
-        /// <summary>
         /// Attempts to refreshes the user access token.
         /// On success, the database is updated.
         /// </summary>
@@ -96,7 +84,7 @@ namespace CK.DB.User.UserGoogle
             if( !user.IsValid ) throw new ArgumentException( "User info is not valid." );
             try
             {
-                var c = _client ?? (_client = CreateHttpClient( TokenEndpoint ));
+                var c = _client ?? (_client = CreateHttpClient( ApiUrl ));
                 var parameters = new Dictionary<string, string>
                 {
                     { "grant_type", "refresh_token" },
@@ -104,7 +92,7 @@ namespace CK.DB.User.UserGoogle
                     { "client_id", ClientId },
                     { "client_secret", ClientSecret },
                 };
-                var response = await c.PostAsync( string.Empty, new FormUrlEncodedContent( parameters ), cancellationToken ).ConfigureAwait( false );
+                var response = await c.PostAsync( TokenEndpoint, new FormUrlEncodedContent( parameters ), cancellationToken ).ConfigureAwait( false );
                 var content = await response.Content.ReadAsStringAsync().ConfigureAwait( false );
                 List<KeyValuePair<string, object>> token = null;
                 if( response.IsSuccessStatusCode )

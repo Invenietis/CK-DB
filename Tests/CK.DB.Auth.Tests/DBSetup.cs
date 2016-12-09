@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CK.DB.Auth.Tests
+namespace CK.DB.Auth.AuthScope.Tests
 {
     [TestFixture]
     public class DBSetup : CK.DB.Tests.DBSetup

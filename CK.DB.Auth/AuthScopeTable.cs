@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CK.DB.Auth
+namespace CK.DB.Auth.AuthScope
 {
     /// <summary>
     /// Holds the scope name.

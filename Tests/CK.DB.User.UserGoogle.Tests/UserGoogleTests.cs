@@ -6,7 +6,6 @@ using CK.DB.Actor;
 using CK.SqlServer;
 using NUnit.Framework;
 using System.Linq;
-using CK.DB.Auth;
 
 namespace CK.DB.User.UserGoogle.Tests
 {
@@ -58,53 +57,6 @@ namespace CK.DB.User.UserGoogle.Tests
                 Assert.That( await u.FindUserInfoAsync( ctx, Guid.NewGuid().ToString() ), Is.Null );
                 await user.DestroyUserAsync( ctx, 1, userId );
                 Assert.That( await u.FindUserInfoAsync( ctx, googleAccountId ), Is.Null );
-            }
-        }
-
-        [Test]
-        public async Task setting_default_scopes_impact_new_users()
-        {
-            var user = TestHelper.StObjMap.Default.Obtain<Actor.UserTable>();
-            var auth = TestHelper.StObjMap.Default.Obtain<Auth.AuthScopeSetTable>();
-            var p = TestHelper.StObjMap.Default.Obtain<Package>();
-            using( var ctx = new SqlStandardCallContext() )
-            {
-                var defaultId = await p.GetDefaultScopeSetIdAsync( ctx );
-                AuthScopeSet original = await auth.ReadAuthScopeSetAsync( ctx, defaultId );
-                Assert.That( !original.Contains( "nimp" ) && !original.Contains( "thing" ) && !original.Contains( "other" ) );
-
-                {
-                    int id = await user.CreateUserAsync( ctx, 1, Guid.NewGuid().ToString() );
-                    UserGoogleInfo userInfo = new UserGoogleInfo() { UserId = id, GoogleAccountId = Guid.NewGuid().ToString() };
-                    await p.UserGoogleTable.CreateOrUpdateGoogleUserAsync( ctx, 1, userInfo );
-                    userInfo = await p.UserGoogleTable.FindUserInfoAsync( ctx, userInfo.GoogleAccountId );
-                    AuthScopeSet userSet = await auth.ReadAuthScopeSetAsync( ctx, userInfo.ScopeSetId );
-                    Assert.That( userSet.ToString(), Is.EqualTo( original.ToString() ) );
-                }
-                AuthScopeSet replaced = original.Clone();
-                replaced.Add( new AuthScope( "nimp" ) );
-                replaced.Add( new AuthScope( "thing", ScopeWARStatus.Rejected ) );
-                replaced.Add( new AuthScope( "other", ScopeWARStatus.Accepted ) );
-                await auth.SetScopesAsync( ctx, 1, defaultId, replaced.Scopes );
-                var readback = await auth.ReadAuthScopeSetAsync( ctx, defaultId );
-                Assert.That( readback.ToString(), Is.EqualTo( replaced.ToString() ) );
-                // Default scopes have non W status!
-                // This must not impact new users: their satus will be W.
-                Assert.That( readback.ToString(), Does.Contain( "[R]thing" ) );
-                Assert.That( readback.ToString(), Does.Contain( "[A]other" ) );
-
-                {
-                    int id = await user.CreateUserAsync( ctx, 1, Guid.NewGuid().ToString() );
-                    UserGoogleInfo userInfo = new UserGoogleInfo() { UserId = id, GoogleAccountId = Guid.NewGuid().ToString() };
-                    await p.UserGoogleTable.CreateOrUpdateGoogleUserAsync( ctx, 1, userInfo );
-                    userInfo = await p.UserGoogleTable.FindUserInfoAsync( ctx, userInfo.GoogleAccountId );
-                    AuthScopeSet userSet = await auth.ReadAuthScopeSetAsync( ctx, userInfo.ScopeSetId );
-                    Assert.That( userSet.ToString(), Does.Contain( "[W]thing" ) );
-                    Assert.That( userSet.ToString(), Does.Contain( "[W]other" ) );
-                    Assert.That( userSet.ToString(), Does.Contain( "[W]nimp" ) );
-                }
-
-                await auth.SetScopesAsync( ctx, 1, defaultId, original.Scopes );
             }
         }
 

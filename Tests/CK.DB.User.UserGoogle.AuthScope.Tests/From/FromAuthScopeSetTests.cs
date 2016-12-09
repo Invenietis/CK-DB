@@ -5,10 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CK.DB.Auth.Tests.FromActor
+namespace CK.DB.User.UserGoogle.AuthScope.Tests.From
 {
     [TestFixture]
-    public class FromActorGroupTests : CK.DB.Actor.Tests.GroupTests
+    public class FromAuthScopeSetTests : CK.DB.Auth.AuthScope.Tests.AuthScopeSetTests
     {
     }
 }

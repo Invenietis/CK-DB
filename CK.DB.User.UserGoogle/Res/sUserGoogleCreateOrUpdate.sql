@@ -30,24 +30,20 @@ begin
 		from CK.tUserGoogle 
 		where UserId = @UserId and GoogleAccountId = @GoogleAccountId;
 
-	--<PreCreateOrUpdate reverse /> 
+	--<PreCreateOrUpdate revert /> 
 
 	if @PrevRefreshToken is null
 	begin
 		if @RefreshToken is null set @RefreshToken = '';
-		declare @DefaultScopeSetId int;
-		select @DefaultScopeSetId = ScopeSetId from CK.tUserGoogle where UserId = 0;
-		declare @NewScopeSetId int;
-		exec CK.sAuthScopeSetCopy @ActorId, @DefaultScopeSetId, 'W', @NewScopeSetId output;
 
-		--<PreCreate reverse /> 
+		--<PreCreate revert /> 
 
 		-- Unique constraint on GoogleAccountId will detect any existing UserId/GoogleAccountId clashes.
-		insert into CK.tUserGoogle( UserId, GoogleAccountId, ScopeSetId, AccessToken, AccessTokenExpirationTime, RefreshToken, LastRefreshTokenTime ) 
-			values( @UserId, @GoogleAccountId, @NewScopeSetId, @AccessToken, @AccessTokenExpirationTime, @RefreshToken, sysutcdatetime() );
+		insert into CK.tUserGoogle( UserId, GoogleAccountId, AccessToken, AccessTokenExpirationTime, RefreshToken, LastRefreshTokenTime ) 
+			values( @UserId, @GoogleAccountId, @AccessToken, @AccessTokenExpirationTime, @RefreshToken, sysutcdatetime() );
 		set @HasBeenCreated = 1;
 
-		--<PostCreate reverse /> 
+		--<PostCreate /> 
 	end
 	else
 	begin

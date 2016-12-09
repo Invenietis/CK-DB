@@ -14,7 +14,7 @@ begin
 
 	--[beginsp]
 
-	--<PreCreate reverse /> 
+	--<PreCreate revert /> 
 
 	insert into CK.tUserPassword(UserId, PwdHash, LastWriteTime ) values( @UserId, @PwdHash, sysutcdatetime());
 

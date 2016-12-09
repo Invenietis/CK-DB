@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CK.DB.Auth
+namespace CK.DB.Auth.AuthScope
 {
     /// <summary>
     /// Holds authentication scopes model and any shared items 
@@ -14,13 +14,5 @@ namespace CK.DB.Auth
     [SqlPackage( Schema = "CK", ResourcePath = "Res" )]
     public class Package : SqlPackage
     {
-        void Construct( Actor.Package actorPackage )
-        {
-        }
-
-        /// <summary>
-        /// Gets the <see cref="AuthScopeSetTable"/> table.
-        /// </summary>
-        public AuthScopeSetTable AuthScopeSetTable { get; protected set; }
     }
 }

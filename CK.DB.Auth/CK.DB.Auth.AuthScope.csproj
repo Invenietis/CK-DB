@@ -7,8 +7,8 @@
     <ProjectGuid>{C5F7E85F-5472-4AB3-8344-49963DA2D860}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CK.DB.Auth</RootNamespace>
-    <AssemblyName>CK.DB.Auth</AssemblyName>
+    <RootNamespace>CK.DB.Auth.AuthScope</RootNamespace>
+    <AssemblyName>CK.DB.Auth.AuthScope</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <NuGetPackageImportStamp>
@@ -33,7 +33,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\CK.DB.Auth.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\CK.DB.Auth.AuthScope.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="CK.ActivityMonitor, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
@@ -49,15 +49,15 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.Setupable.Model, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.Setupable.Model.5.0.0-a35-00-develop-0014\lib\net45\CK.Setupable.Model.dll</HintPath>
+      <HintPath>..\packages\CK.Setupable.Model.5.0.0-a35-00-develop-0017\lib\net45\CK.Setupable.Model.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.SqlServer.Setup.Model, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.SqlServer.Setup.Model.5.0.0-a35-00-develop-0014\lib\net45\CK.SqlServer.Setup.Model.dll</HintPath>
+      <HintPath>..\packages\CK.SqlServer.Setup.Model.5.0.0-a35-00-develop-0017\lib\net45\CK.SqlServer.Setup.Model.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.StObj.Model, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.StObj.Model.5.0.0-a35-00-develop-0014\lib\net45\CK.StObj.Model.dll</HintPath>
+      <HintPath>..\packages\CK.StObj.Model.5.0.0-a35-00-develop-0017\lib\net45\CK.StObj.Model.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.Text, Version=5.1.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
@@ -77,8 +77,9 @@
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="AuthScope.cs" />
+    <Compile Include="AuthScopeItem.cs" />
     <Compile Include="AuthScopeSet.cs" />
+    <Compile Include="AuthScopeSetTable.Shared.cs" />
     <Compile Include="AuthScopeSetTable.Sync.cs" />
     <Compile Include="AuthScopeSetTable.cs" />
     <Compile Include="AuthScopeTable.cs" />
@@ -89,12 +90,6 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\CK.DB.Actor\CK.DB.Actor.csproj">
-      <Project>{3902b885-ac29-4be3-a83e-184316a09e91}</Project>
-      <Name>CK.DB.Actor</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Res\Model.CK.AuthScopeSetTable.Install.1.0.0.sql" />

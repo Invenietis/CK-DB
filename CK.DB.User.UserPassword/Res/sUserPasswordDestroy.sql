@@ -12,7 +12,7 @@ begin
 
 	--[beginsp]
 
-	--<PreDestroy reverse /> 
+	--<PreDestroy revert /> 
 
 	delete CK.tUserPassword where UserId = @UserId;
 

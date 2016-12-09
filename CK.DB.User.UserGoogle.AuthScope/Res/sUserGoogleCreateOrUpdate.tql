@@ -1,0 +1,19 @@
+﻿-- SetupConfig: { "AddRequires" : "CK.sAuthScopeSetCopy" }
+--
+create transformer on CK.sUserGoogleCreateOrUpdate
+as
+begin
+
+	inject "
+		declare @DefaultScopeSetId int;
+		select @DefaultScopeSetId = ScopeSetId from CK.tUserGoogle where UserId = 0;
+		declare @NewScopeSetId int;
+		exec CK.sAuthScopeSetCopy @ActorId, @DefaultScopeSetId, 'W', @NewScopeSetId output;"
+	into "PreCreate";
+		
+	in single part {insert into CK.tUserGoogle}
+	begin
+		add column ScopeSetId = @NewScopeSetId;
+	end
+
+end

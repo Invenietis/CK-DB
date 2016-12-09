@@ -14,7 +14,7 @@ begin
 
 	--[beginsp]
 
-	--<PreSetPwdHash reverse /> 
+	--<PreSetPwdHash revert /> 
 
 	update CK.tUserPassword set PwdHash = @PwdHash, LastWriteTime = sysutcdatetime() where UserId = @UserId;
 
