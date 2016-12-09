@@ -12,4 +12,9 @@ namespace AllPackages.Tests.From
     {
     }
 
+    [TestFixture]
+    public class UserGoogleAuthScopeTests : CK.DB.User.UserGoogle.AuthScope.Tests.UserGoogleAuthScopeTests
+    {
+    }
+
 }
