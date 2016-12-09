@@ -45,7 +45,7 @@ namespace CK.DB.User.UserGoogle
         /// </summary>
         /// <param name="ctx">The call context to use.</param>
         /// <param name="actorId">The acting actor identifier.</param>
-        /// <param name="userInfo">The <see cref="UserGoogleInfo"/> for which a Google user must be created or updated.</param>
+        /// <param name="info">The <see cref="UserGoogleInfo"/> for which a Google user must be created or updated.</param>
         /// <param name="cancellationToken">Optional cancellation token.</param>
         /// <returns>True if the Google user has been created, false if it has been updated.</returns>
         public Task<bool> CreateOrUpdateGoogleUserAsync( ISqlCallContext ctx, int actorId, [ParameterSource]UserGoogleInfo info, CancellationToken cancellationToken = default( CancellationToken ) )

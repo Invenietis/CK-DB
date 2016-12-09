@@ -37,21 +37,19 @@ namespace CK.DB.Auth.AuthScope
 
         /// <summary>
         /// Reads a <see cref="AuthScopeSet"/> content from a configured command.
+        /// Null is returned for empty returned set.
         /// </summary>
         /// <param name="ctx">The call context.</param>
         /// <param name="cmd">The reader command.</param>
-        /// <returns>The set of scopes.</returns>
+        /// <returns>The set of scopes or null.</returns>
         public async Task<AuthScopeSet> RawReadAuthScopeSetAsync( ISqlCallContext ctx, SqlCommand cmd )
         {
             using( await (cmd.Connection = ctx[Database.ConnectionString]).EnsureOpenAsync().ConfigureAwait( false ) )
             using( var r = await cmd.ExecuteReaderAsync().ConfigureAwait( false ) )
             {
-                var result = new AuthScopeSet();
-                if( await r.ReadAsync().ConfigureAwait( false ) )
-                {
-                    result.ScopeSetId = r.GetInt32( 0 );
-                }
-                if( await r.NextResultAsync().ConfigureAwait(false) )
+                if( !await r.ReadAsync().ConfigureAwait( false ) ) return null;
+                var result = new AuthScopeSet() { ScopeSetId = r.GetInt32( 0 ) };
+                if( await r.NextResultAsync().ConfigureAwait( false ) )
                 {
                     while( await r.ReadAsync().ConfigureAwait( false ) ) result.Add( CreateAuthScope( r ) );
                 }
@@ -119,9 +117,9 @@ namespace CK.DB.Auth.AuthScope
         /// <param name="actorId">The acting actor identifier.</param>
         /// <param name="set">The scope set to add or update.</param>
         /// <returns>The awaitable.</returns>
-        public virtual Task AddScopesAsync( ISqlCallContext ctx, int actorId, AuthScopeSet set )
+        public virtual Task AddOrUpdateScopesAsync( ISqlCallContext ctx, int actorId, AuthScopeSet set )
         {
-            return DoAddScopesAsync( ctx, actorId, set.ScopeSetId, set.ToString(), true, 'W', false );
+            return DoAddOrUpdateScopesAsync( ctx, actorId, set.ScopeSetId, set.ToString(), true, 'W', false );
         }
 
         /// <summary>
@@ -134,13 +132,13 @@ namespace CK.DB.Auth.AuthScope
         /// <param name="scopesHaveStatus">True to handle [W], [A] or [R] prefixes from <paramref name="scopes"/>.</param>
         /// <param name="defaultWARstatus">The status ('W', 'A' or 'R') to use when no explicit prefix are handled.</param>
         /// <returns>The awaitable.</returns>
-        public virtual Task AddScopesAsync( ISqlCallContext ctx, int actorId, int scopeSetId, string scopes, bool scopesHaveStatus, ScopeWARStatus defaultWARstatus )
+        public virtual Task AddOrUpdateScopesAsync( ISqlCallContext ctx, int actorId, int scopeSetId, string scopes, bool scopesHaveStatus, ScopeWARStatus defaultWARstatus )
         {
-            return DoAddScopesAsync( ctx, actorId, scopeSetId, scopes, scopesHaveStatus, defaultWARstatus.ToString()[0], false );
+            return DoAddOrUpdateScopesAsync( ctx, actorId, scopeSetId, scopes, scopesHaveStatus, defaultWARstatus.ToString()[0], false );
         }
 
         /// <summary>
-        /// Sets the scopes of a scope set: existing scopes that do not appear in <paramref name="scopes"/>
+        /// Sets the scopes of a scope set: existing scopes that do not appear in <paramref name="set"/>
         /// are removed.
         /// </summary>
         /// <param name="ctx">The call context.</param>
@@ -149,7 +147,7 @@ namespace CK.DB.Auth.AuthScope
         /// <returns>The awaitable.</returns>
         public virtual Task SetScopesAsync( ISqlCallContext ctx, int actorId, AuthScopeSet set )
         {
-            return DoAddScopesAsync( ctx, actorId, set.ScopeSetId, set.ToString(), true, 'W', true );
+            return DoAddOrUpdateScopesAsync( ctx, actorId, set.ScopeSetId, set.ToString(), true, 'W', true );
         }
 
         /// <summary>
@@ -165,7 +163,7 @@ namespace CK.DB.Auth.AuthScope
         /// <returns>The awaitable.</returns>
         public virtual Task SetScopesAsync( ISqlCallContext ctx, int actorId, int scopeSetId, string scopes, bool scopesHaveStatus, ScopeWARStatus defaultWARStatus = ScopeWARStatus.Waiting )
         {
-            return DoAddScopesAsync( ctx, actorId, scopeSetId, scopes, scopesHaveStatus, defaultWARStatus.ToString()[0], true );
+            return DoAddOrUpdateScopesAsync( ctx, actorId, scopeSetId, scopes, scopesHaveStatus, defaultWARStatus.ToString()[0], true );
         }
 
         /// <summary>
@@ -181,7 +179,7 @@ namespace CK.DB.Auth.AuthScope
         /// <param name="resetScopes">True to remove exisiting scopes that do not appear in <paramref name="scopes"/>.</param>
         /// <returns>The awaitable.</returns>
         [SqlProcedure( "sAuthScopeSetAddScopes" )]
-        protected abstract Task DoAddScopesAsync( ISqlCallContext ctx, int actorId, int scopeSetId, string scopes, bool scopesHaveStatus, char defaultWARStatus, bool resetScopes );
+        protected abstract Task DoAddOrUpdateScopesAsync( ISqlCallContext ctx, int actorId, int scopeSetId, string scopes, bool scopesHaveStatus, char defaultWARStatus, bool resetScopes );
 
         /// <summary>
         /// Removes the given scopes from a scope set.
@@ -191,9 +189,9 @@ namespace CK.DB.Auth.AuthScope
         /// <param name="scopeSetId">The target scope set identifier.</param>
         /// <param name="scopes">Scopes to remove.</param>
         /// <returns>The awaitable.</returns>
-        public Task RemoveScopesAsync( ISqlCallContext ctx, int actorId, AuthScopeSet set )
+        public Task RemoveScopesAsync( ISqlCallContext ctx, int actorId, int scopeSetId, IEnumerable<AuthScopeItem> scopes )
         {
-            return DoRemoveScopesAsync( ctx, actorId, set.ScopeSetId, set.ToString(), true, 'W', null );
+            return DoRemoveScopesAsync( ctx, actorId, scopeSetId, ToString( scopes ), true, 'W', null );
         }
 
         /// <summary>

@@ -127,7 +127,7 @@ namespace CK.DB.Auth.AuthScope
         }
 
         /// <summary>
-        /// Sets the scopes of a scope set: existing scopes that do not appear in <paramref name="scopes"/>
+        /// Sets the scopes of a scope set: existing scopes that do not appear in <paramref name="set"/>
         /// are removed.
         /// </summary>
         /// <param name="ctx">The call context.</param>
@@ -175,9 +175,9 @@ namespace CK.DB.Auth.AuthScope
         /// <param name="actorId">The acting actor identifier.</param>
         /// <param name="scopeSetId">The target scope set identifier.</param>
         /// <param name="scopes">Scopes to remove.</param>
-        public void RemoveScopes( ISqlCallContext ctx, int actorId, AuthScopeSet set )
+        public void RemoveScopes( ISqlCallContext ctx, int actorId, int scopeSetId, IEnumerable<AuthScopeItem> scopes )
         {
-            DoRemoveScopes( ctx, actorId, set.ScopeSetId, set.ToString(), true, 'W', null );
+            DoRemoveScopes( ctx, actorId, scopeSetId, ToString( scopes ), true, 'W', null );
         }
 
         /// <summary>

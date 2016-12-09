@@ -44,6 +44,12 @@ namespace CK.DB.User.UserGoogle.AuthScope
         /// </summary>
         public AuthScopeSetTable AuthScopeSetTable => _scopeSetTable;
 
+        /// <summary>
+        /// Reads the <see cref="AuthScopeSet"/> of a user.
+        /// </summary>
+        /// <param name="ctx">The call context to use.</param>
+        /// <param name="userId">The user identifier.</param>
+        /// <returns>The scope set or null if the user is not a Google user.</returns>
         public Task<AuthScopeSet> ReadScopeSetAsync( ISqlCallContext ctx, int userId )
         {
             if( userId <= 0 ) throw new ArgumentException( nameof( userId ) );
@@ -51,6 +57,11 @@ namespace CK.DB.User.UserGoogle.AuthScope
             return _scopeSetTable.RawReadAuthScopeSetAsync( ctx, cmd );
         }
 
+        /// <summary>
+        /// Reads the default <see cref="AuthScopeSet"/> that is the template for new users.
+        /// </summary>
+        /// <param name="ctx">The call context to use.</param>
+        /// <returns>The default scope set.</returns>
         public Task<AuthScopeSet> ReadDefaultScopeSetAsync( ISqlCallContext ctx )
         {
             var cmd = _scopeSetTable.CreateReadCommand( "select ScopeSetId from CK.tUserGoogle where UserId = 0" );

@@ -38,7 +38,7 @@ namespace CK.DB.Auth.AuthScope.Tests
                 await scopes.RemoveScopesAsync( ctx, 1, id, ScopeWARStatus.Waiting );
                 scopes.Database.AssertScalarEquals( string.Empty, $"select ScopesWithStatus from CK.vAuthScopeSet where ScopeSetId = {id}" );
 
-                await scopes.AddScopesAsync( ctx, 1, id, "Z Y X A", true, ScopeWARStatus.Waiting );
+                await scopes.AddOrUpdateScopesAsync( ctx, 1, id, "Z Y X A", true, ScopeWARStatus.Waiting );
                 scopes.Database.AssertScalarEquals( "[W]A [W]X [W]Y [W]Z", $"select ScopesWithStatus from CK.vAuthScopeSet where ScopeSetId = {id}" );
 
                 await scopes.RemoveScopesAsync( ctx, 1, id, "A Y Z", false );
@@ -47,7 +47,7 @@ namespace CK.DB.Auth.AuthScope.Tests
                 await scopes.SetScopesAsync( ctx, 1, id, "a b c d a b", false, ScopeWARStatus.Accepted );
                 scopes.Database.AssertScalarEquals( "[A]a [A]b [A]c [A]d", $"select ScopesWithStatus from CK.vAuthScopeSet where ScopeSetId = {id}" );
 
-                await scopes.AddScopesAsync( ctx, 1, id, "a d z", false, ScopeWARStatus.Rejected );
+                await scopes.AddOrUpdateScopesAsync( ctx, 1, id, "a d z", false, ScopeWARStatus.Rejected );
                 scopes.Database.AssertScalarEquals( "[R]a [A]b [A]c [R]d [R]z", $"select ScopesWithStatus from CK.vAuthScopeSet where ScopeSetId = {id}" );
 
                 await scopes.RemoveScopesAsync( ctx, 1, id, "a b c z", false, ScopeWARStatus.Rejected );
@@ -78,13 +78,13 @@ namespace CK.DB.Auth.AuthScope.Tests
 
                 set.Add( new AuthScopeItem( "B", ScopeWARStatus.Accepted ) );
                 set.Add( new AuthScopeItem( "D", ScopeWARStatus.Waiting ) );
-                await scopes.AddScopesAsync( ctx, 1, set );
+                await scopes.AddOrUpdateScopesAsync( ctx, 1, set );
                 readSet = await scopes.ReadAuthScopeSetAsync( ctx, id );
                 Assert.That( readSet.ToString(), Is.EqualTo( "[A]A [A]B [R]C [W]D" ) );
 
                 set.Remove( "B" );
                 set.Remove( "C" );
-                await scopes.AddScopesAsync( ctx, 1, set );
+                await scopes.AddOrUpdateScopesAsync( ctx, 1, set );
                 readSet = await scopes.ReadAuthScopeSetAsync( ctx, id );
                 Assert.That( readSet.ToString(), Is.EqualTo( "[A]A [A]B [R]C [W]D" ) );
 
