@@ -49,7 +49,7 @@ namespace CK.DB.Actor.ActorEMail.Tests
         }
 
         [Test]
-        public void when_removind_the_primary_email_another_one_is_elected_even_if_they_are_all_not_validated()
+        public void when_removing_the_primary_email_another_one_is_elected_even_if_they_are_all_not_validated()
         {
             var user = TestHelper.StObjMap.Default.Obtain<UserTable>();
             var mails = TestHelper.StObjMap.Default.Obtain<ActorEMailTable>();
@@ -69,7 +69,7 @@ namespace CK.DB.Actor.ActorEMail.Tests
         }
 
         [Test]
-        public void when_removind_the_primary_email_the_most_recently_validated_is_elected()
+        public void when_removing_the_primary_email_the_most_recently_validated_is_elected()
         {
             var user = TestHelper.StObjMap.Default.Obtain<UserTable>();
             var mails = TestHelper.StObjMap.Default.Obtain<ActorEMailTable>();
