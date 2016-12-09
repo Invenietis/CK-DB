@@ -8,7 +8,10 @@ create table CK.tAuthScopeSet
 	constraint PK_CK_AuthScopeSet primary key (ScopeSetId)
 );
 
+-- The ScopeSet 0 can not be modified. This is done thanks to 
+-- the CK_CK_AuthScopeSetContent_ZeroScopeSetId check constraint.
 insert into CK.tAuthScopeSet default values;
+
 --[endscript]
 
 --[beginscript]
@@ -22,7 +25,11 @@ create table CK.tAuthScopeSetContent
 	WARStatus char(1) not null,
 	WARStatusLastWrite datetime2(2) not null,
 	constraint PK_CK_AuthScopeSetContent primary key (ScopeSetId,ScopeId),
-	constraint CK_CK_AuthScopeSetContent_WARStatus check (WARStatus in ('W','A','R'))
+	constraint CK_CK_AuthScopeSetContent_WARStatus check (WARStatus in ('W','A','R')),
+	constraint CK_CK_AuthScopeSetContent_ZeroScopeSetId check (ScopeSetId <> 0),
+	constraint CK_CK_AuthScopeSetContent_ZeroScopeId check (ScopeId <> 0),
+	constraint FK_CK_AuthScopeSetContent_ScopeSetId foreign key( ScopeSetId ) references CK.tAuthScopeSet( ScopeSetId ),
+	constraint FK_CK_AuthScopeSetContent_ScopeId foreign key( ScopeId ) references CK.tAuthScope( ScopeId )
 );
 
 --[endscript]

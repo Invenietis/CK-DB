@@ -27,6 +27,23 @@ namespace CK.DB.Auth.AuthScope.Tests
         }
 
         [Test]
+        public async Task setting_scopes_on_zero_ScopeSetId_is_an_error()
+        {
+            var scopes = TestHelper.StObjMap.Default.Obtain<AuthScopeSetTable>();
+            using( var ctx = new SqlStandardCallContext() )
+            {
+                try
+                {
+                    await scopes.SetScopesAsync( ctx, 1, 0, "openid profile", false );
+                    Assert.Fail( "Modifying the zero ScopeSetId is an error." );
+                }
+                catch( SqlDetailedException )
+                {
+                }
+            }
+        }
+
+        [Test]
         public async Task adding_and_removing_scopes_via_raw_strings()
         {
             var scopes = TestHelper.StObjMap.Default.Obtain<AuthScopeSetTable>();
@@ -76,6 +93,7 @@ namespace CK.DB.Auth.AuthScope.Tests
                 Assert.That( readSet.ScopeSetId, Is.EqualTo( id ) );
                 Assert.That( readSet.ToString(), Is.EqualTo( "[A]A [W]B [R]C" ) );
 
+                set.ScopeSetId = id;
                 set.Add( new AuthScopeItem( "B", ScopeWARStatus.Accepted ) );
                 set.Add( new AuthScopeItem( "D", ScopeWARStatus.Waiting ) );
                 await scopes.AddOrUpdateScopesAsync( ctx, 1, set );
@@ -84,10 +102,12 @@ namespace CK.DB.Auth.AuthScope.Tests
 
                 set.Remove( "B" );
                 set.Remove( "C" );
+                set.Add( new AuthScopeItem( "E", ScopeWARStatus.Accepted ) );
                 await scopes.AddOrUpdateScopesAsync( ctx, 1, set );
                 readSet = await scopes.ReadAuthScopeSetAsync( ctx, id );
-                Assert.That( readSet.ToString(), Is.EqualTo( "[A]A [A]B [R]C [W]D" ) );
+                Assert.That( readSet.ToString(), Is.EqualTo( "[A]A [A]B [R]C [W]D [A]E" ) );
 
+                set.Remove( "E" );
                 await scopes.SetScopesAsync( ctx, 1, set );
                 readSet = await scopes.ReadAuthScopeSetAsync( ctx, id );
                 Assert.That( readSet.ToString(), Is.EqualTo( "[A]A [W]D" ) );
