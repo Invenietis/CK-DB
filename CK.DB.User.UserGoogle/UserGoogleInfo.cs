@@ -37,12 +37,6 @@ namespace CK.DB.User.UserGoogle
         public string RefreshToken { get; set; }
 
         /// <summary>
-        /// Gets or sets the scope set identifier for this user.
-        /// This is meaningful only when reading from the database and is ignored when writing.
-        /// </summary>
-        public int ScopeSetId { get; set; }
-
-        /// <summary>
         /// Gets or sets the last time the refresh token has been updated.
         /// This is meaningful only when reading from the database and is ignored when writing.
         /// </summary>

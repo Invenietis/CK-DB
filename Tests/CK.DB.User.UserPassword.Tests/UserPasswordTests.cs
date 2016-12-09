@@ -143,6 +143,7 @@ namespace CK.DB.User.UserPassword.Tests
                 }
             }
         }
+
         [Test]
         public async Task password_migration_is_supported_by_user_id_and_user_name_async()
         {

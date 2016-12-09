@@ -8,12 +8,8 @@ using System.Threading.Tasks;
 namespace AllPackages.Tests.From
 {
     [TestFixture]
-    public class UserPasswordTests : CK.DB.User.UserPassword.Tests.UserPasswordTests
+    public class ActorEMailTests : CK.DB.Actor.ActorEMail.Tests.ActorEMailTests
     {
     }
 
-    [TestFixture]
-    public class UserGoogleTests : CK.DB.User.UserGoogle.Tests.UserGoogleTests
-    {
-    }
 }

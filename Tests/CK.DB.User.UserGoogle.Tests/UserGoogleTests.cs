@@ -28,7 +28,6 @@ namespace CK.DB.User.UserGoogle.Tests
 
                 Assert.That( info2.UserId, Is.EqualTo( userId ) );
                 Assert.That( info2.GoogleAccountId, Is.EqualTo( googleAccountId ) );
-                Assert.That( info2.ScopeSetId, Is.GreaterThan( 1 ) );
 
                 Assert.That( u.FindUserInfo( ctx, Guid.NewGuid().ToString() ), Is.Null );
                 user.DestroyUser( ctx, 1, userId );
@@ -52,7 +51,6 @@ namespace CK.DB.User.UserGoogle.Tests
 
                 Assert.That( info2.UserId, Is.EqualTo( userId ) );
                 Assert.That( info2.GoogleAccountId, Is.EqualTo( googleAccountId ) );
-                Assert.That( info2.ScopeSetId, Is.GreaterThan( 1 ) );
 
                 Assert.That( await u.FindUserInfoAsync( ctx, Guid.NewGuid().ToString() ), Is.Null );
                 await user.DestroyUserAsync( ctx, 1, userId );

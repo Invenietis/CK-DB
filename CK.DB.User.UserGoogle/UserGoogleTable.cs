@@ -114,11 +114,10 @@ namespace CK.DB.User.UserGoogle
             {
                 UserId = r.GetInt32( 0 ),
                 GoogleAccountId = googleAccountId,
-                ScopeSetId = r.GetInt32( 1 ),
-                AccessToken = r.GetString( 2 ),
-                AccessTokenExpirationTime = r.GetDateTime( 3 ),
-                RefreshToken = r.GetString( 4 ),
-                LastRefreshTokenTime = r.GetDateTime( 5 )
+                AccessToken = r.GetString( 1 ),
+                AccessTokenExpirationTime = r.GetDateTime( 2 ),
+                RefreshToken = r.GetString( 3 ),
+                LastRefreshTokenTime = r.GetDateTime( 4 )
             };
         }
 
@@ -131,7 +130,7 @@ namespace CK.DB.User.UserGoogle
         /// <returns>A ready to use reader command.</returns>
         protected virtual SqlCommand CreateReaderCommand( string googleAccountId )
         {
-            var c = new SqlCommand( $"select UserId, ScopeSetId, AccessToken, AccessTokenExpirationTime, RefreshToken, LastRefreshTokenTime from CK.tUserGoogle where GoogleAccountId=@A" );
+            var c = new SqlCommand( $"select UserId, AccessToken, AccessTokenExpirationTime, RefreshToken, LastRefreshTokenTime from CK.tUserGoogle where GoogleAccountId=@A" );
             c.Parameters.Add( new SqlParameter( "@A", googleAccountId ) );
             return c;
         }

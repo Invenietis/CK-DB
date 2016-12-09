@@ -29,7 +29,7 @@ namespace CK.DB.User.UserGoogle.AuthScope.Tests
                     UserGoogleInfo userInfo = new UserGoogleInfo() { UserId = id, GoogleAccountId = Guid.NewGuid().ToString() };
                     await p.UserGoogleTable.CreateOrUpdateGoogleUserAsync( ctx, 1, userInfo );
                     userInfo = await p.UserGoogleTable.FindUserInfoAsync( ctx, userInfo.GoogleAccountId );
-                    AuthScopeSet userSet = await p.AuthScopeSetTable.ReadAuthScopeSetAsync( ctx, userInfo.ScopeSetId );
+                    AuthScopeSet userSet = await p.ReadScopeSetAsync( ctx, userInfo.UserId );
                     Assert.That( userSet.ToString(), Is.EqualTo( original.ToString() ) );
                 }
                 AuthScopeSet replaced = original.Clone();
@@ -49,7 +49,7 @@ namespace CK.DB.User.UserGoogle.AuthScope.Tests
                     UserGoogleInfo userInfo = new UserGoogleInfo() { UserId = id, GoogleAccountId = Guid.NewGuid().ToString() };
                     await p.UserGoogleTable.CreateOrUpdateGoogleUserAsync( ctx, 1, userInfo );
                     userInfo = await p.UserGoogleTable.FindUserInfoAsync( ctx, userInfo.GoogleAccountId );
-                    AuthScopeSet userSet = await p.AuthScopeSetTable.ReadAuthScopeSetAsync( ctx, userInfo.ScopeSetId );
+                    AuthScopeSet userSet = await p.ReadScopeSetAsync( ctx, userInfo.UserId );
                     Assert.That( userSet.ToString(), Does.Contain( "[W]thing" ) );
                     Assert.That( userSet.ToString(), Does.Contain( "[W]other" ) );
                     Assert.That( userSet.ToString(), Does.Contain( "[W]nimp" ) );
