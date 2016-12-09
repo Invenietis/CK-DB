@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace CK.DB.Actor.ActorEMail
 {
+    /// <summary>
+    /// Brings <see cref="ActorEMailTable"/> to support emails' user.
+    /// </summary>
     [SqlPackage( Schema = "CK", ResourcePath = "Res" )]
     [Versions( "1.0.0" )]
     public class Package : SqlPackage
@@ -15,6 +18,11 @@ namespace CK.DB.Actor.ActorEMail
         void Construct( Actor.Package actorPackage )
         {
         }
+
+        /// <summary>
+        /// Gets the <see cref="ActorEMailTable"/>.
+        /// </summary>
+        public ActorEMailTable ActorEMailTable { get; protected set; }
 
     }
 }
