@@ -23,7 +23,8 @@ namespace CK.DB.User.UserGoogle.Tests
                 int userId = user.CreateUser( ctx, 1, userName );
                 var googleAccountId = Guid.NewGuid().ToString( "N" );
 
-                var info = u.CreateOrUpdateGoogleUser( ctx, 1, new UserGoogleInfo() { UserId = userId, GoogleAccountId = googleAccountId } );
+                bool created = u.CreateOrUpdateGoogleUser( ctx, 1, new UserGoogleInfo() { UserId = userId, GoogleAccountId = googleAccountId }, true );
+                Assert.That( created, Is.True );
                 var info2 = u.FindUserInfo( ctx, googleAccountId );
 
                 Assert.That( info2.UserId, Is.EqualTo( userId ) );
@@ -46,7 +47,7 @@ namespace CK.DB.User.UserGoogle.Tests
                 int userId = await user.CreateUserAsync( ctx, 1, userName );
                 var googleAccountId = Guid.NewGuid().ToString( "N" );
 
-                Assert.That( await u.CreateOrUpdateGoogleUserAsync( ctx, 1, new UserGoogleInfo() { UserId = userId, GoogleAccountId = googleAccountId } ) );
+                Assert.That( await u.CreateOrUpdateGoogleUserAsync( ctx, 1, new UserGoogleInfo() { UserId = userId, GoogleAccountId = googleAccountId }, false ) );
                 var info2 = await u.FindUserInfoAsync( ctx, googleAccountId );
 
                 Assert.That( info2.UserId, Is.EqualTo( userId ) );

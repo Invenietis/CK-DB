@@ -113,7 +113,7 @@ namespace CK.DB.User.UserGoogle
                 double exp = (double)token.FirstOrDefault( kv => kv.Key == "expires_in" ).Value;
                 user.AccessTokenExpirationTime = exp != 0 ? (DateTime?)DateTime.UtcNow.AddSeconds( exp ) : null;
                 // Creates or updates the user (ignoring the created/updated returned value).
-                await UserGoogleTable.CreateOrUpdateGoogleUserAsync( ctx, user.UserId, user, cancellationToken ).ConfigureAwait( false );
+                await UserGoogleTable.CreateOrUpdateGoogleUserAsync( ctx, user.UserId, user, false, cancellationToken ).ConfigureAwait( false );
             }
             catch( Exception ex )
             {

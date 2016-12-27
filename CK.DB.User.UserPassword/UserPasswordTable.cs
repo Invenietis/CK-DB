@@ -18,7 +18,7 @@ namespace CK.DB.User.UserPassword
     /// Static <see cref="HashIterationCount"/> may be changed (typically at starting time).
     /// </summary>
     [SqlTable("tUserPassword", Package = typeof(Package))]
-    [Versions("1.0.0")]
+    [Versions("1.0.0,1.0.1")]
     [SqlObjectItem("transform:sUserDestroy")]
     public abstract partial class UserPasswordTable : SqlTable
     {
@@ -106,13 +106,14 @@ namespace CK.DB.User.UserPassword
         /// <param name="ctx">The call context to use.</param>
         /// <param name="userId">The user identifier.</param>
         /// <param name="password">The password to challenge.</param>
-        /// <returns>True on success, false if the password does not match.</returns>
-        public Task<bool> VerifyAsync( ISqlCallContext ctx, int userId, string password )
+        /// <param name="actualLogin">Sets to false to avoid any login side-effect (such as updating the LastLoginTime) on success.</param>
+        /// <returns>Non zero identifier of the user on success, 0 if the password does not match.</returns>
+        public Task<int> VerifyAsync( ISqlCallContext ctx, int userId, string password, bool actualLogin = true )
         {
             using( var c = new SqlCommand( $"select PwdHash, @UserId from CK.tUserPassword where UserId=@UserId" ) )
             {
                 c.Parameters.AddWithValue( "@UserId", userId );
-                return DoVerifyAsync( ctx, c, password, userId );
+                return DoVerifyAsync( ctx, c, password, userId, actualLogin );
             }
         }
 
@@ -124,19 +125,20 @@ namespace CK.DB.User.UserPassword
         /// <param name="ctx">The call context to use.</param>
         /// <param name="userName">The user name.</param>
         /// <param name="password">The password to challenge.</param>
-        /// <returns>True on success, false if the password does not match.</returns>
-        public Task<bool> VerifyAsync( ISqlCallContext ctx, string userName, string password )
+        /// <param name="actualLogin">Sets to false to avoid any login side-effect (such as updating the LastLoginTime) on success.</param>
+        /// <returns>Non zero identifier of the user on success, 0 if the password does not match.</returns>
+        public Task<int> VerifyAsync( ISqlCallContext ctx, string userName, string password, bool actualLogin = true )
         {
             using( var c = new SqlCommand( $"select p.PwdHash, p.UserId from CK.tUserPassword p inner join CK.tUser u on u.UserId = p.UserId where u.UserName=@UserName" ) )
             {
                 c.Parameters.AddWithValue( "@UserName", userName );
-                return DoVerifyAsync( ctx, c, password, userName );
+                return DoVerifyAsync( ctx, c, password, userName, actualLogin );
             }
         }
 
-        async Task<bool> DoVerifyAsync( ISqlCallContext ctx, SqlCommand hashReader, string password, object objectKey )
+        async Task<int> DoVerifyAsync( ISqlCallContext ctx, SqlCommand hashReader, string password, object objectKey, bool actualLogin )
         {
-            if( string.IsNullOrEmpty( password ) ) return false;
+            if( string.IsNullOrEmpty( password ) ) return 0;
             // 1 - Get the PwdHash and UserId.
             //     hash is null if the user is not a UserPassword: we'll try to migrate it.
             byte[] hash = null;
@@ -148,7 +150,7 @@ namespace CK.DB.User.UserPassword
                 {
                     hash = r.GetSqlBytes( 0 ).Buffer;
                     userId = r.GetInt32( 1 );
-                    if( userId == 0 ) return false;
+                    if( userId == 0 ) return 0;
                 }
             }
             PasswordVerificationResult result = PasswordVerificationResult.Failed;
@@ -168,7 +170,7 @@ namespace CK.DB.User.UserPassword
                     {
                         Debug.Assert( objectKey is string );
                         userId = _userTable.FindByName( ctx, (string)objectKey );
-                        if( userId == 0 ) return false;
+                        if( userId == 0 ) return 0;
                     }
                     if( migrator.VerifyPassword( ctx, userId, password ) )
                     {
@@ -183,27 +185,23 @@ namespace CK.DB.User.UserPassword
                 result = p.VerifyHashedPassword( hash, password );
             }
             // 3 - Handle result.
-            switch( result )
+            if( result == PasswordVerificationResult.Failed ) return 0;
+            if( result == PasswordVerificationResult.SuccessRehashNeeded )
             {
-                case PasswordVerificationResult.Failed: return false;
-                case PasswordVerificationResult.SuccessRehashNeeded:
-                    {
-                        // 4 - If migration occurred, create the user with its password.
-                        //     Else rehash the password and update the database.
-                        if( migrator != null )
-                        {
-                            await CreatePasswordUserAsync( ctx, 1, userId, password ).ConfigureAwait( false );
-                            migrator.MigrationDone( ctx, userId );
-                        }
-                        else await SetPwdRawHashAsync( ctx, 1, userId, p.HashPassword( password ) ).ConfigureAwait( false );
-                        return true;
-                    }
-                default:
-                    {
-                        Debug.Assert( result == PasswordVerificationResult.Success );
-                        return true;
-                    }
+                // 3.1 - If migration occurred, create the user with its password.
+                //       Else rehash the password and update the database.
+                if( migrator != null )
+                {
+                    await CreatePasswordUserAsync( ctx, 1, userId, password ).ConfigureAwait( false );
+                    migrator.MigrationDone( ctx, userId );
+                }
+                else await SetPwdRawHashAsync( ctx, 1, userId, p.HashPassword( password ) ).ConfigureAwait( false );
             }
+            if( actualLogin )
+            {
+                userId = await OnLoginAsync( ctx, userId );
+            }
+            return userId;
         }
 
         /// <summary>
@@ -241,5 +239,17 @@ namespace CK.DB.User.UserPassword
         /// <returns>The awaitable.</returns>
         [SqlProcedure("sUserPasswordPwdHashSet")]
         public abstract Task SetPwdRawHashAsync( ISqlCallContext ctx, int actorId, int userId, byte[] pwdHash);
+
+        /// <summary>
+        /// Called once a login succeed (password hash verification done) and actualLogin parameter is true.
+        /// </summary>
+        /// <param name="ctx">The call context to use.</param>
+        /// <param name="userId">
+        /// The user identifier that logged in: this extension point may change it (setting
+        /// it to 0 de facto forbids login).
+        /// </param>
+        /// <returns>The user identifier.</returns>
+        [SqlProcedure( "sUserPasswordOnLogin" )]
+        protected abstract Task<int> OnLoginAsync( ISqlCallContext ctx, int userId );
     }
 }

@@ -16,7 +16,7 @@ begin
 
 	--<PreCreate revert /> 
 
-	insert into CK.tUserPassword(UserId, PwdHash, LastWriteTime ) values( @UserId, @PwdHash, sysutcdatetime());
+	insert into CK.tUserPassword(UserId, PwdHash, LastWriteTime, LastLoginTime ) values( @UserId, @PwdHash, sysutcdatetime(), sysutcdatetime());
 
 	--<PostCreate /> 
 

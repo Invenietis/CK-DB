@@ -10,6 +10,7 @@ create procedure CK.sUserGoogleCreateOrUpdate
 	@ActorId int,
 	@UserId int,
 	@GoogleAccountId varchar(36), 
+	@ActualLogin bit,
 	@AccessToken varchar(max),
 	@AccessTokenExpirationTime datetime2(2) = null,
 	@RefreshToken varchar(max) = null,
@@ -25,8 +26,9 @@ begin
 
 	--[beginsp]
 
+	declare @LastLoginTime datetime2(2);
 	declare @PrevRefreshToken varchar(max);
-	select @PrevRefreshToken = RefreshToken
+	select @PrevRefreshToken = RefreshToken, @LastLoginTime = LastLoginTime
 		from CK.tUserGoogle 
 		where UserId = @UserId and GoogleAccountId = @GoogleAccountId;
 
@@ -39,28 +41,32 @@ begin
 		--<PreCreate revert /> 
 
 		-- Unique constraint on GoogleAccountId will detect any existing UserId/GoogleAccountId clashes.
-		insert into CK.tUserGoogle( UserId, GoogleAccountId, AccessToken, AccessTokenExpirationTime, RefreshToken, LastRefreshTokenTime ) 
-			values( @UserId, @GoogleAccountId, @AccessToken, @AccessTokenExpirationTime, @RefreshToken, sysutcdatetime() );
+		insert into CK.tUserGoogle( UserId, GoogleAccountId, AccessToken, AccessTokenExpirationTime, RefreshToken, LastRefreshTokenTime, LastLoginTime ) 
+			values( @UserId, @GoogleAccountId, @AccessToken, @AccessTokenExpirationTime, @RefreshToken, sysutcdatetime(), sysutcdatetime() );
 		set @HasBeenCreated = 1;
-
+		-- Creating the Google user is considered as a login. 
+		set @ActualLogin = 1;
 		--<PostCreate /> 
 	end
 	else
 	begin
+		if @ActualLogin = 1 set @LastLoginTime = sysutcdatetime();
 		if @RefreshToken is not null and @PrevRefreshToken <> @RefreshToken 
 		begin
 			update CK.tUserGoogle set 
 					AccessToken = @AccessToken, 
 					AccessTokenExpirationTime = @AccessTokenExpirationTime,
 					RefreshToken = @RefreshToken, 
-					LastRefreshTokenTime = sysutcdatetime() 
+					LastRefreshTokenTime = sysutcdatetime(),
+					LastLoginTime = @LastLoginTime
 				where UserId = @UserId and GoogleAccountId = @GoogleAccountId;
 		end
 		else
 		begin
 			update CK.tUserGoogle set 
 					AccessToken = @AccessToken, 
-					AccessTokenExpirationTime = @AccessTokenExpirationTime
+					AccessTokenExpirationTime = @AccessTokenExpirationTime,
+					LastLoginTime = @LastLoginTime
 				where UserId = @UserId and GoogleAccountId = @GoogleAccountId;
 		end
 		set @HasBeenCreated = 0;
