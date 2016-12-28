@@ -5,7 +5,9 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeCakeBuilder", "CodeCakeBuilder\CodeCakeBuilder.csproj", "{FD4817B6-3CD7-4E74-AA10-7CA95FDFCF2D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AllPackages.Tests", "AllPackages.Tests\AllPackages.Tests.csproj", "{72593041-8D97-4F53-83E1-E01F7FC65F97}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{77261C09-FB79-4FA2-A393-D938450AA840}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AllPackages.Tests", "Tests\AllPackages.Tests\AllPackages.Tests.csproj", "{72593041-8D97-4F53-83E1-E01F7FC65F97}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -24,5 +26,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{72593041-8D97-4F53-83E1-E01F7FC65F97} = {77261C09-FB79-4FA2-A393-D938450AA840}
 	EndGlobalSection
 EndGlobal
