@@ -52,15 +52,15 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.Setupable.Model, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.Setupable.Model.5.0.0-a36\lib\net45\CK.Setupable.Model.dll</HintPath>
+      <HintPath>..\packages\CK.Setupable.Model.5.0.0-a38\lib\net45\CK.Setupable.Model.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.SqlServer.Setup.Model, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.SqlServer.Setup.Model.5.0.0-a36\lib\net45\CK.SqlServer.Setup.Model.dll</HintPath>
+      <HintPath>..\packages\CK.SqlServer.Setup.Model.5.0.0-a38\lib\net45\CK.SqlServer.Setup.Model.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.StObj.Model, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.StObj.Model.5.0.0-a36\lib\net45\CK.StObj.Model.dll</HintPath>
+      <HintPath>..\packages\CK.StObj.Model.5.0.0-a38\lib\net45\CK.StObj.Model.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CK.Text, Version=5.1.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
@@ -86,7 +86,6 @@
     <Compile Include="ZoneTable.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
