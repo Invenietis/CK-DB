@@ -181,100 +181,100 @@ namespace CodeCake
                 } );
 
             Task( "Run-IntegrationTests" )
-        .IsDependentOn( "Create-NuGet-Packages" )
-        .WithCriteria( () => gitInfo.IsValid )
-        .WithCriteria( () => !Cake.IsInteractiveMode()
-                                || Cake.ReadInteractiveOption( "Run integration tests?", 'Y', 'N' ) == 'Y' )
-        .Does( () =>
-        {
-            var integrationSolution = "IntegrationTests/IntegrationTests.sln";
-            var integration = Cake.ParseSolution( integrationSolution );
-            var projects = integration.Projects
-                                        .Where( p => p.Name != "CodeCakeBuilder" )
-                                        .Select( p => new
-                                        {
-                                            CSProj = p.Path.FullPath,
-                                            ConfigFile = p.Path.GetDirectory().CombineWithFilePath( "packages.config" ).FullPath
-                                        } )
-                                        .Where( p => System.IO.File.Exists( p.ConfigFile ) );
+              .IsDependentOn( "Create-NuGet-Packages" )
+              .WithCriteria( () => gitInfo.IsValid )
+              .WithCriteria( () => !Cake.IsInteractiveMode()
+                                      || Cake.ReadInteractiveOption( "Run integration tests?", 'Y', 'N' ) == 'Y' )
+              .Does( () =>
+              {
+                  var integrationSolution = "IntegrationTests/IntegrationTests.sln";
+                  var integration = Cake.ParseSolution( integrationSolution );
+                  var projects = integration.Projects
+                                              .Where( p => p.Name != "CodeCakeBuilder" )
+                                              .Select( p => new
+                                              {
+                                                  CSProj = p.Path.FullPath,
+                                                  ConfigFile = p.Path.GetDirectory().CombineWithFilePath( "packages.config" ).FullPath
+                                              } )
+                                              .Where( p => System.IO.File.Exists( p.ConfigFile ) );
             // Cleans all the existing IntegrationTests/packages.
             // The CodeCakeBuilder restore will get them (from Release for CK-DB packages).
             Cake.CleanDirectory( "IntegrationTests/packages" );
 
-            foreach( var config in projects.Select( p => p.ConfigFile ) )
-            {
-                XDocument doc = XDocument.Load( config );
-                int countRef = 0;
-                foreach( var p in doc.Root.Elements( "package" ) )
-                {
-                    string packageName = p.Attribute( "id" ).Value;
-                    if( IntegrationDependentPackages.ContainsKey( packageName ) )
-                    {
-                        string depVersion = IntegrationDependentPackages[packageName];
-                        if( p.Attribute( "version" ).Value != depVersion )
-                        {
-                            p.SetAttributeValue( "version", depVersion );
-                            ++countRef;
-                        }
-                    }
-                }
-                if( countRef > 0 )
-                {
-                    Cake.Information( $"Updated {countRef} in file {config}." );
-                    doc.Save( config );
-                }
-            }
-            foreach( var csproj in projects.Select( p => p.CSProj ) )
-            {
-                XDocument doc = XDocument.Load( csproj );
-                int countRef = 0;
-                var projection = doc.Root.Descendants( msBuild + "Reference" )
-                                        .Select( e => new
-                                        {
-                                            Reference = e,
-                                            IncludeAttr = e.Attribute( "Include" ),
-                                            HintPathElement = e.Element( msBuild + "HintPath" ),
-                                        } );
-                var filtered = projection.Where( e => e.HintPathElement != null
-                                                        && e.IncludeAttr != null
-                                                        && e.HintPathElement.Value.StartsWith( @"..\packages\" ) );
-                var final = filtered.Select( e => new
-                                {
-                                    E = e,
-                                    ProjectName = new AssemblyName( e.IncludeAttr.Value ).Name
-                                } )
-                                .Where( e => IntegrationDependentPackages.ContainsKey( e.ProjectName ) );
+                  foreach( var config in projects.Select( p => p.ConfigFile ) )
+                  {
+                      XDocument doc = XDocument.Load( config );
+                      int countRef = 0;
+                      foreach( var p in doc.Root.Elements( "package" ) )
+                      {
+                          string packageName = p.Attribute( "id" ).Value;
+                          if( IntegrationDependentPackages.ContainsKey( packageName ) )
+                          {
+                              string depVersion = IntegrationDependentPackages[packageName];
+                              if( p.Attribute( "version" ).Value != depVersion )
+                              {
+                                  p.SetAttributeValue( "version", depVersion );
+                                  ++countRef;
+                              }
+                          }
+                      }
+                      if( countRef > 0 )
+                      {
+                          Cake.Information( $"Updated {countRef} in file {config}." );
+                          doc.Save( config );
+                      }
+                  }
+                  foreach( var csproj in projects.Select( p => p.CSProj ) )
+                  {
+                      XDocument doc = XDocument.Load( csproj );
+                      int countRef = 0;
+                      var projection = doc.Root.Descendants( msBuild + "Reference" )
+                                              .Select( e => new
+                                              {
+                                                  Reference = e,
+                                                  IncludeAttr = e.Attribute( "Include" ),
+                                                  HintPathElement = e.Element( msBuild + "HintPath" ),
+                                              } );
+                      var filtered = projection.Where( e => e.HintPathElement != null
+                                                              && e.IncludeAttr != null
+                                                              && e.HintPathElement.Value.StartsWith( @"..\..\packages\" ) );
+                      var final = filtered.Select( e => new
+                      {
+                          E = e,
+                          ProjectName = new AssemblyName( e.IncludeAttr.Value ).Name
+                      } )
+                                      .Where( e => IntegrationDependentPackages.ContainsKey( e.ProjectName ) );
 
-                foreach( var p in final )
-                {
-                    var version = IntegrationDependentPackages[p.ProjectName];
-                    var path = p.E.HintPathElement.Value.Split( '\\' );
-                    var newFolder = p.ProjectName + '.' + version;
-                    if( path[2] != newFolder )
-                    {
-                        path[2] = newFolder;
-                        p.E.HintPathElement.Value = string.Join( "\\", path );
-                        ++countRef;
-                    }
-                }
-                if( countRef > 0 )
-                {
-                    Cake.Information( $"Updated {countRef} references in file {csproj}." );
-                    doc.Save( csproj );
-                }
-            }
+                      foreach( var p in final )
+                      {
+                          var version = IntegrationDependentPackages[p.ProjectName];
+                          var path = p.E.HintPathElement.Value.Split( '\\' );
+                          var newFolder = p.ProjectName + '.' + version;
+                          if( path[3] != newFolder )
+                          {
+                              path[3] = newFolder;
+                              p.E.HintPathElement.Value = string.Join( "\\", path );
+                              ++countRef;
+                          }
+                      }
+                      if( countRef > 0 )
+                      {
+                          Cake.Information( $"Updated {countRef} references in file {csproj}." );
+                          doc.Save( csproj );
+                      }
+                  }
 
-            Cake.NuGetRestore( integrationSolution );
-            Cake.MSBuild( "IntegrationTests/CodeCakeBuilder/CodeCakeBuilder.csproj", settings =>
-            {
-                settings.Configuration = configuration;
-                settings.Verbosity = Verbosity.Minimal;
-            } );
-            if( Cake.StartProcess( $"IntegrationTests/CodeCakeBuilder/bin/{configuration}/CodeCakeBuilder.exe", "-" + InteractiveAliases.NoInteractionArgument ) != 0 )
-            {
-                Cake.TerminateWithError( "Error in IntegrationTests." );
-            }
-        } );
+                  Cake.NuGetRestore( integrationSolution );
+                  Cake.MSBuild( "IntegrationTests/CodeCakeBuilder/CodeCakeBuilder.csproj", settings =>
+                  {
+                      settings.Configuration = configuration;
+                      settings.Verbosity = Verbosity.Minimal;
+                  } );
+                  if( Cake.StartProcess( $"IntegrationTests/CodeCakeBuilder/bin/{configuration}/CodeCakeBuilder.exe", "-" + InteractiveAliases.NoInteractionArgument ) != 0 )
+                  {
+                      Cake.TerminateWithError( "Error in IntegrationTests." );
+                  }
+              } );
 
 
             Task( "Push-NuGet-Packages" )
@@ -320,10 +320,10 @@ namespace CodeCake
             Task( "Default" ).IsDependentOn( "Push-NuGet-Packages" );
         }
 
-        private void TransformText( 
-            FilePath textFilePath, 
-            string configuration, 
-            SimpleRepositoryInfo gitInfo, 
+        private void TransformText(
+            FilePath textFilePath,
+            string configuration,
+            SimpleRepositoryInfo gitInfo,
             string vCKDatabase,
             string vMicrosoftAspNetCoreCryptographyKeyDerivation )
         {
