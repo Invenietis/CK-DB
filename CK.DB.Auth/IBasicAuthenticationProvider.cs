@@ -70,24 +70,22 @@ namespace CK.DB.Auth
         Task SetPasswordAsync( ISqlCallContext ctx, int actorId, int userId, string password );
 
         /// <summary>
-        /// Verifies a password for a user identifier.
-        /// This automatically updates the hash if the <see cref="HashIterationCount"/> changed
-        /// or if the internal algorithm is upgraded.
+        /// Verifies a password for a user name.
+        /// This must automatically updates the hash if the internal algorithm or one of its parameter is upgraded.
         /// </summary>
         /// <param name="ctx">The call context to use.</param>
-        /// <param name="userId">The user identifier.</param>
+        /// <param name="userName">The user name.</param>
         /// <param name="password">The password to challenge.</param>
         /// <param name="actualLogin">Sets to false to avoid any login side-effect (such as updating the LastLoginTime) on success.</param>
         /// <returns>Non zero identifier of the user on success, 0 if the password does not match.</returns>
         int Verify( ISqlCallContext ctx, string userName, string password, bool actualLogin = true );
 
         /// <summary>
-        /// Verifies a password for a user name.
-        /// This automatically updates the hash if the <see cref="HashIterationCount"/> changed
-        /// or if the internal algorithm is upgraded.
+        /// Verifies a password for a user identifier.
+        /// This must automatically updates the hash if the internal algorithm or one of its parameter is upgraded.
         /// </summary>
         /// <param name="ctx">The call context to use.</param>
-        /// <param name="userName">The user name.</param>
+        /// <param name="userId">The user identifier.</param>
         /// <param name="password">The password to challenge.</param>
         /// <param name="actualLogin">Sets to false to avoid any login side-effect (such as updating the LastLoginTime) on success.</param>
         /// <returns>Non zero identifier of the user on success, 0 if the password does not match.</returns>
@@ -95,8 +93,7 @@ namespace CK.DB.Auth
 
         /// <summary>
         /// Verifies a password for a user name.
-        /// This automatically updates the hash if the <see cref="HashIterationCount"/> changed
-        /// or if the internal algorithm is upgraded.
+        /// This must automatically updates the hash if the internal algorithm or one of its parameter is upgraded.
         /// </summary>
         /// <param name="ctx">The call context to use.</param>
         /// <param name="userName">The user name.</param>
@@ -107,8 +104,7 @@ namespace CK.DB.Auth
 
         /// <summary>
         /// Verifies a password for a user identifier.
-        /// This automatically updates the hash if the <see cref="HashIterationCount"/> changed
-        /// or if the internal algorithm is upgraded.
+        /// This must automatically updates the hash if the internal algorithm or one of its parameter is upgraded.
         /// </summary>
         /// <param name="ctx">The call context to use.</param>
         /// <param name="userId">The user identifier.</param>

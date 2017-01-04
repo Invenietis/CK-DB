@@ -6,6 +6,7 @@ using CK.DB.Actor;
 using CK.SqlServer;
 using NUnit.Framework;
 using System.Linq;
+using CK.DB.Auth;
 
 namespace CK.DB.User.UserGoogle.Tests
 {
@@ -72,7 +73,7 @@ namespace CK.DB.User.UserGoogle.Tests
             var user = TestHelper.StObjMap.Default.Obtain<UserTable>();
             using( var ctx = new SqlStandardCallContext() )
             {
-                string userName = "Basic auth - " + Guid.NewGuid().ToString();
+                string userName = "Google auth - " + Guid.NewGuid().ToString();
                 var googleAccountId = Guid.NewGuid().ToString( "N" );
                 var idU = user.CreateUser( ctx, 1, userName );
                 u.Database.AssertEmptyReader( $"select * from CK.vUserAuthProvider where UserId={idU} and ProviderName='Google'" );
@@ -82,6 +83,29 @@ namespace CK.DB.User.UserGoogle.Tests
                 u.Database.AssertEmptyReader( $"select * from CK.vUserAuthProvider where UserId={idU} and ProviderName='Google'" );
                 // To let the use in the database with a Google authentication.
                 u.CreateOrUpdateGoogleUser( ctx, 1, new UserGoogleInfo() { UserId = idU, GoogleAccountId = googleAccountId }, true );
+            }
+        }
+
+        [Test]
+        public void Google_provider_ignores_AuthProvider_IsEnabled_flag_as_required()
+        {
+            var provider = TestHelper.StObjMap.Default.Obtain<AuthProviderTable>();
+            var u = TestHelper.StObjMap.Default.Obtain<UserGoogleTable>();
+            var user = TestHelper.StObjMap.Default.Obtain<UserTable>();
+            using( var ctx = new SqlStandardCallContext() )
+            {
+                string userName = "Google auth - " + Guid.NewGuid().ToString();
+                var googleAccountId = Guid.NewGuid().ToString( "N" );
+                var idU = user.CreateUser( ctx, 1, userName );
+
+                provider.EnableProvider( ctx, 1, "Google", false );
+
+                bool created = u.CreateOrUpdateGoogleUser( ctx, 1, new UserGoogleInfo() { UserId = idU, GoogleAccountId = googleAccountId }, true );
+                Assert.That( created );
+                created = u.CreateOrUpdateGoogleUser( ctx, 1, new UserGoogleInfo() { UserId = idU, GoogleAccountId = googleAccountId }, true );
+                Assert.That( created, Is.False );
+
+                provider.EnableProvider( ctx, 1, "Google" );
             }
         }
 

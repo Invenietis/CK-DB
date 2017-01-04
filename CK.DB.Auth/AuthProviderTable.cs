@@ -13,14 +13,18 @@ using System.Threading.Tasks;
 namespace CK.DB.Auth
 {
     /// <summary>
-    /// Defines Scope Set entities.
+    /// Defines authentication providers that are registered and offers a data-driven way 
+    /// to disable them.
     /// </summary>
     [SqlTable( "tAuthProvider", Package = typeof( Package ) )]
     [Versions( "1.0.0" )]
     public abstract partial class AuthProviderTable : SqlTable
     {
         /// <summary>
-        /// Enables or disables a provider. 
+        /// Enables or disables a provider.
+        /// Disabled provider must be handled by the application: since implementation can heavily differ
+        /// between them, that some of their capabilities may continue to be operational, and because of
+        /// race conditions from the user perspective, provider implementations MUST ignore this flag.
         /// </summary>
         /// <param name="ctx">The call context.</param>
         /// <param name="actorId">The acting actor identifier.</param>

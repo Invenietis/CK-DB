@@ -7,6 +7,7 @@ using CK.SqlServer;
 using NUnit.Framework;
 using System.Linq;
 using System.Threading;
+using CK.DB.Auth;
 
 namespace CK.DB.User.UserPassword.Tests
 {
@@ -226,6 +227,26 @@ namespace CK.DB.User.UserPassword.Tests
                 u.Database.AssertEmptyReader( $"select * from CK.vUserAuthProvider where UserId={idU} and ProviderName='Basic'" );
                 // To let the use in the database with a basic authentication.
                 u.CreatePasswordUser( ctx, 1, idU, "password" );
+            }
+        }
+
+        [Test]
+        public void Basic_provider_ignores_AuthProvider_IsEnabled_flag_as_required()
+        {
+            var provider = TestHelper.StObjMap.Default.Obtain<AuthProviderTable>();
+            var u = TestHelper.StObjMap.Default.Obtain<UserPasswordTable>();
+            var user = TestHelper.StObjMap.Default.Obtain<UserTable>();
+            using( var ctx = new SqlStandardCallContext() )
+            {
+                string userName = "Basic auth - " + Guid.NewGuid().ToString();
+                var idU = user.CreateUser( ctx, 1, userName );
+
+                provider.EnableProvider( ctx, 1, "Basic", false );
+
+                u.CreatePasswordUser( ctx, 1, idU, "password" );
+                Assert.That( u.Verify( ctx, idU, "password" ) == idU );
+
+                provider.EnableProvider( ctx, 1, "Basic" );
             }
         }
     }

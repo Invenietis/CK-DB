@@ -16,6 +16,9 @@ namespace CK.DB.Auth
     {
         /// <summary>
         /// Enables or disables a provider. 
+        /// Disabled provider must be handled by the application: since implementation can heavily differ
+        /// between them, that some of their capabilities may continue to be operational, and because of
+        /// race conditions from the user perspective, provider implementations MUST ignore this flag.
         /// </summary>
         /// <param name="ctx">The call context.</param>
         /// <param name="actorId">The acting actor identifier.</param>

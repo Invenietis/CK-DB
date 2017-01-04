@@ -161,6 +161,10 @@
       <Project>{3902b885-ac29-4be3-a83e-184316a09e91}</Project>
       <Name>CK.DB.Actor</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\CK.DB.Auth\CK.DB.Auth.csproj">
+      <Project>{51061369-ADA8-4815-B969-867DB9D6FC6A}</Project>
+      <Name>CK.DB.Auth</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\CK.DB.User.UserGoogle\CK.DB.User.UserGoogle.csproj">
       <Project>{b956c628-8b62-4687-9e96-de3d2e4fd78f}</Project>
       <Name>CK.DB.User.UserGoogle</Name>
