@@ -8,6 +8,11 @@ using System.Threading.Tasks;
 namespace AllPackages.Tests.From
 {
     [TestFixture]
+    public class AuthTests : CK.DB.Auth.Tests.AuthTests
+    {
+    }
+
+    [TestFixture]
     public class AuthScopeSetTests : CK.DB.Auth.AuthScope.Tests.AuthScopeSetTests
     {
     }

@@ -60,9 +60,9 @@ namespace CK.DB.User.UserGoogle.Tests
         }
 
         [Test]
-        public void Basic_AuthProvider_is_registered()
+        public void Google_AuthProvider_is_registered()
         {
-            Auth.Tests.AuthTests.CheckProviderRegistration( "Basic" );
+            Auth.Tests.AuthTests.CheckProviderRegistration( "Google" );
         }
 
         [Test]
