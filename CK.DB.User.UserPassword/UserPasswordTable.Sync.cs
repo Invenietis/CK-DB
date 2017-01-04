@@ -35,7 +35,6 @@ namespace CK.DB.User.UserPassword
         /// <param name="actorId">The acting actor identifier.</param>
         /// <param name="userId">The user identifier that must have a password.</param>
         /// <param name="password">The new password to set. Can not be null nor empty.</param>
-        /// <returns>The awaitable.</returns>
         public void SetPassword( ISqlCallContext ctx, int actorId, int userId, string password )
         {
             if( string.IsNullOrEmpty( password ) ) throw new ArgumentNullException( nameof( password ) );
@@ -74,9 +73,8 @@ namespace CK.DB.User.UserPassword
         /// <returns>Non zero identifier of the user on success, 0 if the password does not match.</returns>
         public int Verify( ISqlCallContext ctx, string userName, string password, bool actualLogin = true )
         {
-            using( var c = new SqlCommand( $"select p.PwdHash, p.UserId from CK.tUserPassword p inner join CK.tUser u on u.UserId = p.UserId where u.UserName=@UserName" ) )
+            using( var c = CreateReadByNameCommand( userName ) )
             {
-                c.Parameters.AddWithValue( "@UserName", userName );
                 return DoVerify( ctx, c, password, userName, actualLogin );
             }
         }

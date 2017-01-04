@@ -192,7 +192,7 @@ namespace CK.DB.User.UserPassword.Tests
                     var baseTime = u.Database.ExecuteScalar<DateTime>( "select sysutcdatetime();" );
                     u.CreatePasswordUser( ctx, 1, idU, "password" );
                     var firstTime = u.Database.ExecuteScalar<DateTime>( $"select LastLoginTime from CK.tUserPassword where UserId={idU}" );
-                    Assert.That( firstTime.Ticks, Is.EqualTo( baseTime.Ticks ).Within( TimeSpan.FromMilliseconds(1000).Ticks ) );
+                    Assert.That( firstTime.Ticks, Is.EqualTo( baseTime.Ticks ).Within( TimeSpan.FromMilliseconds( 1000 ).Ticks ) );
                     Thread.Sleep( 100 );
                     Assert.That( u.Verify( ctx, userName, "failed login", actualLogin: true ) == 0 );
                     var firstTimeNo = u.Database.ExecuteScalar<DateTime>( $"select LastLoginTime from CK.tUserPassword where UserId={idU}" );
@@ -201,6 +201,31 @@ namespace CK.DB.User.UserPassword.Tests
                     var firstTimeYes = u.Database.ExecuteScalar<DateTime>( $"select LastLoginTime from CK.tUserPassword where UserId={idU}" );
                     Assert.That( firstTimeYes, Is.GreaterThan( firstTimeNo ) );
                 }
+            }
+        }
+
+        [Test]
+        public void Basic_AuthProvider_is_registered()
+        {
+            Auth.Tests.AuthTests.CheckProviderRegistration( "Basic" );
+        }
+
+        [Test]
+        public void vUserAuthProvider_reflects_the_user_basic_authentication()
+        {
+            var u = TestHelper.StObjMap.Default.Obtain<UserPasswordTable>();
+            var user = TestHelper.StObjMap.Default.Obtain<UserTable>();
+            using( var ctx = new SqlStandardCallContext() )
+            {
+                string userName = "Basic auth - " + Guid.NewGuid().ToString();
+                var idU = user.CreateUser( ctx, 1, userName );
+                u.Database.AssertEmptyReader( $"select * from CK.vUserAuthProvider where UserId={idU} and ProviderName='Basic'" );
+                u.CreatePasswordUser( ctx, 1, idU, "password" );
+                u.Database.AssertScalarEquals( 1, $"select count(*) from CK.vUserAuthProvider where UserId={idU} and ProviderName='Basic'" );
+                u.DestroyPasswordUser( ctx, 1, idU );
+                u.Database.AssertEmptyReader( $"select * from CK.vUserAuthProvider where UserId={idU} and ProviderName='Basic'" );
+                // To let the use in the database with a basic authentication.
+                u.CreatePasswordUser( ctx, 1, idU, "password" );
             }
         }
     }

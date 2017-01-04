@@ -19,6 +19,8 @@ namespace CK.DB.User.UserGoogle
     /// Package that adds Google authentication support for users. 
     /// </summary>
     [SqlPackage( Schema = "CK", ResourcePath = "Res" )]
+    [Versions("1.0.0")]
+    [SqlObjectItem( "transform:vUserAuthProvider" )]
     public class Package : SqlPackage
     {
         /// <summary>
@@ -33,7 +35,7 @@ namespace CK.DB.User.UserGoogle
 
         HttpClient _client;
 
-        void Construct( Actor.Package actorPackage )
+        void Construct( Actor.Package actorPackage, Auth.Package authPackage )
         {
         }
 

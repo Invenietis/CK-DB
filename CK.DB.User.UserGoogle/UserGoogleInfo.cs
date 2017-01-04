@@ -44,7 +44,7 @@ namespace CK.DB.User.UserGoogle
 
         /// <summary>
         /// Gets whether this user info is valid: the access token may not be valid (it can even be null),
-        /// the scopes can be invalid but the <see cref="RefreshToken"/> and <see cref="GoogleAccountId"/> 
+        /// but the <see cref="RefreshToken"/> and <see cref="GoogleAccountId"/> 
         /// are not null nor empty and the <see cref="UserId"/> is positive.
         /// </summary>
         public bool IsValid

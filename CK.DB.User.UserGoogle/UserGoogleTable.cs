@@ -17,7 +17,7 @@ namespace CK.DB.User.UserGoogle
     /// </summary>
     [SqlTable( "tUserGoogle", Package = typeof(Package), Schema = "CK" )]
     [Versions("1.0.0,1.0.1")]
-    [SqlObjectItem("transform:sUserDestroy")]
+    [SqlObjectItem( "transform:sUserDestroy" )]
     public abstract partial class UserGoogleTable : SqlTable
     {
         /// <summary>

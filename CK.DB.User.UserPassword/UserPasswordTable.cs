@@ -20,7 +20,7 @@ namespace CK.DB.User.UserPassword
     [SqlTable("tUserPassword", Package = typeof(Package))]
     [Versions("1.0.0,1.0.1")]
     [SqlObjectItem("transform:sUserDestroy")]
-    public abstract partial class UserPasswordTable : SqlTable
+    public abstract partial class UserPasswordTable : SqlTable, IBasicAuthenticationProvider
     {
         Package _package;
         Actor.UserTable _userTable;
@@ -88,7 +88,7 @@ namespace CK.DB.User.UserPassword
         /// </summary>
         /// <param name="ctx">The call context to use.</param>
         /// <param name="actorId">The acting actor identifier.</param>
-        /// <param name="userId">The user identifier that must have a password.</param>
+        /// <param name="userId">The user identifier that must have a new password.</param>
         /// <param name="password">The new password to set. Can not be null nor empty.</param>
         /// <returns>The awaitable.</returns>
         public Task SetPasswordAsync( ISqlCallContext ctx, int actorId, int userId, string password )
@@ -129,11 +129,24 @@ namespace CK.DB.User.UserPassword
         /// <returns>Non zero identifier of the user on success, 0 if the password does not match.</returns>
         public Task<int> VerifyAsync( ISqlCallContext ctx, string userName, string password, bool actualLogin = true )
         {
-            using( var c = new SqlCommand( $"select p.PwdHash, p.UserId from CK.tUserPassword p inner join CK.tUser u on u.UserId = p.UserId where u.UserName=@UserName" ) )
+            using( var c = CreateReadByNameCommand( userName ) )
             {
-                c.Parameters.AddWithValue( "@UserName", userName );
                 return DoVerifyAsync( ctx, c, password, userName, actualLogin );
             }
+        }
+
+        /// <summary>
+        /// Creates the command to read the user hash and identifier fromits name.
+        /// Defaults to: "select p.PwdHash, p.UserId from CK.tUserPassword p inner join CK.tUser u on u.UserId = p.UserId where u.UserName=@UserName".
+        /// By overriding this, what is considered as the login name (currently the tUser.UserName) can be changed. 
+        /// </summary>
+        /// <param name="userName">The user name to lookup.</param>
+        /// <returns>The command that must select the hash and user identifier.</returns>
+        protected virtual SqlCommand CreateReadByNameCommand( string userName )
+        {
+            var c = new SqlCommand( "select p.PwdHash, p.UserId from CK.tUserPassword p inner join CK.tUser u on u.UserId = p.UserId where u.UserName=@UserName" );
+            c.Parameters.AddWithValue( "@UserName", userName );
+            return c;
         }
 
         async Task<int> DoVerifyAsync( ISqlCallContext ctx, SqlCommand hashReader, string password, object objectKey, bool actualLogin )

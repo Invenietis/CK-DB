@@ -15,7 +15,7 @@
     <language>en-US</language>
     <dependencies>
       <dependency id="CK.DB.User.UserGoogle" version="$version$" />
-      <dependency id="CK.DB.Actor.Tests" version="$version$" />
+      <dependency id="CK.DB.Auth.Tests" version="$version$" />
     </dependencies>
   </metadata>
   <files>

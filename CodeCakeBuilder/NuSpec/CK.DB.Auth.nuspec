@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata >
+    <id>CK.DB.Auth</id>
+    <version>$version$</version>
+    <authors>Invenietis</authors>
+    <owners>Invenietis</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <summary>
+      CK-Database model for Authentication providers model ({{CSemVer}}).
+    </summary>
+    <description>
+      This package defines CK.tAuthProvider table and the CK.vUserAuthProvider.
+    </description>
+    <language>en-US</language>
+    <dependencies>
+      <dependency id="CK.DB.Actor" version="$version$" />
+    </dependencies>
+  </metadata>
+  <files>    
+    <file src="CK.DB.Auth\bin\{{configuration}}\CK.DB.Auth.dll" target="lib\net45" />
+    <file src="CK.DB.Auth\bin\{{configuration}}\CK.DB.Auth.xml" target="lib\net45" />
+  </files>
+</package>

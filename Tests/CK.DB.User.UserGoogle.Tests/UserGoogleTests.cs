@@ -37,7 +37,7 @@ namespace CK.DB.User.UserGoogle.Tests
         }
 
         [Test]
-        public async void create_Google_user_and_check_read_info_object_method_async()
+        public async Task create_Google_user_and_check_read_info_object_method_async()
         {
             var u = TestHelper.StObjMap.Default.Obtain<UserGoogleTable>();
             var user = TestHelper.StObjMap.Default.Obtain<UserTable>();
@@ -60,8 +60,35 @@ namespace CK.DB.User.UserGoogle.Tests
         }
 
         [Test]
+        public void Basic_AuthProvider_is_registered()
+        {
+            Auth.Tests.AuthTests.CheckProviderRegistration( "Basic" );
+        }
+
+        [Test]
+        public void vUserAuthProvider_reflects_the_user_Google_authentication()
+        {
+            var u = TestHelper.StObjMap.Default.Obtain<UserGoogleTable>();
+            var user = TestHelper.StObjMap.Default.Obtain<UserTable>();
+            using( var ctx = new SqlStandardCallContext() )
+            {
+                string userName = "Basic auth - " + Guid.NewGuid().ToString();
+                var googleAccountId = Guid.NewGuid().ToString( "N" );
+                var idU = user.CreateUser( ctx, 1, userName );
+                u.Database.AssertEmptyReader( $"select * from CK.vUserAuthProvider where UserId={idU} and ProviderName='Google'" );
+                u.CreateOrUpdateGoogleUser( ctx, 1, new UserGoogleInfo() { UserId = idU, GoogleAccountId = googleAccountId }, true );
+                u.Database.AssertScalarEquals( 1, $"select count(*) from CK.vUserAuthProvider where UserId={idU} and ProviderName='Google'" );
+                u.DestroyGoogleUser( ctx, 1, idU );
+                u.Database.AssertEmptyReader( $"select * from CK.vUserAuthProvider where UserId={idU} and ProviderName='Google'" );
+                // To let the use in the database with a Google authentication.
+                u.CreateOrUpdateGoogleUser( ctx, 1, new UserGoogleInfo() { UserId = idU, GoogleAccountId = googleAccountId }, true );
+            }
+        }
+
+
+        [Test]
         [Explicit]
-        public async void explicit_refresh_token()
+        public async Task explicit_refresh_token()
         {
             var p = TestHelper.StObjMap.Default.Obtain<Package>();
             var userG = TestHelper.StObjMap.Default.Obtain<UserGoogleTable>();
