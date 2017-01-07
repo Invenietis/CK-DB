@@ -9,6 +9,7 @@ using CK.Setup;
 using CK.SqlServer;
 using CK.SqlServer.Setup;
 using CK.DB.Auth;
+using System.Threading;
 
 namespace CK.DB.User.UserPassword
 {
@@ -21,7 +22,7 @@ namespace CK.DB.User.UserPassword
     [SqlTable("tUserPassword", Package = typeof(Package))]
     [Versions("1.0.0,1.0.1")]
     [SqlObjectItem("transform:sUserDestroy")]
-    public abstract partial class UserPasswordTable : SqlTable, IBasicAuthenticationProvider
+    public abstract partial class UserPasswordTable : SqlTable, IBasicAuthenticationProvider, IGenericAuthenticationProvider
     {
         Package _package;
         Actor.UserTable _userTable;
@@ -60,6 +61,11 @@ namespace CK.DB.User.UserPassword
         }
 
         /// <summary>
+        /// Gets "Basic" that is the name of the UserPassword provider.
+        /// </summary>
+        public string ProviderName => "Basic";
+ 
+        /// <summary>
         /// Gets the User password package.
         /// </summary>
         [InjectContract]
@@ -76,12 +82,14 @@ namespace CK.DB.User.UserPassword
         /// <param name="actorId">The acting actor identifier.</param>
         /// <param name="userId">The user identifier that must have a password.</param>
         /// <param name="password">The initial password. Can not be null nor empty.</param>
-        /// <returns>The awaitable.</returns>
-        public Task CreatePasswordUserAsync( ISqlCallContext ctx, int actorId, int userId, string password )
+        /// <param name="mode">Optionnaly configures Create, Update only or WithLogin behavior.</param>
+        /// <param name="cancellationToken">Optional cancellation token.</param>
+        /// <returns>The operation result.</returns>
+        public Task<CreateOrUpdateResult> CreateOrUpdatePasswordUserAsync( ISqlCallContext ctx, int actorId, int userId, string password, CreateOrUpdateMode mode = CreateOrUpdateMode.CreateOrUpdate, CancellationToken cancellationToken = default( CancellationToken ) )
         {
             if( string.IsNullOrEmpty( password ) ) throw new ArgumentNullException( nameof( password ) );
             PasswordHasher p = new PasswordHasher( HashIterationCount );
-            return CreatePasswordUserWithRawPwdHashAsync( ctx, actorId, userId, p.HashPassword( password ) );
+            return CreateOrUpdatePasswordUserWithRawPwdHashAsync( ctx, actorId, userId, p.HashPassword( password ), mode, cancellationToken );
         }
 
         /// <summary>
@@ -91,12 +99,13 @@ namespace CK.DB.User.UserPassword
         /// <param name="actorId">The acting actor identifier.</param>
         /// <param name="userId">The user identifier that must have a new password.</param>
         /// <param name="password">The new password to set. Can not be null nor empty.</param>
+        /// <param name="cancellationToken">Optional cancellation token.</param>
         /// <returns>The awaitable.</returns>
-        public Task SetPasswordAsync( ISqlCallContext ctx, int actorId, int userId, string password )
+        public Task SetPasswordAsync( ISqlCallContext ctx, int actorId, int userId, string password, CancellationToken cancellationToken = default( CancellationToken ) )
         {
             if( string.IsNullOrEmpty( password ) ) throw new ArgumentNullException( nameof( password ) );
             PasswordHasher p = new PasswordHasher( HashIterationCount );
-            return SetPwdRawHashAsync( ctx, actorId, userId, p.HashPassword( password ) );
+            return CreateOrUpdatePasswordUserWithRawPwdHashAsync( ctx, actorId, userId, p.HashPassword( password ), CreateOrUpdateMode.UpdateOnly, cancellationToken );
         }
 
         /// <summary>
@@ -108,13 +117,14 @@ namespace CK.DB.User.UserPassword
         /// <param name="userId">The user identifier.</param>
         /// <param name="password">The password to challenge.</param>
         /// <param name="actualLogin">Sets to false to avoid any login side-effect (such as updating the LastLoginTime) on success.</param>
+        /// <param name="cancellationToken">Optional cancellation token.</param>
         /// <returns>Non zero identifier of the user on success, 0 if the password does not match.</returns>
-        public Task<int> VerifyAsync( ISqlCallContext ctx, int userId, string password, bool actualLogin = true )
+        public Task<int> LoginUserAsync( ISqlCallContext ctx, int userId, string password, bool actualLogin = true, CancellationToken cancellationToken = default( CancellationToken ) )
         {
             using( var c = new SqlCommand( $"select PwdHash, @UserId from CK.tUserPassword where UserId=@UserId" ) )
             {
                 c.Parameters.AddWithValue( "@UserId", userId );
-                return DoVerifyAsync( ctx, c, password, userId, actualLogin );
+                return DoVerifyAsync( ctx, c, password, userId, actualLogin, cancellationToken );
             }
         }
 
@@ -127,12 +137,13 @@ namespace CK.DB.User.UserPassword
         /// <param name="userName">The user name.</param>
         /// <param name="password">The password to challenge.</param>
         /// <param name="actualLogin">Sets to false to avoid any login side-effect (such as updating the LastLoginTime) on success.</param>
+        /// <param name="cancellationToken">Optional cancellation token.</param>
         /// <returns>Non zero identifier of the user on success, 0 if the password does not match.</returns>
-        public Task<int> VerifyAsync( ISqlCallContext ctx, string userName, string password, bool actualLogin = true )
+        public Task<int> LoginUserAsync( ISqlCallContext ctx, string userName, string password, bool actualLogin = true, CancellationToken cancellationToken = default(CancellationToken) )
         {
             using( var c = CreateReadByNameCommand( userName ) )
             {
-                return DoVerifyAsync( ctx, c, password, userName, actualLogin );
+                return DoVerifyAsync( ctx, c, password, userName, actualLogin, cancellationToken );
             }
         }
 
@@ -150,17 +161,17 @@ namespace CK.DB.User.UserPassword
             return c;
         }
 
-        async Task<int> DoVerifyAsync( ISqlCallContext ctx, SqlCommand hashReader, string password, object objectKey, bool actualLogin )
+        async Task<int> DoVerifyAsync( ISqlCallContext ctx, SqlCommand hashReader, string password, object objectKey, bool actualLogin, CancellationToken cancellationToken )
         {
             if( string.IsNullOrEmpty( password ) ) return 0;
             // 1 - Get the PwdHash and UserId.
             //     hash is null if the user is not a UserPassword: we'll try to migrate it.
             byte[] hash = null;
             int userId = 0;
-            using( await (hashReader.Connection = ctx[Database]).EnsureOpenAsync().ConfigureAwait( false ) )
-            using( var r = await hashReader.ExecuteReaderAsync( System.Data.CommandBehavior.SingleRow ).ConfigureAwait( false ) )
+            using( await (hashReader.Connection = ctx[Database]).EnsureOpenAsync( cancellationToken ).ConfigureAwait( false ) )
+            using( var r = await hashReader.ExecuteReaderAsync( System.Data.CommandBehavior.SingleRow, cancellationToken ).ConfigureAwait( false ) )
             {
-                if( await r.ReadAsync().ConfigureAwait( false ) )
+                if( await r.ReadAsync( cancellationToken ).ConfigureAwait( false ) )
                 {
                     hash = r.GetSqlBytes( 0 ).Buffer;
                     userId = r.GetInt32( 1 );
@@ -183,7 +194,7 @@ namespace CK.DB.User.UserPassword
                     else
                     {
                         Debug.Assert( objectKey is string );
-                        userId = _userTable.FindByName( ctx, (string)objectKey );
+                        userId = await _userTable.FindByNameAsync( ctx, (string)objectKey ).ConfigureAwait( false );
                         if( userId == 0 ) return 0;
                     }
                     if( migrator.VerifyPassword( ctx, userId, password ) )
@@ -204,16 +215,15 @@ namespace CK.DB.User.UserPassword
             {
                 // 3.1 - If migration occurred, create the user with its password.
                 //       Else rehash the password and update the database.
+                await CreateOrUpdatePasswordUserWithRawPwdHashAsync( ctx, 1, userId, p.HashPassword( password ), CreateOrUpdateMode.CreateOrUpdate, cancellationToken ).ConfigureAwait( false );
                 if( migrator != null )
                 {
-                    await CreatePasswordUserAsync( ctx, 1, userId, password ).ConfigureAwait( false );
                     migrator.MigrationDone( ctx, userId );
                 }
-                else await SetPwdRawHashAsync( ctx, 1, userId, p.HashPassword( password ) ).ConfigureAwait( false );
             }
             if( actualLogin )
             {
-                userId = await OnLoginAsync( ctx, userId );
+                await OnLoginAsync( ctx, userId ).ConfigureAwait( false );
             }
             return userId;
         }
@@ -224,9 +234,10 @@ namespace CK.DB.User.UserPassword
         /// <param name="ctx">The call context to use.</param>
         /// <param name="actorId">The acting actor identifier.</param>
         /// <param name="userId">The user identifier for which Password information must be destroyed.</param>
+        /// <param name="cancellationToken">Optional cancellation token.</param>
         /// <returns>The awaitable.</returns>
         [SqlProcedure( "sUserPasswordDestroy" )]
-        public abstract Task DestroyPasswordUserAsync( ISqlCallContext ctx, int actorId, int userId );
+        public abstract Task DestroyPasswordUserAsync( ISqlCallContext ctx, int actorId, int userId, CancellationToken cancellationToken = default( CancellationToken ) );
 
         /// <summary>
         /// Creates a PasswordUser with an initial raw hash for an existing user.
@@ -237,33 +248,67 @@ namespace CK.DB.User.UserPassword
         /// <param name="actorId">The acting actor identifier.</param>
         /// <param name="userId">The user identifier for wich a PassworUser must be created.</param>
         /// <param name="pwdHash">The initial raw hash (no more than 64 bytes).</param>
-        /// <returns>The awaitable.</returns>
-        [SqlProcedure("sUserPasswordCreate")]
-        public abstract Task CreatePasswordUserWithRawPwdHashAsync( ISqlCallContext ctx, int actorId, int userId, byte[] pwdHash);
+        /// <param name="mode">Configures Create or Update only behavior.</param>
+        /// <param name="cancellationToken">Optional cancellation token.</param>
+        /// <returns>The operation result.</returns>
+        [SqlProcedure("sUserPasswordCreateOrUpdate")]
+        public abstract Task<CreateOrUpdateResult> CreateOrUpdatePasswordUserWithRawPwdHashAsync( ISqlCallContext ctx, int actorId, int userId, byte[] pwdHash, CreateOrUpdateMode mode, CancellationToken cancellationToken = default( CancellationToken ) );
 
         /// <summary>
-        /// Sets a raw hash to a PasswordUser.
-        /// This method should be used only if the standard password hasher and verfication 
-        /// mechanism is not used.
+        /// Called once a login succeed (password hash verification done) and actualLogin parameter is true 
+        /// or <see cref="CreateOrUpdateMode.WithLogin"/> is set.
         /// </summary>
         /// <param name="ctx">The call context to use.</param>
-        /// <param name="actorId">The acting actor identifier.</param>
-        /// <param name="userId">The user identifier for wich a raw hash must be set.</param>
-        /// <param name="pwdHash">The raw hash to set (no more than 64 bytes).</param>
+        /// <param name="userId">The user identifier that logged in.</param>
+        /// <param name="cancellationToken">Optional cancellation token.</param>
         /// <returns>The awaitable.</returns>
-        [SqlProcedure("sUserPasswordPwdHashSet")]
-        public abstract Task SetPwdRawHashAsync( ISqlCallContext ctx, int actorId, int userId, byte[] pwdHash);
-
-        /// <summary>
-        /// Called once a login succeed (password hash verification done) and actualLogin parameter is true.
-        /// </summary>
-        /// <param name="ctx">The call context to use.</param>
-        /// <param name="userId">
-        /// The user identifier that logged in: this extension point may change it (setting
-        /// it to 0 de facto forbids login).
-        /// </param>
-        /// <returns>The user identifier.</returns>
         [SqlProcedure( "sUserPasswordOnLogin" )]
-        protected abstract Task<int> OnLoginAsync( ISqlCallContext ctx, int userId );
+        protected abstract Task OnLoginAsync( ISqlCallContext ctx, int userId, CancellationToken cancellationToken = default( CancellationToken ) );
+
+        #region IGenericAuthenticationProvider explicit implementation.
+
+        CreateOrUpdateResult IGenericAuthenticationProvider.CreateOrUpdateUser( ISqlCallContext ctx, int actorId, int userId, object payload, CreateOrUpdateMode mode )
+        {
+            string password = payload as string;
+            if( password == null ) throw new ArgumentException( nameof( payload ) );
+            return CreateOrUpdatePasswordUser( ctx, actorId, userId, password, mode );
+        }
+
+        Task<CreateOrUpdateResult> IGenericAuthenticationProvider.CreateOrUpdateUserAsync( ISqlCallContext ctx, int actorId, int userId, object payload, CreateOrUpdateMode mode, CancellationToken cancellationToken )
+        {
+            string password = payload as string;
+            if( password == null ) throw new ArgumentException( nameof( payload ) );
+            return CreateOrUpdatePasswordUserAsync( ctx, actorId, userId, password, mode, cancellationToken );
+        }
+
+        void IGenericAuthenticationProvider.DestroyUser( ISqlCallContext ctx, int actorId, int userId )
+        {
+            DestroyPasswordUser( ctx, actorId, userId );
+        }
+
+        Task IGenericAuthenticationProvider.DestroyUserAsync( ISqlCallContext ctx, int actorId, int userId, CancellationToken cancellationToken )
+        {
+            return DestroyPasswordUserAsync( ctx, actorId, userId, cancellationToken );
+        }
+
+        int? IGenericAuthenticationProvider.LoginUser( ISqlCallContext ctx, object payload, bool actualLogin )
+        {
+            Tuple<string, string> byName = payload as Tuple<string, string>;
+            if( byName != null ) return LoginUser( ctx, byName.Item1, byName.Item2, actualLogin );
+            Tuple<int, string> byId = payload as Tuple<int, string>;
+            if( byId != null ) return LoginUser( ctx, byId.Item1, byId.Item2, actualLogin );
+            return  null;
+        }
+
+        async Task<int?> IGenericAuthenticationProvider.LoginUserAsync(ISqlCallContext ctx, object payload, bool actualLogin, CancellationToken cancellationToken)
+        {
+            Tuple<string, string> byName = payload as Tuple<string, string>;
+            if( byName != null ) return await LoginUserAsync( ctx, byName.Item1, byName.Item2, actualLogin, cancellationToken );
+            Tuple<int, string> byId = payload as Tuple<int, string>;
+            if( byId != null ) return await LoginUserAsync( ctx, byId.Item1, byId.Item2, actualLogin );
+            return null;
+        }
+
+        #endregion
     }
 }

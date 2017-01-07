@@ -1,4 +1,5 @@
 ﻿using CK.Core;
+using CK.DB.Auth;
 using CK.Setup;
 using CK.SqlServer;
 using CK.SqlServer.Setup;
@@ -104,7 +105,7 @@ namespace CK.DB.User.UserGoogle
                 }
                 if( token == null )
                 {
-                    using( ctx.Monitor.OpenError().Send( $"Unable to refresh token for UserId = {user.UserId}." ) )
+                    using( ctx.Monitor.OpenError().Send( $"Unable to refresh token for GoogleAccountd = {user.GoogleAccountId}." ) )
                     {
                         ctx.Monitor.Trace().Send( $"Status: {response.StatusCode}, Reason: {response.ReasonPhrase}" );
                         ctx.Monitor.Trace().Send( content );
@@ -115,11 +116,11 @@ namespace CK.DB.User.UserGoogle
                 double exp = (double)token.FirstOrDefault( kv => kv.Key == "expires_in" ).Value;
                 user.AccessTokenExpirationTime = exp != 0 ? (DateTime?)DateTime.UtcNow.AddSeconds( exp ) : null;
                 // Creates or updates the user (ignoring the created/updated returned value).
-                await UserGoogleTable.CreateOrUpdateGoogleUserAsync( ctx, user.UserId, user, false, cancellationToken ).ConfigureAwait( false );
+                await UserGoogleTable.CreateOrUpdateGoogleUserAsync( ctx, 1, 0, user, CreateOrUpdateMode.UpdateOnly, cancellationToken ).ConfigureAwait( false );
             }
             catch( Exception ex )
             {
-                ctx.Monitor.Error().Send( ex, $"Unable to refresh token for UserId = {user.UserId}." );
+                ctx.Monitor.Error().Send( ex, $"Unable to refresh token for GoogleAccountd = {user.GoogleAccountId}." );
                 return false;
             }
             return true;

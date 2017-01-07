@@ -78,6 +78,7 @@
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="KnownUserGoogleInfo.cs" />
     <Compile Include="UserGoogleTable.Sync.cs" />
     <Compile Include="UserGoogleTable.cs" />
     <Compile Include="Package.cs" />

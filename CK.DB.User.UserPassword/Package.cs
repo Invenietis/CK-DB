@@ -12,7 +12,7 @@ namespace CK.DB.User.UserPassword
     /// Package that adds a user password support. 
     /// </summary>
     [SqlPackage( Schema = "CK", ResourcePath = "Res" )]
-    [Versions("1.0.0")]
+    [Versions("1.0.0,1.0.1")]
     [SqlObjectItem( "transform:vUserAuthProvider" )]
     public class Package : SqlPackage
     {

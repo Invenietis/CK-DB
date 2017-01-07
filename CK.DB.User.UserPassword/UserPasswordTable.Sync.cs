@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using CK.Setup;
 using CK.SqlServer;
 using CK.SqlServer.Setup;
+using CK.DB.Auth;
 
 namespace CK.DB.User.UserPassword
 {
@@ -21,11 +22,13 @@ namespace CK.DB.User.UserPassword
         /// <param name="actorId">The acting actor identifier.</param>
         /// <param name="userId">The user identifier that must have a password.</param>
         /// <param name="password">The initial password. Can not be null nor empty.</param>
-        public void CreatePasswordUser( ISqlCallContext ctx, int actorId, int userId, string password )
+        /// <param name="mode">Optionnaly configures Create or Update only behavior.</param>
+        /// <returns>The operation result.</returns>
+        public CreateOrUpdateResult CreateOrUpdatePasswordUser( ISqlCallContext ctx, int actorId, int userId, string password, CreateOrUpdateMode mode = CreateOrUpdateMode.CreateOrUpdate )
         {
             if( string.IsNullOrEmpty( password ) ) throw new ArgumentNullException( nameof( password ) );
             PasswordHasher p = new PasswordHasher( HashIterationCount );
-            CreatePasswordUserWithPwdRawHash( ctx, actorId, userId, p.HashPassword( password ) );
+            return CreateOrUpdatePasswordUserWithPwdRawHash( ctx, actorId, userId, p.HashPassword( password ), mode );
         }
 
         /// <summary>
@@ -39,7 +42,7 @@ namespace CK.DB.User.UserPassword
         {
             if( string.IsNullOrEmpty( password ) ) throw new ArgumentNullException( nameof( password ) );
             PasswordHasher p = new PasswordHasher( HashIterationCount );
-            SetPwdRawHash( ctx, actorId, userId, p.HashPassword( password ) );
+            CreateOrUpdatePasswordUserWithPwdRawHash( ctx, actorId, userId, p.HashPassword( password ), CreateOrUpdateMode.UpdateOnly );
         }
 
         /// <summary>
@@ -52,7 +55,7 @@ namespace CK.DB.User.UserPassword
         /// <param name="password">The password to challenge.</param>
         /// <param name="actualLogin">Sets to false to avoid any login side-effect (such as updating the LastLoginTime) on success.</param>
         /// <returns>Non zero identifier of the user on success, 0 if the password does not match.</returns>
-        public int Verify( ISqlCallContext ctx, int userId, string password, bool actualLogin = true )
+        public int LoginUser( ISqlCallContext ctx, int userId, string password, bool actualLogin = true )
         {
             using( var c = new SqlCommand( $"select PwdHash, @UserId from CK.tUserPassword where UserId=@UserId" ) )
             {
@@ -71,7 +74,7 @@ namespace CK.DB.User.UserPassword
         /// <param name="password">The password to challenge.</param>
         /// <param name="actualLogin">Sets to false to avoid any login side-effect (such as updating the LastLoginTime) on success.</param>
         /// <returns>Non zero identifier of the user on success, 0 if the password does not match.</returns>
-        public int Verify( ISqlCallContext ctx, string userName, string password, bool actualLogin = true )
+        public int LoginUser( ISqlCallContext ctx, string userName, string password, bool actualLogin = true )
         {
             using( var c = CreateReadByNameCommand( userName ) )
             {
@@ -96,6 +99,7 @@ namespace CK.DB.User.UserPassword
                     if( userId == 0 ) return 0;
                 }
             }
+            // If hash is null here, it means that the user is not registered.
             PasswordVerificationResult result = PasswordVerificationResult.Failed;
             PasswordHasher p = null;
             IUserPasswordMigrator migrator = null;
@@ -133,17 +137,16 @@ namespace CK.DB.User.UserPassword
             {
                 // 3.1 - If migration occurred, create the user with its password.
                 //       Else rehash the password and update the database.
+                CreateOrUpdatePasswordUserWithPwdRawHash( ctx, 1, userId, p.HashPassword( password ), CreateOrUpdateMode.CreateOrUpdate );
                 if( migrator != null )
                 {
-                    CreatePasswordUser( ctx, 1, userId, password );
                     migrator.MigrationDone( ctx, userId );
                 }
-                else SetPwdRawHash( ctx, 1, userId, p.HashPassword( password ) );
             }
             // 4 - Side-effect of successful login.
             if( actualLogin )
             {
-                OnLogin( ctx, ref userId );
+                OnLogin( ctx, userId );
             }
             return userId;
        }
@@ -159,37 +162,25 @@ namespace CK.DB.User.UserPassword
 
         /// <summary>
         /// Creates a PasswordUser with an initial raw hash for an existing user.
-        /// This method should be used only if the standard password hasher and verfication 
+        /// This method should be used only if the standard password hasher and verification 
         /// mechanism is not used.
         /// </summary>
         /// <param name="ctx">The call context to use.</param>
         /// <param name="actorId">The acting actor identifier.</param>
         /// <param name="userId">The user identifier for wich a PassworUser must be created.</param>
         /// <param name="pwdHash">The initial raw hash (no more than 64 bytes).</param>
-        [SqlProcedure( "sUserPasswordCreate" )]
-        public abstract void CreatePasswordUserWithPwdRawHash( ISqlCallContext ctx, int actorId, int userId, byte[] pwdHash );
+        /// <param name="mode">Optionnaly configures Create or Update only behavior.</param>
+        /// <returns>The operation result.</returns>
+        [SqlProcedure( "sUserPasswordCreateOrUpdate" )]
+        public abstract CreateOrUpdateResult CreateOrUpdatePasswordUserWithPwdRawHash( ISqlCallContext ctx, int actorId, int userId, byte[] pwdHash, CreateOrUpdateMode mode );
 
         /// <summary>
-        /// Sets a raw hash to a PasswordUser.
-        /// This method should be used only if the standard password hasher and verfication 
-        /// mechanism is not used.
+        /// Called once a login succeed (password hash verification done) and actualLogin parameter is true 
+        /// or <see cref="CreateOrUpdateMode.WithLogin"/> is set.
         /// </summary>
         /// <param name="ctx">The call context to use.</param>
-        /// <param name="actorId">The acting actor identifier.</param>
-        /// <param name="userId">The user identifier for wich a raw hash must be set.</param>
-        /// <param name="pwdHash">The raw hash to set (no more than 64 bytes).</param>
-        [SqlProcedure( "sUserPasswordPwdHashSet" )]
-        public abstract void SetPwdRawHash( ISqlCallContext ctx, int actorId, int userId, byte[] pwdHash );
-
-        /// <summary>
-        /// Called once a login succeed (password hash verification done) and actualLogin parameter is true.
-        /// </summary>
-        /// <param name="ctx">The call context to use.</param>
-        /// <param name="userId">
-        /// The user identifier that logged in: this extension point may change it (setting
-        /// it to 0 de facto forbids login).
-        /// </param>
+        /// <param name="userId">The user identifier that logged in.</param>
         [SqlProcedure( "sUserPasswordOnLogin" )]
-        protected abstract void OnLogin( ISqlCallContext ctx, ref int userId );
+        protected abstract void OnLogin( ISqlCallContext ctx, int userId );
     }
 }

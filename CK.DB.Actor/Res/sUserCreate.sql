@@ -2,7 +2,7 @@
 create procedure CK.sUserCreate 
 (
 	@ActorId int,
-	@UserName nvarchar( 127 ),
+	@UserName nvarchar( 255 ),
 	@UserIdResult int output
 )
 as

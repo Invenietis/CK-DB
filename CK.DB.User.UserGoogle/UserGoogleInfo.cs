@@ -12,11 +12,6 @@ namespace CK.DB.User.UserGoogle
     public class UserGoogleInfo
     {
         /// <summary>
-        /// Gets or sets the user identifier.
-        /// </summary>
-        public int UserId { get; set; }
-
-        /// <summary>
         /// Gets or sets the Google account identifier.
         /// </summary>
         public string GoogleAccountId { get; set; }
@@ -44,18 +39,9 @@ namespace CK.DB.User.UserGoogle
 
         /// <summary>
         /// Gets whether this user info is valid: the access token may not be valid (it can even be null),
-        /// but the <see cref="RefreshToken"/> and <see cref="GoogleAccountId"/> 
-        /// are not null nor empty and the <see cref="UserId"/> is positive.
+        /// but the <see cref="RefreshToken"/> and <see cref="GoogleAccountId"/> must be not null nor empty.
         /// </summary>
-        public bool IsValid
-        {
-            get
-            {
-                return UserId >= 0
-                        && !string.IsNullOrWhiteSpace( GoogleAccountId )
-                        && !string.IsNullOrWhiteSpace( RefreshToken );
-            }
-        }
+        public bool IsValid => !string.IsNullOrWhiteSpace( GoogleAccountId ) && !string.IsNullOrWhiteSpace( RefreshToken );
 
     }
 }
