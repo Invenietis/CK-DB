@@ -14,9 +14,9 @@ namespace CK.DB.Auth
     /// An authentication provider can not create a new user by itself, it can only 
     /// register/bind to an existing user.
     /// Direct registration (without explicit intermediate steps as when you directly register on a site 
-    /// via Google or Facebook), when functionnaly needed, must be done in, at least, two steps:
+    /// via Google or Facebook), when functionnally needed, must be done in, at least, two steps:
     /// 1) Call LoginUser to try to login the already registered user.
-    /// 2) If it fails, tries to exploit the user data (ie. the claims) to find an exisiting user registered
+    /// 2) If it fails, tries to exploit the user data (ie. the claims) to find an existing user registered
     /// with any other provider.
     /// If a match is found, either bind the existing account (if you trust the match) or confirm the match
     /// by using a confirmation email, sms, or any other means that can prove the identity match before registering
@@ -25,11 +25,6 @@ namespace CK.DB.Auth
     /// </summary>
     public interface IGenericAuthenticationProvider
     {
-        /// <summary>
-        /// Gets the name of the provider.
-        /// </summary>
-        string ProviderName { get; }
-
         /// <summary>
         /// Creates or updates a user entry for this provider. 
         /// This is the "binding account" feature since it binds an external identity to 

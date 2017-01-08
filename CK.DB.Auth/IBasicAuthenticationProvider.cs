@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace CK.DB.Auth
 {
     /// <summary>
-    /// Defines the ambient contract of the basic authentication provider (there 
+    /// Defines the ambient contract of the basic authentication provider named "Basic" (there 
     /// can be at most one such provider) that handles "PasswordUsers".
     /// </summary>
     public interface IBasicAuthenticationProvider : IAmbientContract

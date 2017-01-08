@@ -22,7 +22,7 @@ namespace CK.DB.User.UserPassword
     [SqlTable("tUserPassword", Package = typeof(Package))]
     [Versions("1.0.0,1.0.1")]
     [SqlObjectItem("transform:sUserDestroy")]
-    public abstract partial class UserPasswordTable : SqlTable, IBasicAuthenticationProvider, IGenericAuthenticationProvider
+    public abstract partial class UserPasswordTable : SqlTable, IBasicAuthenticationProvider, IGenericAuthenticationTableProvider
     {
         Package _package;
         Actor.UserTable _userTable;

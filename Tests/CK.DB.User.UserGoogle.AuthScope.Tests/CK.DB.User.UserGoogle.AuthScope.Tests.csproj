@@ -165,6 +165,10 @@
       <Project>{c5f7e85f-5472-4ab3-8344-49963da2d860}</Project>
       <Name>CK.DB.Auth.AuthScope</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\CK.DB.Auth\CK.DB.Auth.csproj">
+      <Project>{51061369-ADA8-4815-B969-867DB9D6FC6A}</Project>
+      <Name>CK.DB.Auth</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\CK.DB.User.UserGoogle.AuthScope\CK.DB.User.UserGoogle.AuthScope.csproj">
       <Project>{51d87d32-9e8d-4929-9d7e-8ee8dd3b0c90}</Project>
       <Name>CK.DB.User.UserGoogle.AuthScope</Name>

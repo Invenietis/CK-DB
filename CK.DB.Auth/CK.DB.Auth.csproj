@@ -80,6 +80,7 @@
     <Compile Include="AuthProviderTable.cs" />
     <Compile Include="CreateOrUpdateMode.cs" />
     <Compile Include="CreateOrUpdateResult.cs" />
+    <Compile Include="IGenericAuthenticationTableProvider.cs" />
     <Compile Include="IGenericAuthenticationProvider.cs" />
     <Compile Include="IBasicAuthenticationProvider.cs" />
     <Compile Include="Package.cs" />

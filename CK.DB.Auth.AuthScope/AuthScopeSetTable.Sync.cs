@@ -164,7 +164,7 @@ namespace CK.DB.Auth.AuthScope
         /// <param name="scopes">Whitespace separated list of scopes.</param>
         /// <param name="scopesHaveStatus">True to handle [W], [A] or [R] prefixes from <paramref name="scopes"/>.</param>
         /// <param name="defaultWARStatus">The status ('W', 'A' or 'R') to use when no explicit prefix are handled.</param>
-        /// <param name="resetScopes">True to remove exisiting scopes that do not appear in <paramref name="scopes"/>.</param>
+        /// <param name="resetScopes">True to remove existing scopes that do not appear in <paramref name="scopes"/>.</param>
         [SqlProcedure( "sAuthScopeSetAddScopes" )]
         protected abstract void DoAddScopes( ISqlCallContext ctx, int actorId, int scopeSetId, string scopes, bool scopesHaveStatus, char defaultWARStatus, bool resetScopes );
 

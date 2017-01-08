@@ -150,7 +150,9 @@ namespace CodeCake
 
             Task( "Unit-Testing" )
                .IsDependentOn( "Build" )
-                .WithCriteria( () => gitInfo.IsValidRelease )
+              .WithCriteria( () => gitInfo.IsValid )
+              .WithCriteria( () => !Cake.IsInteractiveMode()
+                                      || Cake.ReadInteractiveOption( "Run unit tests?", 'Y', 'N' ) == 'Y' )
                .Does( () =>
                {
                    var testDlls = solution.Projects
