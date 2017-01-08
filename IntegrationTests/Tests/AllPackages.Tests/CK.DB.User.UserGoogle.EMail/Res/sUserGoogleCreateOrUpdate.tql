@@ -1,5 +1,19 @@
 ﻿create transformer on CK.sUserGoogleCreateOrUpdate
 as
 begin
-	add parameter @EMail nvarchar(255) = N'', @EMailVerified bit = 0
+	add parameter @EMail nvarchar(255) = N'', @EMailVerified bit = 0;
+
+	inject "
+	declare @PrevEMail nvarchar(255);
+	declare @PrevEMailVerified bit;" after single statement {declare @PrevRefreshToken};
+
+	in single statement {select	@ActualUserId = UserId}
+	begin
+		inject ", @PrevEMail = EMail, @PrevEMailVerified = EMailVerified" before single {from CK.tUserGoogle};
+	end
+
+	in single statement {insert into CK.tUserGoogle}
+	begin
+		add column EMail = @EMail, EMailVerified = @EMailVerified;
+	end
 end

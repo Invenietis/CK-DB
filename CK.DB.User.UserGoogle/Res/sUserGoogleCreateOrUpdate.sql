@@ -51,9 +51,10 @@ begin
 	declare @LastLoginTime datetime2(2);
 	declare @Now datetime2(2) = sysutcdatetime();
 	declare @PrevRefreshToken varchar(max);
-	select	@PrevRefreshToken = RefreshToken, 
+
+	select	@ActualUserId = UserId,
 			@LastLoginTime = LastLoginTime, 
-			@ActualUserId = UserId
+			@PrevRefreshToken = RefreshToken 			
 		from CK.tUserGoogle 
 		where GoogleAccountId = @GoogleAccountId;
 

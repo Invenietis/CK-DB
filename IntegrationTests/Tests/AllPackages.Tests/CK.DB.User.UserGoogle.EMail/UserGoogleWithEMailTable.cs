@@ -9,10 +9,12 @@ using System.Data.SqlClient;
 using CK.DB.Auth;
 using CK.SqlServer;
 using System.Threading;
+using CK.Setup;
 
 namespace CK.DB.User.UserGoogle.EMail
 {
     [SqlTable( "CK.tUserGoogle", ResourceType = typeof(UserGoogleWithEMailTable), ResourcePath = "~AllPackages.Tests.CK.DB.User.UserGoogle.EMail.Res" )]
+    [Versions("1.0.0")]
     public abstract class UserGoogleWithEMailTable : UserGoogleTable
     {
         protected override StringBuilder AppendColumns( StringBuilder b )
@@ -20,10 +22,7 @@ namespace CK.DB.User.UserGoogle.EMail
             return base.AppendColumns( b ).Append( "EMail, EMailVerified" );
         }
 
-        protected override UserGoogleInfo CreateUserUnfo( string googleAccountId )
-        {
-            return new UserGoogleInfoWithMail() { GoogleAccountId = googleAccountId };
-        }
+        public override UserGoogleInfo CreateUserInfo() => new UserGoogleInfoWithMail();
 
         protected override int FillUserGoogleInfo( UserGoogleInfo info, SqlDataReader r, int idx )
         {
