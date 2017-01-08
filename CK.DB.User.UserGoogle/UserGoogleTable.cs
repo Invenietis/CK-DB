@@ -156,13 +156,15 @@ namespace CK.DB.User.UserGoogle
 
         KnownUserGoogleInfo DoCreateUserUnfo( string googleAccountId, SqlDataReader r )
         {
-            KnownUserGoogleInfo info = new KnownUserGoogleInfo()
+            var info = CreateUserInfo();
+            info.GoogleAccountId = googleAccountId;
+            FillUserGoogleInfo( info, r, 1 );
+            KnownUserGoogleInfo result = new KnownUserGoogleInfo()
             {
                 UserId = r.GetInt32( 0 ),
-                Info = CreateUserUnfo( googleAccountId )
+                Info = info
             };
-            FillUserGoogleInfo( info.Info, r, 1 );
-            return info;
+            return result;
         }
 
 
@@ -177,10 +179,10 @@ namespace CK.DB.User.UserGoogle
         }
 
         /// <summary>
-        /// Leaf creation of the mixin type...
+        /// Leaf creation of the terminal type (future mixin)...
         /// </summary>
         /// <returns></returns>
-        protected virtual UserGoogleInfo CreateUserUnfo( string googleAccountId ) => new UserGoogleInfo() { GoogleAccountId = googleAccountId };
+        public virtual UserGoogleInfo CreateUserInfo() => new UserGoogleInfo();
 
         /// <summary>
         /// Fill data from reader from top to bottom.

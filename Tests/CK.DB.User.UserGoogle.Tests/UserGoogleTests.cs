@@ -24,7 +24,9 @@ namespace CK.DB.User.UserGoogle.Tests
                 int userId = user.CreateUser( ctx, 1, userName );
                 var googleAccountId = Guid.NewGuid().ToString( "N" );
 
-                var created = u.CreateOrUpdateGoogleUser( ctx, 1, userId, new UserGoogleInfo() { GoogleAccountId = googleAccountId } );
+                var info = u.CreateUserInfo();
+                info.GoogleAccountId = googleAccountId;
+                var created = u.CreateOrUpdateGoogleUser( ctx, 1, userId, info );
                 Assert.That( created, Is.EqualTo( CreateOrUpdateResult.Created ) );
                 var info2 = u.FindUserInfo( ctx, googleAccountId );
 
@@ -48,7 +50,9 @@ namespace CK.DB.User.UserGoogle.Tests
                 int userId = await user.CreateUserAsync( ctx, 1, userName );
                 var googleAccountId = Guid.NewGuid().ToString( "N" );
 
-                var created = await u.CreateOrUpdateGoogleUserAsync( ctx, 1, userId, new UserGoogleInfo() { GoogleAccountId = googleAccountId } );
+                var info = u.CreateUserInfo();
+                info.GoogleAccountId = googleAccountId;
+                var created = await u.CreateOrUpdateGoogleUserAsync( ctx, 1, userId, info );
                 Assert.That( created, Is.EqualTo( CreateOrUpdateResult.Created ) );
                 var info2 = await u.FindUserInfoAsync( ctx, googleAccountId );
 
@@ -78,7 +82,9 @@ namespace CK.DB.User.UserGoogle.Tests
                 var googleAccountId = Guid.NewGuid().ToString( "N" );
                 var idU = user.CreateUser( ctx, 1, userName );
                 u.Database.AssertEmptyReader( $"select * from CK.vUserAuthProvider where UserId={idU} and ProviderName='Google'" );
-                u.CreateOrUpdateGoogleUser( ctx, 1, idU, new UserGoogleInfo() { GoogleAccountId = googleAccountId } );
+                var info = u.CreateUserInfo();
+                info.GoogleAccountId = googleAccountId;
+                u.CreateOrUpdateGoogleUser( ctx, 1, idU, info );
                 u.Database.AssertScalarEquals( 1, $"select count(*) from CK.vUserAuthProvider where UserId={idU} and ProviderName='Google'" );
                 u.DestroyGoogleUser( ctx, 1, idU );
                 u.Database.AssertEmptyReader( $"select * from CK.vUserAuthProvider where UserId={idU} and ProviderName='Google'" );
@@ -98,10 +104,11 @@ namespace CK.DB.User.UserGoogle.Tests
                 var idU = user.CreateUser( ctx, 1, userName );
 
                 provider.EnableProvider( ctx, 1, "Google", false );
-
-                var created = u.CreateOrUpdateGoogleUser( ctx, 1, idU, new UserGoogleInfo() { GoogleAccountId = googleAccountId } );
+                var info = u.CreateUserInfo();
+                info.GoogleAccountId = googleAccountId;
+                var created = u.CreateOrUpdateGoogleUser( ctx, 1, idU, info );
                 Assert.That( created, Is.EqualTo( CreateOrUpdateResult.Created ) );
-                var loggedId = u.LoginUser( ctx, new UserGoogleInfo() { GoogleAccountId = googleAccountId }, true );
+                var loggedId = u.LoginUser( ctx, info, true );
                 Assert.That( loggedId, Is.EqualTo( idU ) );
 
                 provider.EnableProvider( ctx, 1, "Google" );
@@ -128,11 +135,10 @@ namespace CK.DB.User.UserGoogle.Tests
                 {
                     var userName = Guid.NewGuid().ToString();
                     int userId = await user.CreateUserAsync( ctx, 1, userName );
-                    info = new UserGoogleInfo()
-                    {
-                        GoogleAccountId = googleAccountId,
-                        RefreshToken = "1/t63rMARi7a9qQWIYEcKPVIrfnNJU51K2TpNB3hjrEjI",
-                    };
+                    info = p.UserGoogleTable.CreateUserInfo();
+                    info.GoogleAccountId = googleAccountId;
+                    info.RefreshToken = "1/t63rMARi7a9qQWIYEcKPVIrfnNJU51K2TpNB3hjrEjI";
+                    await p.UserGoogleTable.CreateOrUpdateGoogleUserAsync( ctx, 1, userId, info );
                 }
                 info.AccessToken = null;
                 Assert.That( await p.RefreshAccessTokenAsync( ctx, info ) );

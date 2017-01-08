@@ -39,7 +39,8 @@ namespace CK.DB.User.UserGoogle.AuthScope.Tests
 
                 {
                     int id = await user.CreateUserAsync( ctx, 1, Guid.NewGuid().ToString() );
-                    UserGoogleInfo userInfo = new UserGoogleInfo() { GoogleAccountId = Guid.NewGuid().ToString() };
+                    UserGoogleInfo userInfo = p.UserGoogleTable.CreateUserInfo();
+                    userInfo.GoogleAccountId = Guid.NewGuid().ToString();
                     await p.UserGoogleTable.CreateOrUpdateGoogleUserAsync( ctx, 1, id, userInfo );
                     KnownUserGoogleInfo info = await p.UserGoogleTable.FindUserInfoAsync( ctx, userInfo.GoogleAccountId );
                     AuthScopeSet userSet = await p.ReadScopeSetAsync( ctx, info.UserId );
@@ -59,7 +60,8 @@ namespace CK.DB.User.UserGoogle.AuthScope.Tests
 
                 {
                     int id = await user.CreateUserAsync( ctx, 1, Guid.NewGuid().ToString() );
-                    UserGoogleInfo userInfo = new UserGoogleInfo() { GoogleAccountId = Guid.NewGuid().ToString() };
+                    UserGoogleInfo userInfo = p.UserGoogleTable.CreateUserInfo();
+                    userInfo.GoogleAccountId = Guid.NewGuid().ToString();
                     await p.UserGoogleTable.CreateOrUpdateGoogleUserAsync( ctx, 1, id, userInfo, CreateOrUpdateMode.CreateOnly|CreateOrUpdateMode.UpdateOnly );
                     userInfo = (await p.UserGoogleTable.FindUserInfoAsync( ctx, userInfo.GoogleAccountId )).Info;
                     AuthScopeSet userSet = await p.ReadScopeSetAsync( ctx, id );

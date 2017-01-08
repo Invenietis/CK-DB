@@ -1,0 +1,5 @@
+﻿create transformer on CK.sUserGoogleCreateOrUpdate
+as
+begin
+	add parameter @EMail nvarchar(255) = N'', @EMailVerified bit = 0
+end

@@ -11,6 +11,10 @@ namespace CK.DB.User.UserGoogle
     /// </summary>
     public class UserGoogleInfo
     {
+        internal protected UserGoogleInfo()
+        {
+        }
+
         /// <summary>
         /// Gets or sets the Google account identifier.
         /// </summary>
