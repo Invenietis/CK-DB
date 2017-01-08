@@ -25,7 +25,7 @@ namespace CK.DB.User.UserGoogle
         /// <returns>The operation result.</returns>
         public CreateOrUpdateResult CreateOrUpdateGoogleUser( ISqlCallContext ctx, int actorId, int userId, UserGoogleInfo info, CreateOrUpdateMode mode = CreateOrUpdateMode.CreateOrUpdate )
         {
-            var r = RawCreateOrUpdateGoogleUser( ctx, actorId, userId, info.GoogleAccountId, info.AccessToken, info.AccessTokenExpirationTime, info.RefreshToken, mode );
+            var r = RawCreateOrUpdateGoogleUser( ctx, actorId, userId, info, mode );
             return r.Result;
         }
 
@@ -43,7 +43,7 @@ namespace CK.DB.User.UserGoogle
             var mode = actualLogin
                         ? CreateOrUpdateMode.UpdateOnly | CreateOrUpdateMode.WithLogin
                         : CreateOrUpdateMode.UpdateOnly; 
-            var r = RawCreateOrUpdateGoogleUser( ctx, 1, 0, info.GoogleAccountId, info.AccessToken, info.AccessTokenExpirationTime, info.RefreshToken, mode );
+            var r = RawCreateOrUpdateGoogleUser( ctx, 1, 0, info, mode );
             return r.Result == CreateOrUpdateResult.Updated ? r.UserId : 0;
         }
 
@@ -68,7 +68,9 @@ namespace CK.DB.User.UserGoogle
         {
             using( var c = CreateReaderCommand( googleAccountId ) )
             {
-                return c.ExecuteRow( ctx[Database], r => r == null ? null : CreateUserUnfo( googleAccountId, r ) );
+                return c.ExecuteRow( ctx[Database], r => r == null
+                                                            ? null
+                                                            : DoCreateUserUnfo( googleAccountId, r ) );
             }
         }
 
@@ -89,11 +91,8 @@ namespace CK.DB.User.UserGoogle
         protected abstract RawResult RawCreateOrUpdateGoogleUser( 
             ISqlCallContext ctx, 
             int actorId, 
-            int userId, 
-            string googleAccountId, 
-            string accessToken, 
-            DateTime? accessTokenExpirationTime, 
-            string refreshToken, 
+            int userId,
+            [ParameterSource]UserGoogleInfo info,
             CreateOrUpdateMode mode );
 
 

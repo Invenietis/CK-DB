@@ -7,14 +7,18 @@ using CK.Core;
 namespace CK.DB.User.UserGoogle
 {
     /// <summary>
-    /// Holds information stored for a Google user.
+    /// Associates a user identifier to its Google user information.
     /// </summary>
-    public class KnownUserGoogleInfo : UserGoogleInfo
+    public class KnownUserGoogleInfo
     {
         /// <summary>
         /// Gets or sets the user identifier.
         /// </summary>
         public int UserId { get; set; }
 
+        /// <summary>
+        /// Gets or sets the associated information.
+        /// </summary>
+        public UserGoogleInfo Info {get;set; }
     }
 }

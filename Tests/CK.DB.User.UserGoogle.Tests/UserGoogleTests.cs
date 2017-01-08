@@ -29,7 +29,7 @@ namespace CK.DB.User.UserGoogle.Tests
                 var info2 = u.FindUserInfo( ctx, googleAccountId );
 
                 Assert.That( info2.UserId, Is.EqualTo( userId ) );
-                Assert.That( info2.GoogleAccountId, Is.EqualTo( googleAccountId ) );
+                Assert.That( info2.Info.GoogleAccountId, Is.EqualTo( googleAccountId ) );
 
                 Assert.That( u.FindUserInfo( ctx, Guid.NewGuid().ToString() ), Is.Null );
                 user.DestroyUser( ctx, 1, userId );
@@ -53,7 +53,7 @@ namespace CK.DB.User.UserGoogle.Tests
                 var info2 = await u.FindUserInfoAsync( ctx, googleAccountId );
 
                 Assert.That( info2.UserId, Is.EqualTo( userId ) );
-                Assert.That( info2.GoogleAccountId, Is.EqualTo( googleAccountId ) );
+                Assert.That( info2.Info.GoogleAccountId, Is.EqualTo( googleAccountId ) );
 
                 Assert.That( await u.FindUserInfoAsync( ctx, Guid.NewGuid().ToString() ), Is.Null );
                 await user.DestroyUserAsync( ctx, 1, userId );
@@ -122,7 +122,8 @@ namespace CK.DB.User.UserGoogle.Tests
             var user = TestHelper.StObjMap.Default.Obtain<UserTable>();
             using( var ctx = new SqlStandardCallContext( TestHelper.Monitor ) )
             {
-                UserGoogleInfo info = await userG.FindUserInfoAsync( ctx, googleAccountId );
+                KnownUserGoogleInfo exists = await userG.FindUserInfoAsync( ctx, googleAccountId );
+                UserGoogleInfo info = exists?.Info;
                 if( info == null )
                 {
                     var userName = Guid.NewGuid().ToString();

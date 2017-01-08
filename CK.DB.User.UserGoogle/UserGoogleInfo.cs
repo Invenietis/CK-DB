@@ -38,10 +38,10 @@ namespace CK.DB.User.UserGoogle
         public DateTime LastRefreshTokenTime { get; set; }
 
         /// <summary>
-        /// Gets whether this user info is valid: the access token may not be valid (it can even be null),
+        /// Gets whether this user info is valid for refresh: the access token may not be valid (it can even be null),
         /// but the <see cref="RefreshToken"/> and <see cref="GoogleAccountId"/> must be not null nor empty.
         /// </summary>
-        public bool IsValid => !string.IsNullOrWhiteSpace( GoogleAccountId ) && !string.IsNullOrWhiteSpace( RefreshToken );
+        public bool IsValidForRefresh => !string.IsNullOrWhiteSpace( GoogleAccountId ) && !string.IsNullOrWhiteSpace( RefreshToken );
 
     }
 }
