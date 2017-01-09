@@ -9,7 +9,7 @@ namespace CK.DB.User.UserGoogle
     /// <summary>
     /// Holds information stored for a Google user.
     /// </summary>
-    public class UserGoogleInfo
+    public class UserGoogleInfo : IUserGoogleInfo
     {
         internal protected UserGoogleInfo()
         {
@@ -40,12 +40,6 @@ namespace CK.DB.User.UserGoogle
         /// This is meaningful only when reading from the database and is ignored when writing.
         /// </summary>
         public DateTime LastRefreshTokenTime { get; set; }
-
-        /// <summary>
-        /// Gets whether this user info is valid for refresh: the access token may not be valid (it can even be null),
-        /// but the <see cref="RefreshToken"/> and <see cref="GoogleAccountId"/> must be not null nor empty.
-        /// </summary>
-        public bool IsValidForRefresh => !string.IsNullOrWhiteSpace( GoogleAccountId ) && !string.IsNullOrWhiteSpace( RefreshToken );
 
     }
 }

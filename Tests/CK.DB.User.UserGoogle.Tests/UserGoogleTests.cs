@@ -130,7 +130,7 @@ namespace CK.DB.User.UserGoogle.Tests
             using( var ctx = new SqlStandardCallContext( TestHelper.Monitor ) )
             {
                 KnownUserGoogleInfo exists = await userG.FindUserInfoAsync( ctx, googleAccountId );
-                UserGoogleInfo info = exists?.Info;
+                IUserGoogleInfo info = exists?.Info;
                 if( info == null )
                 {
                     var userName = Guid.NewGuid().ToString();

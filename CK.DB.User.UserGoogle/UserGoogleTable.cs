@@ -37,7 +37,7 @@ namespace CK.DB.User.UserGoogle
         /// <param name="payload">Provider specific data.</param>
         /// <param name="mode">Optionnaly configures Create, Update only or WithLogin behavior.</param>
         /// <returns>The operation result.</returns>
-        public async Task<CreateOrUpdateResult> CreateOrUpdateGoogleUserAsync( ISqlCallContext ctx, int actorId, int userId, UserGoogleInfo info, CreateOrUpdateMode mode = CreateOrUpdateMode.CreateOrUpdate, CancellationToken cancellationToken = default(CancellationToken) )
+        public async Task<CreateOrUpdateResult> CreateOrUpdateGoogleUserAsync( ISqlCallContext ctx, int actorId, int userId, IUserGoogleInfo info, CreateOrUpdateMode mode = CreateOrUpdateMode.CreateOrUpdate, CancellationToken cancellationToken = default(CancellationToken) )
         {
             var r = await RawCreateOrUpdateGoogleUserAsync( ctx, actorId, userId, info, mode, cancellationToken ).ConfigureAwait( false );
             return r.Result;
@@ -118,7 +118,7 @@ namespace CK.DB.User.UserGoogle
             ISqlCallContext ctx,
             int actorId,
             int userId,
-            [ParameterSource]UserGoogleInfo info,
+            [ParameterSource]IUserGoogleInfo info,
             CreateOrUpdateMode mode,
             CancellationToken cancellationToken );
 
@@ -182,7 +182,7 @@ namespace CK.DB.User.UserGoogle
         /// Leaf creation of the terminal type (future mixin)...
         /// </summary>
         /// <returns></returns>
-        public virtual UserGoogleInfo CreateUserInfo() => new UserGoogleInfo();
+        public virtual IUserGoogleInfo CreateUserInfo() => new UserGoogleInfo();
 
         /// <summary>
         /// Fill data from reader from top to bottom.
@@ -191,7 +191,7 @@ namespace CK.DB.User.UserGoogle
         /// <param name="r">The data reader.</param>
         /// <param name="idx">The index of the first column.</param>
         /// <returns>The updated index.</returns>
-        protected virtual int FillUserGoogleInfo( UserGoogleInfo info, SqlDataReader r, int idx )
+        protected virtual int FillUserGoogleInfo( IUserGoogleInfo info, SqlDataReader r, int idx )
         {
             info.RefreshToken = r.GetString( idx++ );
             info.LastRefreshTokenTime = r.GetDateTime( idx++ );

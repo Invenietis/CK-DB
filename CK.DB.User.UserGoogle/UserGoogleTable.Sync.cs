@@ -23,14 +23,14 @@ namespace CK.DB.User.UserGoogle
         /// <param name="payload">Provider specific data.</param>
         /// <param name="mode">Optionnaly configures Create, Update only or WithLogin behavior.</param>
         /// <returns>The operation result.</returns>
-        public CreateOrUpdateResult CreateOrUpdateGoogleUser( ISqlCallContext ctx, int actorId, int userId, UserGoogleInfo info, CreateOrUpdateMode mode = CreateOrUpdateMode.CreateOrUpdate )
+        public CreateOrUpdateResult CreateOrUpdateGoogleUser( ISqlCallContext ctx, int actorId, int userId, IUserGoogleInfo info, CreateOrUpdateMode mode = CreateOrUpdateMode.CreateOrUpdate )
         {
             var r = RawCreateOrUpdateGoogleUser( ctx, actorId, userId, info, mode );
             return r.Result;
         }
 
         /// <summary>
-        /// Challenges <see cref="UserGoogleInfo"/> data to identify a user.
+        /// Challenges <see cref="IUserGoogleInfo"/> data to identify a user.
         /// Note that a successful challenge may have side effects such as updating claims, access tokens or other data
         /// related to the user and this provider.
         /// </summary>
@@ -38,7 +38,7 @@ namespace CK.DB.User.UserGoogle
         /// <param name="payload">The payload to challenge.</param>
         /// <param name="actualLogin">Set it to false to avoid login side-effect (such as updating the LastLoginTime) on success.</param>
         /// <returns>The positive identifier of the user on success or 0 if the Google user does not exist.</returns>
-        public int LoginUser( ISqlCallContext ctx, UserGoogleInfo info, bool actualLogin = true )
+        public int LoginUser( ISqlCallContext ctx, IUserGoogleInfo info, bool actualLogin = true )
         {
             var mode = actualLogin
                         ? CreateOrUpdateMode.UpdateOnly | CreateOrUpdateMode.WithLogin
@@ -92,7 +92,7 @@ namespace CK.DB.User.UserGoogle
             ISqlCallContext ctx, 
             int actorId, 
             int userId,
-            [ParameterSource]UserGoogleInfo info,
+            [ParameterSource]IUserGoogleInfo info,
             CreateOrUpdateMode mode );
 
 

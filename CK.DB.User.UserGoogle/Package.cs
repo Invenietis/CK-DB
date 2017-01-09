@@ -75,15 +75,15 @@ namespace CK.DB.User.UserGoogle
         /// </summary>
         /// <param name="ctx">The call context to use.</param>
         /// <param name="user">
-        /// The user must not be null and <see cref="UserGoogleInfo.IsValidForRefresh"/> must be true.
+        /// The user must not be null and <see cref="UserGoogleInfoExtensions.IsValidForRefresh"/> must be true.
         /// </param>
         /// <param name="cancellationToken">Optional cancellation token.</param>
         /// <returns>True on success, false on error.</returns>
-        public async Task<bool> RefreshAccessTokenAsync( ISqlCallContext ctx, UserGoogleInfo user, CancellationToken cancellationToken = default( CancellationToken ) )
+        public async Task<bool> RefreshAccessTokenAsync( ISqlCallContext ctx, IUserGoogleInfo user, CancellationToken cancellationToken = default( CancellationToken ) )
         {
             if( ctx == null ) throw new ArgumentNullException( nameof( ctx ) );
             if( user == null ) throw new ArgumentNullException( nameof( user ) );
-            if( !user.IsValidForRefresh ) throw new ArgumentException( "User info is not valid." );
+            if( !user.IsValidForRefresh() ) throw new ArgumentException( "User info is not valid." );
             try
             {
                 var c = _client ?? (_client = CreateHttpClient( ApiUrl ));

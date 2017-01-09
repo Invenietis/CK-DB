@@ -19,6 +19,6 @@ namespace CK.DB.User.UserGoogle
         /// <summary>
         /// Gets or sets the associated information.
         /// </summary>
-        public UserGoogleInfo Info {get;set; }
+        public IUserGoogleInfo Info {get;set; }
     }
 }
