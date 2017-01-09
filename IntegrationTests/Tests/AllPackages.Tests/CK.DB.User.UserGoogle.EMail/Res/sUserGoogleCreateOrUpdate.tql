@@ -1,25 +1,18 @@
 ﻿create transformer on CK.sUserGoogleCreateOrUpdate
 as
 begin
-	add parameter @EMail nvarchar(255) = N'', @EMailVerified bit = 0;
-
-	inject "
-	declare @PrevEMail nvarchar(255);
-	declare @PrevEMailVerified bit;" after single statement {declare @PrevRefreshToken};
-
-	inject "
-	if @EMail is null set @EMail = N'';
-	if @EMailVerified is null set @EMailVerified = 0;
-	" after single statement {if @RefreshToken is null};
-
-	in single statement {select	@ActualUserId = UserId}
-	begin
-		inject ", @PrevEMail = EMail, @PrevEMailVerified = EMailVerified " before single {from CK.tUserGoogle};
-	end
+	add parameter @EMail nvarchar(255) = null, @EMailVerified bit = null;
 
 	in single statement {insert into CK.tUserGoogle}
 	begin
-		add column EMail = @EMail, EMailVerified = @EMailVerified;
+		add column	EMail = case when @EMail is not null then @EMail else N'' end, 
+					EMailVerified = case when @EMailVerified is not null then @EMailVerified else 0 end;
+	end
+
+	in single statement {update CK.tUserGoogle}
+	begin
+		add column	EMail = case when @EMail is not null then @EMail else N'' end, 
+					EMailVerified = case when @EMailVerified is not null then @EMailVerified else 0 end;
 	end
 
 end
