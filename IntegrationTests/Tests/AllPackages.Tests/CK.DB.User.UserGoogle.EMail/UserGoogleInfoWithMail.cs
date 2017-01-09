@@ -9,10 +9,10 @@ using System.Threading.Tasks;
 namespace CK.DB.User.UserGoogle.EMail
 {
 
-    public class UserGoogleInfoWithMail : UserGoogleInfo
+    public class UserGoogleInfoWithMail : UserGoogleInfo, IUserGoogleInfoWithMail
     {
         public string EMail { get; set; }
 
-        public bool EMailVerified { get; set; }
+        public bool? EMailVerified { get; set; }
     }
 }

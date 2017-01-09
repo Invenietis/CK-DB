@@ -22,31 +22,31 @@ namespace CK.DB.User.UserGoogle.EMail
             return base.AppendColumns( b ).Append( ", EMail, EMailVerified" );
         }
 
-        public override UserGoogleInfo CreateUserInfo() => new UserGoogleInfoWithMail();
+        public override IUserGoogleInfo CreateUserInfo() => new UserGoogleInfoWithMail();
 
-        protected override int FillUserGoogleInfo( UserGoogleInfo info, SqlDataReader r, int idx )
+        protected override int FillUserGoogleInfo( IUserGoogleInfo info, SqlDataReader r, int idx )
         {
             idx = base.FillUserGoogleInfo( info, r, idx );
-            ((UserGoogleInfoWithMail)info).EMail = r.GetString( idx++ );
-            ((UserGoogleInfoWithMail)info).EMailVerified = r.GetBoolean( idx++ );
+            ((IUserGoogleInfoWithMail)info).EMail = r.GetString( idx++ );
+            ((IUserGoogleInfoWithMail)info).EMailVerified = r.GetBoolean( idx++ );
             return idx;
         }
 
-        protected override RawResult RawCreateOrUpdateGoogleUser( ISqlCallContext ctx, int actorId, int userId, UserGoogleInfo info, CreateOrUpdateMode mode )
+        protected override RawResult RawCreateOrUpdateGoogleUser( ISqlCallContext ctx, int actorId, int userId, IUserGoogleInfo info, CreateOrUpdateMode mode )
         {
-            return RawCreateOrUpdateGoogleUser( ctx, actorId, userId, (UserGoogleInfoWithMail)info, mode );
+            return RawCreateOrUpdateGoogleUser( ctx, actorId, userId, (IUserGoogleInfoWithMail)info, mode );
         }
 
         [SqlProcedure( "transform:sUserGoogleCreateOrUpdate" )]
-        protected abstract RawResult RawCreateOrUpdateGoogleUser( ISqlCallContext ctx, int actorId, int userId, [ParameterSource]UserGoogleInfoWithMail info, CreateOrUpdateMode mode );
+        protected abstract RawResult RawCreateOrUpdateGoogleUser( ISqlCallContext ctx, int actorId, int userId, [ParameterSource]IUserGoogleInfoWithMail info, CreateOrUpdateMode mode );
 
-        protected override Task<RawResult> RawCreateOrUpdateGoogleUserAsync( ISqlCallContext ctx, int actorId, int userId, UserGoogleInfo info, CreateOrUpdateMode mode, CancellationToken cancellationToken )
+        protected override Task<RawResult> RawCreateOrUpdateGoogleUserAsync( ISqlCallContext ctx, int actorId, int userId, IUserGoogleInfo info, CreateOrUpdateMode mode, CancellationToken cancellationToken )
         {
-            return RawCreateOrUpdateGoogleUserAsync( ctx, actorId, userId, (UserGoogleInfoWithMail)info, mode, cancellationToken );
+            return RawCreateOrUpdateGoogleUserAsync( ctx, actorId, userId, (IUserGoogleInfoWithMail)info, mode, cancellationToken );
         }
 
         [SqlProcedure( "transform:sUserGoogleCreateOrUpdate" )]
-        protected abstract Task<RawResult> RawCreateOrUpdateGoogleUserAsync( ISqlCallContext ctx, int actorId, int userId, [ParameterSource]UserGoogleInfoWithMail info, CreateOrUpdateMode mode, CancellationToken cancellationToken );
+        protected abstract Task<RawResult> RawCreateOrUpdateGoogleUserAsync( ISqlCallContext ctx, int actorId, int userId, [ParameterSource]IUserGoogleInfoWithMail info, CreateOrUpdateMode mode, CancellationToken cancellationToken );
 
     }
 }
