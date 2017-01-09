@@ -1,6 +1,9 @@
 ﻿-- SetupConfig: {}
 --
--- @GoogleAccountId can not be null. This is the key that is used.
+-- @GoogleAccountId can not be null. This is the key that identifies a Google user.
+-- @Mode (flags): CreateOnly = 1, UpdateOnly = 2, CreateOrUpdate = 3, WithLogin = 4  
+-- @Result: None = 0, Created = 1, Updated = 2
+--
 -- When @UserId = 0 we are in "login mode": 
 --  - @Mode must be 2 or 6 (UpdateOnly or UpdateOnly+WithLogin).
 --  - If the google id is found, we update the tokens and output the found @UserId.
@@ -8,23 +11,24 @@
 --  - When updating it means that there is a mismatch in the calling code.
 --  - When creating it means that another user with the same google account is already registered and
 --    this should never happen.
--- When @AccessToken is null, it is replaced with an empty string.
--- When @AccessTokenExpirationTime is null, '9999-12-31T23:59:59.99' is set.
--- When @RefreshToken is null, it is left unchanged on update (an empty string is inserted on creation).
 --
--- @Mode: CreateOnly = 1, UpdateOnly = 2, CreateOrUpdate = 3, WithLogin = 4  
--- @Result: None = 0, Created = 1, Updated = 2
+-- Default values on creation:
+--  - When @RefreshToken is null, an empty string is set.
+--  - When @AccessToken is null, an empty string is set.
+--  - When @AccessTokenExpirationTime is null, '9999-12-31T23:59:59.99' is set.
+--
+-- On update null parameters are left unchanged.
 --
 create procedure CK.sUserGoogleCreateOrUpdate
 (
 	@ActorId int,
 	@UserId int /*input*/output,
 	@GoogleAccountId varchar(36), 
-	@AccessToken varchar(max),
-	@AccessTokenExpirationTime datetime2(2) = null,
-	@RefreshToken varchar(max) = null,
 	@Mode int, -- not null enum { "CreateOnly" = 1, "UpdateOnly" = 2, "CreateOrUpdate" = 3, "WithLogin" = 4, "IgnoreOptimisticKey" = 8 }
-	@Result int output -- not null enum { None = 0, Created = 1, Updated = 2 }
+	@Result int output, -- not null enum { None = 0, Created = 1, Updated = 2 }
+	@RefreshToken varchar(max) = null,
+	@AccessToken varchar(max) = null,
+	@AccessTokenExpirationTime datetime2(2) = null
 )
 as
 begin
@@ -41,20 +45,14 @@ begin
     if @ActorId is null or @ActorId <= 0 throw 50000, 'Security.AnonymousNotAllowed', 1;
     if @UserId is null or @UserId < 0 throw 50000, 'Argument.InvalidUserId', 1;
 	if @GoogleAccountId is null throw 50000, 'Argument.NullGoogleAccountId', 1;
-	if @AccessToken is null set @AccessToken = '';
-	if @AccessTokenExpirationTime is null set @AccessTokenExpirationTime = '9999-12-31T23:59:59.99';
     if @Mode is null or @Mode < 1 or @Mode > 3 throw 50000, 'Argument.InvalidMode', 1;
 	if @UserId = 0 and @Mode <> 2 throw 50000, 'Argument.ModeMustBeUpdateOnlyForLogin', 1;
 	--[beginsp]
 
 	declare @ActualUserId int;
-	declare @LastLoginTime datetime2(2);
 	declare @Now datetime2(2) = sysutcdatetime();
-	declare @PrevRefreshToken varchar(max);
 
-	select	@ActualUserId = UserId,
-			@LastLoginTime = LastLoginTime, 
-			@PrevRefreshToken = RefreshToken 			
+	select	@ActualUserId = UserId
 		from CK.tUserGoogle 
 		where GoogleAccountId = @GoogleAccountId;
 
@@ -64,14 +62,21 @@ begin
 	begin
 		if (@Mode&1) <> 0 -- CreateOnly or CreateOrUpdate
 		begin
-			if @RefreshToken is null set @RefreshToken = '';
-			if @ActualLogin = 1 set @LastLoginTime = @Now;
-			else set @LastLoginTime ='0001-01-01';
 			--<PreCreate revert /> 
 
 			-- Unique constraint on GoogleAccountId will detect any existing UserId/GoogleAccountId clashes.
-			insert into CK.tUserGoogle( UserId, GoogleAccountId, AccessToken, AccessTokenExpirationTime, RefreshToken, LastRefreshTokenTime, LastLoginTime ) 
-				values( @UserId, @GoogleAccountId, @AccessToken, @AccessTokenExpirationTime, @RefreshToken, @Now, @LastLoginTime );
+			insert into CK.tUserGoogle( UserId, GoogleAccountId, LastLoginTime, RefreshToken, LastRefreshTokenTime, AccessToken, AccessTokenExpirationTime ) 
+				select	@UserId, 
+						@GoogleAccountId, 
+						case when  @ActualLogin = 1 then @Now else '0001-01-01' end,
+						case when @RefreshToken is not null then @RefreshToken else '' end,
+						@Now, 
+						case when @AccessToken is not null then @AccessToken else '' end,
+						case when @AccessTokenExpirationTime is not null
+							then @AccessTokenExpirationTime 
+							else '9999-12-31T23:59:59.99' 
+						end;
+
 			set @Result = 1; -- Created
 
 			--<PostCreate />
@@ -88,32 +93,28 @@ begin
 			if @UserId = 0 set @UserId = @ActualUserId;
 			else if @UserId <> @ActualUserId throw 50000, 'Argument.UserIdAndGoogleIdMismatch', 1;
 
-			if @ActualLogin = 1 set @LastLoginTime = @Now;
-			if @RefreshToken is not null and @PrevRefreshToken <> @RefreshToken 
-			begin
-				update CK.tUserGoogle set 
-						AccessToken = @AccessToken, 
-						AccessTokenExpirationTime = @AccessTokenExpirationTime,
-						RefreshToken = @RefreshToken, 
-						LastRefreshTokenTime = @Now,
-						LastLoginTime = @LastLoginTime
-					where UserId = @ActualUserId and GoogleAccountId = @GoogleAccountId;
-			end
-			else
-			begin
-				update CK.tUserGoogle set 
-						AccessToken = @AccessToken, 
-						AccessTokenExpirationTime = @AccessTokenExpirationTime,
-						LastLoginTime = @LastLoginTime
-					where UserId = @ActualUserId and GoogleAccountId = @GoogleAccountId;
-			end
+			update CK.tUserGoogle set 
+					LastLoginTime = case when  @ActualLogin = 1 then @Now else LastLoginTime end,
+					-- Updates LastRefreshTokenTime to @Now only if it has actually changed.
+					RefreshToken = case when @RefreshToken is not null then @RefreshToken else RefreshToken end, 
+					LastRefreshTokenTime = case when @RefreshToken is not null and RefreshToken <> @RefreshToken 
+											then @Now
+											else LastRefreshTokenTime
+										   end,
+					-- If AccessToken is not null but AccessTokenExpirationTime is null this will raise an error.
+					AccessToken = case when @AccessToken is not null then @AccessToken else AccessToken end,
+					AccessTokenExpirationTime = case when @AccessToken is not null 
+													then @AccessTokenExpirationTime 
+													else AccessTokenExpirationTime 
+												end
+				where UserId = @ActualUserId and GoogleAccountId = @GoogleAccountId;
 			set @Result = 2; -- Updated
 		end
 		else set @Result = 0; -- None 
 	end
 	if @Result <> 0 and @ActualLogin = 1
 	begin
-		exec CK.sAuthUserOnLogin 'Google', @LastLoginTime, @UserId;  
+		exec CK.sAuthUserOnLogin 'Google', @Now, @UserId;  
 	end
 	--<PostCreateOrUpdate /> 
 

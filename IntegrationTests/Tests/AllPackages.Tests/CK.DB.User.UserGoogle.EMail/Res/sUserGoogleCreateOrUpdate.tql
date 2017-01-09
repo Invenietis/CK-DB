@@ -7,13 +7,19 @@ begin
 	declare @PrevEMail nvarchar(255);
 	declare @PrevEMailVerified bit;" after single statement {declare @PrevRefreshToken};
 
+	inject "
+	if @EMail is null set @EMail = N'';
+	if @EMailVerified is null set @EMailVerified = 0;
+	" after single statement {if @RefreshToken is null};
+
 	in single statement {select	@ActualUserId = UserId}
 	begin
-		inject ", @PrevEMail = EMail, @PrevEMailVerified = EMailVerified" before single {from CK.tUserGoogle};
+		inject ", @PrevEMail = EMail, @PrevEMailVerified = EMailVerified " before single {from CK.tUserGoogle};
 	end
 
 	in single statement {insert into CK.tUserGoogle}
 	begin
 		add column EMail = @EMail, EMailVerified = @EMailVerified;
 	end
+
 end

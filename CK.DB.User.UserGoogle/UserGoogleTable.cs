@@ -175,7 +175,7 @@ namespace CK.DB.User.UserGoogle
         /// <returns>The string builder.</returns>
         protected virtual StringBuilder AppendColumns( StringBuilder b )
         {
-            return b.Append( "UserId, AccessToken, AccessTokenExpirationTime, RefreshToken, LastRefreshTokenTime" );
+            return b.Append( "UserId, RefreshToken, LastRefreshTokenTime, AccessToken, AccessTokenExpirationTime" );
         }
 
         /// <summary>
@@ -193,13 +193,12 @@ namespace CK.DB.User.UserGoogle
         /// <returns>The updated index.</returns>
         protected virtual int FillUserGoogleInfo( UserGoogleInfo info, SqlDataReader r, int idx )
         {
-            info.AccessToken = r.GetString( idx++ );
-            info.AccessTokenExpirationTime = r.GetDateTime( idx++ );
             info.RefreshToken = r.GetString( idx++ );
             info.LastRefreshTokenTime = r.GetDateTime( idx++ );
+            info.AccessToken = r.GetString( idx++ );
+            info.AccessTokenExpirationTime = r.GetDateTime( idx++ );
             return idx;
         }
-
 
         #region IGenericAuthenticationProvider explicit implementation.
 

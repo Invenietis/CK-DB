@@ -19,7 +19,7 @@ namespace CK.DB.User.UserGoogle.EMail
     {
         protected override StringBuilder AppendColumns( StringBuilder b )
         {
-            return base.AppendColumns( b ).Append( "EMail, EMailVerified" );
+            return base.AppendColumns( b ).Append( ", EMail, EMailVerified" );
         }
 
         public override UserGoogleInfo CreateUserInfo() => new UserGoogleInfoWithMail();
