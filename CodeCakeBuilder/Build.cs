@@ -150,6 +150,7 @@ namespace CodeCake
 
             Task( "Unit-Testing" )
                .IsDependentOn( "Build" )
+              .WithCriteria( () => false )
               .WithCriteria( () => gitInfo.IsValid )
               .WithCriteria( () => !Cake.IsInteractiveMode()
                                       || Cake.ReadInteractiveOption( "Run unit tests?", 'Y', 'N' ) == 'Y' )
@@ -217,7 +218,7 @@ namespace CodeCake
                               if( curVersion != depVersion )
                               {
                                   p.SetAttributeValue( "version", depVersion );
-                                  Cake.Debug( $"=> package.config: {packageName}: {curVersion} -> {depVersion}." );
+                                  Cake.Information( $"=> package.config: {packageName}: {curVersion} -> {depVersion}." );
                                   ++countRef;
                               }
                           }
@@ -259,7 +260,7 @@ namespace CodeCake
                           {
                               path[3] = newFolder;
                               p.E.HintPathElement.Value = string.Join( "\\", path );
-                              Cake.Debug( $"=> cproj: {p.ProjectName}: {curFolder} -> {newFolder}." );
+                              Cake.Information( $"=> cproj: {p.ProjectName}: {curFolder} -> {newFolder}." );
                               ++countRef;
                           }
                       }
