@@ -328,30 +328,23 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CK.DB.User.UserGoogle.EMail\IUserGoogleInfoWithMail.cs" />
-    <Compile Include="CK.DB.User.UserGoogle.EMail\UserGoogleInfoWithMail.cs" />
     <Compile Include="DBSetup.cs" />
     <Compile Include="From\FromActorEMail.cs" />
     <Compile Include="From\FromAuth.cs" />
     <Compile Include="From\FromUser.cs" />
     <Compile Include="From\FromRes.cs" />
     <Compile Include="From\FromActorGroupZoneTests.cs" />
-    <Compile Include="CK.DB.User.UserGoogle.EMail\UserGoogleWithEMailTable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
-    <EmbeddedResource Include="CK.DB.User.UserGoogle.EMail\Res\CK.UserGoogleWithEMailTable.Install.1.0.0.sql" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
   <ItemGroup />
-  <ItemGroup>
-    <EmbeddedResource Include="CK.DB.User.UserGoogle.EMail\Res\sUserGoogleCreateOrUpdate.tql" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

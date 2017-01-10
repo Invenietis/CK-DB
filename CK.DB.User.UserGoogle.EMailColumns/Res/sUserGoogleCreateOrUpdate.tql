@@ -11,8 +11,8 @@ begin
 
 	in single statement {update CK.tUserGoogle}
 	begin
-		add column	EMail = case when @EMail is not null then @EMail else N'' end, 
-					EMailVerified = case when @EMailVerified is not null then @EMailVerified else 0 end;
+		add column	EMail = case when @EMail is not null then @EMail else EMail end, 
+					EMailVerified = case when @EMailVerified is not null then @EMailVerified else EMailVerified end;
 	end
 
 end

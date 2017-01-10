@@ -28,14 +28,14 @@ namespace CK.DB.User.UserGoogle.Tests
                 info.GoogleAccountId = googleAccountId;
                 var created = u.CreateOrUpdateGoogleUser( ctx, 1, userId, info );
                 Assert.That( created, Is.EqualTo( CreateOrUpdateResult.Created ) );
-                var info2 = u.FindUserInfo( ctx, googleAccountId );
+                var info2 = u.FindKnownUserInfo( ctx, googleAccountId );
 
                 Assert.That( info2.UserId, Is.EqualTo( userId ) );
                 Assert.That( info2.Info.GoogleAccountId, Is.EqualTo( googleAccountId ) );
 
-                Assert.That( u.FindUserInfo( ctx, Guid.NewGuid().ToString() ), Is.Null );
+                Assert.That( u.FindKnownUserInfo( ctx, Guid.NewGuid().ToString() ), Is.Null );
                 user.DestroyUser( ctx, 1, userId );
-                Assert.That( u.FindUserInfo( ctx, googleAccountId ), Is.Null );
+                Assert.That( u.FindKnownUserInfo( ctx, googleAccountId ), Is.Null );
             }
         }
 

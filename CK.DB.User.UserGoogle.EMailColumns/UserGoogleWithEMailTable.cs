@@ -11,9 +11,9 @@ using CK.SqlServer;
 using System.Threading;
 using CK.Setup;
 
-namespace CK.DB.User.UserGoogle.EMail
+namespace CK.DB.User.UserGoogle.EMailColumns
 {
-    [SqlTable( "CK.tUserGoogle", ResourceType = typeof(UserGoogleWithEMailTable), ResourcePath = "~AllPackages.Tests.CK.DB.User.UserGoogle.EMail.Res" )]
+    [SqlTable( "CK.tUserGoogle", ResourceType = typeof(UserGoogleWithEMailTable), ResourcePath = "Res" )]
     [Versions("1.0.0")]
     public abstract class UserGoogleWithEMailTable : UserGoogleTable
     {

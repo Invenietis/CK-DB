@@ -75,7 +75,7 @@ namespace CK.DB.User.UserGoogle
         /// </summary>
         /// <param name="ctx">The call context to use.</param>
         /// <param name="user">
-        /// The user must not be null and <see cref="UserGoogleInfoExtensions.IsValidForRefresh"/> must be true.
+        /// The user must not be null and <see cref="UserGoogleInfoExtensions.IsValidForRefreshAccessToken"/> must be true.
         /// </param>
         /// <param name="cancellationToken">Optional cancellation token.</param>
         /// <returns>True on success, false on error.</returns>
@@ -83,7 +83,7 @@ namespace CK.DB.User.UserGoogle
         {
             if( ctx == null ) throw new ArgumentNullException( nameof( ctx ) );
             if( user == null ) throw new ArgumentNullException( nameof( user ) );
-            if( !user.IsValidForRefresh() ) throw new ArgumentException( "User info is not valid." );
+            if( !user.IsValidForRefreshAccessToken() ) throw new ArgumentException( "User info is not valid." );
             try
             {
                 var c = _client ?? (_client = CreateHttpClient( ApiUrl ));

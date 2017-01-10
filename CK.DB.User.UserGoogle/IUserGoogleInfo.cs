@@ -43,7 +43,7 @@ namespace CK.DB.User.UserGoogle
         /// Gets whether this user info is valid for refresh: the access token may not be valid (it can even be null),
         /// but the <see cref="IUserGoogleInfo.RefreshToken"/> and <see cref="IUserGoogleInfo.GoogleAccountId"/> must be not null nor empty.
         /// </summary>
-        public static bool IsValidForRefresh( this IUserGoogleInfo @this )
+        public static bool IsValidForRefreshAccessToken( this IUserGoogleInfo @this )
         {
             return !string.IsNullOrWhiteSpace( @this.GoogleAccountId ) && !string.IsNullOrWhiteSpace( @this.RefreshToken );
         }

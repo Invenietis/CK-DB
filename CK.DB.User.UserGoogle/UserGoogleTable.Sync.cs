@@ -64,7 +64,7 @@ namespace CK.DB.User.UserGoogle
         /// <param name="ctx">The call context to use.</param>
         /// <param name="googleAccountId">The google account identifier.</param>
         /// <returns>A <see cref="UserGoogleInfo"/> object or null if not found.</returns>
-        public KnownUserGoogleInfo FindUserInfo( ISqlCallContext ctx, string googleAccountId )
+        public KnownUserGoogleInfo FindKnownUserInfo( ISqlCallContext ctx, string googleAccountId )
         {
             using( var c = CreateReaderCommand( googleAccountId ) )
             {

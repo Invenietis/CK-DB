@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CK.DB.User.UserGoogle.EMail
+namespace CK.DB.User.UserGoogle.EMailColumns
 {
 
     public class UserGoogleInfoWithMail : UserGoogleInfo, IUserGoogleInfoWithMail
