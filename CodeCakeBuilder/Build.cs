@@ -150,7 +150,6 @@ namespace CodeCake
 
             Task( "Unit-Testing" )
                .IsDependentOn( "Build" )
-              .WithCriteria( () => false )
               .WithCriteria( () => gitInfo.IsValid )
               .WithCriteria( () => !Cake.IsInteractiveMode()
                                       || Cake.ReadInteractiveOption( "Run unit tests?", 'Y', 'N' ) == 'Y' )
@@ -190,6 +189,7 @@ namespace CodeCake
                                       || Cake.ReadInteractiveOption( "Run integration tests?", 'Y', 'N' ) == 'Y' )
               .Does( () =>
               {
+                  System.Diagnostics.Debugger.Launch();
                   var integrationSolution = "IntegrationTests/IntegrationTests.sln";
                   var integration = Cake.ParseSolution( integrationSolution );
                   var projects = integration.Projects
