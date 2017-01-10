@@ -213,9 +213,11 @@ namespace CodeCake
                           if( IntegrationDependentPackages.ContainsKey( packageName ) )
                           {
                               string depVersion = IntegrationDependentPackages[packageName];
-                              if( p.Attribute( "version" ).Value != depVersion )
+                              string curVersion = p.Attribute( "version" ).Value;
+                              if( curVersion != depVersion )
                               {
                                   p.SetAttributeValue( "version", depVersion );
+                                  Cake.Debug( $"=> package.config: {packageName}: {curVersion} -> {depVersion}." );
                                   ++countRef;
                               }
                           }
@@ -252,10 +254,12 @@ namespace CodeCake
                           var version = IntegrationDependentPackages[p.ProjectName];
                           var path = p.E.HintPathElement.Value.Split( '\\' );
                           var newFolder = p.ProjectName + '.' + version;
-                          if( path[3] != newFolder )
+                          var curFolder = path[3];
+                          if( curFolder != newFolder )
                           {
                               path[3] = newFolder;
                               p.E.HintPathElement.Value = string.Join( "\\", path );
+                              Cake.Debug( $"=> cproj: {p.ProjectName}: {curFolder} -> {newFolder}." );
                               ++countRef;
                           }
                       }
