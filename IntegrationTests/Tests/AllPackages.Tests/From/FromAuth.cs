@@ -22,4 +22,9 @@ namespace AllPackages.Tests.From
     {
     }
 
+    [TestFixture]
+    public class UserGoogleEMailColumnsTests : CK.DB.User.UserGoogle.EMailColumns.Tests.UserGoogleEMailTests
+    {
+    }
+
 }
