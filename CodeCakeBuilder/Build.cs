@@ -189,7 +189,6 @@ namespace CodeCake
                                       || Cake.ReadInteractiveOption( "Run integration tests?", 'Y', 'N' ) == 'Y' )
               .Does( () =>
               {
-                  System.Diagnostics.Debugger.Launch();
                   var integrationSolution = "IntegrationTests/IntegrationTests.sln";
                   var integration = Cake.ParseSolution( integrationSolution );
                   var projects = integration.Projects

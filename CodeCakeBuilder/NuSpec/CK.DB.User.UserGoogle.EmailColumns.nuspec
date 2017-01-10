@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata >
-    <id>CK.DB.User.UserGoogle.EmailColumns</id>
+    <id>CK.DB.User.UserGoogle.EMailColumns</id>
     <version>$version$</version>
     <authors>Invenietis</authors>
     <owners>Invenietis</owners>
@@ -18,7 +18,7 @@
     </dependencies>
   </metadata>
   <files>    
-    <file src="CK.DB.User.UserGoogle.EmailColumns\bin\{{configuration}}\CK.DB.User.UserGoogle.EmailColumns.dll" target="lib\net45" />
-    <file src="CK.DB.User.UserGoogle.EmailColumns\bin\{{configuration}}\CK.DB.User.UserGoogle.EmailColumns.xml" target="lib\net45" />
+    <file src="CK.DB.User.UserGoogle.EMailColumns\bin\{{configuration}}\CK.DB.User.UserGoogle.EMailColumns.dll" target="lib\net45" />
+    <file src="CK.DB.User.UserGoogle.EMailColumns\bin\{{configuration}}\CK.DB.User.UserGoogle.EMailColumns.xml" target="lib\net45" />
   </files>
 </package>
