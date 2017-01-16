@@ -22,8 +22,6 @@ namespace CK.DB.User.UserGoogle.EMailColumns
             return base.AppendColumns( b ).Append( ", EMail, EMailVerified" );
         }
 
-        public override IUserGoogleInfo CreateUserInfo() => new UserGoogleInfoWithMail();
-
         protected override int FillUserGoogleInfo( IUserGoogleInfo info, SqlDataReader r, int idx )
         {
             idx = base.FillUserGoogleInfo( info, r, idx );

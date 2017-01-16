@@ -1,11 +1,12 @@
-﻿using System;
+﻿using CK.Core;
+using System;
 
 namespace CK.DB.User.UserGoogle
 {
     /// <summary>
     /// Holds information stored for a Google user.
     /// </summary>
-    public interface IUserGoogleInfo
+    public interface IUserGoogleInfo : IPoco
     {
         /// <summary>
         /// Gets or sets the Google account identifier.

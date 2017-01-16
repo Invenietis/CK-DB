@@ -21,10 +21,17 @@ namespace CK.DB.User.UserGoogle
     [SqlObjectItem( "transform:sUserDestroy" )]
     public abstract partial class UserGoogleTable : SqlTable, IGenericAuthenticationTableProvider
     {
+        IPocoFactory<IUserGoogleInfo> _infoFactory;
+
         /// <summary>
         /// Gets "Google" that is the name of the Google provider.
         /// </summary>
         public string ProviderName => "Google";
+
+        void Construct( IPocoFactory<IUserGoogleInfo> infoFactory )
+        {
+            _infoFactory = infoFactory;
+        }
 
         /// <summary>
         /// Creates or updates a user entry for this provider. 
@@ -44,7 +51,7 @@ namespace CK.DB.User.UserGoogle
         }
 
         /// <summary>
-        /// Challenges <see cref="UserGoogleInfo"/> data to identify a user.
+        /// Challenges <see cref="IUserGoogleInfo"/> data to identify a user.
         /// Note that a successful challenge may have side effects such as updating claims, access tokens or other data
         /// related to the user and this provider.
         /// </summary>
@@ -52,7 +59,7 @@ namespace CK.DB.User.UserGoogle
         /// <param name="payload">The payload to challenge.</param>
         /// <param name="actualLogin">Set it to false to avoid login side-effect (such as updating the LastLoginTime) on success.</param>
         /// <returns>The positive identifier of the user on success or 0 if the Google user does not exist.</returns>
-        public async Task<int> LoginUserAsync( ISqlCallContext ctx, UserGoogleInfo info, bool actualLogin = true, CancellationToken cancellationToken = default( CancellationToken ) )
+        public async Task<int> LoginUserAsync( ISqlCallContext ctx, IUserGoogleInfo info, bool actualLogin = true, CancellationToken cancellationToken = default( CancellationToken ) )
         {
             var mode = actualLogin
                         ? CreateOrUpdateMode.UpdateOnly | CreateOrUpdateMode.WithLogin
@@ -179,10 +186,10 @@ namespace CK.DB.User.UserGoogle
         }
 
         /// <summary>
-        /// Leaf creation of the terminal type (future mixin)...
+        /// Creates the <see cref="IUserGoogleInfo"/> poco.
         /// </summary>
-        /// <returns></returns>
-        public virtual IUserGoogleInfo CreateUserInfo() => new UserGoogleInfo();
+        /// <returns>A new instance.</returns>
+        public IUserGoogleInfo CreateUserInfo() => _infoFactory.Create();
 
         /// <summary>
         /// Fill data from reader from top to bottom.
@@ -204,28 +211,28 @@ namespace CK.DB.User.UserGoogle
 
         CreateOrUpdateResult IGenericAuthenticationProvider.CreateOrUpdateUser( ISqlCallContext ctx, int actorId, int userId, object payload, CreateOrUpdateMode mode )
         {
-            UserGoogleInfo info = payload as UserGoogleInfo;
+            IUserGoogleInfo info = payload as IUserGoogleInfo;
             if( info == null ) throw new ArgumentException( nameof( payload ) );
             return CreateOrUpdateGoogleUser( ctx, actorId, userId, info, mode );
         }
 
         int? IGenericAuthenticationProvider.LoginUser( ISqlCallContext ctx, object payload, bool actualLogin )
         {
-            UserGoogleInfo info = payload as UserGoogleInfo;
+            IUserGoogleInfo info = payload as IUserGoogleInfo;
             if( info == null ) return null;
             return LoginUser( ctx, info, actualLogin );
         }
 
         Task<CreateOrUpdateResult> IGenericAuthenticationProvider.CreateOrUpdateUserAsync( ISqlCallContext ctx, int actorId, int userId, object payload, CreateOrUpdateMode mode, CancellationToken cancellationToken )
         {
-            UserGoogleInfo info = payload as UserGoogleInfo;
+            IUserGoogleInfo info = payload as IUserGoogleInfo;
             if( info == null ) throw new ArgumentException( nameof( payload ) );
             return CreateOrUpdateGoogleUserAsync( ctx, actorId, userId, info, mode, cancellationToken );
         }
 
         async Task<int?> IGenericAuthenticationProvider.LoginUserAsync( ISqlCallContext ctx, object payload, bool actualLogin, CancellationToken cancellationToken )
         {
-            UserGoogleInfo info = payload as UserGoogleInfo;
+            IUserGoogleInfo info = payload as IUserGoogleInfo;
             if( info == null ) return null;
             return await LoginUserAsync( ctx, info, actualLogin, cancellationToken );
         }
