@@ -18,6 +18,8 @@ namespace CK.DB.User.UserGoogle
 
         /// <summary>
         /// Gets or sets the associated information.
+        /// Since <see cref="IUserGoogleInfo"/> is a <see cref="IPoco"/>, this can be casted
+        /// to any specialized info interface defined by other packages.
         /// </summary>
         public IUserGoogleInfo Info {get;set; }
     }

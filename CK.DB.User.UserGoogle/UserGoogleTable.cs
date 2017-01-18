@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using CK.Core;
 using System.Threading;
 using CK.DB.Auth;
+using CK.Text;
 
 namespace CK.DB.User.UserGoogle
 {
@@ -148,14 +149,14 @@ namespace CK.DB.User.UserGoogle
 
         /// <summary>
         /// Creates a the reader command parametrized with the Google account identifier.
-        /// Single-row returned columns are defined by <see cref="AppendColumns(StringBuilder)"/>.
+        /// Single-row returned columns are defined by <see cref="AppendUserInfoColumns(StringBuilder)"/>.
         /// </summary>
         /// <param name="googleAccountId">Google account identifier to look for.</param>
         /// <returns>A ready to use reader command.</returns>
         SqlCommand CreateReaderCommand( string googleAccountId )
         {
             StringBuilder b = new StringBuilder( "select " );
-            AppendColumns( b ).Append( " from CK.tUserGoogle where GoogleAccountId=@A" );
+            AppendUserInfoColumns( b ).Append( " from CK.tUserGoogle where GoogleAccountId=@A" );
             var c = new SqlCommand( b.ToString() );
             c.Parameters.Add( new SqlParameter( "@A", googleAccountId ) );
             return c;
@@ -163,7 +164,7 @@ namespace CK.DB.User.UserGoogle
 
         KnownUserGoogleInfo DoCreateUserUnfo( string googleAccountId, SqlDataReader r )
         {
-            var info = CreateUserInfo();
+            var info = _infoFactory.Create();
             info.GoogleAccountId = googleAccountId;
             FillUserGoogleInfo( info, r, 1 );
             KnownUserGoogleInfo result = new KnownUserGoogleInfo()
@@ -180,30 +181,32 @@ namespace CK.DB.User.UserGoogle
         /// </summary>
         /// <param name="b">The string builder.</param>
         /// <returns>The string builder.</returns>
-        protected virtual StringBuilder AppendColumns( StringBuilder b )
+        protected virtual StringBuilder AppendUserInfoColumns( StringBuilder b )
         {
-            return b.Append( "UserId, RefreshToken, LastRefreshTokenTime, AccessToken, AccessTokenExpirationTime" );
+            var props = _infoFactory.PocoClassType.GetProperties().Where( p => p.Name != nameof( IUserGoogleInfo.GoogleAccountId ) );
+            return b.Append( "UserId, " ).AppendStrings( props.Select( p => p.Name ) );
         }
 
         /// <summary>
-        /// Creates the <see cref="IUserGoogleInfo"/> poco.
+        /// Creates a <see cref="IUserGoogleInfo"/> poco.
         /// </summary>
         /// <returns>A new instance.</returns>
-        public IUserGoogleInfo CreateUserInfo() => _infoFactory.Create();
+        public T CreateUserInfo<T>() where T : IUserGoogleInfo => (T)_infoFactory.Create();
 
         /// <summary>
-        /// Fill data from reader from top to bottom.
+        /// Fill UserInfo properties from reader.
         /// </summary>
-        /// <param name="info">The ifnfo to fill.</param>
+        /// <param name="info">The info to fill.</param>
         /// <param name="r">The data reader.</param>
         /// <param name="idx">The index of the first column.</param>
         /// <returns>The updated index.</returns>
         protected virtual int FillUserGoogleInfo( IUserGoogleInfo info, SqlDataReader r, int idx )
         {
-            info.RefreshToken = r.GetString( idx++ );
-            info.LastRefreshTokenTime = r.GetDateTime( idx++ );
-            info.AccessToken = r.GetString( idx++ );
-            info.AccessTokenExpirationTime = r.GetDateTime( idx++ );
+            var props = _infoFactory.PocoClassType.GetProperties().Where( p => p.Name != nameof( IUserGoogleInfo.GoogleAccountId ) );
+            foreach( var p in props )
+            {
+                p.SetValue( info, r.GetValue( idx++ ) );
+            }
             return idx;
         }
 

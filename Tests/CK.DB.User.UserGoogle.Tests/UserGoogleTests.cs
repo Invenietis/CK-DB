@@ -18,13 +18,14 @@ namespace CK.DB.User.UserGoogle.Tests
         {
             var u = TestHelper.StObjMap.Default.Obtain<UserGoogleTable>();
             var user = TestHelper.StObjMap.Default.Obtain<UserTable>();
+            var infoFactory = TestHelper.StObjMap.Default.Obtain<IPocoFactory<IUserGoogleInfo>>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 var userName = Guid.NewGuid().ToString();
                 int userId = user.CreateUser( ctx, 1, userName );
                 var googleAccountId = Guid.NewGuid().ToString( "N" );
 
-                var info = u.CreateUserInfo();
+                var info = infoFactory.Create();
                 info.GoogleAccountId = googleAccountId;
                 var created = u.CreateOrUpdateGoogleUser( ctx, 1, userId, info );
                 Assert.That( created, Is.EqualTo( CreateOrUpdateResult.Created ) );
@@ -44,13 +45,14 @@ namespace CK.DB.User.UserGoogle.Tests
         {
             var u = TestHelper.StObjMap.Default.Obtain<UserGoogleTable>();
             var user = TestHelper.StObjMap.Default.Obtain<UserTable>();
+            var infoFactory = TestHelper.StObjMap.Default.Obtain<IPocoFactory<IUserGoogleInfo>>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 var userName = Guid.NewGuid().ToString();
                 int userId = await user.CreateUserAsync( ctx, 1, userName );
                 var googleAccountId = Guid.NewGuid().ToString( "N" );
 
-                var info = u.CreateUserInfo();
+                var info = infoFactory.Create();
                 info.GoogleAccountId = googleAccountId;
                 var created = await u.CreateOrUpdateGoogleUserAsync( ctx, 1, userId, info );
                 Assert.That( created, Is.EqualTo( CreateOrUpdateResult.Created ) );
@@ -82,7 +84,7 @@ namespace CK.DB.User.UserGoogle.Tests
                 var googleAccountId = Guid.NewGuid().ToString( "N" );
                 var idU = user.CreateUser( ctx, 1, userName );
                 u.Database.AssertEmptyReader( $"select * from CK.vUserAuthProvider where UserId={idU} and ProviderName='Google'" );
-                var info = u.CreateUserInfo();
+                var info = u.CreateUserInfo<IUserGoogleInfo>();
                 info.GoogleAccountId = googleAccountId;
                 u.CreateOrUpdateGoogleUser( ctx, 1, idU, info );
                 u.Database.AssertScalarEquals( 1, $"select count(*) from CK.vUserAuthProvider where UserId={idU} and ProviderName='Google'" );
@@ -104,7 +106,7 @@ namespace CK.DB.User.UserGoogle.Tests
                 var idU = user.CreateUser( ctx, 1, userName );
 
                 provider.EnableProvider( ctx, 1, "Google", false );
-                var info = u.CreateUserInfo();
+                var info = u.CreateUserInfo<IUserGoogleInfo>();
                 info.GoogleAccountId = googleAccountId;
                 var created = u.CreateOrUpdateGoogleUser( ctx, 1, idU, info );
                 Assert.That( created, Is.EqualTo( CreateOrUpdateResult.Created ) );
@@ -135,7 +137,7 @@ namespace CK.DB.User.UserGoogle.Tests
                 {
                     var userName = Guid.NewGuid().ToString();
                     int userId = await user.CreateUserAsync( ctx, 1, userName );
-                    info = p.UserGoogleTable.CreateUserInfo();
+                    info = p.UserGoogleTable.CreateUserInfo<IUserGoogleInfo>();
                     info.GoogleAccountId = googleAccountId;
                     info.RefreshToken = "1/t63rMARi7a9qQWIYEcKPVIrfnNJU51K2TpNB3hjrEjI";
                     await p.UserGoogleTable.CreateOrUpdateGoogleUserAsync( ctx, 1, userId, info );

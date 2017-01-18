@@ -36,7 +36,8 @@ namespace CK.DB.Auth.AuthScope
         }
 
         /// <summary>
-        /// Reads a <see cref="AuthScopeSet"/> content from a configured command.
+        /// Reads a <see cref="AuthScopeSet"/> content from a configured 
+        /// command (created by <see cref="CreateReadCommand"/>).
         /// Null is returned for empty returned set.
         /// </summary>
         /// <param name="ctx">The call context.</param>

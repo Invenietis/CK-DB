@@ -32,6 +32,7 @@ namespace CK.DB.User.UserGoogle.AuthScope.Tests
         {
             var user = TestHelper.StObjMap.Default.Obtain<UserTable>();
             var p = TestHelper.StObjMap.Default.Obtain<Package>();
+            var factory = TestHelper.StObjMap.Default.Obtain<IPocoFactory<IUserGoogleInfo>>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 AuthScopeSet original = await p.ReadDefaultScopeSetAsync( ctx );
@@ -39,7 +40,7 @@ namespace CK.DB.User.UserGoogle.AuthScope.Tests
 
                 {
                     int id = await user.CreateUserAsync( ctx, 1, Guid.NewGuid().ToString() );
-                    IUserGoogleInfo userInfo = p.UserGoogleTable.CreateUserInfo();
+                    IUserGoogleInfo userInfo = factory.Create();
                     userInfo.GoogleAccountId = Guid.NewGuid().ToString();
                     await p.UserGoogleTable.CreateOrUpdateGoogleUserAsync( ctx, 1, id, userInfo );
                     KnownUserGoogleInfo info = await p.UserGoogleTable.FindUserInfoAsync( ctx, userInfo.GoogleAccountId );
@@ -60,10 +61,10 @@ namespace CK.DB.User.UserGoogle.AuthScope.Tests
 
                 {
                     int id = await user.CreateUserAsync( ctx, 1, Guid.NewGuid().ToString() );
-                    IUserGoogleInfo userInfo = p.UserGoogleTable.CreateUserInfo();
+                    IUserGoogleInfo userInfo = p.UserGoogleTable.CreateUserInfo<IUserGoogleInfo>();
                     userInfo.GoogleAccountId = Guid.NewGuid().ToString();
                     await p.UserGoogleTable.CreateOrUpdateGoogleUserAsync( ctx, 1, id, userInfo, CreateOrUpdateMode.CreateOnly|CreateOrUpdateMode.UpdateOnly );
-                    userInfo = (await p.UserGoogleTable.FindUserInfoAsync( ctx, userInfo.GoogleAccountId )).Info;
+                    userInfo = (IUserGoogleInfo)(await p.UserGoogleTable.FindUserInfoAsync( ctx, userInfo.GoogleAccountId )).Info;
                     AuthScopeSet userSet = await p.ReadScopeSetAsync( ctx, id );
                     Assert.That( userSet.ToString(), Does.Contain( "[W]thing" ) );
                     Assert.That( userSet.ToString(), Does.Contain( "[W]other" ) );

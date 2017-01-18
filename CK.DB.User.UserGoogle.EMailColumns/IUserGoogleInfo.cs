@@ -2,9 +2,9 @@
 namespace CK.DB.User.UserGoogle.EMailColumns
 {
     /// <summary>
-    /// Extends <see cref="IUserGoogleInfo"/> with email related information.
+    /// Extends <see cref="UserGoogle.IUserGoogleInfo"/> with email related information.
     /// </summary>
-    public interface IUserGoogleInfoWithMail : IUserGoogleInfo
+    public interface IUserGoogleInfo : UserGoogle.IUserGoogleInfo
     {
         /// <summary>
         /// Gets or sets the email address.
