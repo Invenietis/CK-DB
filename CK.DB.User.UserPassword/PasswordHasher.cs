@@ -17,7 +17,7 @@ namespace CK.DB.User.UserPassword
     /// * (All UInt32s are stored big-endian.)
     /// More information about ASP.NET Identity's implementation: https://github.com/aspnet/Identity/blob/master/src/Microsoft.AspNetCore.Identity/PasswordHasher.cs
     /// </remarks>
-    public class PasswordHasher : IPasswordHasher
+    class PasswordHasher : IPasswordHasher
     {
 
         private readonly int _iterCount;
@@ -27,7 +27,7 @@ namespace CK.DB.User.UserPassword
         /// Creates a new instance of <see cref="PasswordHasher"/>.
         /// </summary>
         /// <param name="iterCount">Iteration count to use.</param>
-        internal PasswordHasher(int iterCount)
+        public PasswordHasher(int iterCount)
         {
             _iterCount = iterCount;
             _rng = RandomNumberGenerator.Create();
