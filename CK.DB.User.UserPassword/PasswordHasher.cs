@@ -15,8 +15,9 @@ namespace CK.DB.User.UserPassword
     /// * PBKDF2 with HMAC-SHA256, 128-bit salt, 256-bit subkey, 10000 iterations.
     /// * Format: { 0x01, prf( UInt32), iter count( UInt32), salt length( UInt32), salt, subkey }
     /// * (All UInt32s are stored big-endian.)
+    /// More information about ASP.NET Identity's implementation: https://github.com/aspnet/Identity/blob/master/src/Microsoft.AspNetCore.Identity/PasswordHasher.cs
     /// </remarks>
-    internal class PasswordHasher
+    class PasswordHasher : IPasswordHasher
     {
 
         private readonly int _iterCount;
