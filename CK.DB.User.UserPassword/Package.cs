@@ -26,5 +26,13 @@ namespace CK.DB.User.UserPassword
         /// implementations.
         /// </summary>
         public IUserPasswordMigrator PasswordMigrator { get; set; }
+
+        /// <summary>
+        /// Creates a new <see cref="IPasswordHasher"/> configured with the
+        /// current <see cref="UserPasswordTable.HashIterationCount"/>.
+        /// </summary>
+        /// <returns>A password hasher.</returns>
+        public IPasswordHasher CreatePasswordHasher() => new PasswordHasher(UserPasswordTable.HashIterationCount);
+
     }
 }
