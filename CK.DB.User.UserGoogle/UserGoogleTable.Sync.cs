@@ -35,7 +35,7 @@ namespace CK.DB.User.UserGoogle
         /// related to the user and this provider.
         /// </summary>
         /// <param name="ctx">The call context to use.</param>
-        /// <param name="payload">The payload to challenge.</param>
+        /// <param name="info">The payload to challenge.</param>
         /// <param name="actualLogin">Set it to false to avoid login side-effect (such as updating the LastLoginTime) on success.</param>
         /// <returns>The positive identifier of the user on success or 0 if the Google user does not exist.</returns>
         public int LoginUser( ISqlCallContext ctx, IUserGoogleInfo info, bool actualLogin = true )
@@ -81,11 +81,8 @@ namespace CK.DB.User.UserGoogle
         /// <param name="ctx">The call context to use.</param>
         /// <param name="actorId">The acting actor identifier.</param>
         /// <param name="userId">The user identifier for which a Google account must be created or updated.</param>
-        /// <param name="googleAccountId">The Google account identifier.</param>
-        /// <param name="accessToken">The access token. Can be null: an empty string is stored.</param>
-        /// <param name="accessTokenExpirationTime">Access token expiration time. Can be null (the largest datetime2(2) = '9999-12-31T23:59:59.99' is used).</param>
-        /// <param name="refreshToken">The obtained refresh token. Can be null: an empty string is stored on creation and current refresh token is not touched on update.</param>
-        /// <param name="mode">Configures Create, Update only and/or WithLogin behavior.</param>
+        /// <param name="info">User information to create or update.</param>
+        /// <param name="mode">Configures Create, Update only or WithLogin behavior.</param>
         /// <returns>The user identifier (when <paramref name="userId"/> is 0, this is a login) and the operation result.</returns>
         [SqlProcedure( "sUserGoogleCreateOrUpdate" )]
         protected abstract RawResult RawCreateOrUpdateGoogleUser( 

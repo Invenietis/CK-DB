@@ -115,7 +115,7 @@ namespace CK.DB.User.UserGoogle
         /// <param name="actorId">The acting actor identifier.</param>
         /// <param name="userId">The user identifier for which a Google account must be created or updated.</param>
         /// <param name="info">User information to create or update.</param>
-        /// <param name="mode">Configures Create, Update only or WithLogin behavior</param>
+        /// <param name="mode">Configures Create, Update only or WithLogin behavior.</param>
         /// <param name="cancellationToken">Optional cancellation token.</param>
         /// <returns>The user identifier (when <paramref name="userId"/> is 0, this is a login) and the operation result.</returns>
         [SqlProcedure( "sUserGoogleCreateOrUpdate" )]

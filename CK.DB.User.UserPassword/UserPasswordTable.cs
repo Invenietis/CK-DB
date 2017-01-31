@@ -265,7 +265,6 @@ namespace CK.DB.User.UserPassword
         [SqlProcedure( "sUserPasswordOnLogin" )]
         protected abstract Task OnLoginAsync( ISqlCallContext ctx, int userId, CancellationToken cancellationToken = default( CancellationToken ) );
 
-        public IPasswordHasher CreatePasswordHasher() => new PasswordHasher( HashIterationCount );
 
         #region IGenericAuthenticationProvider explicit implementation.
 
