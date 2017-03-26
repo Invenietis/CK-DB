@@ -1,8 +1,0 @@
--- SetupConfig: {}
-create transformer on CK.sGroupDestroy
-as 
-begin
-	inject "
-	delete from CK.tAclConfig where ActorId = @GroupId;
-	delete from CK.tAclConfigMemory where ActorId = @GroupId;" into "PreDestroy";
-end
