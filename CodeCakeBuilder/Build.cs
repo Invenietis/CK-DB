@@ -125,7 +125,8 @@ namespace CodeCake
                     Cake.DotNetCoreRestore(coreBuildFile, 
                         new DotNetCoreRestoreSettings().AddVersionArguments(gitInfo, c =>
                         {
-                            c.Verbosity = DotNetCoreRestoreVerbosity.Minimal;
+                            // No impact see: https://github.com/NuGet/Home/issues/3772
+                            // c.Verbosity = DotNetCoreRestoreVerbosity.Minimal;
                         }));
                 });
 
@@ -145,7 +146,6 @@ namespace CodeCake
 
             Task( "Unit-Testing" )
                .IsDependentOn( "Build" )
-              .WithCriteria( () => gitInfo.IsValid )
               .WithCriteria( () => !Cake.IsInteractiveMode()
                                       || Cake.ReadInteractiveOption( "Run unit tests?", 'Y', 'N' ) == 'Y' )
                .Does( () =>

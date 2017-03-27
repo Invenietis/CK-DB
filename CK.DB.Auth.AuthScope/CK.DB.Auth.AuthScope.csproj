@@ -3,7 +3,7 @@
   <Import Project="..\Common\Shared.props" />
   <PropertyGroup>
     <TargetFrameworks>netstandard1.6;net451</TargetFrameworks>
-    <Description>This package defines tAuthScopeSet, tAuthScope and tAuthScopeSetContent tables ({{CSemVer}}).</Description>
+    <Description>This package defines tAuthScopeSet, tAuthScope and tAuthScopeSetContent tables.</Description>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="CK.SqlServer.Setup.Model" Version="5.0.0-a43-00-develop-0029" />
