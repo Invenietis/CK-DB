@@ -312,62 +312,20 @@ namespace CodeCake
                     .Does(() =>
                     {
                         XNamespace ns = "http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd";
-                        var sourceSolutionFileName = Cake.File("../CK-DB-Old/CK-DB.sln");
-                        var docProj = XDocument.Load(Cake.File("CK.DB.Actor/CK.DB.Actor.csproj"));
-                        var docTestProj = XDocument.Load(Cake.File("Tests/CK.DB.Actor.Tests/CK.DB.Actor.Tests.csproj"));
-                        var sourceProjects = Cake.ParseSolution(sourceSolutionFileName)
+                        var launchFileName = Cake.File("Tests/CK.DB.Actor.Tests/Properties/launchSettings.json");
+                        var launchText = System.IO.File.ReadAllText( launchFileName );
+                        var sourceProjects = Cake.ParseSolution(solutionFileName)
                                                   .Projects
                                                   .Where(p => !(p is SolutionFolder)
+                                                               && p.Name.EndsWith(".Tests")
                                                                && !p.Path.Segments.Contains("IntegrationTests")
                                                                && p.Name != "CodeCakeBuilder");
                         foreach ( var p in sourceProjects)
                         {
-                            if (p.Name == "CK.DB.Actor" || p.Name == "CK.DB.Actor.Tests") continue;
-                            bool isTest = p.Name.EndsWith(".Tests");
-                            var sourceDir = p.Path.GetDirectory().FullPath;
-                            var targetDir = sourceDir.Replace("CK-DB-Old", "CK-DB");
-                            Cake.CleanDirectories(System.IO.Path.Combine(sourceDir, "bin"));
-                            Cake.CleanDirectories(System.IO.Path.Combine(sourceDir, "obj"));
-                            Cake.CopyDirectory(sourceDir, targetDir);
-                            if (!isTest) Cake.DeleteFile(System.IO.Path.Combine(targetDir, "app.config"));
-                            Cake.DeleteFile(System.IO.Path.Combine(targetDir, "packages.config"));
-                            Cake.DeleteFile(System.IO.Path.Combine(targetDir, "Properties", "AssemblyInfo.cs"));
-                            var nuSpec = XDocument.Load(Cake.File("CodeCakeBuilder/NuSpec/"+p.Name+".nuspec"));
-                            var desc = nuSpec.Root.Elements(ns+"metadata").Elements(ns+"description").FirstOrDefault()?.Value?.Trim();
-                            var projectDependencies = nuSpec.Root.Descendants(ns+"dependency")
-                                                        .Where(e => (string)e.Attribute("version") == "$version$")
-                                                        .Select(e => (string)e.Attribute("id"));
-                            if ( !isTest )
-                            {
-                                var csproj = new XDocument(docProj);
-                                csproj.Root.Descendants("Description").Single().Value = desc;
-                                if( p.Name != "CK.DB.Auth.AuthScope" 
-                                    && p.Name != "CK.DB.Culture"
-                                    && p.Name != "CK.DB.Res")
-                                {
-                                    var refs = csproj.Root.Elements("ItemGroup").Elements("PackageReference").First().Parent;
-                                    refs.Elements().Remove();
-                                    refs.Add(projectDependencies.Select(name => new XElement("ProjectReference", new XAttribute("Include", "..\\"+name+"\\"+name+".csproj"))));
-                                }
-                                csproj.Save(System.IO.Path.Combine(targetDir, p.Name + ".csproj"));
-                            }
-                            else
-                            {
-                                var csproj = new XDocument(docTestProj);
-                                csproj.Root.Descendants("Description").Single().Value = desc;
-                                if (p.Name != "CK.DB.Auth.AuthScope.Tests"
-                                    && p.Name != "CK.DB.Culture.Tests"
-                                    && p.Name != "CK.DB.Res.Tests")
-                                {
-                                    var refs = csproj.Root.Elements("ItemGroup").Elements("PackageReference").First().Parent;
-                                    refs.Elements().Remove();
-                                    refs.Add(projectDependencies.Select(name => new XElement("ProjectReference", new XAttribute("Include", 
-                                        name.EndsWith(".Tests") 
-                                            ? "..\\" + name + "\\" + name + ".csproj"
-                                            : "..\\..\\" + name + "\\" + name + ".csproj" ))));
-                                }
-                                csproj.Save(System.IO.Path.Combine(targetDir, p.Name + ".csproj"));
-                            }
+                            if (p.Name == "CK.DB.Actor.Tests" ) continue;
+                            var text = launchText.Replace("CK.DB.Actor.Tests", p.Name);
+                            var fName = Cake.File("Tests/"+p.Name+"/Properties/launchSettings.json");
+                            System.IO.File.WriteAllText(fName, text );
                         }
 
                     });
