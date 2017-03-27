@@ -2,6 +2,6 @@
 <RepositoryInfo xmlns="http://csemver.org/schemas/2015">
 	<!--<StartingVersionForCSemVer>v3.0.21-alpha</StartingVersionForCSemVer>-->
   <Branches>
-    <Branch Name="vs-2017" CIVersionMode="LastReleaseBased" />
+    <Branch Name="develop" CIVersionMode="LastReleaseBased" />
   </Branches>
 </RepositoryInfo>
