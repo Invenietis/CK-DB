@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CK.DB.Tests.NUnit" Version="5.0.0-a43-00-develop-0029" />
+    <PackageReference Include="CK.DB.Tests.NUnit" Version="5.0.0-a44" />
   </ItemGroup>
 
   <ItemGroup>
