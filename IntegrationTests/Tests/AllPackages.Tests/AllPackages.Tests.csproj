@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net451</TargetFramework>
+    <CKDBVersion Condition=" '$(CKDBVersion)' == '' ">1.0.0-d14</CKDBVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CK.DB.Acl.AclType.Tests" Version="$(CKDBVersion)" />
+    <PackageReference Include="CK.DB.HZone.Tests" Version="$(CKDBVersion)" />
+    <PackageReference Include="CK.DB.Zone.SimpleNaming.Tests" Version="$(CKDBVersion)" />
+    <PackageReference Include="CK.DB.User.UserGoogle.Tests" Version="$(CKDBVersion)" />
+    <PackageReference Include="CK.DB.User.UserGoogle.EMailColumns.Tests" Version="$(CKDBVersion)" />
+    <PackageReference Include="CK.DB.User.UserGoogle.AuthScope.Tests" Version="$(CKDBVersion)" />
+    <PackageReference Include="CK.DB.User.UserPassword.Tests" Version="$(CKDBVersion)" />
+    <PackageReference Include="CK.DB.Actor.ActorEMail.Tests" Version="$(CKDBVersion)" />
+    <PackageReference Include="CK.DB.Actor.ActorEMail.Tests" Version="$(CKDBVersion)" />
+    <PackageReference Include="CK.DB.Res.Tests" Version="$(CKDBVersion)" />
+    <PackageReference Include="CK.DB.Res.ResName.Tests" Version="$(CKDBVersion)" />
+    <PackageReference Include="CK.DB.Res.ResText.Tests" Version="$(CKDBVersion)" />
+    <PackageReference Include="CK.DB.Res.ResString.Tests" Version="$(CKDBVersion)" />
+    <PackageReference Include="CK.DB.Res.ResHtml.Tests" Version="$(CKDBVersion)" />
+    <PackageReference Include="CK.DB.Culture.Tests" Version="$(CKDBVersion)" />
+    <PackageReference Include="CK.DB.Res.MCResText.Tests" Version="$(CKDBVersion)" />
+    <PackageReference Include="CK.DB.Res.MCResString.Tests" Version="$(CKDBVersion)" />
+    <PackageReference Include="CK.DB.Res.MCResHtml.Tests" Version="$(CKDBVersion)" />
+  </ItemGroup>
+</Project>

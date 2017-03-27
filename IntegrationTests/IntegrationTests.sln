@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26228.9
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{77261C09-FB79-4FA2-A393-D938450AA840}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AllPackages.Tests", "Tests\AllPackages.Tests\AllPackages.Tests.csproj", "{6300FABF-1307-4D0B-940D-CEB5CBD9216B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CE857439-1CC5-481F-A38C-0D2969585AB7}"
+	ProjectSection(SolutionItems) = preProject
+		nuget.config = nuget.config
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6300FABF-1307-4D0B-940D-CEB5CBD9216B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6300FABF-1307-4D0B-940D-CEB5CBD9216B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6300FABF-1307-4D0B-940D-CEB5CBD9216B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6300FABF-1307-4D0B-940D-CEB5CBD9216B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{6300FABF-1307-4D0B-940D-CEB5CBD9216B} = {77261C09-FB79-4FA2-A393-D938450AA840}
+	EndGlobalSection
+EndGlobal

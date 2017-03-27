@@ -178,103 +178,31 @@ namespace CodeCake
                                       || Cake.ReadInteractiveOption( "Run integration tests?", 'Y', 'N' ) == 'Y' )
               .Does( () =>
               {
-                //  var integrationSolution = "IntegrationTests/IntegrationTests.sln";
-                //  var integration = Cake.ParseSolution( integrationSolution );
-                //  var projects = integration.Projects
-                //                              .Where( p => p.Name != "CodeCakeBuilder" )
-                //                              .Select( p => new
-                //                              {
-                //                                  CSProj = p.Path.FullPath,
-                //                                  ConfigFile = p.Path.GetDirectory().CombineWithFilePath( "packages.config" ).FullPath
-                //                              } )
-                //                              .Where( p => System.IO.File.Exists( p.ConfigFile ) );
-                //// Cleans all the existing IntegrationTests/packages.
-                //// The CodeCakeBuilder restore will get them (from Release for CK-DB packages).
-                //Cake.CleanDirectory( "IntegrationTests/packages" );
+                  var integrationSolution = "IntegrationTests/IntegrationTests.sln";
+                  var integrationProjects = Cake.ParseSolution(solutionFileName)
+                                               .Projects
+                                               .Where(p => !(p is SolutionFolder));
+                  var integrationTests = integrationProjects.Where(p => p.Name.EndsWith(".Tests"));
 
-                //  foreach( var config in projects.Select( p => p.ConfigFile ) )
-                //  {
-                //      XDocument doc = XDocument.Load( config );
-                //      int countRef = 0;
-                //      foreach( var p in doc.Root.Elements( "package" ) )
-                //      {
-                //          string packageName = p.Attribute( "id" ).Value;
-                //          if( IntegrationDependentPackages.ContainsKey( packageName ) )
-                //          {
-                //              string depVersion = IntegrationDependentPackages[packageName];
-                //              string curVersion = p.Attribute( "version" ).Value;
-                //              if( curVersion != depVersion )
-                //              {
-                //                  p.SetAttributeValue( "version", depVersion );
-                //                  Cake.Information( $"=> package.config: {packageName}: {curVersion} -> {depVersion}." );
-                //                  ++countRef;
-                //              }
-                //          }
-                //      }
-                //      if( countRef > 0 )
-                //      {
-                //          Cake.Information( $"Updated {countRef} in file {config}." );
-                //          doc.Save( config );
-                //      }
-                //  }
-                //  foreach( var csproj in projects.Select( p => p.CSProj ) )
-                //  {
-                //      XDocument doc = XDocument.Load( csproj );
-                //      int countRef = 0;
-                //      var projection = doc.Root.Descendants( msBuild + "Reference" )
-                //                              .Select( e => new
-                //                              {
-                //                                  Reference = e,
-                //                                  IncludeAttr = e.Attribute( "Include" ),
-                //                                  HintPathElement = e.Element( msBuild + "HintPath" ),
-                //                              } );
-                //      var filtered = projection.Where( e => e.HintPathElement != null
-                //                                              && e.IncludeAttr != null
-                //                                              && e.HintPathElement.Value.StartsWith( @"..\..\packages\" ) );
-                //      var final = filtered.Select( e => new
-                //      {
-                //          E = e,
-                //          ProjectName = new AssemblyName( e.IncludeAttr.Value ).Name
-                //      } )
-                //                      .Where( e => IntegrationDependentPackages.ContainsKey( e.ProjectName ) );
+                  Cake.DotNetCoreRestore(integrationSolution, new DotNetCoreRestoreSettings()
+                  {
+                      ArgumentCustomization = c => c.Append($@"/p:CKDBVersion=""{gitInfo.NuGetVersion}""")
+                  });
 
-                //      foreach( var p in final )
-                //      {
-                //          var version = IntegrationDependentPackages[p.ProjectName];
-                //          var path = p.E.HintPathElement.Value.Split( '\\' );
-                //          var newFolder = p.ProjectName + '.' + version;
-                //          var curFolder = path[3];
-                //          if( curFolder != newFolder )
-                //          {
-                //              path[3] = newFolder;
-                //              p.E.HintPathElement.Value = string.Join( "\\", path );
-                //              Cake.Information( $"=> cproj: {p.ProjectName}: {curFolder} -> {newFolder}." );
-                //              ++countRef;
-                //          }
-                //      }
-                //      if( countRef > 0 )
-                //      {
-                //          Cake.Information( $"Updated {countRef} references in file {csproj}." );
-                //          doc.Save( csproj );
-                //      }
-                //  }
+                  Cake.DotNetCoreBuild(integrationSolution, new DotNetCoreBuildSettings()
+                  {
+                      ArgumentCustomization = c => c.Append($@"/p:CKDBVersion=""{gitInfo.NuGetVersion}""")
+                  });
 
-                //  Cake.NuGetRestore( integrationSolution );
-                //  Cake.MSBuild( "IntegrationTests/CodeCakeBuilder/CodeCakeBuilder.csproj", settings =>
-                //  {
-                //      settings.Configuration = configuration;
-                //      settings.Verbosity = Verbosity.Minimal;
-                //  } );
-                //  if( Cake.StartProcess( $"IntegrationTests/CodeCakeBuilder/bin/{configuration}/CodeCakeBuilder.exe", "-" + InteractiveAliases.NoInteractionArgument ) != 0 )
-                //  {
-                //      Cake.TerminateWithError( "Error in IntegrationTests." );
-                //  }
-              } );
-
+                  var testDlls = integrationTests
+                                    .Select(p => p.Path.GetDirectory().CombineWithFilePath("bin/" + configuration + "/net451/" + p.Name + ".dll"));
+                  Cake.Information("Testing: {0}", string.Join(", ", testDlls.Select(p => p.GetFilename().ToString())));
+                  Cake.NUnit(testDlls, new NUnitSettings() { Framework = "v4.5" });
+              });
 
             Task( "Push-NuGet-Packages" )
                     .IsDependentOn( "Create-NuGet-Packages" )
-                    //.IsDependentOn( "Run-IntegrationTests" )
+                    .IsDependentOn( "Run-IntegrationTests" )
                     .WithCriteria( () => gitInfo.IsValid )
                     .Does( () =>
                     {
