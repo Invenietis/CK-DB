@@ -20,9 +20,37 @@ using Cake.Core.IO;
 using System.Diagnostics;
 using System.Xml.Linq;
 using System.Reflection;
+using Cake.Common.Tools.DotNetCore;
+using Cake.Common.Tools.DotNetCore.Restore;
+using Cake.Common.Tools.DotNetCore.Build;
+using Cake.Common.Tools.DotNetCore.Pack;
+using Cake.Common.Build;
 
 namespace CodeCake
 {
+
+    public static class DotNetCoreRestoreSettingsExtension
+    {
+        public static T AddVersionArguments<T>(this T @this, SimpleRepositoryInfo info, Action<T> conf = null) where T : DotNetCoreSettings
+        {
+            var prev = @this.ArgumentCustomization;
+            @this.ArgumentCustomization = args => (prev?.Invoke(args) ?? args)
+                    .Append($@"/p:CakeBuild=""true""");
+
+            if (info.IsValid)
+            {
+                var prev2 = @this.ArgumentCustomization;
+                @this.ArgumentCustomization = args => (prev2?.Invoke(args) ?? args)
+                        .Append($@"/p:Version=""{info.NuGetVersion}""")
+                        .Append($@"/p:AssemblyVersion=""{info.MajorMinor}.0""")
+                        .Append($@"/p:FileVersion=""{info.FileVersion}""")
+                        .Append($@"/p:InformationalVersion=""{info.SemVer} ({info.NuGetVersion}) - SHA1: {info.CommitSha} - CommitDate: {info.CommitDateUtc.ToString("u")}""");
+            }
+            conf?.Invoke(@this);
+            return @this;
+        }
+    }
+
     /// <summary>
     /// Sample build "script".
     /// Build scripts can be decorated with AddPath attributes that inject existing paths into the PATH environment variable. 
@@ -35,93 +63,73 @@ namespace CodeCake
 
         public Build()
         {
-            var releasesDir = Cake.Directory( "CodeCakeBuilder/Releases" );
+            Cake.Log.Verbosity = Verbosity.Diagnostic;
 
+            const string solutionName = "CK-DB";
+            const string solutionFileName = solutionName + ".sln";
+
+            var releasesDir = Cake.Directory("CodeCakeBuilder/Releases");
+            var coreBuildFile = Cake.File("CodeCakeBuilder/CoreBuild.proj");
+
+            var projects = Cake.ParseSolution(solutionFileName)
+                                       .Projects
+                                       .Where(p => !(p is SolutionFolder)
+                                                    && !p.Path.Segments.Contains( "IntegrationTests" )
+                                                    && p.Name != "CodeCakeBuilder");
+
+            // We publish .Tests projects for this solution.
+            var projectsToPublish = projects;
+
+            SimpleRepositoryInfo gitInfo = Cake.GetSimpleRepositoryInfo();
+
+            // Configuration is either "Debug" or "Release".
             string configuration = null;
-            SimpleRepositoryInfo gitInfo = null;
-            var solution = Cake.ParseSolution( "CK-DB.sln" );
-            var CKDBProjectNames = new HashSet<string>( solution.Projects.Where( p => p.Name.StartsWith( "CK." ) ).Select( pub => pub.Name ) );
-            string VersionCKDatabase = null;
-            string VersionMicrosoftAspNetCoreCryptographyKeyDerivation = null;
-            Dictionary<string, string> DependentPackages = null;
-            Dictionary<string, string> IntegrationDependentPackages = null;
 
-            Task( "Check-Dependencies" )
-            .Does( () =>
-            {
-                var allPackages = solution.Projects
-                                    .Where( p => p.Name.StartsWith( "CK." ) )
-                                    .Select( p => new
-                                    {
-                                        Project = p,
-                                        PackageConfig = p.Path.GetDirectory().CombineWithFilePath( "packages.config" ).FullPath
-                                    } )
-                                    .Where( p => System.IO.File.Exists( p.PackageConfig ) )
-                                    .SelectMany( p => XDocument.Load( p.PackageConfig )
-                                                    .Root
-                                                    .Elements( "package" )
-                                                    .Select( e => { e.AddAnnotation( p.Project ); return e; } ) )
-                                    .ToList();
-                var byPackage = allPackages
-                                    .GroupBy( e => e.Attribute( "id" ).Value,
-                                              e => new
-                                              {
-                                                  ProjectName = e.Annotation<SolutionProject>().Name,
-                                                  Version = e.Attribute( "version" ).Value
-                                              } );
-                var multiVersions = byPackage.Where( g => g.GroupBy( x => x.Version ).Count() > 1 );
-                if( multiVersions.Any() )
+            Task("Check-Repository")
+                .Does(() =>
                 {
-                    var conflicts = multiVersions.Select( e => Environment.NewLine + " - " + e.Key + ":" + Environment.NewLine + "    - " + string.Join( Environment.NewLine + "    - ", e.GroupBy( x => x.Version ).Select( x => x.Key + " in " + string.Join( ", ", x.Select( xN => xN.ProjectName ) ) ) ) );
-                    Cake.TerminateWithError( $"Dependency versions differ for:{Environment.NewLine}{string.Join( Environment.NewLine, conflicts )}" );
-                }
-                // This is ugly... But it works.
-                VersionCKDatabase = byPackage.Single( e => e.Key == "CK.StObj.Model" ).First().Version;
-                VersionMicrosoftAspNetCoreCryptographyKeyDerivation = byPackage.Single( e => e.Key == "Microsoft.AspNetCore.Cryptography.KeyDerivation" ).First().Version;
-
-                // Use Tests/CK.DB.Actor.Tests/packages.config for packages' versions that are not the CK-DB ones.
-                XDocument aclPackagesConfig = XDocument.Load( "Tests/CK.DB.Actor.Tests/packages.config" );
-                var pp = aclPackagesConfig.Root.Descendants( "package" ).Where( e => !CKDBProjectNames.Contains( (string)e.Attribute( "id" ) ) );
-                DependentPackages = pp.ToDictionary( e => (string)e.Attribute( "id" ), e => (string)e.Attribute( "version" ) );
-            } );
-
-            Task( "Check-Repository" )
-                .IsDependentOn( "Check-Dependencies" )
-                .Does( () =>
-                {
-                    gitInfo = Cake.GetSimpleRepositoryInfo();
-                    if( !gitInfo.IsValid )
+                    if (!gitInfo.IsValid)
                     {
-                        if( Cake.IsInteractiveMode()
-                            && Cake.ReadInteractiveOption( "Repository is not ready to be published. Proceed anyway?", 'Y', 'N' ) == 'Y' )
+                        if (Cake.IsInteractiveMode()
+                            && Cake.ReadInteractiveOption("Repository is not ready to be published. Proceed anyway?", 'Y', 'N') == 'Y')
                         {
-                            Cake.Warning( "GitInfo is not valid, but you choose to continue..." );
+                            Cake.Warning("GitInfo is not valid, but you choose to continue...");
                         }
-                        else throw new Exception( "Repository is not ready to be published." );
+                        else throw new Exception("Repository is not ready to be published.");
                     }
-                    IntegrationDependentPackages = new Dictionary<string, string>( DependentPackages );
-                    foreach( var n in CKDBProjectNames )
-                    {
-                        IntegrationDependentPackages.Add( n, gitInfo.NuGetVersion );
-                    }
-                    configuration = gitInfo.IsValidRelease && gitInfo.PreReleaseName.Length == 0 ? "Release" : "Debug";
-                    Cake.Information( "Publishing {0} in {1}.", gitInfo.SemVer, configuration );
-                } );
 
-            Task( "Clean" )
-                .IsDependentOn( "Check-Repository" )
-                .Does( () =>
+                    configuration = gitInfo.IsValidRelease
+                                    && (gitInfo.PreReleaseName.Length == 0 || gitInfo.PreReleaseName == "rc")
+                                    ? "Release"
+                                    : "Debug";
+
+                    Cake.Information("Publishing {0} projects with version={1} and configuration={2}: {3}",
+                        projectsToPublish.Count(),
+                        gitInfo.SemVer,
+                        configuration,
+                        string.Join(", ", projectsToPublish.Select(p => p.Name)));
+                });
+
+            Task("Clean")
+                .IsDependentOn("Check-Repository")
+                .Does(() =>
                 {
-                    Cake.CleanDirectories( "**/bin/" + configuration, d => !d.Path.Segments.Contains( "CodeCakeBuilder" ) );
-                    Cake.CleanDirectories( "**/obj/" + configuration, d => !d.Path.Segments.Contains( "CodeCakeBuilder" ) );
-                    Cake.CleanDirectories( releasesDir );
-                } );
+                    Cake.CleanDirectories(projects.Select(p => p.Path.GetDirectory().Combine("bin")));
+                    Cake.CleanDirectories(releasesDir);
+                    Cake.DeleteFiles("Tests/**/TestResult*.xml");
+                });
 
             Task( "Restore-NuGet-Packages" )
+                .IsDependentOn("Check-Repository")
                 .Does( () =>
                 {
-                    Cake.NuGetRestore( "CK-DB.sln" );
-                } );
+                    Cake.DotNetCoreRestore(coreBuildFile, 
+                        new DotNetCoreRestoreSettings().AddVersionArguments(gitInfo, c =>
+                        {
+                            // No impact see: https://github.com/NuGet/Home/issues/3772
+                            // c.Verbosity = DotNetCoreRestoreVerbosity.Minimal;
+                        }));
+                });
 
 
             Task( "Build" )
@@ -130,34 +138,22 @@ namespace CodeCake
                 .IsDependentOn( "Check-Repository" )
                 .Does( () =>
                 {
-                    using( var tempSln = Cake.CreateTemporarySolutionFile( "CK-DB.sln" ) )
-                    {
-                        tempSln.ExcludeProjectsFromBuild( "CodeCakeBuilder" );
-                        Cake.MSBuild( tempSln.FullPath, settings =>
+                    Cake.DotNetCoreBuild(coreBuildFile,
+                        new DotNetCoreBuildSettings().AddVersionArguments(gitInfo, s =>
                         {
-                            settings.Configuration = configuration;
-                            settings.Verbosity = Verbosity.Minimal;
-                            // Always generates Xml documentation. Relies on this definition in the csproj files:
-                            //
-                            // <PropertyGroup Condition=" $(GenerateDocumentation) != '' ">
-                            //   <DocumentationFile>bin\$(Configuration)\$(AssemblyName).xml</DocumentationFile>
-                            // </PropertyGroup>
-                            //
-                            settings.Properties.Add( "GenerateDocumentation", new[] { "true" } );
-                        } );
-                    }
+                            s.Configuration = configuration;
+                        }));
                 } );
 
             Task( "Unit-Testing" )
                .IsDependentOn( "Build" )
-              .WithCriteria( () => gitInfo.IsValid )
               .WithCriteria( () => !Cake.IsInteractiveMode()
                                       || Cake.ReadInteractiveOption( "Run unit tests?", 'Y', 'N' ) == 'Y' )
                .Does( () =>
                {
-                   var testDlls = solution.Projects
-                                            .Where( p => p.Name.EndsWith( ".Tests" ) )
-                                            .Select( p => p.Path.GetDirectory().CombineWithFilePath( "bin/" + configuration + "/" + p.Name + ".dll" ) );
+                   var testDlls = projects
+                                    .Where( p => p.Name.EndsWith( ".Tests" ) )
+                                    .Select( p => p.Path.GetDirectory().CombineWithFilePath( "bin/" + configuration + "/net451/" + p.Name + ".dll" ) );
                    Cake.Information( "Testing: {0}", string.Join( ", ", testDlls.Select( p => p.GetFilename().ToString() ) ) );
                    Cake.NUnit( testDlls, new NUnitSettings() { Framework = "v4.5" } );
                } );
@@ -166,21 +162,15 @@ namespace CodeCake
                 .IsDependentOn( "Unit-Testing" )
                 .Does( () =>
                 {
-                    Cake.CreateDirectory( releasesDir );
-                    var settings = new NuGetPackSettings()
-                    {
-                        Version = gitInfo.NuGetVersion,
-                        BasePath = Cake.Environment.WorkingDirectory,
-                        OutputDirectory = releasesDir
-                    };
-                    Cake.CopyFiles( "CodeCakeBuilder/NuSpec/*.nuspec", releasesDir );
-                    foreach( var nuspec in Cake.GetFiles( releasesDir.Path + "/*.nuspec" ) )
-                    {
-                        TransformText( nuspec, configuration, gitInfo, VersionCKDatabase, VersionMicrosoftAspNetCoreCryptographyKeyDerivation );
-                        Cake.NuGetPack( nuspec, settings );
-                    }
-                    Cake.DeleteFiles( releasesDir.Path + "/*.nuspec" );
-                } );
+                    Cake.CreateDirectory(releasesDir);
+                    var settings = new DotNetCorePackSettings();
+                    settings.ArgumentCustomization = args => args.Append("--include-symbols");
+                    settings.NoBuild = true;
+                    settings.Configuration = configuration;
+                    settings.OutputDirectory = releasesDir;
+                    settings.AddVersionArguments(gitInfo);
+                    Cake.DotNetCorePack(coreBuildFile, settings);
+                });
 
             Task( "Run-IntegrationTests" )
               .IsDependentOn( "Create-NuGet-Packages" )
@@ -190,98 +180,26 @@ namespace CodeCake
               .Does( () =>
               {
                   var integrationSolution = "IntegrationTests/IntegrationTests.sln";
-                  var integration = Cake.ParseSolution( integrationSolution );
-                  var projects = integration.Projects
-                                              .Where( p => p.Name != "CodeCakeBuilder" )
-                                              .Select( p => new
-                                              {
-                                                  CSProj = p.Path.FullPath,
-                                                  ConfigFile = p.Path.GetDirectory().CombineWithFilePath( "packages.config" ).FullPath
-                                              } )
-                                              .Where( p => System.IO.File.Exists( p.ConfigFile ) );
-            // Cleans all the existing IntegrationTests/packages.
-            // The CodeCakeBuilder restore will get them (from Release for CK-DB packages).
-            Cake.CleanDirectory( "IntegrationTests/packages" );
+                  var integrationProjects = Cake.ParseSolution(solutionFileName)
+                                               .Projects
+                                               .Where(p => !(p is SolutionFolder));
+                  var integrationTests = integrationProjects.Where(p => p.Name.EndsWith(".Tests"));
 
-                  foreach( var config in projects.Select( p => p.ConfigFile ) )
+                  Cake.DotNetCoreRestore(integrationSolution, new DotNetCoreRestoreSettings()
                   {
-                      XDocument doc = XDocument.Load( config );
-                      int countRef = 0;
-                      foreach( var p in doc.Root.Elements( "package" ) )
-                      {
-                          string packageName = p.Attribute( "id" ).Value;
-                          if( IntegrationDependentPackages.ContainsKey( packageName ) )
-                          {
-                              string depVersion = IntegrationDependentPackages[packageName];
-                              string curVersion = p.Attribute( "version" ).Value;
-                              if( curVersion != depVersion )
-                              {
-                                  p.SetAttributeValue( "version", depVersion );
-                                  Cake.Information( $"=> package.config: {packageName}: {curVersion} -> {depVersion}." );
-                                  ++countRef;
-                              }
-                          }
-                      }
-                      if( countRef > 0 )
-                      {
-                          Cake.Information( $"Updated {countRef} in file {config}." );
-                          doc.Save( config );
-                      }
-                  }
-                  foreach( var csproj in projects.Select( p => p.CSProj ) )
-                  {
-                      XDocument doc = XDocument.Load( csproj );
-                      int countRef = 0;
-                      var projection = doc.Root.Descendants( msBuild + "Reference" )
-                                              .Select( e => new
-                                              {
-                                                  Reference = e,
-                                                  IncludeAttr = e.Attribute( "Include" ),
-                                                  HintPathElement = e.Element( msBuild + "HintPath" ),
-                                              } );
-                      var filtered = projection.Where( e => e.HintPathElement != null
-                                                              && e.IncludeAttr != null
-                                                              && e.HintPathElement.Value.StartsWith( @"..\..\packages\" ) );
-                      var final = filtered.Select( e => new
-                      {
-                          E = e,
-                          ProjectName = new AssemblyName( e.IncludeAttr.Value ).Name
-                      } )
-                                      .Where( e => IntegrationDependentPackages.ContainsKey( e.ProjectName ) );
+                      ArgumentCustomization = c => c.Append($@"/p:CKDBVersion=""{gitInfo.NuGetVersion}""")
+                  });
 
-                      foreach( var p in final )
-                      {
-                          var version = IntegrationDependentPackages[p.ProjectName];
-                          var path = p.E.HintPathElement.Value.Split( '\\' );
-                          var newFolder = p.ProjectName + '.' + version;
-                          var curFolder = path[3];
-                          if( curFolder != newFolder )
-                          {
-                              path[3] = newFolder;
-                              p.E.HintPathElement.Value = string.Join( "\\", path );
-                              Cake.Information( $"=> cproj: {p.ProjectName}: {curFolder} -> {newFolder}." );
-                              ++countRef;
-                          }
-                      }
-                      if( countRef > 0 )
-                      {
-                          Cake.Information( $"Updated {countRef} references in file {csproj}." );
-                          doc.Save( csproj );
-                      }
-                  }
-
-                  Cake.NuGetRestore( integrationSolution );
-                  Cake.MSBuild( "IntegrationTests/CodeCakeBuilder/CodeCakeBuilder.csproj", settings =>
+                  Cake.DotNetCoreBuild(integrationSolution, new DotNetCoreBuildSettings()
                   {
-                      settings.Configuration = configuration;
-                      settings.Verbosity = Verbosity.Minimal;
-                  } );
-                  if( Cake.StartProcess( $"IntegrationTests/CodeCakeBuilder/bin/{configuration}/CodeCakeBuilder.exe", "-" + InteractiveAliases.NoInteractionArgument ) != 0 )
-                  {
-                      Cake.TerminateWithError( "Error in IntegrationTests." );
-                  }
-              } );
+                      ArgumentCustomization = c => c.Append($@"/p:CKDBVersion=""{gitInfo.NuGetVersion}""")
+                  });
 
+                  var testDlls = integrationTests
+                                    .Select(p => p.Path.GetDirectory().CombineWithFilePath("bin/" + configuration + "/net451/" + p.Name + ".dll"));
+                  Cake.Information("Testing: {0}", string.Join(", ", testDlls.Select(p => p.GetFilename().ToString())));
+                  Cake.NUnit(testDlls, new NUnitSettings() { Framework = "v4.5" });
+              });
 
             Task( "Push-NuGet-Packages" )
                     .IsDependentOn( "Create-NuGet-Packages" )
@@ -321,25 +239,13 @@ namespace CodeCake
                             Debug.Assert( gitInfo.IsValidCIBuild );
                             PushNuGetPackages( "MYGET_CI_API_KEY", "https://www.myget.org/F/invenietis-ci/api/v2/package", nugetPackages );
                         }
-                    } );
+                        if (Cake.AppVeyor().IsRunningOnAppVeyor)
+                        {
+                            Cake.AppVeyor().UpdateBuildVersion(gitInfo.SemVer);
+                        }
+                    });
 
-            Task( "Default" ).IsDependentOn( "Push-NuGet-Packages" );
-        }
-
-        private void TransformText(
-            FilePath textFilePath,
-            string configuration,
-            SimpleRepositoryInfo gitInfo,
-            string vCKDatabase,
-            string vMicrosoftAspNetCoreCryptographyKeyDerivation )
-        {
-            Cake.TransformTextFile( textFilePath, "{{", "}}" )
-                    .WithToken( "configuration", configuration )
-                    .WithToken( "NuGetVersion", gitInfo.NuGetVersion )
-                    .WithToken( "CSemVer", gitInfo.SemVer )
-                    .WithToken( "VersionCKDatabase", vCKDatabase )
-                    .WithToken( "VersionMicrosoftAspNetCoreCryptographyKeyDerivation", vMicrosoftAspNetCoreCryptographyKeyDerivation )
-                    .Save( textFilePath );
+            Task("Default").IsDependentOn("Push-NuGet-Packages" );
         }
 
         private void PushNuGetPackages( string apiKeyName, string pushUrl, IEnumerable<FilePath> nugetPackages )

@@ -1,6 +1,6 @@
 # Basic appveyor configuration : CodeCakeBuilder does the job.
 version: build{build}
-services: mssql2012sp1
+services: mssql2016
 branches:
   only:
   - master
@@ -13,11 +13,11 @@ environment:
   MYGET_CI_API_KEY:
     secure: jhHWme6+MulQTwEN1kkwygP2kEf47L8SyndWGQWEvPn6dRwZh9ZQXXGz4e1Xk7q0
   CK_DB_TEST_MASTER_CONNECTION_STRING:
-    Server=(local)\SQL2012SP1;Database=master;User ID=sa;Password=Password12!
+    Server=(local)\SQL2016;Database=master;User ID=sa;Password=Password12!
 init:
 - git config --global core.autocrlf true
 install:
-- ps: CodeCakeBuilder\Bootstrap.ps1
+  - ps: CodeCakeBuilder\Bootstrap.ps1
 build_script:
 - CodeCakeBuilder\bin\Release\CodeCakeBuilder.exe -nointeraction
 test: off

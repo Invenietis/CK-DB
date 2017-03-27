@@ -1,0 +1,176 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<DirectedGraph GraphDirection="LeftToRight" xmlns="http://schemas.microsoft.com/vs/2009/dgml">
+  <Nodes>
+    <Node Id="CK.SqlServer.Parser" Label="CK.SqlServer.Parser" Category="Project" />
+    <Node Id="CK.Core 4.0.1" Label="CK.Core 4.0.1" Category="Package" />
+    <Node Id="CK.Stamp.Fody 1.0.1" Label="CK.Stamp.Fody 1.0.1" Category="Package" />
+    <Node Id="Fody 1.26.1" Label="Fody 1.26.1" Category="Package" />
+    <Node Id="CK.SqlServer.Core" Label="CK.SqlServer.Core" Category="Project" />
+    <Node Id="CK.Core 4.0.1" Label="CK.Core 4.0.1" Category="Package" />
+    <Node Id="CK.Stamp.Fody 1.0.1" Label="CK.Stamp.Fody 1.0.1" Category="Package" />
+    <Node Id="Fody 1.26.1" Label="Fody 1.26.1" Category="Package" />
+    <Node Id="CK.SqlServer.Setup.Runtime" Label="CK.SqlServer.Setup.Runtime" Category="Project" />
+    <Node Id="CK.Core 4.0.1" Label="CK.Core 4.0.1" Category="Package" />
+    <Node Id="CK.Reflection 4.0.1" Label="CK.Reflection 4.0.1" Category="Package" />
+    <Node Id="CK.Stamp.Fody 1.0.1" Label="CK.Stamp.Fody 1.0.1" Category="Package" />
+    <Node Id="Fody 1.26.1" Label="Fody 1.26.1" Category="Package" />
+    <Node Id="CK.Setupable.Runtime" Label="CK.Setupable.Runtime" Category="Project" />
+    <Node Id="CK.Core 4.0.1" Label="CK.Core 4.0.1" Category="Package" />
+    <Node Id="CK.Stamp.Fody 1.0.1" Label="CK.Stamp.Fody 1.0.1" Category="Package" />
+    <Node Id="Fody 1.26.1" Label="Fody 1.26.1" Category="Package" />
+    <Node Id="CK.StObj.Runtime" Label="CK.StObj.Runtime" Category="Project" />
+    <Node Id="CK.Core 4.0.1" Label="CK.Core 4.0.1" Category="Package" />
+    <Node Id="CK.Stamp.Fody 1.0.1" Label="CK.Stamp.Fody 1.0.1" Category="Package" />
+    <Node Id="Fody 1.26.1" Label="Fody 1.26.1" Category="Package" />
+    <Node Id="CK.SqlServer.Setup.Model" Label="CK.SqlServer.Setup.Model" Category="Project" />
+    <Node Id="CK.Core 4.0.1" Label="CK.Core 4.0.1" Category="Package" />
+    <Node Id="CK.Stamp.Fody 1.0.1" Label="CK.Stamp.Fody 1.0.1" Category="Package" />
+    <Node Id="Fody 1.26.1" Label="Fody 1.26.1" Category="Package" />
+    <Node Id="CK.Setupable.Model" Label="CK.Setupable.Model" Category="Project" />
+    <Node Id="CK.Core 4.0.1" Label="CK.Core 4.0.1" Category="Package" />
+    <Node Id="CK.Stamp.Fody 1.0.1" Label="CK.Stamp.Fody 1.0.1" Category="Package" />
+    <Node Id="Fody 1.26.1" Label="Fody 1.26.1" Category="Package" />
+    <Node Id="CK.StObj.Model" Label="CK.StObj.Model" Category="Project" />
+    <Node Id="CK.Core 4.0.1" Label="CK.Core 4.0.1" Category="Package" />
+    <Node Id="CK.Stamp.Fody 1.0.1" Label="CK.Stamp.Fody 1.0.1" Category="Package" />
+    <Node Id="Fody 1.26.1" Label="Fody 1.26.1" Category="Package" />
+    <Node Id="CK.Deploy.Console" Label="CK.Deploy.Console" Category="Project" />
+    <Node Id="CK.Core 4.0.1" Label="CK.Core 4.0.1" Category="Package" />
+    <Node Id="CK.Monitoring 4.0.1" Label="CK.Monitoring 4.0.1" Category="Package" />
+    <Node Id="CK.Stamp.Fody 1.0.1" Label="CK.Stamp.Fody 1.0.1" Category="Package" />
+    <Node Id="Fody 1.26.1" Label="Fody 1.26.1" Category="Package" />
+    <Node Id="CK.StObj.Engine" Label="CK.StObj.Engine" Category="Project" />
+    <Node Id="CK.Core 4.0.1" Label="CK.Core 4.0.1" Category="Package" />
+    <Node Id="CK.Reflection 4.0.1" Label="CK.Reflection 4.0.1" Category="Package" />
+    <Node Id="CK.Stamp.Fody 1.0.1" Label="CK.Stamp.Fody 1.0.1" Category="Package" />
+    <Node Id="Fody 1.26.1" Label="Fody 1.26.1" Category="Package" />
+    <Node Id="CK.Setup.Dependency" Label="CK.Setup.Dependency" Category="Project" />
+    <Node Id="CK.Core 4.0.1" Label="CK.Core 4.0.1" Category="Package" />
+    <Node Id="CK.Stamp.Fody 1.0.1" Label="CK.Stamp.Fody 1.0.1" Category="Package" />
+    <Node Id="Fody 1.26.1" Label="Fody 1.26.1" Category="Package" />
+    <Node Id="DBPackages\CK.ActorGroup" Label="CK.ActorGroup" Category="Project" />
+    <Node Id="CK.Core 4.0.1" Label="CK.Core 4.0.1" Category="Package" />
+    <Node Id="CK.Stamp.Fody 1.0.1" Label="CK.Stamp.Fody 1.0.1" Category="Package" />
+    <Node Id="Fody 1.26.1" Label="Fody 1.26.1" Category="Package" />
+    <Node Id="DBPackages\CK.Actor" Label="CK.Actor" Category="Project" />
+    <Node Id="CK.Core 4.0.1" Label="CK.Core 4.0.1" Category="Package" />
+    <Node Id="CK.Stamp.Fody 1.0.1" Label="CK.Stamp.Fody 1.0.1" Category="Package" />
+    <Node Id="Fody 1.26.1" Label="Fody 1.26.1" Category="Package" />
+    <Node Id="DBPackages\CK.Resource" Label="CK.Resource" Category="Project" />
+    <Node Id="CK.Core 4.0.1" Label="CK.Core 4.0.1" Category="Package" />
+    <Node Id="CK.Stamp.Fody 1.0.1" Label="CK.Stamp.Fody 1.0.1" Category="Package" />
+    <Node Id="Fody 1.26.1" Label="Fody 1.26.1" Category="Package" />
+    <Node Id="Tests\CK.StObj.Engine.Tests" Label="CK.StObj.Engine.Tests" Category="Project" />
+    <Node Id="CK.Core 4.0.1" Label="CK.Core 4.0.1" Category="Package" />
+    <Node Id="CK.Reflection 4.0.1" Label="CK.Reflection 4.0.1" Category="Package" />
+    <Node Id="NUnit 2.6.3" Label="NUnit 2.6.3" Category="Package" />
+    <Node Id="Tests\CK.Setup.Dependency.Tests" Label="CK.Setup.Dependency.Tests" Category="Project" />
+    <Node Id="CK.Core 4.0.1" Label="CK.Core 4.0.1" Category="Package" />
+    <Node Id="NUnit 2.6.3" Label="NUnit 2.6.3" Category="Package" />
+    <Node Id="Tests\CK.SqlServer.Setup.Engine.Tests.Model\SqlZonePackage" Label="SqlZonePackage" Category="Project" />
+    <Node Id="CK.Core 4.0.1" Label="CK.Core 4.0.1" Category="Package" />
+    <Node Id="Tests\CK.SqlServer.Setup.Engine.Tests.Model\SqlActorPackage" Label="SqlActorPackage" Category="Project" />
+    <Node Id="CK.Core 4.0.1" Label="CK.Core 4.0.1" Category="Package" />
+    <Node Id="Tests\CK.SqlServer.Setup.Engine.Tests.Model\IntoTheWild0" Label="IntoTheWild0" Category="Project" />
+    <Node Id="CK.Core 4.0.1" Label="CK.Core 4.0.1" Category="Package" />
+    <Node Id="Tests\CK.SqlServer.Parser.Tests" Label="CK.SqlServer.Parser.Tests" Category="Project" />
+    <Node Id="CK.Core 4.0.1" Label="CK.Core 4.0.1" Category="Package" />
+    <Node Id="NUnit 2.6.3" Label="NUnit 2.6.3" Category="Package" />
+    <Node Id="Tests\CK.Setupable.Engine.Tests" Label="CK.Setupable.Engine.Tests" Category="Project" />
+    <Node Id="CK.Core 4.0.1" Label="CK.Core 4.0.1" Category="Package" />
+    <Node Id="NUnit 2.6.3" Label="NUnit 2.6.3" Category="Package" />
+    <Node Id="Tests\CK.SqlServer.Setup.Engine.Tests" Label="CK.SqlServer.Setup.Engine.Tests" Category="Project" />
+    <Node Id="CK.Core 4.0.1" Label="CK.Core 4.0.1" Category="Package" />
+    <Node Id="NUnit 2.6.3" Label="NUnit 2.6.3" Category="Package" />
+    <Node Id="CK.SqlServer.Setup.Engine" Label="CK.SqlServer.Setup.Engine" Category="Project" />
+    <Node Id="CK.Core 4.0.1" Label="CK.Core 4.0.1" Category="Package" />
+    <Node Id="CK.Stamp.Fody 1.0.1" Label="CK.Stamp.Fody 1.0.1" Category="Package" />
+    <Node Id="Fody 1.26.1" Label="Fody 1.26.1" Category="Package" />
+    <Node Id="CK.Setupable.Engine" Label="CK.Setupable.Engine" Category="Project" />
+    <Node Id="CK.Core 4.0.1" Label="CK.Core 4.0.1" Category="Package" />
+    <Node Id="CK.Stamp.Fody 1.0.1" Label="CK.Stamp.Fody 1.0.1" Category="Package" />
+    <Node Id="Fody 1.26.1" Label="Fody 1.26.1" Category="Package" />
+  </Nodes>
+  <Links>
+    <Link Source="CK.Stamp.Fody 1.0.1" Target="Fody 1.26.1" Category="Package Dependency" />
+    <Link Source="CK.SqlServer.Parser" Target="CK.Core 4.0.1" Category="Installed Package" />
+    <Link Source="CK.SqlServer.Parser" Target="CK.Stamp.Fody 1.0.1" Category="Installed Package" />
+    <Link Source="CK.Stamp.Fody 1.0.1" Target="Fody 1.26.1" Category="Package Dependency" />
+    <Link Source="CK.SqlServer.Core" Target="CK.Core 4.0.1" Category="Installed Package" />
+    <Link Source="CK.SqlServer.Core" Target="CK.Stamp.Fody 1.0.1" Category="Installed Package" />
+    <Link Source="CK.Stamp.Fody 1.0.1" Target="Fody 1.26.1" Category="Package Dependency" />
+    <Link Source="CK.SqlServer.Setup.Runtime" Target="CK.Core 4.0.1" Category="Installed Package" />
+    <Link Source="CK.SqlServer.Setup.Runtime" Target="CK.Reflection 4.0.1" Category="Installed Package" />
+    <Link Source="CK.SqlServer.Setup.Runtime" Target="CK.Stamp.Fody 1.0.1" Category="Installed Package" />
+    <Link Source="CK.Stamp.Fody 1.0.1" Target="Fody 1.26.1" Category="Package Dependency" />
+    <Link Source="CK.Setupable.Runtime" Target="CK.Core 4.0.1" Category="Installed Package" />
+    <Link Source="CK.Setupable.Runtime" Target="CK.Stamp.Fody 1.0.1" Category="Installed Package" />
+    <Link Source="CK.Stamp.Fody 1.0.1" Target="Fody 1.26.1" Category="Package Dependency" />
+    <Link Source="CK.StObj.Runtime" Target="CK.Core 4.0.1" Category="Installed Package" />
+    <Link Source="CK.StObj.Runtime" Target="CK.Stamp.Fody 1.0.1" Category="Installed Package" />
+    <Link Source="CK.Stamp.Fody 1.0.1" Target="Fody 1.26.1" Category="Package Dependency" />
+    <Link Source="CK.SqlServer.Setup.Model" Target="CK.Core 4.0.1" Category="Installed Package" />
+    <Link Source="CK.SqlServer.Setup.Model" Target="CK.Stamp.Fody 1.0.1" Category="Installed Package" />
+    <Link Source="CK.Stamp.Fody 1.0.1" Target="Fody 1.26.1" Category="Package Dependency" />
+    <Link Source="CK.Setupable.Model" Target="CK.Core 4.0.1" Category="Installed Package" />
+    <Link Source="CK.Setupable.Model" Target="CK.Stamp.Fody 1.0.1" Category="Installed Package" />
+    <Link Source="CK.Stamp.Fody 1.0.1" Target="Fody 1.26.1" Category="Package Dependency" />
+    <Link Source="CK.StObj.Model" Target="CK.Core 4.0.1" Category="Installed Package" />
+    <Link Source="CK.StObj.Model" Target="CK.Stamp.Fody 1.0.1" Category="Installed Package" />
+    <Link Source="CK.Monitoring 4.0.1" Target="CK.Core 4.0.1" Category="Package Dependency" />
+    <Link Source="CK.Monitoring 4.0.1" Target="CK.Core 4.0.1" Category="Package Dependency" />
+    <Link Source="CK.Stamp.Fody 1.0.1" Target="Fody 1.26.1" Category="Package Dependency" />
+    <Link Source="CK.Deploy.Console" Target="CK.Monitoring 4.0.1" Category="Installed Package" />
+    <Link Source="CK.Deploy.Console" Target="CK.Stamp.Fody 1.0.1" Category="Installed Package" />
+    <Link Source="CK.Stamp.Fody 1.0.1" Target="Fody 1.26.1" Category="Package Dependency" />
+    <Link Source="CK.StObj.Engine" Target="CK.Core 4.0.1" Category="Installed Package" />
+    <Link Source="CK.StObj.Engine" Target="CK.Reflection 4.0.1" Category="Installed Package" />
+    <Link Source="CK.StObj.Engine" Target="CK.Stamp.Fody 1.0.1" Category="Installed Package" />
+    <Link Source="CK.Stamp.Fody 1.0.1" Target="Fody 1.26.1" Category="Package Dependency" />
+    <Link Source="CK.Setup.Dependency" Target="CK.Core 4.0.1" Category="Installed Package" />
+    <Link Source="CK.Setup.Dependency" Target="CK.Stamp.Fody 1.0.1" Category="Installed Package" />
+    <Link Source="CK.Stamp.Fody 1.0.1" Target="Fody 1.26.1" Category="Package Dependency" />
+    <Link Source="DBPackages\CK.ActorGroup" Target="CK.Core 4.0.1" Category="Installed Package" />
+    <Link Source="DBPackages\CK.ActorGroup" Target="CK.Stamp.Fody 1.0.1" Category="Installed Package" />
+    <Link Source="CK.Stamp.Fody 1.0.1" Target="Fody 1.26.1" Category="Package Dependency" />
+    <Link Source="DBPackages\CK.Actor" Target="CK.Core 4.0.1" Category="Installed Package" />
+    <Link Source="DBPackages\CK.Actor" Target="CK.Stamp.Fody 1.0.1" Category="Installed Package" />
+    <Link Source="CK.Stamp.Fody 1.0.1" Target="Fody 1.26.1" Category="Package Dependency" />
+    <Link Source="DBPackages\CK.Resource" Target="CK.Core 4.0.1" Category="Installed Package" />
+    <Link Source="DBPackages\CK.Resource" Target="CK.Stamp.Fody 1.0.1" Category="Installed Package" />
+    <Link Source="Tests\CK.StObj.Engine.Tests" Target="CK.Core 4.0.1" Category="Installed Package" />
+    <Link Source="Tests\CK.StObj.Engine.Tests" Target="CK.Reflection 4.0.1" Category="Installed Package" />
+    <Link Source="Tests\CK.StObj.Engine.Tests" Target="NUnit 2.6.3" Category="Installed Package" />
+    <Link Source="Tests\CK.Setup.Dependency.Tests" Target="CK.Core 4.0.1" Category="Installed Package" />
+    <Link Source="Tests\CK.Setup.Dependency.Tests" Target="NUnit 2.6.3" Category="Installed Package" />
+    <Link Source="Tests\CK.SqlServer.Setup.Engine.Tests.Model\SqlZonePackage" Target="CK.Core 4.0.1" Category="Installed Package" />
+    <Link Source="Tests\CK.SqlServer.Setup.Engine.Tests.Model\SqlActorPackage" Target="CK.Core 4.0.1" Category="Installed Package" />
+    <Link Source="Tests\CK.SqlServer.Setup.Engine.Tests.Model\IntoTheWild0" Target="CK.Core 4.0.1" Category="Installed Package" />
+    <Link Source="Tests\CK.SqlServer.Parser.Tests" Target="CK.Core 4.0.1" Category="Installed Package" />
+    <Link Source="Tests\CK.SqlServer.Parser.Tests" Target="NUnit 2.6.3" Category="Installed Package" />
+    <Link Source="Tests\CK.Setupable.Engine.Tests" Target="CK.Core 4.0.1" Category="Installed Package" />
+    <Link Source="Tests\CK.Setupable.Engine.Tests" Target="NUnit 2.6.3" Category="Installed Package" />
+    <Link Source="Tests\CK.SqlServer.Setup.Engine.Tests" Target="CK.Core 4.0.1" Category="Installed Package" />
+    <Link Source="Tests\CK.SqlServer.Setup.Engine.Tests" Target="NUnit 2.6.3" Category="Installed Package" />
+    <Link Source="CK.Stamp.Fody 1.0.1" Target="Fody 1.26.1" Category="Package Dependency" />
+    <Link Source="CK.SqlServer.Setup.Engine" Target="CK.Core 4.0.1" Category="Installed Package" />
+    <Link Source="CK.SqlServer.Setup.Engine" Target="CK.Stamp.Fody 1.0.1" Category="Installed Package" />
+    <Link Source="CK.Stamp.Fody 1.0.1" Target="Fody 1.26.1" Category="Package Dependency" />
+    <Link Source="CK.Setupable.Engine" Target="CK.Core 4.0.1" Category="Installed Package" />
+    <Link Source="CK.Setupable.Engine" Target="CK.Stamp.Fody 1.0.1" Category="Installed Package" />
+  </Links>
+  <Categories>
+    <Category Id="Project" />
+    <Category Id="Package" />
+  </Categories>
+  <Styles>
+    <Style TargetType="Node" GroupLabel="Project" ValueLabel="True">
+      <Condition Expression="HasCategory('Project')" />
+      <Setter Property="Background" Value="Blue" />
+    </Style>
+    <Style TargetType="Link" GroupLabel="Package Dependency" ValueLabel="True">
+      <Condition Expression="HasCategory('Package Dependency')" />
+      <Setter Property="Background" Value="Yellow" />
+    </Style>
+  </Styles>
+</DirectedGraph>

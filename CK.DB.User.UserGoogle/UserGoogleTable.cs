@@ -11,6 +11,7 @@ using CK.Core;
 using System.Threading;
 using CK.DB.Auth;
 using CK.Text;
+using System.Reflection;
 
 namespace CK.DB.User.UserGoogle
 {

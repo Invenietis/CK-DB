@@ -42,7 +42,7 @@ namespace CK.DB.Culture.Tests
         [Test]
         public void registering_a_culture_updates_all_fallbacks()
         {
-            var p = TestHelper.StObjMap.Default.Obtain<Package>();
+            var p = TestHelper.StObjMap.Default.Obtain<Culture.Package>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 // Removes all cultures except 9 and 12.
@@ -71,7 +71,7 @@ namespace CK.DB.Culture.Tests
             }
         }
 
-        public static void RestoreDatabaseToEnglishAndFrenchOnly( Package p )
+        public static void RestoreDatabaseToEnglishAndFrenchOnly(Package p )
         {
             p.Database.RawExecute( @"while 1 = 1
                                         begin

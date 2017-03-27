@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <!-- SharedDir is the /Common directory. -->
+  <PropertyGroup>
+    <SharedDir>$(MSBuildThisFileDirectory)</SharedDir>
+  </PropertyGroup>
+
+  <!-- 
+    When building from the CI (ie. from Cake, hence directly with the msbuild tool, SolutionDir is not defined),
+    we unify the behavior here as well as setting the BaseIntermediateOutputPath (the /obj folder)
+    below CodeCakeBuilder/Releases/ so that compilation from external sources does not interfere with visual studio work.
+  -->
+  <PropertyGroup Condition=" '$(CakeBuild)' == 'true' ">
+    <SolutionDir>$([System.IO.Path]::GetDirectoryName($([System.IO.Path]::GetDirectoryName($(MSBuildThisFileDirectory)))))\</SolutionDir>
+    <BaseIntermediateOutputPath>$(SolutionDir)CodeCakeBuilder\Releases\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+  </PropertyGroup>
+  <!-- When not building from the CI, assemblies do not have any AssemblyInfo attributes. -->
+  <PropertyGroup Condition=" '$(CakeBuild)' != 'true' ">
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- Standard properties. -->
+    <AssemblyOriginatorKeyFile>$(SharedDir)SharedKey.snk</AssemblyOriginatorKeyFile>
+    <SignAssembly>true</SignAssembly>
+    <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
+    <RepositoryType>git</RepositoryType>
+
+    <!-- Invenietis standard properties. -->
+    <Company>Invenietis</Company>
+    <Authors>Invenietis</Authors>
+
+    <!-- Properties that are solution depdendents. -->
+    <Copyright>Copyright Invenietis 2012-$([System.DateTime]::UtcNow.ToString("yyyy"))</Copyright>
+    <ProductName>CK-DB</ProductName>
+    
+    <PackageLicenseUrl>https://opensource.org/licenses/MIT</PackageLicenseUrl>
+    <RepositoryUrl>https://github.com/Invenietis/CK-DB</RepositoryUrl>
+
+  </PropertyGroup>
+</Project>
