@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="..\Common\Shared.props" />
+  <PropertyGroup>
+    <TargetFrameworks>netstandard1.6;net451</TargetFrameworks>
+    <Description>This package defines CK.tMCResText table with its procedures, functions and views.</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CK.DB.Culture\CK.DB.Culture.csproj" />
+    <ProjectReference Include="..\CK.DB.Res\CK.DB.Res.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="**\*.sql;**\*.tql;**\*.y4" Exclude="bin\**;obj\**;CodeCakeBuilder\**;packages\**;@(EmbeddedResource)" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,15 @@
+-- SetupConfig: {}
+create transformer on CK.sGroupCreate
+as
+begin
+	add parameter @ZoneId int = 0;
+
+	inject "
+	if @ZoneId = 1 throw 50000, 'Zone.SystemZoneHasNoGroup', 1;
+	" before single "--[beginsp]";
+	
+	in single part {insert into CK.tGroup}
+	begin
+		add column ZoneId = @ZoneId;
+	end
+end

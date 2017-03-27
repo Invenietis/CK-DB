@@ -1,0 +1,40 @@
+-- SetupConfig: {}
+create transformer on CK.fGroupGroupNameComputeUnique
+as 
+begin
+	add parameter @ZoneId int = -1;
+	inject "
+		-- If the caller is unaware of the zone, we always have two choices:
+		--   - Always consider that he works on the 0 default zone.
+		--     This is the easier one: @ZoneId defaults to 0 and we are done.
+		--   - Try to relocate it as much as possible in in the 'current' zone.
+		--     This could be done here whenever a @GroupId is provided (when a rename must be done).
+		--     When no @GroupId is known (we are looking for a new group name from a 'Zone unaware' code),
+		--     the most conservative choice is to consider that a unique name must be found 
+		--     accross all the zones.
+		-- 
+		-- 'Zone unaware code' that must find a new name for an existing Group: we automatically 
+		-- get the zone of the group => the result is accurate.
+		--
+		if @ZoneId < 0 and @GroupId >= 0 
+		begin
+			select @ZoneId = g.ZoneId from CK.tGroup g where g.GroupId = @GroupId;
+			-- Cannot throw from a function: return not found instead.
+			if @ZoneId is null 
+			begin
+				return null;
+			end
+		end
+		--
+		-- 'Zone unaware code' that must find a new name for a new Group: we
+		-- let the @Zone be -1 (or negative).
+		-- By doing this, we consider all the groups regardless of the hierarchy => this is not efficient
+		-- but it is perfectly valid (the name, if found will be globally unique).
+		--
+	" after first {begin};
+
+	in all 2 part {select '?'}
+	begin
+		replace all 2 {and g.GroupName =} with "and (@ZoneId < 0 or g.ZoneId = @ZoneId) and g.GroupName ="
+	end
+end

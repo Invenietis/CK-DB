@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="..\Common\Shared.props" />
+  <PropertyGroup>
+    <TargetFrameworks>netstandard1.6;net451</TargetFrameworks>
+    <Description>This package adds EMail and EMailVerified to CK.tUserGoogle table.</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CK.DB.User.UserGoogle\CK.DB.User.UserGoogle.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="**\*.sql;**\*.tql;**\*.y4" Exclude="bin\**;obj\**;CodeCakeBuilder\**;packages\**;@(EmbeddedResource)" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+</Project>

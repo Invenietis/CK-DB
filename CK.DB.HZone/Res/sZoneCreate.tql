@@ -1,0 +1,33 @@
+-- SetupConfig: {}
+create transformer on CK.sZoneCreate 
+as
+begin
+	add parameter @ParentZoneId int = 0;
+	
+	inject "
+	declare @ParentHId hierarchyid;
+	declare @LastHId hierarchyid;
+	select  @ParentHId = z.HierarchicalId,
+			@LastHId = (select max(zc.HierarchicalId) 
+							from CK.tGroup g with(UPDLOCK)
+							inner join CK.tZone zc on zc.ZoneId = g.GroupId
+							where g.ZoneId = @ParentZoneId)
+        from CK.tZone z with(UPDLOCK)
+        where z.ZoneId = @ParentZoneId;
+	if @ParentHId is null throw 50000, 'Zone.UnexistingParentZoneId', 1;
+	declare @NewZoneHId hierarchyid = @ParentHId.GetDescendant( @LastHId, null );
+	" 
+	into "PreZoneCreate";
+
+	in single statement {exec CK.sGroupCreate}
+	begin
+		replace first {@ZoneId = 0} with "@ZoneId = @ParentZoneId";
+	end
+
+	in single part {insert into CK.tZone}
+	begin
+		add column HierarchicalId = @NewZoneHId;
+	end
+
+end
+ 

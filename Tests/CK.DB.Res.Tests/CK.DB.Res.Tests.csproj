@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="..\..\Common\Shared.props" />
+  <PropertyGroup>
+    <TargetFramework>net451</TargetFramework>
+    <Description>This package contains tests for CK.DB.Res (uses CK.DB.Tests.NUnit).</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\CK.DB.Res\CK.DB.Res.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="CK.DB.Tests.NUnit" Version="5.0.0-a43-00-develop-0029" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="..\Common\Shared.props" />
+  <PropertyGroup>
+    <TargetFrameworks>netstandard1.6;net451</TargetFrameworks>
+    <Description>This package defines tAcl, tAclConfigMemory and tAclConfig tables.</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CK.DB.Actor\CK.DB.Actor.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="**\*.sql;**\*.tql;**\*.y4" Exclude="bin\**;obj\**;CodeCakeBuilder\**;packages\**;@(EmbeddedResource)" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+</Project>

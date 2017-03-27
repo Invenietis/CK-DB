@@ -1,0 +1,17 @@
+-- SetupConfig: {}
+create transformer on CK.sGroupMove
+as 
+begin
+	inject "
+		-- Ensures that the GroupName will not clash: once computed
+		-- we must update it with the ZoneId.
+		declare @GroupName nvarchar(128);
+		select @GroupName = GroupName from CK.tGroup where GroupId = @GroupId;
+		declare @GroupNameCorrected nvarchar(128);
+		exec @GroupNameCorrected = CK.fGroupGroupNameComputeUnique -1, @GroupName, @NewZoneId;
+		if @GroupNameCorrected is null throw 50000, 'GroupName.NameClash', 1;
+	" into "PreGroupMove";
+
+	inject ", GroupName = @GroupNameCorrected"
+	after single {update CK.tGroup set ZoneId = @NewZoneId};
+end

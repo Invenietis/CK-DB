@@ -1,0 +1,26 @@
+﻿-- SetupConfig: { "AddRequires" : "CK.sAuthScopeSetCopy" }
+--
+-- The ScopeSetId is intrinsic.
+-- A new ScopeSetId is only set when a new UserGoogle is created,
+-- but it is not editable: it does not appear in the parameters and does not
+-- participate in updates.
+--
+create transformer on CK.sUserGoogleCreateOrUpdate
+as
+begin
+
+	inject "
+		-- The ScopeSetId is intrinsic.
+		-- A new ScopeSetId is only set when a new User Google is created.
+		declare @DefaultScopeSetId int;
+		select @DefaultScopeSetId = ScopeSetId from CK.tUserGoogle where UserId = 0;
+		declare @NewScopeSetId int;
+		exec CK.sAuthScopeSetCopy @ActorId, @DefaultScopeSetId, 'W', @NewScopeSetId output;"
+	into "PreCreate";
+		
+	in single part {insert into CK.tUserGoogle}
+	begin
+		add column ScopeSetId = @NewScopeSetId;
+	end
+
+end

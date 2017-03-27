@@ -1,0 +1,8 @@
+-- SetupConfig: {}
+create transformer on CK.vZone
+as
+begin
+	add column	ParentZoneId = g.ZoneId,
+				Depth = z.HierarchicalId.GetLevel(),
+				OrderByKey = z.HierarchicalId;
+end

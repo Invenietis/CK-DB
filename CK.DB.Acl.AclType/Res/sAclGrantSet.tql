@@ -1,0 +1,18 @@
+﻿-- SetupConfig: {}
+create transformer on CK.sAclGrantSet
+as 
+begin
+  inject "
+  		if exists( select *
+					from CK.tAcl a
+					inner join CK.tAclType t on t.AclTypeId = a.AclTypeId
+					where a.AclId = @AclId 
+							and t.ConstrainedGrantLevel = 1
+							and (case when @GrantLevel >= 127 then 255 - @GrantLevel else @GrantLevel end) 
+									not in (select l.GrantLevel from CK.tAclTypeGrantLevel l where l.AclTypeId = t.AclTypeId) )
+		begin
+			;throw 50000, 'Security.AclTypeConstrainedLevelError', 1;
+		end
+  " 
+  into "PreMemoryUpdate";
+end

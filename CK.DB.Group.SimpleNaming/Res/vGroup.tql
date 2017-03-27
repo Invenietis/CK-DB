@@ -1,0 +1,6 @@
+-- SetupConfig: {}
+create transformer on CK.vGroup
+as 
+begin
+	replace single {GroupName = N'#Group-' +  cast( g.GroupId as varchar )} with "GroupName = g.GroupName";
+end

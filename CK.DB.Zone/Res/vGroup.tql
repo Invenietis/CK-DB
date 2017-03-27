@@ -1,0 +1,6 @@
+-- SetupConfig: {}
+create transformer on CK.vGroup
+as 
+begin
+	add column ZoneId = g.ZoneId;
+end
