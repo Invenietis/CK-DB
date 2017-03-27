@@ -122,7 +122,11 @@ namespace CodeCake
                 .IsDependentOn("Check-Repository")
                 .Does( () =>
                 {
-                    Cake.DotNetCoreRestore(coreBuildFile, new DotNetCoreRestoreSettings().AddVersionArguments(gitInfo));
+                    Cake.DotNetCoreRestore(coreBuildFile, 
+                        new DotNetCoreRestoreSettings().AddVersionArguments(gitInfo, c =>
+                        {
+                            c.Verbosity = DotNetCoreRestoreVerbosity.Minimal;
+                        }));
                 });
 
 
@@ -308,30 +312,7 @@ namespace CodeCake
                         }
                     } );
 
-            Task("Migrate-From-Old")
-                    .Does(() =>
-                    {
-                        XNamespace ns = "http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd";
-                        var launchFileName = Cake.File("Tests/CK.DB.Actor.Tests/Properties/launchSettings.json");
-                        var launchText = System.IO.File.ReadAllText( launchFileName );
-                        var sourceProjects = Cake.ParseSolution(solutionFileName)
-                                                  .Projects
-                                                  .Where(p => !(p is SolutionFolder)
-                                                               && p.Name.EndsWith(".Tests")
-                                                               && !p.Path.Segments.Contains("IntegrationTests")
-                                                               && p.Name != "CodeCakeBuilder");
-                        foreach ( var p in sourceProjects)
-                        {
-                            if (p.Name == "CK.DB.Actor.Tests" ) continue;
-                            var text = launchText.Replace("CK.DB.Actor.Tests", p.Name);
-                            var fName = Cake.File("Tests/"+p.Name+"/Properties/launchSettings.json");
-                            System.IO.File.WriteAllText(fName, text );
-                        }
-
-                    });
-
-            //Task("Default").IsDependentOn("Push-NuGet-Packages" );
-            Task("Default").IsDependentOn("Migrate-From-Old" );
+            Task("Default").IsDependentOn("Push-NuGet-Packages" );
         }
 
         private void PushNuGetPackages( string apiKeyName, string pushUrl, IEnumerable<FilePath> nugetPackages )
