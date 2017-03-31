@@ -19,7 +19,7 @@ namespace CK.DB.User.UserGoogle
     /// Holds Google account identifier and refresh token for users.
     /// </summary>
     [SqlTable( "tUserGoogle", Package = typeof(Package), Schema = "CK" )]
-    [Versions("1.0.0,1.0.1")]
+    [Versions("1.0.0,1.0.1,1.0.2")]
     [SqlObjectItem( "transform:sUserDestroy" )]
     public abstract partial class UserGoogleTable : SqlTable, IGenericAuthenticationProvider
     {
