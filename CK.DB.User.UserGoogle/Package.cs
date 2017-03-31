@@ -36,7 +36,7 @@ namespace CK.DB.User.UserGoogle
 
         HttpClient _client;
 
-        void Construct( Actor.Package actorPackage, Auth.Package authPackage )
+        void StObjConstruct( Actor.Package actorPackage, Auth.Package authPackage )
         {
         }
 

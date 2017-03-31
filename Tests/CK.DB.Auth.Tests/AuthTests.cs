@@ -13,17 +13,116 @@ namespace CK.DB.Auth.Tests
     public class AuthTests
     {
         [Test]
-        public void calling_vUserAuthProvider_always_work_but_returns_data_only_when_actual_auth_providers_are_installed()
+        public void existing_providers_are_registered_in_tAuthProvider_and_available_as_IGenericAuthenticationProvider()
         {
             var p = TestHelper.StObjMap.Default.Obtain<Package>();
-            using( var ctx = new SqlStandardCallContext() )
+            using (var ctx = new SqlStandardCallContext())
             {
-                p.Database.RawExecute( "select * from CK.vUserAuthProvider" );
             }
         }
 
         [Test]
-        public async Task creating_a_fake_provider_and_enable_or_disable_it()
+        public void when_basic_provider_exists_it_is_registered_in_tAuthProvider_and_available_as_IGenericAuthenticationProvider()
+        {
+            var auth = TestHelper.StObjMap.Default.Obtain<Package>();
+            Assume.That(auth.BasicProvider != null);
+
+            Assert.That(auth.AllProviders.Single(provider => provider.ProviderName == "Basic"), Is.Not.Null);
+            Assert.That(auth.FindProvider("Basic"), Is.Not.Null);
+            Assert.That(auth.FindProvider("bASIC"), Is.Not.Null);
+        }
+
+        static public void StandardTestGorGenericAuthenticationProvider( 
+            Package auth,
+            string providerName,
+            Func<int, string, object> payloadForCreateOrUpdate,
+            Func<int, string, object> payloadForLogin,
+            Func<int, string, object> payloadForLoginFail
+            )
+        {
+            var user = TestHelper.StObjMap.Default.Obtain<Actor.UserTable>();
+            IGenericAuthenticationProvider g = auth.FindProvider(providerName);
+            using (var ctx = new SqlStandardCallContext())
+            {
+                string userName = Guid.NewGuid().ToString();
+                int userId = user.CreateUser(ctx, 1, userName);
+                IUserAuthInfo info = auth.ReadUserAuthInfo(ctx, 1, userId);
+
+                Assert.That(info.UserId, Is.EqualTo(userId));
+                Assert.That(info.UserName, Is.EqualTo(userName));
+                Assert.That(info.Providers.Count, Is.EqualTo(0));
+
+                {
+                    #region CreateOrUpdateUser without WithLogin
+
+                    Assert.That(g.CreateOrUpdateUser(ctx, 1, userId, payloadForCreateOrUpdate(userId,userName)), Is.EqualTo(CreateOrUpdateResult.Created));
+                    info = auth.ReadUserAuthInfo(ctx, 1, userId);
+                    Assert.That(info.Providers.Count, Is.EqualTo(0), "Still no provider since we did not use WithLogin.");
+
+                    Assert.That(g.LoginUser(ctx, payloadForLogin(userId, userName), actualLogin:false), Is.EqualTo(userId));
+                    info = auth.ReadUserAuthInfo(ctx, 1, userId);
+                    Assert.That(info.Providers.Count, Is.EqualTo(0), "Still no provider since we challenge login but not use WithLogin.");
+
+                    Assert.That(g.LoginUser(ctx, payloadForLogin(userId, userName)), Is.EqualTo(userId));
+                    info = auth.ReadUserAuthInfo(ctx, 1, userId);
+                    Assert.That(info.Providers.Count, Is.EqualTo(1));
+                    Assert.That(info.Providers[0].Name, Is.EqualTo(g.ProviderName));
+                    Assert.That(info.Providers[0].LastUsed, Is.GreaterThan(DateTime.UtcNow.AddSeconds(-1)));
+
+                    g.DestroyUser(ctx, 1, userId);
+                    info = auth.ReadUserAuthInfo(ctx, 1, userId);
+                    Assert.That(info.Providers.Count, Is.EqualTo(0));
+
+                    #endregion 
+                }
+                {
+                    #region CreateOrUpdateUser WithLogin
+                    Assert.That(info.UserId, Is.EqualTo(userId));
+                    Assert.That(info.UserName, Is.EqualTo(userName));
+                    Assert.That(info.Providers.Count, Is.EqualTo(0));
+
+                    Assert.That(g.CreateOrUpdateUser(ctx, 1, userId, payloadForCreateOrUpdate(userId,userName), CreateOrUpdateMode.CreateOnly | CreateOrUpdateMode.WithLogin), Is.EqualTo(CreateOrUpdateResult.Created));
+                    info = auth.ReadUserAuthInfo(ctx, 1, userId);
+                    Assert.That(info.Providers.Count, Is.EqualTo(1));
+                    Assert.That(info.Providers[0].Name, Is.EqualTo(g.ProviderName));
+                    Assert.That(info.Providers[0].LastUsed, Is.GreaterThan(DateTime.UtcNow.AddSeconds(-1)));
+
+                    Assert.That(g.LoginUser(ctx, payloadForLoginFail(userId,userName)), Is.EqualTo(0));
+
+                    g.DestroyUser(ctx, 1, userId);
+                    info = auth.ReadUserAuthInfo(ctx, 1, userId);
+                    Assert.That(info.Providers.Count, Is.EqualTo(0));
+
+                    user.DestroyUser(ctx, 1, userId);
+                    #endregion
+                }
+                user.DestroyUser(ctx, 1, userId);
+            }
+        }
+
+        [Test]
+        public void when_a_basic_provider_exists_its_IGenericAuthenticationProvider_adpater_accepts_UserId_or_UserName_based_login_payloads()
+        {
+            var auth = TestHelper.StObjMap.Default.Obtain<Package>();
+            Assume.That( auth.BasicProvider != null );
+
+            StandardTestGorGenericAuthenticationProvider(
+                auth,
+                "Basic",
+                payloadForCreateOrUpdate: (userId, userName) => "password",
+                payloadForLogin: (userId, userName) => Tuple.Create(userId, "password"),
+                payloadForLoginFail: (userId, userName) => Tuple.Create(userId, "wrong password"));
+
+            StandardTestGorGenericAuthenticationProvider(
+                auth,
+                "Basic",
+                payloadForCreateOrUpdate: (userId, userName) => "password",
+                payloadForLogin: (userId, userName) => Tuple.Create(userName, "password"),
+                payloadForLoginFail: (userId, userName) => Tuple.Create(userName, "wrong password"));
+        }
+
+        [Test]
+        public async Task creating_a_fake_provider_in_the_database_and_enable_or_disable_it()
         {
             var provider = TestHelper.StObjMap.Default.Obtain<AuthProviderTable>();
             using( var ctx = new SqlStandardCallContext() )

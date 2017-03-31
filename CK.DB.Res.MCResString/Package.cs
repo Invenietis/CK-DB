@@ -17,7 +17,7 @@ namespace CK.DB.Res.MCResString
         ResTable _resTable;
         Culture.Package _culture;
 
-        void Construct( ResTable resTable, Culture.Package culture )
+        void StObjConstruct( ResTable resTable, Culture.Package culture )
         {
             _resTable = resTable;
             _culture = culture;

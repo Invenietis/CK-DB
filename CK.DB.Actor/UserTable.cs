@@ -18,7 +18,7 @@ namespace CK.DB.Actor
     [SqlObjectItem( "vUser" )]
     public abstract partial class UserTable : SqlTable
     {
-        void Construct( ActorTable actor )
+        void StObjConstruct( ActorTable actor )
         {
         }
 

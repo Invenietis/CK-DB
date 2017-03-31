@@ -5,6 +5,6 @@ as
 begin
 	inject "
 	union all
-	select UserId, 'Basic', LastLoginTime from CK.tUserPassword where UserId > 0
+	select UserId, 'Basic', case LastLoginTime when '0001-01-01 00:00:00' then null else LastLoginTime end from CK.tUserPassword where UserId > 0
 	" after first part {select};
 end

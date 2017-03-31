@@ -17,7 +17,7 @@ namespace CK.DB.Acl
     [SqlObjectItem( "transform:sUserDestroy, transform:sGroupDestroy" )]
     public abstract class Package : SqlPackage
     {
-        void Construct( Actor.Package actorPackage )
+        void StObjConstruct( Actor.Package actorPackage )
         {
         }
 

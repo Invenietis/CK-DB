@@ -14,7 +14,7 @@ namespace CK.DB.Res.ResString
     [SqlPackage( Schema = "CK", ResourcePath = "Res" )]
     public class Package : SqlPackage
     {
-        void Construct( Res.Package resource )
+        void StObjConstruct( Res.Package resource )
         {
         }
 

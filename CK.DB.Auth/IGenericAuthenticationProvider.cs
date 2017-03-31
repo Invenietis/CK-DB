@@ -26,6 +26,13 @@ namespace CK.DB.Auth
     public interface IGenericAuthenticationProvider
     {
         /// <summary>
+        /// Gets the name of the provider.
+        /// This name is unique, case insensitive (must use <see cref="StringComparison.OrdinalIgnoreCase"/>) 
+        /// and must be the one added to the CK.tAuthProvider table.
+        /// </summary>
+        string ProviderName { get; }
+
+        /// <summary>
         /// Creates or updates a user entry for this provider. 
         /// This is the "binding account" feature since it binds an external identity to 
         /// an already existing user that may already be registered into other authencation providers.
@@ -40,7 +47,7 @@ namespace CK.DB.Auth
 
         /// <summary>
         /// Destroys a registered user entry for this provider. 
-        /// This is the "unregister from ths provider" feature.
+        /// This is the "unregister from this provider" feature.
         /// </summary>
         /// <param name="ctx">The call context to use.</param>
         /// <param name="actorId">The acting actor identifier.</param>
@@ -76,7 +83,7 @@ namespace CK.DB.Auth
 
         /// <summary>
         /// Destroys a registered user entry for this provider. 
-        /// This is the "unregister from ths provider" feature.
+        /// This is the "unregister from this provider" feature.
         /// </summary>
         /// <param name="ctx">The call context to use.</param>
         /// <param name="actorId">The acting actor identifier.</param>

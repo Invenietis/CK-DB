@@ -18,7 +18,7 @@ namespace CK.DB.Zone
     [SqlObjectItem( "vZone" )]
     public abstract partial class ZoneTable : SqlTable
     {
-        void Construct( Actor.GroupTable group )
+        void StObjConstruct( Actor.GroupTable group )
         {
         }
 

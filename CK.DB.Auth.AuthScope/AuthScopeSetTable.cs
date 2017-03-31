@@ -20,7 +20,7 @@ namespace CK.DB.Auth.AuthScope
     [SqlObjectItem( "vAuthScopeSet, vAuthScopeSetContent, sAuthScopeSetCopy" )]
     public abstract partial class AuthScopeSetTable : SqlTable
     {
-        void Construct( AuthScopeTable scopes )
+        void StObjConstruct( AuthScopeTable scopes )
         {
         }
 

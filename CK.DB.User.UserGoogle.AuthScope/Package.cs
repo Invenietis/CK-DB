@@ -28,7 +28,7 @@ namespace CK.DB.User.UserGoogle.AuthScope
         AuthScopeSetTable _scopeSetTable;
         UserGoogleTable _googleTable;
 
-        void Construct( AuthScopeSetTable scopeSetTable, UserGoogleTable googleTable )
+        void StObjConstruct( AuthScopeSetTable scopeSetTable, UserGoogleTable googleTable )
         {
             _scopeSetTable = scopeSetTable;
             _googleTable = googleTable;

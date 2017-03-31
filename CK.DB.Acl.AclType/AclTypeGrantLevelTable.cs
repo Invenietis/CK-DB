@@ -10,7 +10,7 @@ namespace CK.DB.Acl.AclType
     [Versions( "1.0.0" )]
     public abstract class AclTypeGrantLevelTable : SqlTable
     {
-        void Construct( AclTypeTable aclType )
+        void StObjConstruct( AclTypeTable aclType )
         {
         }
 

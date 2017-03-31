@@ -117,6 +117,19 @@ namespace CK.DB.User.UserGoogle.Tests
             }
         }
 
+        [Test]
+        public void standard_generic_tests_for_Google_provider()
+        {
+            var auth = TestHelper.StObjMap.Default.Obtain<Auth.Package>();
+            var f = TestHelper.StObjMap.Default.Obtain<IPocoFactory<IUserGoogleInfo>>();
+            CK.DB.Auth.Tests.AuthTests.StandardTestGorGenericAuthenticationProvider(
+                auth,
+                "Google",
+                payloadForCreateOrUpdate: (userId, userName) => f.Create( i => i.GoogleAccountId = "GoogleAccountIdFor:"+userName ),
+                payloadForLogin: (userId, userName) => f.Create(i => i.GoogleAccountId = "GoogleAccountIdFor:" + userName),
+                payloadForLoginFail: (userId, userName) => f.Create(i => i.GoogleAccountId = "NO!" + userName)
+                );
+        }
 
         [Test]
         [Explicit]

@@ -21,7 +21,7 @@ namespace CK.DB.User.UserGoogle
     [SqlTable( "tUserGoogle", Package = typeof(Package), Schema = "CK" )]
     [Versions("1.0.0,1.0.1")]
     [SqlObjectItem( "transform:sUserDestroy" )]
-    public abstract partial class UserGoogleTable : SqlTable, IGenericAuthenticationTableProvider
+    public abstract partial class UserGoogleTable : SqlTable, IGenericAuthenticationProvider
     {
         IPocoFactory<IUserGoogleInfo> _infoFactory;
 
@@ -30,7 +30,7 @@ namespace CK.DB.User.UserGoogle
         /// </summary>
         public string ProviderName => "Google";
 
-        void Construct( IPocoFactory<IUserGoogleInfo> infoFactory )
+        void StObjConstruct( IPocoFactory<IUserGoogleInfo> infoFactory )
         {
             _infoFactory = infoFactory;
         }

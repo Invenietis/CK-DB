@@ -18,7 +18,7 @@ namespace CK.DB.Culture
     [SqlObjectItem( "vLCID" )]
     public class LCIDTable : SqlTable
     {
-        void Construct( XLCIDTable xlcid )
+        void StObjConstruct( XLCIDTable xlcid )
         {
         }
 

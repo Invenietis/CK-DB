@@ -18,7 +18,7 @@ namespace CK.DB.HZone
     [SqlObjectItem( "vZoneDirectChildren, vZoneAllChildren" )]
     public abstract class Package : Zone.Package
     {
-        void Construct( Zone.Package zone )
+        void StObjConstruct( Zone.Package zone )
         {
         }
 

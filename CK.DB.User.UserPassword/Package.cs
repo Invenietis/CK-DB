@@ -16,7 +16,7 @@ namespace CK.DB.User.UserPassword
     [SqlObjectItem( "transform:vUserAuthProvider" )]
     public class Package : SqlPackage
     {
-        void Construct( Actor.Package actorPackage, Auth.Package auth )
+        void StObjConstruct( Actor.Package actorPackage, Auth.Package auth )
         {
         }
 

@@ -16,7 +16,7 @@ namespace CK.DB.Culture
     [SqlTable( "tXLCIDMap", Package = typeof( Package ) ), Versions( "1.0.0" )]
     public class XLCIDMapTable : SqlTable
     {
-        void Construct( XLCIDTable xlcid, LCIDTable lcid )
+        void StObjConstruct( XLCIDTable xlcid, LCIDTable lcid )
         {
         }
     }

@@ -19,7 +19,7 @@ namespace CK.DB.Zone
     [SqlObjectItem( "transform:sGroupUserRemove, transform:vGroup" )]
     public abstract partial class GroupTable : Actor.GroupTable
     {
-        void Construct( ZoneTable zoneTable )
+        void StObjConstruct( ZoneTable zoneTable )
         {
         }
 

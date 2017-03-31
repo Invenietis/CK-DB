@@ -15,7 +15,7 @@ namespace CK.DB.Actor.ActorEMail
     [Versions( "1.0.0" )]
     public class Package : SqlPackage
     {
-        void Construct( Actor.Package actorPackage )
+        void StObjConstruct( Actor.Package actorPackage )
         {
         }
 

@@ -18,7 +18,7 @@ namespace CK.DB.User.UserGoogle.EMailColumns
     [SqlObjectItem( "transform:CK.sUserGoogleCreateOrUpdate" )]
     public abstract class Package : SqlPackage
     {
-        void Construct( UserGoogle.UserGoogleTable table )
+        void StObjConstruct( UserGoogle.UserGoogleTable table )
         {
         }
     }

@@ -15,7 +15,7 @@ namespace CK.DB.Actor
     [Versions( "5.0.0" )]
     public abstract class ActorProfileTable : SqlTable
     {
-        void Construct( ActorTable actor, GroupTable group )
+        void StObjConstruct( ActorTable actor, GroupTable group )
         {
         }
     }

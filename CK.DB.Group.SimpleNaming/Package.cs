@@ -19,7 +19,7 @@ namespace CK.DB.Group.SimpleNaming
     [SqlObjectItem( "transform:vGroup" )]
     public abstract partial class Package : SqlPackage
     {
-        void Construct( Actor.Package actorPackage )
+        void StObjConstruct( Actor.Package actorPackage )
         {
         }
 

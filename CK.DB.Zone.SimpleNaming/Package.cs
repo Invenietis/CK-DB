@@ -17,7 +17,7 @@ namespace CK.DB.Zone.SimpleNaming
     [SqlObjectItem( "transform:sGroupMove" )]
     public abstract partial class Package : Group.SimpleNaming.Package
     {
-        void Construct( Zone.Package zonePackage )
+        void StObjConstruct( Zone.Package zonePackage )
         {
         }
 

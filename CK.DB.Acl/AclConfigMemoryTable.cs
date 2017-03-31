@@ -17,7 +17,7 @@ namespace CK.DB.Acl
     [SqlObjectItem( "vAclConfigMemory" )]
     public abstract class AclConfigMemoryTable : SqlTable
     {
-        void Construct( AclTable acl, Actor.ActorTable actor )
+        void StObjConstruct( AclTable acl, Actor.ActorTable actor )
         {
         }
     }

@@ -18,7 +18,7 @@ namespace CK.DB.Acl
     [SqlObjectItem( "vAclActor, vAclActorReason" )]
     public abstract partial class AclTable : SqlTable
     {
-        void Construct()
+        void StObjConstruct()
         {
         }
 

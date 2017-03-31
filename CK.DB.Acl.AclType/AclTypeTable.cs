@@ -15,7 +15,7 @@ namespace CK.DB.Acl.AclType
     [SqlObjectItem( "transform:sAclGrantSet" )]
     public abstract partial class AclTypeTable : SqlTable
     {
-        void Construct( AclTable acl )
+        void StObjConstruct( AclTable acl )
         {
         }
 

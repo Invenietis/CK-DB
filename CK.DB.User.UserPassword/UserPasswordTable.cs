@@ -22,7 +22,7 @@ namespace CK.DB.User.UserPassword
     [SqlTable("tUserPassword", Package = typeof(Package))]
     [Versions("1.0.0,1.0.1")]
     [SqlObjectItem("transform:sUserDestroy")]
-    public abstract partial class UserPasswordTable : SqlTable, IBasicAuthenticationProvider, IGenericAuthenticationTableProvider
+    public abstract partial class UserPasswordTable : SqlTable, IBasicAuthenticationProvider
     {
         Package _package;
         Actor.UserTable _userTable;
@@ -55,16 +55,11 @@ namespace CK.DB.User.UserPassword
             _iterationCount = DefaultHashIterationCount;
         }
 
-        void Construct( Actor.UserTable userTable )
+        void StObjConstruct( Actor.UserTable userTable )
         {
             _userTable = userTable;
         }
 
-        /// <summary>
-        /// Gets "Basic" that is the name of the UserPassword provider.
-        /// </summary>
-        public string ProviderName => "Basic";
- 
         /// <summary>
         /// Gets the User password package.
         /// </summary>
@@ -266,50 +261,5 @@ namespace CK.DB.User.UserPassword
         protected abstract Task OnLoginAsync( ISqlCallContext ctx, int userId, CancellationToken cancellationToken = default( CancellationToken ) );
 
 
-        #region IGenericAuthenticationProvider explicit implementation.
-
-        CreateOrUpdateResult IGenericAuthenticationProvider.CreateOrUpdateUser( ISqlCallContext ctx, int actorId, int userId, object payload, CreateOrUpdateMode mode )
-        {
-            string password = payload as string;
-            if( password == null ) throw new ArgumentException( nameof( payload ) );
-            return CreateOrUpdatePasswordUser( ctx, actorId, userId, password, mode );
-        }
-
-        Task<CreateOrUpdateResult> IGenericAuthenticationProvider.CreateOrUpdateUserAsync( ISqlCallContext ctx, int actorId, int userId, object payload, CreateOrUpdateMode mode, CancellationToken cancellationToken )
-        {
-            string password = payload as string;
-            if( password == null ) throw new ArgumentException( nameof( payload ) );
-            return CreateOrUpdatePasswordUserAsync( ctx, actorId, userId, password, mode, cancellationToken );
-        }
-
-        void IGenericAuthenticationProvider.DestroyUser( ISqlCallContext ctx, int actorId, int userId )
-        {
-            DestroyPasswordUser( ctx, actorId, userId );
-        }
-
-        Task IGenericAuthenticationProvider.DestroyUserAsync( ISqlCallContext ctx, int actorId, int userId, CancellationToken cancellationToken )
-        {
-            return DestroyPasswordUserAsync( ctx, actorId, userId, cancellationToken );
-        }
-
-        int? IGenericAuthenticationProvider.LoginUser( ISqlCallContext ctx, object payload, bool actualLogin )
-        {
-            Tuple<string, string> byName = payload as Tuple<string, string>;
-            if( byName != null ) return LoginUser( ctx, byName.Item1, byName.Item2, actualLogin );
-            Tuple<int, string> byId = payload as Tuple<int, string>;
-            if( byId != null ) return LoginUser( ctx, byId.Item1, byId.Item2, actualLogin );
-            return  null;
-        }
-
-        async Task<int?> IGenericAuthenticationProvider.LoginUserAsync(ISqlCallContext ctx, object payload, bool actualLogin, CancellationToken cancellationToken)
-        {
-            Tuple<string, string> byName = payload as Tuple<string, string>;
-            if( byName != null ) return await LoginUserAsync( ctx, byName.Item1, byName.Item2, actualLogin, cancellationToken );
-            Tuple<int, string> byId = payload as Tuple<int, string>;
-            if( byId != null ) return await LoginUserAsync( ctx, byId.Item1, byId.Item2, actualLogin );
-            return null;
-        }
-
-        #endregion
     }
 }

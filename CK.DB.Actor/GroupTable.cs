@@ -18,7 +18,7 @@ namespace CK.DB.Actor
     [SqlObjectItem( "vGroup" )]
     public abstract partial class GroupTable : SqlTable
     {
-        void Construct( ActorTable actor )
+        void StObjConstruct( ActorTable actor )
         {
         }
 

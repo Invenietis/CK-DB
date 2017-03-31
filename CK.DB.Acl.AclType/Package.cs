@@ -16,7 +16,7 @@ namespace CK.DB.Acl.AclType
     [Versions( "1.0.0" )]
     public class Package : SqlPackage
     {
-        void Construct( Acl.Package acl )
+        void StObjConstruct( Acl.Package acl )
         {
         }
     }
