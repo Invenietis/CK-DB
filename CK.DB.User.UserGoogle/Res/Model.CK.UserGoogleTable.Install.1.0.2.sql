@@ -5,7 +5,7 @@ create table CK.tUserGoogle
 	UserId int not null,
 	-- The Google account identifier is the key to identify a Google user.
 	-- See http://stackoverflow.com/questions/27330348/what-is-the-data-type-of-a-google-accounts-unique-user-identifier
-	GoogleAccountId varchar(36) not null,
+	GoogleAccountId varchar(36) collate Latin1_General_100_BIN2 not null,
 	AccessToken varchar(max) not null, 
 	AccessTokenExpirationTime datetime2(2) not null, 
 	RefreshToken varchar(max) not null,
