@@ -25,10 +25,7 @@ create procedure CK.sUserGoogleCreateOrUpdate
 	@UserId int /*input*/output,
 	@GoogleAccountId varchar(36), 
 	@Mode int, -- not null enum { "CreateOnly" = 1, "UpdateOnly" = 2, "CreateOrUpdate" = 3, "WithLogin" = 4, "IgnoreOptimisticKey" = 8 }
-	@Result int output, -- not null enum { None = 0, Created = 1, Updated = 2 }
-	@RefreshToken varchar(max) = null,
-	@AccessToken varchar(max) = null,
-	@AccessTokenExpirationTime datetime2(2) = null
+	@Result int output -- not null enum { None = 0, Created = 1, Updated = 2 }
 )
 as
 begin
@@ -65,17 +62,10 @@ begin
 			--<PreCreate revert /> 
 
 			-- Unique constraint on GoogleAccountId will detect any existing UserId/GoogleAccountId clashes.
-			insert into CK.tUserGoogle( UserId, GoogleAccountId, LastLoginTime, RefreshToken, LastRefreshTokenTime, AccessToken, AccessTokenExpirationTime ) 
+			insert into CK.tUserGoogle( UserId, GoogleAccountId, LastLoginTime ) 
 				select	@UserId, 
 						@GoogleAccountId, 
-						case when  @ActualLogin = 1 then @Now else '0001-01-01' end,
-						case when @RefreshToken is not null then @RefreshToken else '' end,
-						@Now, 
-						case when @AccessToken is not null then @AccessToken else '' end,
-						case when @AccessTokenExpirationTime is not null
-							then @AccessTokenExpirationTime 
-							else '9999-12-31T23:59:59.99' 
-						end;
+						case when  @ActualLogin = 1 then @Now else '0001-01-01' end;
 
 			set @Result = 1; -- Created
 
@@ -94,19 +84,7 @@ begin
 			else if @UserId <> @ActualUserId throw 50000, 'Argument.UserIdAndGoogleIdMismatch', 1;
 
 			update CK.tUserGoogle set 
-					LastLoginTime = case when  @ActualLogin = 1 then @Now else LastLoginTime end,
-					-- Updates LastRefreshTokenTime to @Now only if it has actually changed.
-					RefreshToken = case when @RefreshToken is not null then @RefreshToken else RefreshToken end, 
-					LastRefreshTokenTime = case when @RefreshToken is not null and RefreshToken <> @RefreshToken 
-											then @Now
-											else LastRefreshTokenTime
-										   end,
-					-- If AccessToken is not null but AccessTokenExpirationTime is null this will raise an error.
-					AccessToken = case when @AccessToken is not null then @AccessToken else AccessToken end,
-					AccessTokenExpirationTime = case when @AccessToken is not null 
-													then @AccessTokenExpirationTime 
-													else AccessTokenExpirationTime 
-												end
+					LastLoginTime = case when  @ActualLogin = 1 then @Now else LastLoginTime end
 				where UserId = @ActualUserId and GoogleAccountId = @GoogleAccountId;
 			set @Result = 2; -- Updated
 		end

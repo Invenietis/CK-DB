@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="..\..\Common\Shared.props" />
+  <PropertyGroup>
+    <TargetFramework>net451</TargetFramework>
+    <Description>This package contains tests for CK.DB.User.UserGoogle.RefreshToken (uses CK.DB.Tests.NUnit).</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\CK.DB.User.UserGoogle.RefreshToken\CK.DB.User.UserGoogle.RefreshToken.csproj" />
+    <ProjectReference Include="..\CK.DB.User.UserGoogle.Tests\CK.DB.User.UserGoogle.Tests.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+</Project>

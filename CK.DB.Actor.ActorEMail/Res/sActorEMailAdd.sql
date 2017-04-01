@@ -1,7 +1,7 @@
 ﻿-- SetupConfig: { }
 --
 -- Adds an email to a user or a group and/or sets whether it is the primary one.
--- Optionally sets the ValTime to sysutcdatetime() or '0001-01-01T00:00:00.00'.
+-- Optionally sets the ValTime to sysutcdatetime() or '0001-01-01'.
 create procedure CK.sActorEMailAdd 
 (
 	@ActorId int,
@@ -34,7 +34,7 @@ begin
 		as source on source.ActorId = target.ActorId and source.EMail = target.EMail
 		when matched then update set IsPrimary = @IsPrimary, 
 									 ValTime = case when @Validate is null then target.ValTime 
-													when @Validate = 0 then '0001-01-01T00:00:00.00'
+													when @Validate = 0 then '0001-01-0'
 													else sysutcdatetime() 
 												end
 		when not matched by target then insert( ActorId, EMail, IsPrimary, ValTime ) 
@@ -42,7 +42,7 @@ begin
 													@EMail, 
 													@IsPrimary, 
 													case when @Validate is null or @Validate = 0 
-														then '0001-01-01T00:00:00.00'
+														then '0001-01-01'
 														else sysutcdatetime() 
 													end );
 	-- A little bit of defensive programming here: 

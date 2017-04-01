@@ -26,7 +26,7 @@ begin
 		declare @ExistingPrimaryEMail nvarchar(255);
 		select @ExistingPrimaryEMail = EMail 
 			from CK.tActorEMail
-			where ActorId = @UserOrGroupId and IsPrimary = 1 and ValTime = '0001-01-01T00:00:00.00';
+			where ActorId = @UserOrGroupId and IsPrimary = 1 and ValTime = '0001-01-01';
 		if @ExistingPrimaryEMail is not null
 		begin
 			exec CK.sActorEMailAdd @ActorId, @UserOrGroupId, @EMail, @IsPrimary = 1; 

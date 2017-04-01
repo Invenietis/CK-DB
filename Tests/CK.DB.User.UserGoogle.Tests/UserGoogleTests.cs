@@ -131,39 +131,6 @@ namespace CK.DB.User.UserGoogle.Tests
                 );
         }
 
-        [Test]
-        [Explicit]
-        public async Task explicit_refresh_token()
-        {
-            var p = TestHelper.StObjMap.Default.Obtain<Package>();
-            var userG = TestHelper.StObjMap.Default.Obtain<UserGoogleTable>();
-            // This is the PrimarySchool Google application.
-            p.ClientId = "368841447214-b0hhtth684efi54lfjhs03uk4an28dd9.apps.googleusercontent.com";
-            p.ClientSecret = "GiApMZBp3RTxdNzsHbhAQKSG";
-            string googleAccountId = "112981383157638924429";
-            var user = TestHelper.StObjMap.Default.Obtain<UserTable>();
-            using( var ctx = new SqlStandardCallContext( TestHelper.Monitor ) )
-            {
-                KnownUserGoogleInfo exists = await userG.FindUserInfoAsync( ctx, googleAccountId );
-                IUserGoogleInfo info = exists?.Info;
-                if( info == null )
-                {
-                    var userName = Guid.NewGuid().ToString();
-                    int userId = await user.CreateUserAsync( ctx, 1, userName );
-                    info = p.UserGoogleTable.CreateUserInfo<IUserGoogleInfo>();
-                    info.GoogleAccountId = googleAccountId;
-                    info.RefreshToken = "1/t63rMARi7a9qQWIYEcKPVIrfnNJU51K2TpNB3hjrEjI";
-                    await p.UserGoogleTable.CreateOrUpdateGoogleUserAsync( ctx, 1, userId, info );
-                }
-                info.AccessToken = null;
-                Assert.That( await p.RefreshAccessTokenAsync( ctx, info ) );
-                Assert.That( info.AccessToken, Is.Not.Null );
-                Assert.That( info.AccessTokenExpirationTime, Is.GreaterThan( DateTime.UtcNow ) );
-                Assert.That( info.AccessTokenExpirationTime, Is.LessThan( DateTime.UtcNow.AddDays( 1 ) ) );
-                Assert.That( await p.RefreshAccessTokenAsync( ctx, info ) );
-            }
-        }
-
     }
 
 }

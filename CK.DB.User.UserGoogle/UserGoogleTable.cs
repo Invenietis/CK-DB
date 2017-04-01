@@ -19,7 +19,7 @@ namespace CK.DB.User.UserGoogle
     /// Holds Google account identifier and refresh token for users.
     /// </summary>
     [SqlTable( "tUserGoogle", Package = typeof(Package), Schema = "CK" )]
-    [Versions("1.0.0,1.0.1,1.0.2")]
+    [Versions("1.0.0,1.0.1,1.0.2,2.0.0")]
     [SqlObjectItem( "transform:sUserDestroy" )]
     public abstract partial class UserGoogleTable : SqlTable, IGenericAuthenticationProvider
     {
@@ -182,7 +182,7 @@ namespace CK.DB.User.UserGoogle
         protected virtual StringBuilder AppendUserInfoColumns( StringBuilder b )
         {
             var props = _infoFactory.PocoClassType.GetProperties().Where( p => p.Name != nameof( IUserGoogleInfo.GoogleAccountId ) );
-            return b.Append( "UserId, " ).AppendStrings( props.Select( p => p.Name ) );
+            return props.Any() ? b.Append("UserId, ").AppendStrings(props.Select(p => p.Name)) : b.Append( "UserId " );
         }
 
         /// <summary>

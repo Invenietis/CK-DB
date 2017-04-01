@@ -19,7 +19,7 @@ namespace CK.DB.Actor.ActorEMail
         /// <param name="userOrGroupId">The user or group identifier for which an email should be added or configured as the primary one.</param>
         /// <param name="email">The email.</param>
         /// <param name="isPrimary">True to set the email as the user or group's primary one.</param>
-        /// <param name="validate">Optionaly sets the ValTime of the email: true to set it to sysUTCDateTime(), false to reset it to '0001:01:01T00:00:00.00'.</param>
+        /// <param name="validate">Optionaly sets the ValTime of the email: true to set it to sysUTCDateTime(), false to reset it to '0001-01-01'.</param>
         [SqlProcedure( "sActorEMailAdd" )]
         public abstract void AddEMail( ISqlCallContext ctx, int actorId, int userOrGroupId, string email, bool isPrimary, bool? validate = null );
 
