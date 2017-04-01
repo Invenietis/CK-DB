@@ -27,4 +27,9 @@ namespace AllPackages.Tests.From
     {
     }
 
+    [TestFixture]
+    public class UserGoogleRefreshTokenTests : CK.DB.User.UserGoogle.RefreshToken.Tests.UserGoogleRefreshTokenTests
+    {
+    }
+
 }

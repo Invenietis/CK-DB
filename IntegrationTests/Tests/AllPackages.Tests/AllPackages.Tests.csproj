@@ -1,12 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net451</TargetFramework>
-    <CKDBVersion Condition=" '$(CKDBVersion)' == '' ">1.0.0-d14</CKDBVersion>
+    <CKDBVersion Condition=" '$(CKDBVersion)' == '' ">0.0.0-AbsolutelyInvalid</CKDBVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="CK.DB.Acl.AclType.Tests" Version="$(CKDBVersion)" />
-    <PackageReference Include="CK.DB.Acl.Acl.Tests" Version="$(CKDBVersion)" />
+    <PackageReference Include="CK.DB.Acl.Tests" Version="$(CKDBVersion)" />
     <PackageReference Include="CK.DB.Actor.ActorEMail.Tests" Version="$(CKDBVersion)" />
     <PackageReference Include="CK.DB.Actor.Tests" Version="$(CKDBVersion)" />
     <PackageReference Include="CK.DB.Auth.AuthScope.Tests" Version="$(CKDBVersion)" />

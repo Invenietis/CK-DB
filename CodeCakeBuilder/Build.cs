@@ -31,21 +31,26 @@ namespace CodeCake
 
     public static class DotNetCoreRestoreSettingsExtension
     {
+        public const string versionWhenInvalid = "0.0.0-AbsolutelyInvalid";
+
         public static T AddVersionArguments<T>(this T @this, SimpleRepositoryInfo info, Action<T> conf = null) where T : DotNetCoreSettings
         {
-            var prev = @this.ArgumentCustomization;
-            @this.ArgumentCustomization = args => (prev?.Invoke(args) ?? args)
-                    .Append($@"/p:CakeBuild=""true""");
-
+            string version = versionWhenInvalid, assemblyVersion = "0.0", fileVersion="0.0.0.0", informationalVersion = "";
             if (info.IsValid)
             {
-                var prev2 = @this.ArgumentCustomization;
-                @this.ArgumentCustomization = args => (prev2?.Invoke(args) ?? args)
-                        .Append($@"/p:Version=""{info.NuGetVersion}""")
-                        .Append($@"/p:AssemblyVersion=""{info.MajorMinor}.0""")
-                        .Append($@"/p:FileVersion=""{info.FileVersion}""")
-                        .Append($@"/p:InformationalVersion=""{info.SemVer} ({info.NuGetVersion}) - SHA1: {info.CommitSha} - CommitDate: {info.CommitDateUtc.ToString("u")}""");
+                version = info.NuGetVersion;
+                assemblyVersion = info.MajorMinor;
+                fileVersion = info.FileVersion;
+                informationalVersion = $"{info.SemVer} ({info.NuGetVersion}) - SHA1: {info.CommitSha} - CommitDate: {info.CommitDateUtc.ToString("u")}";
             }
+            var prev2 = @this.ArgumentCustomization;
+            @this.ArgumentCustomization = args => (prev2?.Invoke(args) ?? args)
+                    .Append($@"/p:CakeBuild=""true""")
+                    .Append($@"/p:Version=""{version}""")
+                    .Append($@"/p:AssemblyVersion=""{assemblyVersion}.0""")
+                    .Append($@"/p:FileVersion=""{fileVersion}""")
+                    .Append($@"/p:InformationalVersion=""{informationalVersion}""");
+
             conf?.Invoke(@this);
             return @this;
         }
@@ -83,7 +88,7 @@ namespace CodeCake
             SimpleRepositoryInfo gitInfo = Cake.GetSimpleRepositoryInfo();
 
             // Configuration is either "Debug" or "Release".
-            string configuration = null;
+            string configuration = "Debug";
 
             Task("Check-Repository")
                 .Does(() =>
@@ -97,11 +102,12 @@ namespace CodeCake
                         }
                         else throw new Exception("Repository is not ready to be published.");
                     }
-
-                    configuration = gitInfo.IsValidRelease
-                                    && (gitInfo.PreReleaseName.Length == 0 || gitInfo.PreReleaseName == "rc")
-                                    ? "Release"
-                                    : "Debug";
+                    Debug.Assert(configuration == "Debug");
+                    if( gitInfo.IsValidRelease
+                        && (gitInfo.PreReleaseName.Length == 0 || gitInfo.PreReleaseName == "rc") )
+                    {
+                        configuration = "Release";
+                    }
 
                     Cake.Information("Publishing {0} projects with version={1} and configuration={2}: {3}",
                         projectsToPublish.Count(),
@@ -175,28 +181,39 @@ namespace CodeCake
             Task( "Run-IntegrationTests" )
               .IsDependentOn( "Create-NuGet-Packages" )
               .WithCriteria( () => !Cake.IsInteractiveMode()
-                                      || Cake.ReadInteractiveOption( "Run integration tests?", 'Y', 'N' ) == 'Y' )
+                                   || Cake.ReadInteractiveOption( "Run integration tests?", 'Y', 'N' ) == 'Y' )
               .Does( () =>
               {
+                  if( !gitInfo.IsValid )
+                  {
+                      string nugetV3Cache = Environment.ExpandEnvironmentVariables(@"%USERPROFILE%/.nuget/packages");
+                      Cake.CleanDirectories( nugetV3Cache + @"/**/" + DotNetCoreRestoreSettingsExtension.versionWhenInvalid);
+                  }
                   var integrationSolution = "IntegrationTests/IntegrationTests.sln";
-                  var integrationProjects = Cake.ParseSolution(solutionFileName)
+                  var integrationProjects = Cake.ParseSolution(integrationSolution)
                                                .Projects
                                                .Where(p => !(p is SolutionFolder));
                   var integrationTests = integrationProjects.Where(p => p.Name.EndsWith(".Tests"));
 
+                  string version = gitInfo.IsValid 
+                                    ? gitInfo.NuGetVersion 
+                                    : DotNetCoreRestoreSettingsExtension.versionWhenInvalid;
+
                   Cake.DotNetCoreRestore(integrationSolution, new DotNetCoreRestoreSettings()
                   {
-                      ArgumentCustomization = c => c.Append($@"/p:CKDBVersion=""{gitInfo.NuGetVersion}""")
+                      NoCache = true,
+                      ArgumentCustomization = c => c.Append($@"/p:CKDBVersion=""{version}""")
                   });
 
                   Cake.DotNetCoreBuild(integrationSolution, new DotNetCoreBuildSettings()
                   {
-                      ArgumentCustomization = c => c.Append($@"/p:CKDBVersion=""{gitInfo.NuGetVersion}""")
+                      ArgumentCustomization = c => c.Append($@"/p:CKDBVersion=""{version}""")
                   });
 
                   var testDlls = integrationTests
-                                    .Select(p => p.Path.GetDirectory().CombineWithFilePath("bin/" + configuration + "/net451/" + p.Name + ".dll"));
-                  Cake.Information("Testing: {0}", string.Join(", ", testDlls.Select(p => p.GetFilename().ToString())));
+                                    .Select(p => System.IO.Path.Combine(
+                                                    p.Path.GetDirectory().ToString(), "bin", configuration, "net451", p.Name + ".dll"));
+                  Cake.Information("Testing: {0}", string.Join(", ", testDlls));
                   Cake.NUnit(testDlls, new NUnitSettings() { Framework = "v4.5" });
               });
 
