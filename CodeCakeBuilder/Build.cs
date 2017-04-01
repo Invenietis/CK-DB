@@ -146,9 +146,9 @@ namespace CodeCake
                 } );
 
             Task( "Unit-Testing" )
-               .IsDependentOn( "Build" )
-              .WithCriteria( () => !Cake.IsInteractiveMode()
-                                      || Cake.ReadInteractiveOption( "Run unit tests?", 'Y', 'N' ) == 'Y' )
+                .IsDependentOn( "Build" )
+                .WithCriteria( () => !Cake.IsInteractiveMode()
+                                        || Cake.ReadInteractiveOption( "Run unit tests?", 'Y', 'N' ) == 'Y' )
                .Does( () =>
                {
                    var testDlls = projects
@@ -174,7 +174,6 @@ namespace CodeCake
 
             Task( "Run-IntegrationTests" )
               .IsDependentOn( "Create-NuGet-Packages" )
-              .WithCriteria( () => gitInfo.IsValid )
               .WithCriteria( () => !Cake.IsInteractiveMode()
                                       || Cake.ReadInteractiveOption( "Run integration tests?", 'Y', 'N' ) == 'Y' )
               .Does( () =>

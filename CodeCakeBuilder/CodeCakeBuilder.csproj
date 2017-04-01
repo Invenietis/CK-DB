@@ -68,63 +68,6 @@
     <None Include="App.config" />
     <None Include="Bootstrap.ps1" />
     <None Include="CoreBuild.proj" />
-    <None Include="NuSpec\CK.DB.Auth.nuspec" />
-    <None Include="NuSpec\CK.DB.Auth.Tests.nuspec" />
-    <None Include="NuSpec\CK.DB.Auth.AuthScope.nuspec" />
-    <None Include="NuSpec\CK.DB.Actor.ActorEMail.Tests.nuspec" />
-    <None Include="NuSpec\CK.DB.Actor.ActorEMail.nuspec" />
-    <None Include="NuSpec\CK.DB.Auth.AuthScope.Tests.nuspec" />
-    <None Include="NuSpec\CK.DB.User.UserGoogle.EmailColumns.nuspec" />
-    <None Include="NuSpec\CK.DB.User.UserGoogle.AuthScope.nuspec" />
-    <None Include="NuSpec\CK.DB.User.UserGoogle.EMailColumns.Tests.nuspec" />
-    <None Include="NuSpec\CK.DB.User.UserGoogle.nuspec" />
-    <None Include="NuSpec\CK.DB.User.UserGoogle.AuthScope.Tests.nuspec" />
-    <None Include="NuSpec\CK.DB.User.UserGoogle.Tests.nuspec" />
-    <None Include="NuSpec\CK.DB.User.UserPassword.Tests.nuspec" />
-    <None Include="NuSpec\CK.DB.User.UserPassword.nuspec" />
-    <None Include="NuSpec\CK.DB.Acl.AclType.nuspec" />
-    <None Include="NuSpec\CK.DB.Acl.AclType.Tests.nuspec" />
-    <None Include="NuSpec\CK.DB.Culture.Tests.nuspec" />
-    <None Include="NuSpec\CK.DB.Culture.nuspec">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="NuSpec\CK.DB.Zone.SimpleNaming.nuspec" />
-    <None Include="NuSpec\CK.DB.Zone.SimpleNaming.Tests.nuspec" />
-    <None Include="NuSpec\CK.DB.HZone.nuspec" />
-    <None Include="NuSpec\CK.DB.HZone.Tests.nuspec" />
-    <None Include="NuSpec\CK.DB.Res.MCResHtml.nuspec" />
-    <None Include="NuSpec\CK.DB.Res.MCResText.nuspec" />
-    <None Include="NuSpec\CK.DB.Res.MCResHtml.Tests.nuspec">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="NuSpec\CK.DB.Res.MCResText.Tests.nuspec">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="NuSpec\CK.DB.Res.ResHtml.nuspec" />
-    <None Include="NuSpec\CK.DB.Res.ResHtml.Tests.nuspec" />
-    <None Include="NuSpec\CK.DB.Res.MCResString.nuspec" />
-    <None Include="NuSpec\CK.DB.Res.MCResString.Tests.nuspec">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="NuSpec\CK.DB.Res.ResText.Tests.nuspec" />
-    <None Include="NuSpec\CK.DB.Res.ResString.Tests.nuspec" />
-    <None Include="NuSpec\CK.DB.Res.ResText.nuspec" />
-    <None Include="NuSpec\CK.DB.Res.ResString.nuspec" />
-    <None Include="NuSpec\CK.DB.Res.Tests.nuspec" />
-    <None Include="NuSpec\CK.DB.Res.nuspec" />
-    <None Include="NuSpec\CK.DB.Group.SimpleNaming.Tests.nuspec" />
-    <None Include="NuSpec\CK.DB.Group.SimpleNaming.nuspec" />
-    <None Include="NuSpec\CK.DB.Res.ResName.nuspec" />
-    <None Include="NuSpec\CK.DB.Res.ResName.Tests.nuspec" />
-    <None Include="NuSpec\CK.DB.Zone.Tests.nuspec" />
-    <None Include="NuSpec\CK.DB.Acl.Tests.nuspec" />
-    <None Include="NuSpec\CK.DB.Actor.Tests.nuspec" />
-    <None Include="NuSpec\CK.DB.Zone.nuspec" />
-    <None Include="NuSpec\CK.DB.Actor.nuspec" />
-    <None Include="NuSpec\nuspec.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="NuSpec\CK.DB.Acl.nuspec" />
     <None Include="packages.config" />
     <None Include="Run-CodeCake.ps1" />
   </ItemGroup>
