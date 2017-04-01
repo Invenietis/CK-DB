@@ -1,0 +1,10 @@
+﻿-- SetupConfig: { "AddRequires": "Model.CK.UserGoogleTable" } 
+-- 
+create transformer on CK.vUserAuthProvider
+as
+begin
+	inject "
+	union all
+	select UserId, 'Google', LastLoginTime from CK.tUserGoogle where UserId > 0
+	" after first part {select};
+end

@@ -1,0 +1,21 @@
+﻿create transformer on CK.sUserGoogleCreateOrUpdate
+as
+begin
+	add parameter @RefreshToken nvarchar(max) = null;
+
+	in single statement {insert into CK.tUserGoogle}
+	begin
+		add column RefreshToken = case when @RefreshToken is not null then @RefreshToken else '' end,
+				   LastRefreshTokenTime = case when @RefreshToken is not null then @Now else '0001-01-01' end;
+	end
+
+	in single statement {update CK.tUserGoogle}
+	begin
+		add column RefreshToken = case when @RefreshToken is not null then @RefreshToken else RefreshToken end, 
+				   LastRefreshTokenTime = case when @RefreshToken is not null and RefreshToken <> @RefreshToken 
+											then @Now
+											else LastRefreshTokenTime
+										   end;
+	end
+
+end

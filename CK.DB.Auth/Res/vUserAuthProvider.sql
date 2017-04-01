@@ -23,5 +23,5 @@
 create view CK.vUserAuthProvider( UserId, ProviderName, LastUsed )
 as 
 	select	UserId = 0, ProviderName = 'ProviderName', LastUsed = 'non null datetime2(2)'
-		from CKCore.tSystem where '(provider table).LastLoginTime' > '0001-01-01 00:00:00'
+		from CKCore.tSystem where '(provider table).LastLoginTime' > '0001-01-01'
 
