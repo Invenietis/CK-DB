@@ -9,7 +9,7 @@
     <ProjectReference Include="..\..\CK.DB.Culture\CK.DB.Culture.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="CK.DB.Tests.NUnit" Version="5.0.0-a44-00-develop-0009" />
+    <PackageReference Include="CK.DB.Tests.NUnit" Version="5.0.0-a45" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
