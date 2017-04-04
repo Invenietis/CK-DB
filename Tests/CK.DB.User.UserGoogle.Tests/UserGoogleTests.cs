@@ -132,11 +132,11 @@ namespace CK.DB.User.UserGoogle.Tests
         }
 
         [Test]
-        public Task standard_generic_tests_for_Google_provider_Async()
+        public async Task standard_generic_tests_for_Google_provider_Async()
         {
             var auth = TestHelper.StObjMap.Default.Obtain<Auth.Package>();
             var f = TestHelper.StObjMap.Default.Obtain<IPocoFactory<IUserGoogleInfo>>();
-            return Auth.Tests.AuthTests.StandardTestForGenericAuthenticationProviderAsync(
+            await Auth.Tests.AuthTests.StandardTestForGenericAuthenticationProviderAsync(
                 auth,
                 "Google",
                 payloadForCreateOrUpdate: (userId, userName) => f.Create(i => i.GoogleAccountId = "GoogleAccountIdFor:" + userName),
