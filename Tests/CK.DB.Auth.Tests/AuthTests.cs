@@ -152,5 +152,15 @@ namespace CK.DB.Auth.Tests
             }
         }
 
+        [Test]
+        public void reading_IUserAuthInfo_for_an_unexisting_user_returns_null()
+        {
+            var p = TestHelper.StObjMap.Default.Obtain<Package>();
+            using (var ctx = new SqlStandardCallContext())
+            {
+                IUserAuthInfo info = p.ReadUserAuthInfo(ctx, 1, int.MaxValue);
+                Assert.That(info, Is.Null);
+            }
+        }
     }
 }
