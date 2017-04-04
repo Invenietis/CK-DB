@@ -18,7 +18,7 @@ using System.Threading.Tasks;
 namespace CK.DB.User.UserGoogle.AuthScope
 {
     /// <summary>
-    /// Package that adds Google authentication support for users. 
+    /// Package that adds AuthScope support to Google authentication. 
     /// </summary>
     [SqlPackage( Schema = "CK", ResourcePath = "Res" )]
     [Versions("1.0.0")]

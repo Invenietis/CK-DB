@@ -74,5 +74,46 @@ namespace CK.DB.Auth
         /// <returns>The awaitable.</returns>
         [SqlProcedure( "sAuthUserOnLogin" )]
         public abstract Task OnUserLoginAsync( ISqlCallContext ctx, string providerName, DateTime loginTime, int userId );
+
+        /// <summary>
+        /// Reads a <see cref="IUserAuthInfo"/> for a user.
+        /// </summary>
+        /// <param name="ctx">The call context to use.</param>
+        /// <param name="actorId">The acting actor identifier.</param>
+        /// <param name="userId">The user identifier.</param>
+        /// <returns>The user information or null if the user identifier does not exist.</returns>
+        public async Task<IUserAuthInfo> ReadUserAuthInfoAsync(ISqlCallContext ctx, int actorId, int userId)
+        {
+            using (var cmd = CmdReadUserAuthInfo(actorId, userId))
+                try
+                {
+                    using (await (cmd.Connection = ctx[this]).EnsureOpenAsync().ConfigureAwait(false))
+                    using (var r = await cmd.ExecuteReaderAsync().ConfigureAwait(false))
+                     {
+                        if (!await r.ReadAsync().ConfigureAwait(false)) return null;
+                        var result = new AuthInfo();
+                        result.UserId = r.GetInt32(0);
+                        result.UserName = r.GetString(1);
+                        if (await r.NextResultAsync().ConfigureAwait(false) 
+                            && await r.ReadAsync().ConfigureAwait(false))
+                        {
+                            var providers = new List<UserAuthProviderInfo>();
+                            do
+                            {
+                                providers.Add(new UserAuthProviderInfo(r.GetString(0), r.GetDateTime(1)));
+                            }
+                            while (await r.ReadAsync().ConfigureAwait(false));
+                            result.Providers = providers;
+                        }
+                        else result.Providers = Util.Array.Empty<UserAuthProviderInfo>();
+                        return result;
+                    }
+                }
+                catch (SqlException ex)
+                {
+                    throw SqlDetailedException.Create(cmd, ex);
+                }
+        }
+
     }
 }

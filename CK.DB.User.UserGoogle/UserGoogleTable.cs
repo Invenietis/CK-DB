@@ -43,8 +43,9 @@ namespace CK.DB.User.UserGoogle
         /// <param name="ctx">The call context to use.</param>
         /// <param name="actorId">The acting actor identifier.</param>
         /// <param name="userId">The user identifier that must be registered.</param>
-        /// <param name="payload">Provider specific data.</param>
+        /// <param name="info">Provider specific data: the <see cref="IUserGoogleInfo"/> poco.</param>
         /// <param name="mode">Optionnaly configures Create, Update only or WithLogin behavior.</param>
+        /// <param name="cancellationToken">Optional cancellation token.</param>
         /// <returns>The operation result.</returns>
         public async Task<CreateOrUpdateResult> CreateOrUpdateGoogleUserAsync( ISqlCallContext ctx, int actorId, int userId, IUserGoogleInfo info, CreateOrUpdateMode mode = CreateOrUpdateMode.CreateOrUpdate, CancellationToken cancellationToken = default(CancellationToken) )
         {
@@ -60,6 +61,7 @@ namespace CK.DB.User.UserGoogle
         /// <param name="ctx">The call context to use.</param>
         /// <param name="info">The payload to challenge.</param>
         /// <param name="actualLogin">Set it to false to avoid login side-effect (such as updating the LastLoginTime) on success.</param>
+        /// <param name="cancellationToken">Optional cancellation token.</param>
         /// <returns>The positive identifier of the user on success or 0 if the Google user does not exist.</returns>
         public async Task<int> LoginUserAsync( ISqlCallContext ctx, IUserGoogleInfo info, bool actualLogin = true, CancellationToken cancellationToken = default( CancellationToken ) )
         {
@@ -136,7 +138,7 @@ namespace CK.DB.User.UserGoogle
         /// <param name="googleAccountId">The google account identifier.</param>
         /// <param name="cancellationToken">Optional cancellation token.</param>
         /// <returns>A <see cref="KnownUserGoogleInfo"/> object or null if not found.</returns>
-        public Task<KnownUserGoogleInfo> FindUserInfoAsync( ISqlCallContext ctx, string googleAccountId, CancellationToken cancellationToken = default( CancellationToken ) )
+        public Task<KnownUserGoogleInfo> FindKnownUserInfoAsync( ISqlCallContext ctx, string googleAccountId, CancellationToken cancellationToken = default( CancellationToken ) )
         {
             using( var c = CreateReaderCommand( googleAccountId ) )
             {

@@ -56,14 +56,14 @@ namespace CK.DB.User.UserGoogle.Tests
                 info.GoogleAccountId = googleAccountId;
                 var created = await u.CreateOrUpdateGoogleUserAsync( ctx, 1, userId, info );
                 Assert.That( created, Is.EqualTo( CreateOrUpdateResult.Created ) );
-                var info2 = await u.FindUserInfoAsync( ctx, googleAccountId );
+                var info2 = await u.FindKnownUserInfoAsync( ctx, googleAccountId );
 
                 Assert.That( info2.UserId, Is.EqualTo( userId ) );
                 Assert.That( info2.Info.GoogleAccountId, Is.EqualTo( googleAccountId ) );
 
-                Assert.That( await u.FindUserInfoAsync( ctx, Guid.NewGuid().ToString() ), Is.Null );
+                Assert.That( await u.FindKnownUserInfoAsync( ctx, Guid.NewGuid().ToString() ), Is.Null );
                 await user.DestroyUserAsync( ctx, 1, userId );
-                Assert.That( await u.FindUserInfoAsync( ctx, googleAccountId ), Is.Null );
+                Assert.That( await u.FindKnownUserInfoAsync( ctx, googleAccountId ), Is.Null );
             }
         }
 
@@ -122,10 +122,24 @@ namespace CK.DB.User.UserGoogle.Tests
         {
             var auth = TestHelper.StObjMap.Default.Obtain<Auth.Package>();
             var f = TestHelper.StObjMap.Default.Obtain<IPocoFactory<IUserGoogleInfo>>();
-            CK.DB.Auth.Tests.AuthTests.StandardTestGorGenericAuthenticationProvider(
+            CK.DB.Auth.Tests.AuthTests.StandardTestForGenericAuthenticationProvider(
                 auth,
                 "Google",
-                payloadForCreateOrUpdate: (userId, userName) => f.Create( i => i.GoogleAccountId = "GoogleAccountIdFor:"+userName ),
+                payloadForCreateOrUpdate: (userId, userName) => f.Create(i => i.GoogleAccountId = "GoogleAccountIdFor:" + userName),
+                payloadForLogin: (userId, userName) => f.Create(i => i.GoogleAccountId = "GoogleAccountIdFor:" + userName),
+                payloadForLoginFail: (userId, userName) => f.Create(i => i.GoogleAccountId = "NO!" + userName)
+                );
+        }
+
+        [Test]
+        public Task standard_generic_tests_for_Google_provider_Async()
+        {
+            var auth = TestHelper.StObjMap.Default.Obtain<Auth.Package>();
+            var f = TestHelper.StObjMap.Default.Obtain<IPocoFactory<IUserGoogleInfo>>();
+            return Auth.Tests.AuthTests.StandardTestForGenericAuthenticationProviderAsync(
+                auth,
+                "Google",
+                payloadForCreateOrUpdate: (userId, userName) => f.Create(i => i.GoogleAccountId = "GoogleAccountIdFor:" + userName),
                 payloadForLogin: (userId, userName) => f.Create(i => i.GoogleAccountId = "GoogleAccountIdFor:" + userName),
                 payloadForLoginFail: (userId, userName) => f.Create(i => i.GoogleAccountId = "NO!" + userName)
                 );

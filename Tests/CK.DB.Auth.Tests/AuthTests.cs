@@ -32,7 +32,7 @@ namespace CK.DB.Auth.Tests
             Assert.That(auth.FindProvider("bASIC"), Is.Not.Null);
         }
 
-        static public void StandardTestGorGenericAuthenticationProvider( 
+        static public void StandardTestForGenericAuthenticationProvider(
             Package auth,
             string providerName,
             Func<int, string, object> payloadForCreateOrUpdate,
@@ -55,11 +55,11 @@ namespace CK.DB.Auth.Tests
                 {
                     #region CreateOrUpdateUser without WithLogin
 
-                    Assert.That(g.CreateOrUpdateUser(ctx, 1, userId, payloadForCreateOrUpdate(userId,userName)), Is.EqualTo(CreateOrUpdateResult.Created));
+                    Assert.That(g.CreateOrUpdateUser(ctx, 1, userId, payloadForCreateOrUpdate(userId, userName)), Is.EqualTo(CreateOrUpdateResult.Created));
                     info = auth.ReadUserAuthInfo(ctx, 1, userId);
                     Assert.That(info.Providers.Count, Is.EqualTo(0), "Still no provider since we did not use WithLogin.");
 
-                    Assert.That(g.LoginUser(ctx, payloadForLogin(userId, userName), actualLogin:false), Is.EqualTo(userId));
+                    Assert.That(g.LoginUser(ctx, payloadForLogin(userId, userName), actualLogin: false), Is.EqualTo(userId));
                     info = auth.ReadUserAuthInfo(ctx, 1, userId);
                     Assert.That(info.Providers.Count, Is.EqualTo(0), "Still no provider since we challenge login but not use WithLogin.");
 
@@ -81,13 +81,13 @@ namespace CK.DB.Auth.Tests
                     Assert.That(info.UserName, Is.EqualTo(userName));
                     Assert.That(info.Providers.Count, Is.EqualTo(0));
 
-                    Assert.That(g.CreateOrUpdateUser(ctx, 1, userId, payloadForCreateOrUpdate(userId,userName), CreateOrUpdateMode.CreateOnly | CreateOrUpdateMode.WithLogin), Is.EqualTo(CreateOrUpdateResult.Created));
+                    Assert.That(g.CreateOrUpdateUser(ctx, 1, userId, payloadForCreateOrUpdate(userId, userName), CreateOrUpdateMode.CreateOnly | CreateOrUpdateMode.WithLogin), Is.EqualTo(CreateOrUpdateResult.Created));
                     info = auth.ReadUserAuthInfo(ctx, 1, userId);
                     Assert.That(info.Providers.Count, Is.EqualTo(1));
                     Assert.That(info.Providers[0].Name, Is.EqualTo(g.ProviderName));
                     Assert.That(info.Providers[0].LastUsed, Is.GreaterThan(DateTime.UtcNow.AddSeconds(-1)));
 
-                    Assert.That(g.LoginUser(ctx, payloadForLoginFail(userId,userName)), Is.EqualTo(0));
+                    Assert.That(g.LoginUser(ctx, payloadForLoginFail(userId, userName)), Is.EqualTo(0));
 
                     g.DestroyUser(ctx, 1, userId);
                     info = auth.ReadUserAuthInfo(ctx, 1, userId);
@@ -100,20 +100,112 @@ namespace CK.DB.Auth.Tests
             }
         }
 
+        static public async Task StandardTestForGenericAuthenticationProviderAsync(
+            Package auth,
+            string providerName,
+            Func<int, string, object> payloadForCreateOrUpdate,
+            Func<int, string, object> payloadForLogin,
+            Func<int, string, object> payloadForLoginFail
+            )
+        {
+            var user = TestHelper.StObjMap.Default.Obtain<Actor.UserTable>();
+            IGenericAuthenticationProvider g = auth.FindProvider(providerName);
+            using (var ctx = new SqlStandardCallContext())
+            {
+                string userName = Guid.NewGuid().ToString();
+                int userId = await user.CreateUserAsync(ctx, 1, userName);
+                IUserAuthInfo info = await auth.ReadUserAuthInfoAsync(ctx, 1, userId);
+
+                Assert.That(info.UserId, Is.EqualTo(userId));
+                Assert.That(info.UserName, Is.EqualTo(userName));
+                Assert.That(info.Providers.Count, Is.EqualTo(0));
+
+                {
+                    #region CreateOrUpdateUser without WithLogin
+
+                    Assert.That(await g.CreateOrUpdateUserAsync(ctx, 1, userId, payloadForCreateOrUpdate(userId, userName)), Is.EqualTo(CreateOrUpdateResult.Created));
+                    info = await auth.ReadUserAuthInfoAsync(ctx, 1, userId);
+                    Assert.That(info.Providers.Count, Is.EqualTo(0), "Still no provider since we did not use WithLogin.");
+
+                    Assert.That(await g.LoginUserAsync(ctx, payloadForLogin(userId, userName), actualLogin: false), Is.EqualTo(userId));
+                    info = await auth.ReadUserAuthInfoAsync(ctx, 1, userId);
+                    Assert.That(info.Providers.Count, Is.EqualTo(0), "Still no provider since we challenge login but not use WithLogin.");
+
+                    Assert.That(await g.LoginUserAsync(ctx, payloadForLogin(userId, userName)), Is.EqualTo(userId));
+                    info = await auth.ReadUserAuthInfoAsync(ctx, 1, userId);
+                    Assert.That(info.Providers.Count, Is.EqualTo(1));
+                    Assert.That(info.Providers[0].Name, Is.EqualTo(g.ProviderName));
+                    Assert.That(info.Providers[0].LastUsed, Is.GreaterThan(DateTime.UtcNow.AddSeconds(-1)));
+
+                    await g.DestroyUserAsync(ctx, 1, userId);
+                    info = await auth.ReadUserAuthInfoAsync(ctx, 1, userId);
+                    Assert.That(info.Providers.Count, Is.EqualTo(0));
+
+                    #endregion 
+                }
+                {
+                    #region CreateOrUpdateUser WithLogin
+                    Assert.That(info.UserId, Is.EqualTo(userId));
+                    Assert.That(info.UserName, Is.EqualTo(userName));
+                    Assert.That(info.Providers.Count, Is.EqualTo(0));
+
+                    Assert.That(await g.CreateOrUpdateUserAsync(ctx, 1, userId, payloadForCreateOrUpdate(userId, userName), CreateOrUpdateMode.CreateOnly | CreateOrUpdateMode.WithLogin), Is.EqualTo(CreateOrUpdateResult.Created));
+                    info = await auth.ReadUserAuthInfoAsync(ctx, 1, userId);
+                    Assert.That(info.Providers.Count, Is.EqualTo(1));
+                    Assert.That(info.Providers[0].Name, Is.EqualTo(g.ProviderName));
+                    Assert.That(info.Providers[0].LastUsed, Is.GreaterThan(DateTime.UtcNow.AddSeconds(-1)));
+
+                    Assert.That(await g.LoginUserAsync(ctx, payloadForLoginFail(userId, userName)), Is.EqualTo(0));
+
+                    await g.DestroyUserAsync(ctx, 1, userId);
+                    info = await auth.ReadUserAuthInfoAsync(ctx, 1, userId);
+                    Assert.That(info.Providers.Count, Is.EqualTo(0));
+
+                    #endregion
+                }
+                await user.DestroyUserAsync(ctx, 1, userId);
+            }
+        }
+
         [Test]
         public void when_a_basic_provider_exists_its_IGenericAuthenticationProvider_adpater_accepts_UserId_or_UserName_based_login_payloads()
         {
             var auth = TestHelper.StObjMap.Default.Obtain<Package>();
-            Assume.That( auth.BasicProvider != null );
+            Assume.That(auth.BasicProvider != null);
 
-            StandardTestGorGenericAuthenticationProvider(
+            // With (UserId, Password) payload.  
+            StandardTestForGenericAuthenticationProvider(
                 auth,
                 "Basic",
                 payloadForCreateOrUpdate: (userId, userName) => "password",
                 payloadForLogin: (userId, userName) => Tuple.Create(userId, "password"),
                 payloadForLoginFail: (userId, userName) => Tuple.Create(userId, "wrong password"));
 
-            StandardTestGorGenericAuthenticationProvider(
+            // With (UserName, Password) payload.  
+            StandardTestForGenericAuthenticationProvider(
+                auth,
+                "Basic",
+                payloadForCreateOrUpdate: (userId, userName) => "password",
+                payloadForLogin: (userId, userName) => Tuple.Create(userName, "password"),
+                payloadForLoginFail: (userId, userName) => Tuple.Create(userName, "wrong password"));
+        }
+
+        [Test]
+        public async Task when_a_basic_provider_exists_its_IGenericAuthenticationProvider_adpater_accepts_UserId_or_UserName_based_login_payloads_Async()
+        {
+            var auth = TestHelper.StObjMap.Default.Obtain<Package>();
+            Assume.That(auth.BasicProvider != null);
+
+            // With (UserId, Password) payload.  
+            await StandardTestForGenericAuthenticationProviderAsync(
+                auth,
+                "Basic",
+                payloadForCreateOrUpdate: (userId, userName) => "password",
+                payloadForLogin: (userId, userName) => Tuple.Create(userId, "password"),
+                payloadForLoginFail: (userId, userName) => Tuple.Create(userId, "wrong password"));
+
+            // With (UserName, Password) payload.  
+            await StandardTestForGenericAuthenticationProviderAsync(
                 auth,
                 "Basic",
                 payloadForCreateOrUpdate: (userId, userName) => "password",

@@ -20,7 +20,7 @@ namespace CK.DB.User.UserGoogle
         /// <param name="ctx">The call context to use.</param>
         /// <param name="actorId">The acting actor identifier.</param>
         /// <param name="userId">The user identifier that must be registered.</param>
-        /// <param name="payload">Provider specific data.</param>
+        /// <param name="info">Provider specific data: the <see cref="IUserGoogleInfo"/> poco.</param>
         /// <param name="mode">Optionnaly configures Create, Update only or WithLogin behavior.</param>
         /// <returns>The operation result.</returns>
         public CreateOrUpdateResult CreateOrUpdateGoogleUser( ISqlCallContext ctx, int actorId, int userId, IUserGoogleInfo info, CreateOrUpdateMode mode = CreateOrUpdateMode.CreateOrUpdate )
@@ -63,7 +63,7 @@ namespace CK.DB.User.UserGoogle
         /// </summary>
         /// <param name="ctx">The call context to use.</param>
         /// <param name="googleAccountId">The google account identifier.</param>
-        /// <returns>A <see cref="UserGoogleInfo"/> object or null if not found.</returns>
+        /// <returns>A <see cref="KnownUserGoogleInfo"/> or null if not found.</returns>
         public KnownUserGoogleInfo FindKnownUserInfo( ISqlCallContext ctx, string googleAccountId )
         {
             using( var c = CreateReaderCommand( googleAccountId ) )
