@@ -12,14 +12,6 @@ namespace CK.DB.Auth.Tests
     [TestFixture]
     public class AuthTests
     {
-        [Test]
-        public void existing_providers_are_registered_in_tAuthProvider_and_available_as_IGenericAuthenticationProvider()
-        {
-            var p = TestHelper.StObjMap.Default.Obtain<Package>();
-            using (var ctx = new SqlStandardCallContext())
-            {
-            }
-        }
 
         [Test]
         public void when_basic_provider_exists_it_is_registered_in_tAuthProvider_and_available_as_IGenericAuthenticationProvider()
@@ -245,12 +237,14 @@ namespace CK.DB.Auth.Tests
         }
 
         [Test]
-        public void reading_IUserAuthInfo_for_an_unexisting_user_returns_null()
+        public void reading_IUserAuthInfo_for_an_unexisting_user_or_Anonymous_returns_null()
         {
             var p = TestHelper.StObjMap.Default.Obtain<Package>();
             using (var ctx = new SqlStandardCallContext())
             {
                 IUserAuthInfo info = p.ReadUserAuthInfo(ctx, 1, int.MaxValue);
+                Assert.That(info, Is.Null);
+                info = p.ReadUserAuthInfo(ctx, 1, 0);
                 Assert.That(info, Is.Null);
             }
         }

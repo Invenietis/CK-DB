@@ -7,7 +7,7 @@ create procedure CK.sAuthUserInfoRead
 )
 as 
 begin
-	select UserId, UserName from CK.tUser with(nolock) where UserId = @UserId;
+	select UserId, UserName from CK.tUser with(nolock) where UserId = @UserId and @UserId > 0;
 	select ProviderName, LastUsed 
 		from CK.vUserAuthProvider with(nolock) 
 		where UserId = @UserId and LastUsed > '0001-01-01'
