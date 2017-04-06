@@ -33,6 +33,7 @@ namespace CK.DB.Auth
 
         /// <summary>
         /// Reads a <see cref="IUserAuthInfo"/> for a user.
+        /// Null for unexisting user or for the anonymous (<paramref name="userId"/> = 0).
         /// </summary>
         /// <param name="ctx">The call context to use.</param>
         /// <param name="actorId">The acting actor identifier.</param>
@@ -42,6 +43,7 @@ namespace CK.DB.Auth
 
         /// <summary>
         /// Reads a <see cref="IUserAuthInfo"/> for a user.
+        /// Null for unexisting user or for the anonymous (<paramref name="userId"/> = 0).
         /// </summary>
         /// <param name="ctx">The call context to use.</param>
         /// <param name="actorId">The acting actor identifier.</param>
