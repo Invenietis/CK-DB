@@ -17,7 +17,7 @@ namespace CK.DB.Auth
     [SqlPackage( Schema = "CK", ResourcePath = "Res" )]
     [Versions( "1.0.0" )]
     [SqlObjectItem( "vUserAuthProvider" )]
-    public abstract partial class Package : SqlPackage
+    public abstract partial class Package : SqlPackage, IAuthenticationDatabaseService
     {
         IDictionary<string,IGenericAuthenticationProvider> _allProviders;
         IReadOnlyCollection<IGenericAuthenticationProvider> _allProvidersValues;
@@ -40,7 +40,8 @@ namespace CK.DB.Auth
         public IBasicAuthenticationProvider BasicProvider { get; protected set; }
 
         /// <summary>
-        /// Gets the collection of existing providers, including the <see cref="IBasicAuthenticationProvider"/> if it exists.
+        /// Gets the collection of existing providers, including an adapter of <see cref="IBasicAuthenticationProvider"/> 
+        /// if it exists.
         /// </summary>
         public IReadOnlyCollection<IGenericAuthenticationProvider> AllProviders => _allProvidersValues;
 
