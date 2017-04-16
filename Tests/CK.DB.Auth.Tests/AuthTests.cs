@@ -88,7 +88,6 @@ namespace CK.DB.Auth.Tests
                     user.DestroyUser(ctx, 1, userId);
                     #endregion
                 }
-
                 {
                     #region Invalid payload MUST throw an ArgumentException
 
@@ -182,7 +181,7 @@ namespace CK.DB.Auth.Tests
             var auth = TestHelper.StObjMap.Default.Obtain<Package>();
             Assume.That(auth.BasicProvider != null);
 
-            // With (UserId, Password) payload.  
+            // With Tuple (UserId, Password) payload.  
             StandardTestForGenericAuthenticationProvider(
                 auth,
                 "Basic",
@@ -190,13 +189,45 @@ namespace CK.DB.Auth.Tests
                 payloadForLogin: (userId, userName) => Tuple.Create(userId, "password"),
                 payloadForLoginFail: (userId, userName) => Tuple.Create(userId, "wrong password"));
 
-            // With (UserName, Password) payload.  
+            // With Tuple (UserName, Password) payload.  
             StandardTestForGenericAuthenticationProvider(
                 auth,
                 "Basic",
                 payloadForCreateOrUpdate: (userId, userName) => "password",
                 payloadForLogin: (userId, userName) => Tuple.Create(userName, "password"),
                 payloadForLoginFail: (userId, userName) => Tuple.Create(userName, "wrong password"));
+
+            // With KeyValuePairs (UserName, Password) payload.  
+            StandardTestForGenericAuthenticationProvider(
+                auth,
+                "Basic",
+                payloadForCreateOrUpdate: (userId, userName) => "£$$µ+",
+                payloadForLogin: (userId, userName) => new[]
+                {
+                    new KeyValuePair<string, object>("username", userName),
+                    new KeyValuePair<string, object>("password", "£$$µ+")
+                },
+                payloadForLoginFail: (userId, userName) => new[]
+                {
+                    new KeyValuePair<string, object>("username", userName),
+                    new KeyValuePair<string, object>("password", "wrong password")
+                });
+
+            // With KeyValuePairs (UserId, Password) payload.  
+            StandardTestForGenericAuthenticationProvider(
+                auth,
+                "Basic",
+                payloadForCreateOrUpdate: (userId, userName) => "MM£$$µ+",
+                payloadForLogin: (userId, userName) => new[]
+                {
+                    new KeyValuePair<string, object>("USERID", userId),
+                    new KeyValuePair<string, object>("PASSWORD", "MM£$$µ+")
+                },
+                payloadForLoginFail: (userId, userName) => new[]
+                {
+                    new KeyValuePair<string, object>("USERID", userId),
+                    new KeyValuePair<string, object>("PASSWORD", "wrong password")
+                });
         }
 
         [Test]

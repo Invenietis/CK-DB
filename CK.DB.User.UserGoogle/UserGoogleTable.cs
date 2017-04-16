@@ -214,26 +214,25 @@ namespace CK.DB.User.UserGoogle
 
         CreateOrUpdateResult IGenericAuthenticationProvider.CreateOrUpdateUser( ISqlCallContext ctx, int actorId, int userId, object payload, CreateOrUpdateMode mode )
         {
-            IUserGoogleInfo info = payload as IUserGoogleInfo;
-            if( info == null ) throw new ArgumentException( nameof( payload ) );
+            IUserGoogleInfo info = _infoFactory.ExtractPayload(payload);
             return CreateOrUpdateGoogleUser( ctx, actorId, userId, info, mode );
         }
 
         int IGenericAuthenticationProvider.LoginUser( ISqlCallContext ctx, object payload, bool actualLogin )
         {
-            IUserGoogleInfo info = ExtractPayload(payload);
+            IUserGoogleInfo info = _infoFactory.ExtractPayload(payload);
             return LoginUser( ctx, info, actualLogin );
         }
 
         Task<CreateOrUpdateResult> IGenericAuthenticationProvider.CreateOrUpdateUserAsync( ISqlCallContext ctx, int actorId, int userId, object payload, CreateOrUpdateMode mode, CancellationToken cancellationToken )
         {
-            IUserGoogleInfo info = ExtractPayload(payload);
+            IUserGoogleInfo info = _infoFactory.ExtractPayload(payload);
             return CreateOrUpdateGoogleUserAsync( ctx, actorId, userId, info, mode, cancellationToken );
         }
 
         Task<int> IGenericAuthenticationProvider.LoginUserAsync( ISqlCallContext ctx, object payload, bool actualLogin, CancellationToken cancellationToken )
         {
-            IUserGoogleInfo info = ExtractPayload( payload);
+            IUserGoogleInfo info = _infoFactory.ExtractPayload(payload);
             return LoginUserAsync( ctx, info, actualLogin, cancellationToken );
         }
 
@@ -245,13 +244,6 @@ namespace CK.DB.User.UserGoogle
         Task IGenericAuthenticationProvider.DestroyUserAsync( ISqlCallContext ctx, int actorId, int userId, CancellationToken cancellationToken )
         {
             return DestroyGoogleUserAsync( ctx, actorId, userId, cancellationToken );
-        }
-
-        IUserGoogleInfo ExtractPayload( object payload )
-        {
-            IUserGoogleInfo info = payload as IUserGoogleInfo;
-            if( info == null ) throw new ArgumentException("Invalid payload. It must be a IUserGoogleInfo POCO.", nameof(payload));
-            return info;
         }
 
         #endregion

@@ -41,10 +41,13 @@ namespace CK.DB.Auth
     /// <para>
     /// Just like the basic one, providers SHOULD handle IDictionary&lt;string,object&gt; (or the more abstract IEnumerable&lt;KeyValuePair&lt;string,object&gt;&gt;)
     /// where the names of the keys match the names of their database columns.
+    /// The helper <see cref="PocoFactotyExtensions.ExtractPayload{T}(IPocoFactory{T}, object)"/> does just that (but does not check required
+    /// property, this is up to provider implementations).
     /// </para>
     /// <para>
-    /// Payloads MUST be correct: a provider MUST throw an ArgumentException whenever the payload parameter is not the expected type or does not carry 
-    /// the required information to be able to <see cref="CreateOrUpdateUser"/> or <see cref="LoginUser"/>.
+    /// Payloads MUST be correct: a provider MUST throw an ArgumentException whenever the payload parameter is not 
+    /// of the expected type. Any other kind of exception MUST be thrown if the payload does not carry the required 
+    /// information to be able to <see cref="CreateOrUpdateUser"/> or <see cref="LoginUser"/>.
     /// </para>
     /// </summary>
     public interface IGenericAuthenticationProvider

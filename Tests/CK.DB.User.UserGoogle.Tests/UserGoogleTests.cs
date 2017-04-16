@@ -7,6 +7,7 @@ using CK.SqlServer;
 using NUnit.Framework;
 using System.Linq;
 using CK.DB.Auth;
+using System.Collections.Generic;
 
 namespace CK.DB.User.UserGoogle.Tests
 {
@@ -121,6 +122,7 @@ namespace CK.DB.User.UserGoogle.Tests
         public void standard_generic_tests_for_Google_provider()
         {
             var auth = TestHelper.StObjMap.Default.Obtain<Auth.Package>();
+            // With IUserGoogleInfo POCO.
             var f = TestHelper.StObjMap.Default.Obtain<IPocoFactory<IUserGoogleInfo>>();
             CK.DB.Auth.Tests.AuthTests.StandardTestForGenericAuthenticationProvider(
                 auth,
@@ -128,6 +130,23 @@ namespace CK.DB.User.UserGoogle.Tests
                 payloadForCreateOrUpdate: (userId, userName) => f.Create(i => i.GoogleAccountId = "GoogleAccountIdFor:" + userName),
                 payloadForLogin: (userId, userName) => f.Create(i => i.GoogleAccountId = "GoogleAccountIdFor:" + userName),
                 payloadForLoginFail: (userId, userName) => f.Create(i => i.GoogleAccountId = "NO!" + userName)
+                );
+            // With a KeyValuePair.
+            CK.DB.Auth.Tests.AuthTests.StandardTestForGenericAuthenticationProvider(
+                auth,
+                "Google",
+                payloadForCreateOrUpdate: (userId, userName) => new[]
+                {
+                    new KeyValuePair<string,object>( "GoogleAccountId", "IdFor:" + userName)
+                },
+                payloadForLogin: (userId, userName) => new[]
+                {
+                    new KeyValuePair<string,object>( "GoogleAccountId", "IdFor:" + userName)
+                },
+                payloadForLoginFail: (userId, userName) => new[]
+                {
+                    new KeyValuePair<string,object>( "GoogleAccountId", ("IdFor:" + userName).ToUpperInvariant())
+                }
                 );
         }
 
