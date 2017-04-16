@@ -84,7 +84,7 @@ namespace CK.DB.Auth
                 if (password != null)
                 {
                     if (userName != null) return Tuple.Create(userName, password);
-                    if (userId.HasValue) return Tuple.Create(userId, password);
+                    if (userId.HasValue) return Tuple.Create(userId.Value, password);
                     throw new ArgumentException("Invalid payload. Missing 'UserId' -> int or 'UserName' -> string entry.", nameof(payload));
                 }
                 throw new ArgumentException("Invalid payload. Missing 'Password' -> string entry.", nameof(payload));
