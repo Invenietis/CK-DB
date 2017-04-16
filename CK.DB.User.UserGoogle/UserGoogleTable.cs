@@ -16,7 +16,7 @@ using System.Reflection;
 namespace CK.DB.User.UserGoogle
 {
     /// <summary>
-    /// Holds Google account identifier and refresh token for users.
+    /// Google authentication provider.
     /// </summary>
     [SqlTable( "tUserGoogle", Package = typeof(Package), Schema = "CK" )]
     [Versions("1.0.0,1.0.1,1.0.2,2.0.0")]
@@ -219,25 +219,22 @@ namespace CK.DB.User.UserGoogle
             return CreateOrUpdateGoogleUser( ctx, actorId, userId, info, mode );
         }
 
-        int? IGenericAuthenticationProvider.LoginUser( ISqlCallContext ctx, object payload, bool actualLogin )
+        int IGenericAuthenticationProvider.LoginUser( ISqlCallContext ctx, object payload, bool actualLogin )
         {
-            IUserGoogleInfo info = payload as IUserGoogleInfo;
-            if( info == null ) return null;
+            IUserGoogleInfo info = ExtractPayload(payload);
             return LoginUser( ctx, info, actualLogin );
         }
 
         Task<CreateOrUpdateResult> IGenericAuthenticationProvider.CreateOrUpdateUserAsync( ISqlCallContext ctx, int actorId, int userId, object payload, CreateOrUpdateMode mode, CancellationToken cancellationToken )
         {
-            IUserGoogleInfo info = payload as IUserGoogleInfo;
-            if( info == null ) throw new ArgumentException( nameof( payload ) );
+            IUserGoogleInfo info = ExtractPayload(payload);
             return CreateOrUpdateGoogleUserAsync( ctx, actorId, userId, info, mode, cancellationToken );
         }
 
-        async Task<int?> IGenericAuthenticationProvider.LoginUserAsync( ISqlCallContext ctx, object payload, bool actualLogin, CancellationToken cancellationToken )
+        Task<int> IGenericAuthenticationProvider.LoginUserAsync( ISqlCallContext ctx, object payload, bool actualLogin, CancellationToken cancellationToken )
         {
-            IUserGoogleInfo info = payload as IUserGoogleInfo;
-            if( info == null ) return null;
-            return await LoginUserAsync( ctx, info, actualLogin, cancellationToken );
+            IUserGoogleInfo info = ExtractPayload( payload);
+            return LoginUserAsync( ctx, info, actualLogin, cancellationToken );
         }
 
         void IGenericAuthenticationProvider.DestroyUser( ISqlCallContext ctx, int actorId, int userId )
@@ -248,6 +245,13 @@ namespace CK.DB.User.UserGoogle
         Task IGenericAuthenticationProvider.DestroyUserAsync( ISqlCallContext ctx, int actorId, int userId, CancellationToken cancellationToken )
         {
             return DestroyGoogleUserAsync( ctx, actorId, userId, cancellationToken );
+        }
+
+        IUserGoogleInfo ExtractPayload( object payload )
+        {
+            IUserGoogleInfo info = payload as IUserGoogleInfo;
+            if( info == null ) throw new ArgumentException("Invalid payload. It must be a IUserGoogleInfo POCO.", nameof(payload));
+            return info;
         }
 
         #endregion

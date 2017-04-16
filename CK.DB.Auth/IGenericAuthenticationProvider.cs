@@ -13,15 +13,39 @@ namespace CK.DB.Auth
     /// Generalizes authentication provider.
     /// An authentication provider can not create a new user by itself, it can only 
     /// register/bind to an existing user.
+    /// <para>
     /// Direct registration (ie. without explicit intermediate steps as when you directly register on a site 
     /// via Google or Facebook), when functionnally needed, must be done in, at least, two steps:
-    /// 1) Call LoginUser to try to login the already registered user.
-    /// 2) If it fails, tries to exploit the user data (ie. the claims) to find an existing user registered
+    /// <list type="number">
+    /// <item><description>
+    /// Call LoginUser to try to login the already registered user.
+    /// </description></item>
+    /// <item><description>
+    /// If it fails, try to exploit the user data (typically the claims) to find an existing user registered
     /// with any other provider.
     /// If a match is found, either bind the existing account (if you trust the match) or confirm the match
     /// by using a confirmation email, sms, or any other means that can prove the identity match before registering
     /// it in its new provider.
-    /// 3) If no match can be found, create the user and register it.
+    /// </description></item>
+    /// <item><description>
+    /// If no match can be found, create the user and register it.
+    /// </description></item>
+    /// </list>
+    /// </para>
+    /// <para>
+    /// The untyped object payload is provider specific. <see cref="IBasicAuthenticationProvider"/> generic wrapper for 
+    /// instance accepts a Tuple&lt;int,string&gt; (for userId, password), a Tuple&lt;string,string&gt;; (for userName, password) or any 
+    /// IEnumerable&lt;KeyValuePair&lt;string,object&gt;&gt; into which it will lookup for a "Password" key with a string 
+    /// value and a "UserId" key with an int value or a "UserName" key with a string value.
+    /// </para>
+    /// <para>
+    /// Just like the basic one, providers SHOULD handle IDictionary&lt;string,object&gt; (or the more abstract IEnumerable&lt;KeyValuePair&lt;string,object&gt;&gt;)
+    /// where the names of the keys match the names of their database columns.
+    /// </para>
+    /// <para>
+    /// Payloads MUST be correct: a provider MUST throw an ArgumentException whenever the payload parameter is not the expected type or does not carry 
+    /// the required information to be able to <see cref="CreateOrUpdateUser"/> or <see cref="LoginUser"/>.
+    /// </para>
     /// </summary>
     public interface IGenericAuthenticationProvider
     {
@@ -63,9 +87,9 @@ namespace CK.DB.Auth
         /// <param name="payload">The payload to challenge.</param>
         /// <param name="actualLogin">Set it to false to avoid login side-effect (such as updating the LastLoginTime) on success.</param>
         /// <returns>
-        /// Null when the payload can not be handled by this provider, the positive identifier of the user on success or 0 if the challenge fails.
+        /// Non zero identifier of the user on success, 0 if the login fails.
         /// </returns>
-        int? LoginUser( ISqlCallContext ctx, object payload, bool actualLogin = true );
+        int LoginUser( ISqlCallContext ctx, object payload, bool actualLogin = true );
 
         /// <summary>
         /// Creates or updates a user entry for this provider. 
@@ -101,9 +125,9 @@ namespace CK.DB.Auth
         /// <param name="actualLogin">Set it to false to avoid login side-effect (such as updating the LastLoginTime) on success.</param>
         /// <param name="cancellationToken">Optional cancellation token.</param>
         /// <returns>
-        /// Null when the payload can not be handled by this provider, the positive identifier of the user on success or 0 if the challenge fails.
+        /// Non zero identifier of the user on success, 0 if the login fails.
         /// </returns>
-        Task<int?> LoginUserAsync( ISqlCallContext ctx, object payload, bool actualLogin = true, CancellationToken cancellationToken = default( CancellationToken ) );
+        Task<int> LoginUserAsync( ISqlCallContext ctx, object payload, bool actualLogin = true, CancellationToken cancellationToken = default( CancellationToken ) );
 
     }
 }

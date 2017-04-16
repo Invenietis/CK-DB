@@ -88,6 +88,15 @@ namespace CK.DB.Auth.Tests
                     user.DestroyUser(ctx, 1, userId);
                     #endregion
                 }
+
+                {
+                    #region Invalid payload MUST throw an ArgumentException
+
+                    Assert.Throws<ArgumentException>(() => g.CreateOrUpdateUser(ctx, 1, userId, DBNull.Value));
+                    Assert.Throws<ArgumentException>(() => g.LoginUser(ctx, DBNull.Value));
+
+                    #endregion
+                }
                 user.DestroyUser(ctx, 1, userId);
             }
         }
@@ -152,6 +161,14 @@ namespace CK.DB.Auth.Tests
                     await g.DestroyUserAsync(ctx, 1, userId);
                     info = await auth.ReadUserAuthInfoAsync(ctx, 1, userId);
                     Assert.That(info.Providers.Count, Is.EqualTo(0));
+
+                    #endregion
+                }
+                {
+                    #region Invalid payload MUST throw an ArgumentException
+
+                    Assert.Throws<ArgumentException>( async () => await g.CreateOrUpdateUserAsync(ctx, 1, userId, DBNull.Value));
+                    Assert.Throws<ArgumentException>( async () => await g.LoginUserAsync(ctx, DBNull.Value));
 
                     #endregion
                 }
