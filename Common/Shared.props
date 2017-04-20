@@ -7,6 +7,10 @@
     <IsTestProject Condition="$(MSBuildProjectName.EndsWith('.Tests'))">true</IsTestProject>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <!-- Centralized version dependencies. -->
+    <CKDatabaseVersion>5.0.0-a47</CKDatabaseVersion>
+  </PropertyGroup>
 
   <!-- Xml documentation is generated in Release or during Cake builds (except for tests projects). -->
   <PropertyGroup Condition=" '$(IsTestProject)' != 'true' And ('$(CakeBuild)' == 'true' Or '$(Configuration)' == 'Release') ">

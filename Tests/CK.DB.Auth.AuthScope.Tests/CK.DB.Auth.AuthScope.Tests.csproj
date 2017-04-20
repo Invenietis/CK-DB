@@ -9,7 +9,7 @@
     <ProjectReference Include="..\..\CK.DB.Auth.AuthScope\CK.DB.Auth.AuthScope.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="CK.DB.Tests.NUnit" Version="5.0.0-a46" />
+    <PackageReference Include="CK.DB.Tests.NUnit" Version="$(CKDatabaseVersion)" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />

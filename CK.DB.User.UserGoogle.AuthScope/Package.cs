@@ -1,18 +1,8 @@
-﻿using CK.Core;
-using CK.DB.Auth;
-using CK.DB.Auth.AuthScope;
+﻿using CK.DB.Auth.AuthScope;
 using CK.Setup;
 using CK.SqlServer;
 using CK.SqlServer.Setup;
-using CK.Text;
 using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace CK.DB.User.UserGoogle.AuthScope
