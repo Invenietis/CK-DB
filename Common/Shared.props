@@ -9,7 +9,7 @@
 
   <PropertyGroup>
     <!-- Centralized version dependencies. -->
-    <CKDatabaseVersion>5.0.0-a47</CKDatabaseVersion>
+    <CKDatabaseVersion>5.0.0-a47-00-develop-0001</CKDatabaseVersion>
   </PropertyGroup>
 
   <!-- Xml documentation is generated in Release or during Cake builds (except for tests projects). -->
