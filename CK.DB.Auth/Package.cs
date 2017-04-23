@@ -2,6 +2,7 @@
 using CK.Setup;
 using CK.SqlServer;
 using CK.SqlServer.Setup;
+using CK.Text;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -28,9 +29,13 @@ namespace CK.DB.Auth
 
         void StObjInitialize(IActivityMonitor m, IContextualStObjMap map)
         {
-            _allProviders = map.Implementations.OfType<IGenericAuthenticationProvider>().ToDictionary(p => p.ProviderName, StringComparer.OrdinalIgnoreCase);
-            if (BasicProvider != null) _allProviders.Add(BasicToGenericProviderAdapter.Name, new BasicToGenericProviderAdapter(BasicProvider));
-            _allProvidersValues = new CKReadOnlyCollectionOnICollection<IGenericAuthenticationProvider>(_allProviders.Values);
+            using (m.OpenInfo().Send($"Initializing CK.DB.Auth.Package : IAuthenticationDatabaseService"))
+            {
+                _allProviders = map.Implementations.OfType<IGenericAuthenticationProvider>().ToDictionary(p => p.ProviderName, StringComparer.OrdinalIgnoreCase);
+                if (BasicProvider != null) _allProviders.Add(BasicToGenericProviderAdapter.Name, new BasicToGenericProviderAdapter(BasicProvider));
+                _allProvidersValues = new CKReadOnlyCollectionOnICollection<IGenericAuthenticationProvider>(_allProviders.Values);
+                m.CloseGroup($"{_allProviders.Count} providers: " + _allProviders.Keys.Concatenate());
+            }
         }
 
         /// <summary>
