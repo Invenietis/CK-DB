@@ -28,6 +28,7 @@ namespace CK.DB.Auth
             if (kindOfDic != null) return ExtractPayload(@this, kindOfDic);
             throw new ArgumentException($"Invalid payload. It must be a '{typeof(T).Name}' POCO or a IEnumerable<KeyValuePair<string, object>>.", nameof(payload));
         }
+
         /// <summary>
         /// Populates a new instance of <typeparamref name="T"/> with the provided KeyValuePair&lt;string, object&gt;.
         /// </summary>

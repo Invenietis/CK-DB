@@ -257,7 +257,7 @@ namespace CodeCake
                         }
                         if (Cake.AppVeyor().IsRunningOnAppVeyor)
                         {
-                            Cake.AppVeyor().UpdateBuildVersion(gitInfo.SemVer);
+                            Cake.AppVeyor().UpdateBuildVersion(gitInfo.NuGetVersion);
                         }
                     });
 
