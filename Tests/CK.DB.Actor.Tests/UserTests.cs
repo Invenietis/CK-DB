@@ -25,6 +25,22 @@ namespace CK.DB.Actor.Tests
         }
 
         [Test]
+        public void user_FindByName_returns_0_when_not_found()
+        {
+            var u = TestHelper.StObjMap.Default.Obtain<UserTable>();
+            using( var ctx = new SqlStandardCallContext() )
+            {
+                var exist = Guid.NewGuid().ToString();
+                var notExist = Guid.NewGuid().ToString();
+
+                Assert.That( u.FindByName( ctx, notExist ) == 0 );
+                int userId = u.CreateUser( ctx, 1, exist );
+                Assert.That( userId > 1 );
+                Assert.That( u.FindByName( ctx, exist ) == userId );
+            }
+        }
+
+        [Test]
         public void user_can_not_be_created_with_an_already_existing_UserName()
         {
             var u = TestHelper.StObjMap.Default.Obtain<UserTable>();
