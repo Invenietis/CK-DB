@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net451</TargetFramework>
+    <TargetFramework>net461</TargetFramework>
     <CKDBVersion Condition=" '$(CKDBVersion)' == '' ">0.0.0-AbsolutelyInvalid</CKDBVersion>
   </PropertyGroup>
 

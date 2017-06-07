@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\Common\Shared.props" />
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.6;net451</TargetFrameworks>
+    <TargetFrameworks>netstandard1.3;net461</TargetFrameworks>
     <Description>CK.tGroup.GrouName column from CK.DB.Group.SimpleNaming is globally unique. This package makes it
       unique in the scope of the group's Zone (from CK.DB.Zone).</Description>
   </PropertyGroup>

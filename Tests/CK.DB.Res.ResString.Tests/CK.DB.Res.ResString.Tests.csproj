@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\..\Common\Shared.props" />
   <PropertyGroup>
-    <TargetFramework>net451</TargetFramework>
+    <TargetFramework>net461</TargetFramework>
     <Description>This package contains tests for CK.DB.Res.ResString (uses CK.DB.Tests.NUnit).</Description>
   </PropertyGroup>
   <ItemGroup>

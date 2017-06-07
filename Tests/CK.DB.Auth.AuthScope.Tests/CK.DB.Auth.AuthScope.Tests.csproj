@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\..\Common\Shared.props" />
   <PropertyGroup>
-    <TargetFramework>net451</TargetFramework>
+    <TargetFramework>net461</TargetFramework>
     <Description>Tests for CK.DB.Auth.AuthScope (uses CK.DB.Tests.NUnit).</Description>
   </PropertyGroup>
   <ItemGroup>
