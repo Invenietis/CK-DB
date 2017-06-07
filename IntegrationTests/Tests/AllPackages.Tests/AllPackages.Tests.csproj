@@ -29,6 +29,8 @@
     <PackageReference Include="CK.DB.User.UserGoogle.EMailColumns.Tests" Version="$(CKDBVersion)" />
     <PackageReference Include="CK.DB.User.UserGoogle.RefreshToken.Tests" Version="$(CKDBVersion)" />
     <PackageReference Include="CK.DB.User.UserGoogle.Tests" Version="$(CKDBVersion)" />
+    
+    <PackageReference Include="CK.DB.User.UserOidc.Tests" Version="$(CKDBVersion)" />
 
     <PackageReference Include="CK.DB.User.UserPassword.Tests" Version="$(CKDBVersion)" />
 

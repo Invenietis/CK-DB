@@ -16,4 +16,9 @@ namespace AllPackages.Tests.From
     public class UserGoogleTests : CK.DB.User.UserGoogle.Tests.UserGoogleTests
     {
     }
+
+    [TestFixture]
+    public class UserOidcTests : CK.DB.User.UserOidc.Tests.UserOidcTests
+    {
+    }
 }
