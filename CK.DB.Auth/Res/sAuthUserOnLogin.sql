@@ -2,7 +2,7 @@
 -- 
 create procedure CK.sAuthUserOnLogin
 ( 
-	@ProviderName varchar(64),
+	@Scheme varchar(64),
 	@LoginTime datetime2(2),
 	@UserId int
 )

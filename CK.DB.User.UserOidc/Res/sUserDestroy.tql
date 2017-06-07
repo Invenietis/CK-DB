@@ -1,0 +1,10 @@
+﻿-- SetupConfig: {}
+create transformer on CK.sUserDestroy
+as
+begin
+	inject "
+		exec CK.sUserOidcDestroy @ActorId, @UserId, null;
+	" 
+	into "PreDestroy";
+end
+

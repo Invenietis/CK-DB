@@ -15,17 +15,17 @@ namespace CK.DB.Auth
         /// This is not intended to be called by code: this is public to allow edge case scenarii.
         /// </summary>
         /// <param name="ctx">The call context to use.</param>
-        /// <param name="providerName">The provider name.</param>
+        /// <param name="scheme">The scheme used.</param>
         /// <param name="loginTime">Login time.</param>
         /// <param name="userId">The user identifier.</param>
         [SqlProcedure("sAuthUserOnLogin")]
-        public abstract void OnUserLogin(ISqlCallContext ctx, string providerName, DateTime loginTime, int userId);
+        public abstract void OnUserLogin(ISqlCallContext ctx, string scheme, DateTime loginTime, int userId);
 
         class AuthInfo : IUserAuthInfo
         {
             public int UserId { get; set; }
             public string UserName { get; set; }
-            public IReadOnlyList<UserAuthProviderInfo> Providers { get; set; }
+            public IReadOnlyList<UserAuthSchemeInfo> Schemes { get; set; }
         }
 
         /// <summary>
@@ -50,15 +50,15 @@ namespace CK.DB.Auth
                         info.UserName = reader.GetString(1);
                         if (reader.NextResult() && reader.Read())
                         {
-                            var providers = new List<UserAuthProviderInfo>();
+                            var providers = new List<UserAuthSchemeInfo>();
                             do
                             {
-                                providers.Add(new UserAuthProviderInfo(reader.GetString(0), reader.GetDateTime(1)));
+                                providers.Add(new UserAuthSchemeInfo(reader.GetString(0), reader.GetDateTime(1)));
                             }
                             while (reader.Read());
-                            info.Providers = providers;
+                            info.Schemes = providers;
                         }
-                        else info.Providers = Util.Array.Empty<UserAuthProviderInfo>();
+                        else info.Schemes = Util.Array.Empty<UserAuthSchemeInfo>();
                         return info;
                     }
                 }

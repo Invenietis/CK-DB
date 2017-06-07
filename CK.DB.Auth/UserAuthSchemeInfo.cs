@@ -5,24 +5,24 @@ using System.Text;
 namespace CK.DB.Auth
 {
     /// <summary>
-    /// Provider name and last used time for <see cref="IUserAuthInfo"/>.
+    /// Scheme name and last used time for <see cref="IUserAuthInfo"/>.
     /// This struct is immutable.
     /// </summary>
-    public struct UserAuthProviderInfo
+    public struct UserAuthSchemeInfo
     {
         /// <summary>
-        /// Initializes a new <see cref="UserAuthProviderInfo"/>.
+        /// Initializes a new <see cref="UserAuthSchemeInfo"/>.
         /// </summary>
-        /// <param name="n">Provider name.</param>
+        /// <param name="s">Scheme name.</param>
         /// <param name="t">Last used time.</param>
-        public UserAuthProviderInfo(string n, DateTime t)
+        public UserAuthSchemeInfo(string s, DateTime t)
         {
-            Name = n;
+            Name = s;
             LastUsed = t;
         }
 
         /// <summary>
-        /// The provider name.
+        /// The scheme name.
         /// </summary>
         public readonly string Name;
 

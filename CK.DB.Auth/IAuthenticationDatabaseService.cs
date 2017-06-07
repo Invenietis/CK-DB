@@ -26,11 +26,15 @@ namespace CK.DB.Auth
 
         /// <summary>
         /// Finds a <see cref="IGenericAuthenticationProvider"/> by its name (using <see cref="StringComparer.OrdinalIgnoreCase"/>).
+        /// This methods accepts a scheme: it is the provider name followed by a, optional dotted suffix and
+        /// in such case only the provider name part is used.
         /// Null if it does not exist.
         /// </summary>
-        /// <param name="providerName">The provider name to find (lookup is case insensitive).</param>
+        /// <param name="schemeOrProviderName">
+        /// The provider name (or ProviderName.SchemeSuffix) to find (lookup is case insensitive).
+        /// </param>
         /// <returns>The provider or null.</returns>
-        IGenericAuthenticationProvider FindProvider(string providerName);
+        IGenericAuthenticationProvider FindProvider(string schemeOrProviderName);
 
         /// <summary>
         /// Reads a <see cref="IUserAuthInfo"/> for a user.

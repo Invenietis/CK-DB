@@ -13,24 +13,24 @@ using CK.DB.Auth;
 using CK.Text;
 using System.Reflection;
 
-namespace CK.DB.User.UserGoogle
+namespace CK.DB.User.UserOidc
 {
     /// <summary>
-    /// Google authentication provider.
+    /// Oidc authentication provider.
     /// </summary>
-    [SqlTable( "tUserGoogle", Package = typeof(Package), Schema = "CK" )]
-    [Versions("1.0.0,1.0.1,1.0.2,2.0.0")]
+    [SqlTable( "tUserOidc", Package = typeof(Package), Schema = "CK" )]
+    [Versions("2.0.0")]
     [SqlObjectItem( "transform:sUserDestroy" )]
-    public abstract partial class UserGoogleTable : SqlTable, IGenericAuthenticationProvider
+    public abstract partial class UserOidcTable : SqlTable, IGenericAuthenticationProvider
     {
-        IPocoFactory<IUserGoogleInfo> _infoFactory;
+        IPocoFactory<IUserOidcInfo> _infoFactory;
 
         /// <summary>
-        /// Gets "Google" that is the name of the Google provider.
+        /// Gets "Oidc" that is the name of the Oidc provider.
         /// </summary>
-        public string ProviderName => "Google";
+        public string ProviderName => "Oidc";
 
-        void StObjConstruct( IPocoFactory<IUserGoogleInfo> infoFactory )
+        void StObjConstruct( IPocoFactory<IUserOidcInfo> infoFactory )
         {
             _infoFactory = infoFactory;
         }
@@ -43,18 +43,18 @@ namespace CK.DB.User.UserGoogle
         /// <param name="ctx">The call context to use.</param>
         /// <param name="actorId">The acting actor identifier.</param>
         /// <param name="userId">The user identifier that must be registered.</param>
-        /// <param name="info">Provider specific data: the <see cref="IUserGoogleInfo"/> poco.</param>
+        /// <param name="info">Provider specific data: the <see cref="IUserOidcInfo"/> poco.</param>
         /// <param name="mode">Optionnaly configures Create, Update only or WithLogin behavior.</param>
         /// <param name="cancellationToken">Optional cancellation token.</param>
         /// <returns>The operation result.</returns>
-        public async Task<CreateOrUpdateResult> CreateOrUpdateGoogleUserAsync( ISqlCallContext ctx, int actorId, int userId, IUserGoogleInfo info, CreateOrUpdateMode mode = CreateOrUpdateMode.CreateOrUpdate, CancellationToken cancellationToken = default(CancellationToken) )
+        public async Task<CreateOrUpdateResult> CreateOrUpdateOidcUserAsync( ISqlCallContext ctx, int actorId, int userId, IUserOidcInfo info, CreateOrUpdateMode mode = CreateOrUpdateMode.CreateOrUpdate, CancellationToken cancellationToken = default(CancellationToken) )
         {
-            var r = await RawCreateOrUpdateGoogleUserAsync( ctx, actorId, userId, info, mode, cancellationToken ).ConfigureAwait( false );
+            var r = await RawCreateOrUpdateOidcUserAsync( ctx, actorId, userId, info, mode, cancellationToken ).ConfigureAwait( false );
             return r.Result;
         }
 
         /// <summary>
-        /// Challenges <see cref="IUserGoogleInfo"/> data to identify a user.
+        /// Challenges <see cref="IUserOidcInfo"/> data to identify a user.
         /// Note that a successful challenge may have side effects such as updating claims, access tokens or other data
         /// related to the user and this provider.
         /// </summary>
@@ -62,29 +62,33 @@ namespace CK.DB.User.UserGoogle
         /// <param name="info">The payload to challenge.</param>
         /// <param name="actualLogin">Set it to false to avoid login side-effect (such as updating the LastLoginTime) on success.</param>
         /// <param name="cancellationToken">Optional cancellation token.</param>
-        /// <returns>The positive identifier of the user on success or 0 if the Google user does not exist.</returns>
-        public async Task<int> LoginUserAsync( ISqlCallContext ctx, IUserGoogleInfo info, bool actualLogin = true, CancellationToken cancellationToken = default( CancellationToken ) )
+        /// <returns>The positive identifier of the user on success or 0 if the Oidc user does not exist.</returns>
+        public async Task<int> LoginUserAsync( ISqlCallContext ctx, IUserOidcInfo info, bool actualLogin = true, CancellationToken cancellationToken = default( CancellationToken ) )
         {
             var mode = actualLogin
                         ? CreateOrUpdateMode.UpdateOnly | CreateOrUpdateMode.WithLogin
                         : CreateOrUpdateMode.UpdateOnly;
-            var r = await RawCreateOrUpdateGoogleUserAsync( ctx, 1, 0, info, mode, cancellationToken ).ConfigureAwait( false );
+            var r = await RawCreateOrUpdateOidcUserAsync( ctx, 1, 0, info, mode, cancellationToken ).ConfigureAwait( false );
             return r.Result == CreateOrUpdateResult.Updated ? r.UserId : 0;
         }
 
         /// <summary>
-        /// Destroys a GoogleUser for a user.
+        /// Destroys a OidcUser for a user.
         /// </summary>
         /// <param name="ctx">The call context to use.</param>
         /// <param name="actorId">The acting actor identifier.</param>
-        /// <param name="userId">The user identifier for which Google account information must be destroyed.</param>
+        /// <param name="userId">The user identifier for which Oidc account information must be destroyed.</param>
+        /// <param name="schemeSuffix">
+        /// Scheme suffix to delete.
+        /// When null, all registrations for this provider regardless of the scheme suffix are deleted.
+        /// </param>
         /// <param name="cancellationToken">Optional cancellation token.</param>
         /// <returns>The awaitable.</returns>
-        [SqlProcedure( "sUserGoogleDestroy" )]
-        public abstract Task DestroyGoogleUserAsync( ISqlCallContext ctx, int actorId, int userId, CancellationToken cancellationToken = default( CancellationToken ) );
+        [SqlProcedure( "sUserOidcDestroy" )]
+        public abstract Task DestroyOidcUserAsync( ISqlCallContext ctx, int actorId, int userId, string schemeSuffix, CancellationToken cancellationToken = default( CancellationToken ) );
 
         /// <summary>
-        /// Captures the result of <see cref="RawCreateOrUpdateGoogleUser"/> and <see cref="RawCreateOrUpdateGoogleUserAsync"/>.
+        /// Captures the result of <see cref="RawCreateOrUpdateOidcUser"/> and <see cref="RawCreateOrUpdateOidcUserAsync"/>.
         /// </summary>
         public struct RawResult
         {
@@ -111,63 +115,67 @@ namespace CK.DB.User.UserGoogle
         }
 
         /// <summary>
-        /// Raw call to manage GoogleUser. Since this should not be used directly, it is protected.
+        /// Raw call to manage OidcUser. Since this should not be used directly, it is protected.
         /// Actual implementation of the centralized create, update or login procedure.
         /// </summary>
         /// <param name="ctx">The call context to use.</param>
         /// <param name="actorId">The acting actor identifier.</param>
-        /// <param name="userId">The user identifier for which a Google account must be created or updated.</param>
+        /// <param name="userId">The user identifier for which a Oidc account must be created or updated.</param>
         /// <param name="info">User information to create or update.</param>
         /// <param name="mode">Configures Create, Update only or WithLogin behavior.</param>
         /// <param name="cancellationToken">Optional cancellation token.</param>
         /// <returns>The user identifier (when <paramref name="userId"/> is 0, this is a login) and the operation result.</returns>
-        [SqlProcedure( "sUserGoogleCreateOrUpdate" )]
-        protected abstract Task<RawResult> RawCreateOrUpdateGoogleUserAsync(
+        [SqlProcedure( "sUserOidcCreateOrUpdate" )]
+        protected abstract Task<RawResult> RawCreateOrUpdateOidcUserAsync(
             ISqlCallContext ctx,
             int actorId,
             int userId,
-            [ParameterSource]IUserGoogleInfo info,
+            [ParameterSource]IUserOidcInfo info,
             CreateOrUpdateMode mode,
             CancellationToken cancellationToken );
 
         /// <summary>
-        /// Finds a user by its Google account identifier.
+        /// Finds a user by its Oidc scheme suffix and sub.
         /// Returns null if no such user exists.
         /// </summary>
         /// <param name="ctx">The call context to use.</param>
-        /// <param name="googleAccountId">The google account identifier.</param>
+        /// <param name="schemeSuffix">The scheme suffix.</param>
+        /// <param name="sub">The sub that identifies the user in the <paramref name="schemeSuffix"/>.</param>
         /// <param name="cancellationToken">Optional cancellation token.</param>
-        /// <returns>A <see cref="KnownUserGoogleInfo"/> object or null if not found.</returns>
-        public Task<KnownUserGoogleInfo> FindKnownUserInfoAsync( ISqlCallContext ctx, string googleAccountId, CancellationToken cancellationToken = default( CancellationToken ) )
+        /// <returns>A <see cref="KnownUserOidcInfo"/> object or null if not found.</returns>
+        public Task<KnownUserOidcInfo> FindKnownUserInfoAsync( ISqlCallContext ctx, string schemeSuffix, string sub, CancellationToken cancellationToken = default( CancellationToken ) )
         {
-            using( var c = CreateReaderCommand( googleAccountId ) )
+            using( var c = CreateReaderCommand( schemeSuffix, sub ) )
             {
-                return c.ExecuteRowAsync( ctx[Database], r => r == null ? null : DoCreateUserUnfo( googleAccountId, r ) );
+                return c.ExecuteRowAsync( ctx[Database], r => r == null ? null : DoCreateUserUnfo( schemeSuffix, sub, r ) );
             }
         }
 
 
         /// <summary>
-        /// Creates a the reader command parametrized with the Google account identifier.
+        /// Creates a the reader command parametrized with the Oidc account identifier.
         /// Single-row returned columns are defined by <see cref="AppendUserInfoColumns(StringBuilder)"/>.
         /// </summary>
-        /// <param name="googleAccountId">Google account identifier to look for.</param>
+        /// <param name="schemeSuffix">The scheme suffix.</param>
+        /// <param name="sub">The sub that identifies the user in the <paramref name="schemeSuffix"/>.</param>
         /// <returns>A ready to use reader command.</returns>
-        SqlCommand CreateReaderCommand( string googleAccountId )
+        SqlCommand CreateReaderCommand( string schemeSuffix, string sub )
         {
             StringBuilder b = new StringBuilder( "select " );
-            AppendUserInfoColumns( b ).Append( " from CK.tUserGoogle where GoogleAccountId=@A" );
+            AppendUserInfoColumns( b ).Append( " from CK.tUserOidc where SchemeSuffix=@S and Sub=@U" );
             var c = new SqlCommand( b.ToString() );
-            c.Parameters.Add( new SqlParameter( "@A", googleAccountId ) );
+            c.Parameters.Add( new SqlParameter( "@S", schemeSuffix ) );
+            c.Parameters.Add( new SqlParameter( "@U", sub ) );
             return c;
         }
 
-        KnownUserGoogleInfo DoCreateUserUnfo( string googleAccountId, SqlDataReader r )
+        KnownUserOidcInfo DoCreateUserUnfo( string schemeSuffix, string sub, SqlDataReader r )
         {
             var info = _infoFactory.Create();
-            info.GoogleAccountId = googleAccountId;
-            FillUserGoogleInfo( info, r, 1 );
-            KnownUserGoogleInfo result = new KnownUserGoogleInfo()
+            info.SchemeSuffix = schemeSuffix;
+            info.Sub = sub;
+            FillUserOidcInfo( info, r, 1 );
+            KnownUserOidcInfo result = new KnownUserOidcInfo()
             {
                 UserId = r.GetInt32( 0 ),
                 Info = info
@@ -183,15 +191,15 @@ namespace CK.DB.User.UserGoogle
         /// <returns>The string builder.</returns>
         protected virtual StringBuilder AppendUserInfoColumns( StringBuilder b )
         {
-            var props = _infoFactory.PocoClassType.GetProperties().Where( p => p.Name != nameof( IUserGoogleInfo.GoogleAccountId ) );
+            var props = _infoFactory.PocoClassType.GetProperties().Where( p => p.Name != nameof( IUserOidcInfo.SchemeSuffix ) && p.Name != nameof( IUserOidcInfo.Sub ) );
             return props.Any() ? b.Append("UserId, ").AppendStrings(props.Select(p => p.Name)) : b.Append( "UserId " );
         }
 
         /// <summary>
-        /// Creates a <see cref="IUserGoogleInfo"/> poco.
+        /// Creates a <see cref="IUserOidcInfo"/> poco.
         /// </summary>
         /// <returns>A new instance.</returns>
-        public T CreateUserInfo<T>() where T : IUserGoogleInfo => (T)_infoFactory.Create();
+        public T CreateUserInfo<T>() where T : IUserOidcInfo => (T)_infoFactory.Create();
 
         /// <summary>
         /// Fill UserInfo properties from reader.
@@ -200,9 +208,9 @@ namespace CK.DB.User.UserGoogle
         /// <param name="r">The data reader.</param>
         /// <param name="idx">The index of the first column.</param>
         /// <returns>The updated index.</returns>
-        protected virtual int FillUserGoogleInfo( IUserGoogleInfo info, SqlDataReader r, int idx )
+        protected virtual int FillUserOidcInfo( IUserOidcInfo info, SqlDataReader r, int idx )
         {
-            var props = _infoFactory.PocoClassType.GetProperties().Where( p => p.Name != nameof( IUserGoogleInfo.GoogleAccountId ) );
+            var props = _infoFactory.PocoClassType.GetProperties().Where( p => p.Name != nameof( IUserOidcInfo.SchemeSuffix ) && p.Name != nameof( IUserOidcInfo.Sub ) );
             foreach( var p in props )
             {
                 p.SetValue( info, r.GetValue( idx++ ) );
@@ -214,36 +222,36 @@ namespace CK.DB.User.UserGoogle
 
         CreateOrUpdateResult IGenericAuthenticationProvider.CreateOrUpdateUser( ISqlCallContext ctx, int actorId, int userId, object payload, CreateOrUpdateMode mode )
         {
-            IUserGoogleInfo info = _infoFactory.ExtractPayload(payload);
-            return CreateOrUpdateGoogleUser( ctx, actorId, userId, info, mode );
+            IUserOidcInfo info = _infoFactory.ExtractPayload(payload);
+            return CreateOrUpdateOidcUser( ctx, actorId, userId, info, mode );
         }
 
         int IGenericAuthenticationProvider.LoginUser( ISqlCallContext ctx, object payload, bool actualLogin )
         {
-            IUserGoogleInfo info = _infoFactory.ExtractPayload(payload);
+            IUserOidcInfo info = _infoFactory.ExtractPayload(payload);
             return LoginUser( ctx, info, actualLogin );
         }
 
         Task<CreateOrUpdateResult> IGenericAuthenticationProvider.CreateOrUpdateUserAsync( ISqlCallContext ctx, int actorId, int userId, object payload, CreateOrUpdateMode mode, CancellationToken cancellationToken )
         {
-            IUserGoogleInfo info = _infoFactory.ExtractPayload(payload);
-            return CreateOrUpdateGoogleUserAsync( ctx, actorId, userId, info, mode, cancellationToken );
+            IUserOidcInfo info = _infoFactory.ExtractPayload(payload);
+            return CreateOrUpdateOidcUserAsync( ctx, actorId, userId, info, mode, cancellationToken );
         }
 
         Task<int> IGenericAuthenticationProvider.LoginUserAsync( ISqlCallContext ctx, object payload, bool actualLogin, CancellationToken cancellationToken )
         {
-            IUserGoogleInfo info = _infoFactory.ExtractPayload(payload);
+            IUserOidcInfo info = _infoFactory.ExtractPayload(payload);
             return LoginUserAsync( ctx, info, actualLogin, cancellationToken );
         }
 
         void IGenericAuthenticationProvider.DestroyUser( ISqlCallContext ctx, int actorId, int userId, string schemeSuffix )
         {
-            DestroyGoogleUser( ctx, actorId, userId );
+            DestroyOidcUser( ctx, actorId, userId, schemeSuffix );
         }
 
         Task IGenericAuthenticationProvider.DestroyUserAsync( ISqlCallContext ctx, int actorId, int userId, string schemeSuffix, CancellationToken cancellationToken )
         {
-            return DestroyGoogleUserAsync( ctx, actorId, userId, cancellationToken );
+            return DestroyOidcUserAsync( ctx, actorId, userId, schemeSuffix, cancellationToken );
         }
 
         #endregion

@@ -277,11 +277,11 @@ namespace CK.DB.User.UserPassword.Tests
             {
                 string userName = "Basic auth - " + Guid.NewGuid().ToString();
                 var idU = user.CreateUser( ctx, 1, userName );
-                u.Database.AssertEmptyReader( $"select * from CK.vUserAuthProvider where UserId={idU} and ProviderName='Basic'" );
+                u.Database.AssertEmptyReader( $"select * from CK.vUserAuthProvider where UserId={idU} and Scheme='Basic'" );
                 u.CreateOrUpdatePasswordUser( ctx, 1, idU, "password" );
-                u.Database.AssertScalarEquals( 1, $"select count(*) from CK.vUserAuthProvider where UserId={idU} and ProviderName='Basic'" );
+                u.Database.AssertScalarEquals( 1, $"select count(*) from CK.vUserAuthProvider where UserId={idU} and Scheme='Basic'" );
                 u.DestroyPasswordUser( ctx, 1, idU );
-                u.Database.AssertEmptyReader( $"select * from CK.vUserAuthProvider where UserId={idU} and ProviderName='Basic'" );
+                u.Database.AssertEmptyReader( $"select * from CK.vUserAuthProvider where UserId={idU} and Scheme='Basic'" );
                 // To let the use in the database with a basic authentication.
                 u.CreateOrUpdatePasswordUser( ctx, 1, idU, "password" );
             }

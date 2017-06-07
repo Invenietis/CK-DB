@@ -54,7 +54,7 @@ namespace CK.DB.Auth
     {
         /// <summary>
         /// Gets the name of the provider.
-        /// This name is unique, case insensitive (must use <see cref="StringComparison.OrdinalIgnoreCase"/>) 
+        /// This name is unique, must not contain any dot ('.'), is case insensitive (must use <see cref="StringComparison.OrdinalIgnoreCase"/>) 
         /// and must be the one added to the CK.tAuthProvider table.
         /// </summary>
         string ProviderName { get; }
@@ -79,7 +79,11 @@ namespace CK.DB.Auth
         /// <param name="ctx">The call context to use.</param>
         /// <param name="actorId">The acting actor identifier.</param>
         /// <param name="userId">The user identifier for which provider information must be destroyed.</param>
-        void DestroyUser( ISqlCallContext ctx, int actorId, int userId );
+        /// <param name="schemeSuffix">
+        /// Optional scheme suffix for multi scheme providers.
+        /// When null, all registrations for this provider regardless of the scheme suffix are deleted.
+        /// </param>
+        void DestroyUser( ISqlCallContext ctx, int actorId, int userId, string schemeSuffix = null );
 
         /// <summary>
         /// Challenges provider dependent information to identify a user.
@@ -115,8 +119,12 @@ namespace CK.DB.Auth
         /// <param name="ctx">The call context to use.</param>
         /// <param name="actorId">The acting actor identifier.</param>
         /// <param name="userId">The user identifier for which provider information must be destroyed.</param>
+        /// <param name="schemeSuffix">
+        /// Optional scheme suffix for multi scheme providers.
+        /// When null, all registrations for this provider regardless of the scheme suffix are deleted.
+        /// </param>
         /// <param name="cancellationToken">Optional cancellation token.</param>
-        Task DestroyUserAsync( ISqlCallContext ctx, int actorId, int userId, CancellationToken cancellationToken = default( CancellationToken ) );
+        Task DestroyUserAsync( ISqlCallContext ctx, int actorId, int userId, string schemeSuffix = null, CancellationToken cancellationToken = default( CancellationToken ) );
 
         /// <summary>
         /// Challenges provider dependent information to locate a user.

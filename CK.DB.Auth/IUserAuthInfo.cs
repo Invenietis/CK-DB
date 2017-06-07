@@ -21,8 +21,8 @@ namespace CK.DB.Auth
         string UserName { get; }
 
         /// <summary>
-        /// Gets the providers information for this user.
+        /// Gets the schemes information for this user.
         /// </summary>
-        IReadOnlyList<UserAuthProviderInfo> Providers { get; }
+        IReadOnlyList<UserAuthSchemeInfo> Schemes { get; }
     }
 }

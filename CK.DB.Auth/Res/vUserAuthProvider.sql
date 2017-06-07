@@ -20,8 +20,8 @@
 --			" after first part {select};
 --		end
 --
-create view CK.vUserAuthProvider( UserId, ProviderName, LastUsed )
+create view CK.vUserAuthProvider( UserId, Scheme, LastUsed )
 as 
-	select	UserId = 0, ProviderName = 'ProviderName', LastUsed = 'non null datetime2(2)' -- (provider table).LastLoginTime
+	select	UserId = 0, Scheme = 'Scheme (ProviderName when IsMultiScheme = 0)', LastUsed = 'non null datetime2(2)' -- (provider table).LastLoginTime
 		from CKCore.tSystem where 1 = 0;
 

@@ -84,13 +84,13 @@ namespace CK.DB.User.UserGoogle.Tests
                 string userName = "Google auth - " + Guid.NewGuid().ToString();
                 var googleAccountId = Guid.NewGuid().ToString( "N" );
                 var idU = user.CreateUser( ctx, 1, userName );
-                u.Database.AssertEmptyReader( $"select * from CK.vUserAuthProvider where UserId={idU} and ProviderName='Google'" );
+                u.Database.AssertEmptyReader( $"select * from CK.vUserAuthProvider where UserId={idU} and Scheme='Google'" );
                 var info = u.CreateUserInfo<IUserGoogleInfo>();
                 info.GoogleAccountId = googleAccountId;
                 u.CreateOrUpdateGoogleUser( ctx, 1, idU, info );
-                u.Database.AssertScalarEquals( 1, $"select count(*) from CK.vUserAuthProvider where UserId={idU} and ProviderName='Google'" );
+                u.Database.AssertScalarEquals( 1, $"select count(*) from CK.vUserAuthProvider where UserId={idU} and Scheme='Google'" );
                 u.DestroyGoogleUser( ctx, 1, idU );
-                u.Database.AssertEmptyReader( $"select * from CK.vUserAuthProvider where UserId={idU} and ProviderName='Google'" );
+                u.Database.AssertEmptyReader( $"select * from CK.vUserAuthProvider where UserId={idU} and Scheme='Google'" );
             }
         }
 

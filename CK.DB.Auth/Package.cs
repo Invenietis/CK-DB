@@ -52,11 +52,21 @@ namespace CK.DB.Auth
 
         /// <summary>
         /// Finds a <see cref="IGenericAuthenticationProvider"/> by its name (using <see cref="StringComparer.OrdinalIgnoreCase"/>).
-        /// Null if it does not exist.
+        /// This methods accepts a scheme: it is the provider name followed by a, optional dotted suffix and
+        /// in such case only the provider name part is used.
+        /// Returns null if it does not exist.
         /// </summary>
-        /// <param name="providerName">The provider name to find (lookup is case insensitive).</param>
+        /// <param name="schemeOrProviderName">
+        /// The provider name (or ProviderName.SchemeSuffix) to find (lookup is case insensitive).
+        /// </param>
         /// <returns>The provider or null.</returns>
-        public IGenericAuthenticationProvider FindProvider(string providerName) => _allProviders.GetValueWithDefault(providerName, null);
+        public IGenericAuthenticationProvider FindProvider( string providerName )
+        {
+            if( string.IsNullOrEmpty( providerName ) ) return null;
+            int idx = providerName.IndexOf( '.' );
+            if( idx >= 0 ) providerName = providerName.Substring( 0, idx );
+            return _allProviders.GetValueWithDefault( providerName, null );
+        }
 
         /// <summary>
         /// Obtains the command object to read auth info.
@@ -74,12 +84,12 @@ namespace CK.DB.Auth
         /// This is not intended to be called by code: this is public to allow edge case scenarii.
         /// </summary>
         /// <param name="ctx">The call context to use.</param>
-        /// <param name="providerName">The provider name.</param>
+        /// <param name="scheme">The scheme used.</param>
         /// <param name="loginTime">Login time.</param>
         /// <param name="userId">The user identifier.</param>
         /// <returns>The awaitable.</returns>
         [SqlProcedure( "sAuthUserOnLogin" )]
-        public abstract Task OnUserLoginAsync( ISqlCallContext ctx, string providerName, DateTime loginTime, int userId );
+        public abstract Task OnUserLoginAsync( ISqlCallContext ctx, string scheme, DateTime loginTime, int userId );
 
         /// <summary>
         /// Reads a <see cref="IUserAuthInfo"/> for a user.
@@ -104,15 +114,15 @@ namespace CK.DB.Auth
                         if (await r.NextResultAsync().ConfigureAwait(false) 
                             && await r.ReadAsync().ConfigureAwait(false))
                         {
-                            var providers = new List<UserAuthProviderInfo>();
+                            var schemes = new List<UserAuthSchemeInfo>();
                             do
                             {
-                                providers.Add(new UserAuthProviderInfo(r.GetString(0), r.GetDateTime(1)));
+                                schemes.Add(new UserAuthSchemeInfo(r.GetString(0), r.GetDateTime(1)));
                             }
                             while (await r.ReadAsync().ConfigureAwait(false));
-                            result.Providers = providers;
+                            result.Schemes = schemes;
                         }
-                        else result.Providers = Util.Array.Empty<UserAuthProviderInfo>();
+                        else result.Schemes = Util.Array.Empty<UserAuthSchemeInfo>();
                         return result;
                     }
                 }

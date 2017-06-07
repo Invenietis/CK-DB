@@ -26,14 +26,14 @@ namespace CK.DB.Auth.Tests
 
         static public void StandardTestForGenericAuthenticationProvider(
             Package auth,
-            string providerName,
+            string schemeOrProviderName,
             Func<int, string, object> payloadForCreateOrUpdate,
             Func<int, string, object> payloadForLogin,
             Func<int, string, object> payloadForLoginFail
             )
         {
             var user = TestHelper.StObjMap.Default.Obtain<Actor.UserTable>();
-            IGenericAuthenticationProvider g = auth.FindProvider(providerName);
+            IGenericAuthenticationProvider g = auth.FindProvider(schemeOrProviderName);
             using (var ctx = new SqlStandardCallContext())
             {
                 string userName = Guid.NewGuid().ToString();
@@ -42,28 +42,29 @@ namespace CK.DB.Auth.Tests
 
                 Assert.That(info.UserId, Is.EqualTo(userId));
                 Assert.That(info.UserName, Is.EqualTo(userName));
-                Assert.That(info.Providers.Count, Is.EqualTo(0));
+                Assert.That(info.Schemes.Count, Is.EqualTo(0));
 
                 {
                     #region CreateOrUpdateUser without WithLogin
 
                     Assert.That(g.CreateOrUpdateUser(ctx, 1, userId, payloadForCreateOrUpdate(userId, userName)), Is.EqualTo(CreateOrUpdateResult.Created));
                     info = auth.ReadUserAuthInfo(ctx, 1, userId);
-                    Assert.That(info.Providers.Count, Is.EqualTo(0), "Still no provider since we did not use WithLogin.");
+                    Assert.That(info.Schemes.Count, Is.EqualTo(0), "Still no scheme since we did not use WithLogin.");
 
                     Assert.That(g.LoginUser(ctx, payloadForLogin(userId, userName), actualLogin: false), Is.EqualTo(userId));
                     info = auth.ReadUserAuthInfo(ctx, 1, userId);
-                    Assert.That(info.Providers.Count, Is.EqualTo(0), "Still no provider since we challenge login but not use WithLogin.");
+                    Assert.That(info.Schemes.Count, Is.EqualTo(0), "Still no scheme since we challenge login but not use WithLogin." );
 
                     Assert.That(g.LoginUser(ctx, payloadForLogin(userId, userName)), Is.EqualTo(userId));
                     info = auth.ReadUserAuthInfo(ctx, 1, userId);
-                    Assert.That(info.Providers.Count, Is.EqualTo(1));
-                    Assert.That(info.Providers[0].Name, Is.EqualTo(g.ProviderName));
-                    Assert.That(info.Providers[0].LastUsed, Is.GreaterThan(DateTime.UtcNow.AddSeconds(-1)));
+                    Assert.That(info.Schemes.Count, Is.EqualTo(1));
+                    Assert.That( info.Schemes[0].Name, Does.StartWith( g.ProviderName ) );
+                    Assert.That( info.Schemes[0].Name, Is.EqualTo( schemeOrProviderName ).IgnoreCase );
+                    Assert.That(info.Schemes[0].LastUsed, Is.GreaterThan(DateTime.UtcNow.AddSeconds(-1)));
 
                     g.DestroyUser(ctx, 1, userId);
                     info = auth.ReadUserAuthInfo(ctx, 1, userId);
-                    Assert.That(info.Providers.Count, Is.EqualTo(0));
+                    Assert.That(info.Schemes.Count, Is.EqualTo(0));
 
                     #endregion 
                 }
@@ -71,19 +72,20 @@ namespace CK.DB.Auth.Tests
                     #region CreateOrUpdateUser WithLogin
                     Assert.That(info.UserId, Is.EqualTo(userId));
                     Assert.That(info.UserName, Is.EqualTo(userName));
-                    Assert.That(info.Providers.Count, Is.EqualTo(0));
+                    Assert.That(info.Schemes.Count, Is.EqualTo(0));
 
                     Assert.That(g.CreateOrUpdateUser(ctx, 1, userId, payloadForCreateOrUpdate(userId, userName), CreateOrUpdateMode.CreateOnly | CreateOrUpdateMode.WithLogin), Is.EqualTo(CreateOrUpdateResult.Created));
                     info = auth.ReadUserAuthInfo(ctx, 1, userId);
-                    Assert.That(info.Providers.Count, Is.EqualTo(1));
-                    Assert.That(info.Providers[0].Name, Is.EqualTo(g.ProviderName));
-                    Assert.That(info.Providers[0].LastUsed, Is.GreaterThan(DateTime.UtcNow.AddSeconds(-1)));
+                    Assert.That(info.Schemes.Count, Is.EqualTo(1));
+                    Assert.That( info.Schemes[0].Name, Does.StartWith( g.ProviderName ) );
+                    Assert.That( info.Schemes[0].Name, Is.EqualTo( schemeOrProviderName ).IgnoreCase );
+                    Assert.That(info.Schemes[0].LastUsed, Is.GreaterThan(DateTime.UtcNow.AddSeconds(-1)));
 
                     Assert.That(g.LoginUser(ctx, payloadForLoginFail(userId, userName)), Is.EqualTo(0));
 
                     g.DestroyUser(ctx, 1, userId);
                     info = auth.ReadUserAuthInfo(ctx, 1, userId);
-                    Assert.That(info.Providers.Count, Is.EqualTo(0));
+                    Assert.That(info.Schemes.Count, Is.EqualTo(0));
 
                     user.DestroyUser(ctx, 1, userId);
                     #endregion
@@ -102,14 +104,14 @@ namespace CK.DB.Auth.Tests
 
         static public async Task StandardTestForGenericAuthenticationProviderAsync(
             Package auth,
-            string providerName,
+            string schemeOrProviderName,
             Func<int, string, object> payloadForCreateOrUpdate,
             Func<int, string, object> payloadForLogin,
             Func<int, string, object> payloadForLoginFail
             )
         {
             var user = TestHelper.StObjMap.Default.Obtain<Actor.UserTable>();
-            IGenericAuthenticationProvider g = auth.FindProvider(providerName);
+            IGenericAuthenticationProvider g = auth.FindProvider(schemeOrProviderName);
             using (var ctx = new SqlStandardCallContext())
             {
                 string userName = Guid.NewGuid().ToString();
@@ -118,28 +120,29 @@ namespace CK.DB.Auth.Tests
 
                 Assert.That(info.UserId, Is.EqualTo(userId));
                 Assert.That(info.UserName, Is.EqualTo(userName));
-                Assert.That(info.Providers.Count, Is.EqualTo(0));
+                Assert.That(info.Schemes.Count, Is.EqualTo(0));
 
                 {
                     #region CreateOrUpdateUser without WithLogin
 
                     Assert.That(await g.CreateOrUpdateUserAsync(ctx, 1, userId, payloadForCreateOrUpdate(userId, userName)), Is.EqualTo(CreateOrUpdateResult.Created));
                     info = await auth.ReadUserAuthInfoAsync(ctx, 1, userId);
-                    Assert.That(info.Providers.Count, Is.EqualTo(0), "Still no provider since we did not use WithLogin.");
+                    Assert.That(info.Schemes.Count, Is.EqualTo(0), "Still no scheme since we did not use WithLogin." );
 
                     Assert.That(await g.LoginUserAsync(ctx, payloadForLogin(userId, userName), actualLogin: false), Is.EqualTo(userId));
                     info = await auth.ReadUserAuthInfoAsync(ctx, 1, userId);
-                    Assert.That(info.Providers.Count, Is.EqualTo(0), "Still no provider since we challenge login but not use WithLogin.");
+                    Assert.That(info.Schemes.Count, Is.EqualTo(0), "Still no scheme since we challenge login but not use WithLogin.");
 
                     Assert.That(await g.LoginUserAsync(ctx, payloadForLogin(userId, userName)), Is.EqualTo(userId));
                     info = await auth.ReadUserAuthInfoAsync(ctx, 1, userId);
-                    Assert.That(info.Providers.Count, Is.EqualTo(1));
-                    Assert.That(info.Providers[0].Name, Is.EqualTo(g.ProviderName));
-                    Assert.That(info.Providers[0].LastUsed, Is.GreaterThan(DateTime.UtcNow.AddSeconds(-1)));
+                    Assert.That(info.Schemes.Count, Is.EqualTo(1));
+                    Assert.That( info.Schemes[0].Name, Does.StartWith( g.ProviderName ) );
+                    Assert.That( info.Schemes[0].Name, Is.EqualTo( schemeOrProviderName ).IgnoreCase );
+                    Assert.That(info.Schemes[0].LastUsed, Is.GreaterThan(DateTime.UtcNow.AddSeconds(-1)));
 
                     await g.DestroyUserAsync(ctx, 1, userId);
                     info = await auth.ReadUserAuthInfoAsync(ctx, 1, userId);
-                    Assert.That(info.Providers.Count, Is.EqualTo(0));
+                    Assert.That(info.Schemes.Count, Is.EqualTo(0));
 
                     #endregion 
                 }
@@ -147,19 +150,20 @@ namespace CK.DB.Auth.Tests
                     #region CreateOrUpdateUser WithLogin
                     Assert.That(info.UserId, Is.EqualTo(userId));
                     Assert.That(info.UserName, Is.EqualTo(userName));
-                    Assert.That(info.Providers.Count, Is.EqualTo(0));
+                    Assert.That(info.Schemes.Count, Is.EqualTo(0));
 
                     Assert.That(await g.CreateOrUpdateUserAsync(ctx, 1, userId, payloadForCreateOrUpdate(userId, userName), CreateOrUpdateMode.CreateOnly | CreateOrUpdateMode.WithLogin), Is.EqualTo(CreateOrUpdateResult.Created));
                     info = await auth.ReadUserAuthInfoAsync(ctx, 1, userId);
-                    Assert.That(info.Providers.Count, Is.EqualTo(1));
-                    Assert.That(info.Providers[0].Name, Is.EqualTo(g.ProviderName));
-                    Assert.That(info.Providers[0].LastUsed, Is.GreaterThan(DateTime.UtcNow.AddSeconds(-1)));
+                    Assert.That(info.Schemes.Count, Is.EqualTo(1));
+                    Assert.That( info.Schemes[0].Name, Does.StartWith( g.ProviderName ) );
+                    Assert.That( info.Schemes[0].Name, Is.EqualTo( schemeOrProviderName ).IgnoreCase );
+                    Assert.That(info.Schemes[0].LastUsed, Is.GreaterThan(DateTime.UtcNow.AddSeconds(-1)));
 
                     Assert.That(await g.LoginUserAsync(ctx, payloadForLoginFail(userId, userName)), Is.EqualTo(0));
 
                     await g.DestroyUserAsync(ctx, 1, userId);
                     info = await auth.ReadUserAuthInfoAsync(ctx, 1, userId);
-                    Assert.That(info.Providers.Count, Is.EqualTo(0));
+                    Assert.That(info.Schemes.Count, Is.EqualTo(0));
 
                     #endregion
                 }
@@ -260,7 +264,7 @@ namespace CK.DB.Auth.Tests
             using( var ctx = new SqlStandardCallContext() )
             {
                 string name = "Absolutely Nimp name";
-                var id = await provider.RegisterProviderAsync( ctx, 1, "Absolutely Nimp name", "Schema.[a table name]" );
+                var id = await provider.RegisterProviderAsync( ctx, 1, "Absolutely Nimp name", "Schema.[a table name]", false );
                 Assert.That( id, Is.GreaterThan( 0 ) );
                 provider.Database.AssertScalarEquals( true, $"select IsEnabled from CK.tAuthProvider where AuthProviderId = {id}" );
                 await provider.EnableProviderAsync( ctx, 1, name, false );

@@ -36,12 +36,12 @@ namespace CK.DB.Auth
             return _basic.CreateOrUpdatePasswordUserAsync(ctx, actorId, userId, password, mode, cancellationToken);
         }
 
-        void IGenericAuthenticationProvider.DestroyUser(ISqlCallContext ctx, int actorId, int userId)
+        void IGenericAuthenticationProvider.DestroyUser(ISqlCallContext ctx, int actorId, int userId, string schemeSuffix )
         {
             _basic.DestroyPasswordUser(ctx, actorId, userId);
         }
 
-        Task IGenericAuthenticationProvider.DestroyUserAsync(ISqlCallContext ctx, int actorId, int userId, CancellationToken cancellationToken)
+        Task IGenericAuthenticationProvider.DestroyUserAsync(ISqlCallContext ctx, int actorId, int userId, string schemeSuffix, CancellationToken cancellationToken)
         {
             return _basic.DestroyPasswordUserAsync(ctx, actorId, userId, cancellationToken);
         }
