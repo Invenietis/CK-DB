@@ -6,7 +6,7 @@
 
   <ItemGroup>
 
-    <PackageReference Include="CK.DB.Tests.NUnit" Version="5.0.0-a53-00-develop-0008" />
+    <PackageReference Include="CK.DB.Tests.NUnit" Version="5.0.0-a54" />
     
     <PackageReference Include="CK.DB.Acl.AclType.Tests" Version="$(CKDBVersion)" />
     <PackageReference Include="CK.DB.Acl.Tests" Version="$(CKDBVersion)" />
