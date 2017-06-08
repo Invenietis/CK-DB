@@ -60,12 +60,12 @@ namespace CK.DB.Auth
         /// The provider name (or ProviderName.SchemeSuffix) to find (lookup is case insensitive).
         /// </param>
         /// <returns>The provider or null.</returns>
-        public IGenericAuthenticationProvider FindProvider( string providerName )
+        public IGenericAuthenticationProvider FindProvider( string schemeOrProviderName )
         {
-            if( string.IsNullOrEmpty( providerName ) ) return null;
-            int idx = providerName.IndexOf( '.' );
-            if( idx >= 0 ) providerName = providerName.Substring( 0, idx );
-            return _allProviders.GetValueWithDefault( providerName, null );
+            if( string.IsNullOrEmpty( schemeOrProviderName ) ) return null;
+            int idx = schemeOrProviderName.IndexOf( '.' );
+            if( idx >= 0 ) schemeOrProviderName = schemeOrProviderName.Substring( 0, idx );
+            return _allProviders.GetValueWithDefault( schemeOrProviderName, null );
         }
 
         /// <summary>
