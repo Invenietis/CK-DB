@@ -8,6 +8,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DD8E9B65-DF41-40CF-9995-5965585CF72E}"
 	ProjectSection(SolutionItems) = preProject
 		appveyor.yml = appveyor.yml
+		Common\DependencyVersions.props = Common\DependencyVersions.props
 		nuget.config = nuget.config
 		RepositoryInfo.xml = RepositoryInfo.xml
 		Common\Shared.props = Common\Shared.props

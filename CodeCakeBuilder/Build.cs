@@ -25,6 +25,7 @@ using Cake.Common.Tools.DotNetCore.Restore;
 using Cake.Common.Tools.DotNetCore.Build;
 using Cake.Common.Tools.DotNetCore.Pack;
 using Cake.Common.Build;
+using System.Data.SqlClient;
 
 namespace CodeCake
 {
@@ -72,6 +73,7 @@ namespace CodeCake
 
             const string solutionName = "CK-DB";
             const string solutionFileName = solutionName + ".sln";
+            const string integrationSolution = "IntegrationTests/IntegrationTests.sln";
 
             var releasesDir = Cake.Directory("CodeCakeBuilder/Releases");
             var coreBuildFile = Cake.File("CodeCakeBuilder/CoreBuild.proj");
@@ -81,6 +83,10 @@ namespace CodeCake
                                        .Where(p => !(p is SolutionFolder)
                                                     && !p.Path.Segments.Contains( "IntegrationTests" )
                                                     && p.Name != "CodeCakeBuilder");
+
+            var integrationProjects = Cake.ParseSolution( integrationSolution )
+                            .Projects
+                            .Where( p => !(p is SolutionFolder) );
 
             // We publish .Tests projects for this solution.
             var projectsToPublish = projects;
@@ -178,7 +184,7 @@ namespace CodeCake
                     Cake.DotNetCorePack(coreBuildFile, settings);
                 });
 
-            Task( "Run-IntegrationTests" )
+            Task( "Compile-IntegrationTests" )
               .IsDependentOn( "Create-NuGet-Packages" )
               .WithCriteria( () => !Cake.IsInteractiveMode()
                                    || Cake.ReadInteractiveOption( "Run integration tests?", 'Y', 'N' ) == 'Y' )
@@ -186,39 +192,57 @@ namespace CodeCake
               {
                   if( !gitInfo.IsValid )
                   {
-                      string nugetV3Cache = Environment.ExpandEnvironmentVariables(@"%USERPROFILE%/.nuget/packages");
-                      Cake.CleanDirectories( nugetV3Cache + @"/**/" + DotNetCoreRestoreSettingsExtension.VersionWhenInvalid);
+                      string nugetV3Cache = Environment.ExpandEnvironmentVariables( @"%USERPROFILE%/.nuget/packages" );
+                      Cake.CleanDirectories( nugetV3Cache + @"/**/" + DotNetCoreRestoreSettingsExtension.VersionWhenInvalid );
                   }
 
-                  string version = gitInfo.IsValid 
-                                    ? gitInfo.NuGetVersion 
+                  string version = gitInfo.IsValid
+                                    ? gitInfo.NuGetVersion
                                     : DotNetCoreRestoreSettingsExtension.VersionWhenInvalid;
-                  
-                  var integrationSolution = "IntegrationTests/IntegrationTests.sln";
 
                   Cake.DotNetCoreRestore( integrationSolution, new DotNetCoreRestoreSettings()
                   {
                       NoCache = true,
                       ArgumentCustomization = c => c.Append( $@"/p:CKDBVersion=""{version}""" )
                   } );
-                  
+
                   Cake.DotNetCoreBuild( integrationSolution, new DotNetCoreBuildSettings()
                   {
                       ArgumentCustomization = c => c.Append( $@"/p:CKDBVersion=""{version}""" )
                   } );
+              } );
 
-                  var integrationProjects = Cake.ParseSolution( integrationSolution )
-                                              .Projects
-                                              .Where( p => !(p is SolutionFolder) );
-                  //{
-                  //    var exe = Cake.File( "packages/CKDBSetup.5.0.0-a54/tools/CKDBSetup.exe" );
-                  //    var args = "setup "Server =.\SQLSERVER2016; Database =; Integrated Security = SSPI" -ra  "CK.DB.All" -n "" -p "Path"";
-                  /*
-                  setup "Data Source=.;Initial Catalog=TEST_CK_DB_AllPackages;Integrated Security=True" -ra "AllPackages" -p "C:\Dev\CK-Database-Projects\CK-DB\IntegrationTests\Tests\AllPackages\bin\Debug\net461"
-                   */
-                  //    var pI = new ProcessStartInfo( path, "" );
+            Task( "Run-IntegrationTests" )
+              .IsDependentOn( "Compile-IntegrationTests" )
+              .Does( () =>
+              {
+                  #region CKDBSetup with IL and Source on IntegrationTests/Tests/AllPackages
+                  {
+                      var vCKDatabase = XDocument.Load( "Common/DependencyVersions.props" )
+                                        .Root
+                                        .Elements( msBuild+"PropertyGroup" )
+                                        .Elements( msBuild+"CKDatabaseVersion" )
+                                        .Single()
+                                        .Value;
 
-                  //}
+                      var exe = System.IO.Path.Combine( Cake.EnvironmentVariable( "%UserProfile%" ), "nuget","packages","ckdbsetup", vCKDatabase, "tools", "CKDBSetup.exe" );
+                      var path = integrationProjects.Single( p => p.Name == "AllPackages" ).Path;
+
+                      string c = Environment.GetEnvironmentVariable( "CK_DB_TEST_MASTER_CONNECTION_STRING" );
+                      if( c == null ) c = System.Configuration.ConfigurationManager.AppSettings["CK_DB_TEST_MASTER_CONNECTION_STRING"];
+                      if( c == null ) c = "Server=.;Database=master;Integrated Security=SSPI";
+                      var csB = new SqlConnectionStringBuilder( c );
+                      csB.InitialCatalog = "TEST_CK_DB_AllPackages";
+                      var dbCon = csB.ToString();
+
+                      var cmdLineIL = $@"{exe} setup ""{dbCon}"" -ra ""AllPackages"" -n ""GenByCKDBSetup"" -p ""{path}""";
+                      int result = Cake.RunCmd( cmdLineIL );
+                      if( result != 0 ) throw new Exception( "CKDSetup.exe failed for IL generation." );
+
+                      result = Cake.RunCmd( cmdLineIL + " -sg" );
+                      if( result != 0 ) throw new Exception( "CKDSetup.exe failed for Source Code generation." );
+                  }
+                  #endregion
                   #region Unit testing *.Tests
                   {
                       var integrationTests = integrationProjects.Where( p => p.Name.EndsWith( ".Tests" ) );
