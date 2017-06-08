@@ -31,11 +31,11 @@ namespace CodeCake
 
     public static class DotNetCoreRestoreSettingsExtension
     {
-        public const string versionWhenInvalid = "0.0.0-AbsolutelyInvalid";
+        public const string VersionWhenInvalid = "0.0.0-AbsolutelyInvalid";
 
         public static T AddVersionArguments<T>(this T @this, SimpleRepositoryInfo info, Action<T> conf = null) where T : DotNetCoreSettings
         {
-            string version = versionWhenInvalid, assemblyVersion = "0.0", fileVersion="0.0.0.0", informationalVersion = "";
+            string version = VersionWhenInvalid, assemblyVersion = "0.0", fileVersion="0.0.0.0", informationalVersion = "";
             if (info.IsValid)
             {
                 version = info.NuGetVersion;
@@ -187,34 +187,50 @@ namespace CodeCake
                   if( !gitInfo.IsValid )
                   {
                       string nugetV3Cache = Environment.ExpandEnvironmentVariables(@"%USERPROFILE%/.nuget/packages");
-                      Cake.CleanDirectories( nugetV3Cache + @"/**/" + DotNetCoreRestoreSettingsExtension.versionWhenInvalid);
+                      Cake.CleanDirectories( nugetV3Cache + @"/**/" + DotNetCoreRestoreSettingsExtension.VersionWhenInvalid);
                   }
-                  var integrationSolution = "IntegrationTests/IntegrationTests.sln";
-                  var integrationProjects = Cake.ParseSolution(integrationSolution)
-                                               .Projects
-                                               .Where(p => !(p is SolutionFolder));
-                  var integrationTests = integrationProjects.Where(p => p.Name.EndsWith(".Tests"));
 
                   string version = gitInfo.IsValid 
                                     ? gitInfo.NuGetVersion 
-                                    : DotNetCoreRestoreSettingsExtension.versionWhenInvalid;
+                                    : DotNetCoreRestoreSettingsExtension.VersionWhenInvalid;
+                  
+                  var integrationSolution = "IntegrationTests/IntegrationTests.sln";
 
-                  Cake.DotNetCoreRestore(integrationSolution, new DotNetCoreRestoreSettings()
+                  Cake.DotNetCoreRestore( integrationSolution, new DotNetCoreRestoreSettings()
                   {
                       NoCache = true,
-                      ArgumentCustomization = c => c.Append($@"/p:CKDBVersion=""{version}""")
-                  });
-
-                  Cake.DotNetCoreBuild(integrationSolution, new DotNetCoreBuildSettings()
+                      ArgumentCustomization = c => c.Append( $@"/p:CKDBVersion=""{version}""" )
+                  } );
+                  
+                  Cake.DotNetCoreBuild( integrationSolution, new DotNetCoreBuildSettings()
                   {
-                      ArgumentCustomization = c => c.Append($@"/p:CKDBVersion=""{version}""")
-                  });
+                      ArgumentCustomization = c => c.Append( $@"/p:CKDBVersion=""{version}""" )
+                  } );
 
-                  var testDlls = integrationTests
-                                    .Select(p => System.IO.Path.Combine(
-                                                    p.Path.GetDirectory().ToString(), "bin", configuration, "net461", p.Name + ".dll"));
-                  Cake.Information("Testing: {0}", string.Join(", ", testDlls));
-                  Cake.NUnit(testDlls, new NUnitSettings() { Framework = "v4.5" });
+                  var integrationProjects = Cake.ParseSolution( integrationSolution )
+                                              .Projects
+                                              .Where( p => !(p is SolutionFolder) );
+                  //{
+                  //    var exe = Cake.File( "packages/CKDBSetup.5.0.0-a54/tools/CKDBSetup.exe" );
+                  //    var args = "setup "Server =.\SQLSERVER2016; Database =; Integrated Security = SSPI" -ra  "CK.DB.All" -n "" -p "Path"";
+                  /*
+                  setup "Data Source=.;Initial Catalog=TEST_CK_DB_AllPackages;Integrated Security=True" -ra "AllPackages" -p "C:\Dev\CK-Database-Projects\CK-DB\IntegrationTests\Tests\AllPackages\bin\Debug\net461"
+                   */
+                  //    var pI = new ProcessStartInfo( path, "" );
+
+                  //}
+                  #region Unit testing *.Tests
+                  {
+                      var integrationTests = integrationProjects.Where( p => p.Name.EndsWith( ".Tests" ) );
+
+
+                      var testDlls = integrationTests
+                                        .Select( p => System.IO.Path.Combine(
+                                                         p.Path.GetDirectory().ToString(), "bin", configuration, "net461", p.Name + ".dll" ) );
+                      Cake.Information( "Testing: {0}", string.Join( ", ", testDlls ) );
+                      Cake.NUnit( testDlls, new NUnitSettings() { Framework = "v4.5" } );
+                  }
+                  #endregion
               });
 
             Task( "Push-NuGet-Packages" )
