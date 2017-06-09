@@ -1,4 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="../../../Common/DependencyVersions.props" />
+
   <PropertyGroup>
     <TargetFramework>net461</TargetFramework>
     <CKDBVersion Condition=" '$(CKDBVersion)' == '' ">0.0.0-AbsolutelyInvalid</CKDBVersion>
@@ -6,7 +9,9 @@
 
   <ItemGroup>
 
-    <PackageReference Include="CK.DB.Tests.NUnit" Version="5.0.0-b" />
+    <!-- This sould not be needed, but since MSBuild sometimes fails to transitively consider
+         the current CK-Database version, this forces the right one. -->
+    <PackageReference Include="CK.DB.Tests.NUnit" Version="$(CKDataBaseVersion)" />
     
     <PackageReference Include="CK.DB.Acl.AclType.Tests" Version="$(CKDBVersion)" />
     <PackageReference Include="CK.DB.Acl.Tests" Version="$(CKDBVersion)" />

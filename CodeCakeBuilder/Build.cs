@@ -188,8 +188,6 @@ namespace CodeCake
 
             Task( "Compile-IntegrationTests" )
               .IsDependentOn( "Create-NuGet-Packages" )
-              .WithCriteria( () => !Cake.IsInteractiveMode()
-                                   || Cake.ReadInteractiveOption( "Run integration tests?", 'Y', 'N' ) == 'Y' )
               .Does( () =>
               {
                   if( !gitInfo.IsValid )
@@ -250,34 +248,37 @@ namespace CodeCake
                    csB.InitialCatalog = "TEST_CK_DB_AllPackages";
                    var dbCon = csB.ToString();
 
-                   var cmdLineIL = $@"{exe} setup ""{dbCon}"" -ra ""AllPackages"" -n ""GenByCKDBSetup"" -p ""{binPath}""";
-                   int result = Cake.RunCmd( cmdLineIL );
-                   if( result != 0 ) throw new Exception( "CKDSetup.exe failed for IL generation." );
+                   var cmdLine = $@"{exe} setup ""{dbCon}"" -ra ""AllPackages"" -n ""GenByCKDBSetup"" -p ""{binPath}""";
 
-                   //result = Cake.RunCmd( cmdLineIL + " -sg" );
-                   //if( result != 0 ) throw new Exception( "CKDSetup.exe failed for Source Code generation." );
-               });
+                   {
+                       int result = Cake.RunCmd( cmdLine );
+                       if( result != 0 ) throw new Exception( "CKDSetup.exe failed for IL generation." );
+                   }
+                   {
+                       int result = Cake.RunCmd( cmdLine + " -sg" );
+                       if( result != 0 ) throw new Exception( "CKDSetup.exe failed for Source Code generation." );
+                   }
+               } );
 
             Task( "Run-IntegrationTests" )
               .IsDependentOn( "Compile-IntegrationTests" )
+              .WithCriteria( () => !Cake.IsInteractiveMode()
+                                   || Cake.ReadInteractiveOption( "Run integration tests?", 'Y', 'N' ) == 'Y' )
               .Does( () =>
               {
-                  #region Unit testing *.Tests
-                  {
-                      var integrationTests = integrationProjects.Where( p => p.Name.EndsWith( ".Tests" ) );
+                    var integrationTests = integrationProjects.Where( p => p.Name.EndsWith( ".Tests" ) );
 
 
-                      var testDlls = integrationTests
-                                        .Select( p => System.IO.Path.Combine(
-                                                         p.Path.GetDirectory().ToString(), "bin", configuration, "net461", p.Name + ".dll" ) );
-                      Cake.Information( "Testing: {0}", string.Join( ", ", testDlls ) );
-                      Cake.NUnit( testDlls, new NUnitSettings() { Framework = "v4.5" } );
-                  }
-                  #endregion
+                    var testDlls = integrationTests
+                                    .Select( p => System.IO.Path.Combine(
+                                                        p.Path.GetDirectory().ToString(), "bin", configuration, "net461", p.Name + ".dll" ) );
+                    Cake.Information( "Testing: {0}", string.Join( ", ", testDlls ) );
+                    Cake.NUnit( testDlls, new NUnitSettings() { Framework = "v4.5" } );
               });
 
             Task( "Push-NuGet-Packages" )
                     .IsDependentOn( "Create-NuGet-Packages" )
+                    .IsDependentOn( "Run-CKDBSetup-On-IntegrationTests-AllPackages" )
                     .IsDependentOn( "Run-IntegrationTests" )
                     .WithCriteria( () => gitInfo.IsValid )
                     .Does( () =>
