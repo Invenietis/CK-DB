@@ -26,6 +26,7 @@ using Cake.Common.Tools.DotNetCore.Build;
 using Cake.Common.Tools.DotNetCore.Pack;
 using Cake.Common.Build;
 using System.Data.SqlClient;
+using Cake.Common.Tools.NuGet.Install;
 
 namespace CodeCake
 {
@@ -96,7 +97,8 @@ namespace CodeCake
             // Configuration is either "Debug" or "Release".
             string configuration = "Debug";
 
-            Task("Check-Repository")
+
+            Task( "Check-Repository")
                 .Does(() =>
                 {
                     if (!gitInfo.IsValid)
@@ -212,37 +214,54 @@ namespace CodeCake
                   } );
               } );
 
+            Task( "Run-CKDBSetup-On-IntegrationTests-AllPackages" )
+              .IsDependentOn( "Compile-IntegrationTests" )
+              .Does( () =>
+               {
+                   var vCKDatabase = XDocument.Load( "Common/DependencyVersions.props" )
+                     .Root
+                     .Elements( msBuild + "PropertyGroup" )
+                     .Elements( msBuild + "CKDatabaseVersion" )
+                     .Single()
+                     .Value;
+
+                   var exe = System.IO.Path.Combine( Cake.EnvironmentVariable( "UserProfile" ), ".nuget", "packages", "ckdbsetup", vCKDatabase, "tools", "CKDBSetup.exe" );
+                   if( !System.IO.File.Exists( exe ) )
+                   {
+                       Cake.NuGetInstall( "CKDBSetup", new NuGetInstallSettings()
+                       {
+                           Prerelease = true,
+                           Version = vCKDatabase,
+                           OutputDirectory = "packages"
+                       } );
+                   }
+                   if( !System.IO.File.Exists( exe ) )
+                   {
+                       throw new Exception( "Unable to install CKDBSetup " + vCKDatabase );
+                   }
+
+                   var projectPath = integrationProjects.Single( p => p.Name == "AllPackages" ).Path.GetDirectory();
+                   var binPath = projectPath.Combine( $"bin/{configuration}/net461" );
+
+                   string c = Environment.GetEnvironmentVariable( "CK_DB_TEST_MASTER_CONNECTION_STRING" );
+                   if( c == null ) c = System.Configuration.ConfigurationManager.AppSettings["CK_DB_TEST_MASTER_CONNECTION_STRING"];
+                   if( c == null ) c = "Server=.;Database=master;Integrated Security=SSPI";
+                   var csB = new SqlConnectionStringBuilder( c );
+                   csB.InitialCatalog = "TEST_CK_DB_AllPackages";
+                   var dbCon = csB.ToString();
+
+                   var cmdLineIL = $@"{exe} setup ""{dbCon}"" -ra ""AllPackages"" -n ""GenByCKDBSetup"" -p ""{binPath}""";
+                   int result = Cake.RunCmd( cmdLineIL );
+                   if( result != 0 ) throw new Exception( "CKDSetup.exe failed for IL generation." );
+
+                   //result = Cake.RunCmd( cmdLineIL + " -sg" );
+                   //if( result != 0 ) throw new Exception( "CKDSetup.exe failed for Source Code generation." );
+               });
+
             Task( "Run-IntegrationTests" )
               .IsDependentOn( "Compile-IntegrationTests" )
               .Does( () =>
               {
-                  #region CKDBSetup with IL and Source on IntegrationTests/Tests/AllPackages
-                  {
-                      var vCKDatabase = XDocument.Load( "Common/DependencyVersions.props" )
-                                        .Root
-                                        .Elements( msBuild+"PropertyGroup" )
-                                        .Elements( msBuild+"CKDatabaseVersion" )
-                                        .Single()
-                                        .Value;
-
-                      var exe = System.IO.Path.Combine( Cake.EnvironmentVariable( "%UserProfile%" ), "nuget","packages","ckdbsetup", vCKDatabase, "tools", "CKDBSetup.exe" );
-                      var path = integrationProjects.Single( p => p.Name == "AllPackages" ).Path;
-
-                      string c = Environment.GetEnvironmentVariable( "CK_DB_TEST_MASTER_CONNECTION_STRING" );
-                      if( c == null ) c = System.Configuration.ConfigurationManager.AppSettings["CK_DB_TEST_MASTER_CONNECTION_STRING"];
-                      if( c == null ) c = "Server=.;Database=master;Integrated Security=SSPI";
-                      var csB = new SqlConnectionStringBuilder( c );
-                      csB.InitialCatalog = "TEST_CK_DB_AllPackages";
-                      var dbCon = csB.ToString();
-
-                      var cmdLineIL = $@"{exe} setup ""{dbCon}"" -ra ""AllPackages"" -n ""GenByCKDBSetup"" -p ""{path}""";
-                      int result = Cake.RunCmd( cmdLineIL );
-                      if( result != 0 ) throw new Exception( "CKDSetup.exe failed for IL generation." );
-
-                      result = Cake.RunCmd( cmdLineIL + " -sg" );
-                      if( result != 0 ) throw new Exception( "CKDSetup.exe failed for Source Code generation." );
-                  }
-                  #endregion
                   #region Unit testing *.Tests
                   {
                       var integrationTests = integrationProjects.Where( p => p.Name.EndsWith( ".Tests" ) );
