@@ -9,7 +9,9 @@
 
   <ItemGroup>
 
-    <!-- This sould not be needed, but since MSBuild sometimes fails to transitively consider
+    <PackageReference Include="CK.Monitoring" Version="7.0.0" />
+
+    <!-- This should not be needed, but since MSBuild sometimes fails to transitively consider
          the current CK-Database version, this forces the right one. -->
     <PackageReference Include="CK.DB.Tests.NUnit" Version="$(CKDataBaseVersion)" />
     

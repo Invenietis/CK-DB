@@ -97,8 +97,7 @@ namespace CodeCake
             // Configuration is either "Debug" or "Release".
             string configuration = "Debug";
 
-
-            Task( "Check-Repository")
+             Task( "Check-Repository")
                 .Does(() =>
                 {
                     if (!gitInfo.IsValid)
