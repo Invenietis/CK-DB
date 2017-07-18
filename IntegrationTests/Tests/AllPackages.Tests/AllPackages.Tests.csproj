@@ -4,7 +4,7 @@
 
   <PropertyGroup>
     <TargetFramework>net461</TargetFramework>
-    <CKDBVersion Condition=" '$(CKDBVersion)' == '' ">0.0.0-AbsolutelyInvalid</CKDBVersion>
+    <CKDBVersion Condition=" '$(CKDBVersion)' == '' ">0.0.0-0</CKDBVersion>
   </PropertyGroup>
 
   <ItemGroup>
