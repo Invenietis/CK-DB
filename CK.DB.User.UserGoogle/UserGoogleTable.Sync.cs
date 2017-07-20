@@ -42,7 +42,7 @@ namespace CK.DB.User.UserGoogle
         {
             var mode = actualLogin
                         ? CreateOrUpdateMode.UpdateOnly | CreateOrUpdateMode.WithLogin
-                        : CreateOrUpdateMode.UpdateOnly; 
+                        : CreateOrUpdateMode.UpdateOnly;
             var r = RawCreateOrUpdateGoogleUser( ctx, 1, 0, info, mode );
             return r.Result == CreateOrUpdateResult.Updated ? r.UserId : 0;
         }
@@ -85,9 +85,9 @@ namespace CK.DB.User.UserGoogle
         /// <param name="mode">Configures Create, Update only or WithLogin behavior.</param>
         /// <returns>The user identifier (when <paramref name="userId"/> is 0, this is a login) and the operation result.</returns>
         [SqlProcedure( "sUserGoogleCreateOrUpdate" )]
-        protected abstract RawResult RawCreateOrUpdateGoogleUser( 
-            ISqlCallContext ctx, 
-            int actorId, 
+        protected abstract RawResult RawCreateOrUpdateGoogleUser(
+            ISqlCallContext ctx,
+            int actorId,
             int userId,
             [ParameterSource]IUserGoogleInfo info,
             CreateOrUpdateMode mode );

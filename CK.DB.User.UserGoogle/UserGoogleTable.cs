@@ -18,10 +18,10 @@ namespace CK.DB.User.UserGoogle
     /// <summary>
     /// Google authentication provider.
     /// </summary>
-    [SqlTable( "tUserGoogle", Package = typeof(Package), Schema = "CK" )]
-    [Versions("1.0.0,1.0.1,1.0.2,2.0.0")]
+    [SqlTable( "tUserGoogle", Package = typeof( Package ), Schema = "CK" )]
+    [Versions( "1.0.0,1.0.1,1.0.2,2.0.0" )]
     [SqlObjectItem( "transform:sUserDestroy" )]
-    public abstract partial class UserGoogleTable : SqlTable, IGenericAuthenticationProvider
+    public abstract partial class UserGoogleTable : SqlTable, IGenericAuthenticationProvider<IUserGoogleInfo>
     {
         IPocoFactory<IUserGoogleInfo> _infoFactory;
 
@@ -35,6 +35,14 @@ namespace CK.DB.User.UserGoogle
             _infoFactory = infoFactory;
         }
 
+        IUserGoogleInfo IGenericAuthenticationProvider<IUserGoogleInfo>.CreatePayload() => _infoFactory.Create();
+
+        /// <summary>
+        /// Creates a <see cref="IUserGoogleInfo"/> poco.
+        /// </summary>
+        /// <returns>A new instance.</returns>
+        public T CreateUserInfo<T>() where T : IUserGoogleInfo => (T)_infoFactory.Create();
+
         /// <summary>
         /// Creates or updates a user entry for this provider. 
         /// This is the "binding account" feature since it binds an external identity to 
@@ -47,7 +55,7 @@ namespace CK.DB.User.UserGoogle
         /// <param name="mode">Optionnaly configures Create, Update only or WithLogin behavior.</param>
         /// <param name="cancellationToken">Optional cancellation token.</param>
         /// <returns>The operation result.</returns>
-        public async Task<CreateOrUpdateResult> CreateOrUpdateGoogleUserAsync( ISqlCallContext ctx, int actorId, int userId, IUserGoogleInfo info, CreateOrUpdateMode mode = CreateOrUpdateMode.CreateOrUpdate, CancellationToken cancellationToken = default(CancellationToken) )
+        public async Task<CreateOrUpdateResult> CreateOrUpdateGoogleUserAsync( ISqlCallContext ctx, int actorId, int userId, IUserGoogleInfo info, CreateOrUpdateMode mode = CreateOrUpdateMode.CreateOrUpdate, CancellationToken cancellationToken = default( CancellationToken ) )
         {
             var r = await RawCreateOrUpdateGoogleUserAsync( ctx, actorId, userId, info, mode, cancellationToken ).ConfigureAwait( false );
             return r.Result;
@@ -184,14 +192,8 @@ namespace CK.DB.User.UserGoogle
         protected virtual StringBuilder AppendUserInfoColumns( StringBuilder b )
         {
             var props = _infoFactory.PocoClassType.GetProperties().Where( p => p.Name != nameof( IUserGoogleInfo.GoogleAccountId ) );
-            return props.Any() ? b.Append("UserId, ").AppendStrings(props.Select(p => p.Name)) : b.Append( "UserId " );
+            return props.Any() ? b.Append( "UserId, " ).AppendStrings( props.Select( p => p.Name ) ) : b.Append( "UserId " );
         }
-
-        /// <summary>
-        /// Creates a <see cref="IUserGoogleInfo"/> poco.
-        /// </summary>
-        /// <returns>A new instance.</returns>
-        public T CreateUserInfo<T>() where T : IUserGoogleInfo => (T)_infoFactory.Create();
 
         /// <summary>
         /// Fill UserInfo properties from reader.
@@ -214,25 +216,25 @@ namespace CK.DB.User.UserGoogle
 
         CreateOrUpdateResult IGenericAuthenticationProvider.CreateOrUpdateUser( ISqlCallContext ctx, int actorId, int userId, object payload, CreateOrUpdateMode mode )
         {
-            IUserGoogleInfo info = _infoFactory.ExtractPayload(payload);
+            IUserGoogleInfo info = _infoFactory.ExtractPayload( payload );
             return CreateOrUpdateGoogleUser( ctx, actorId, userId, info, mode );
         }
 
         int IGenericAuthenticationProvider.LoginUser( ISqlCallContext ctx, object payload, bool actualLogin )
         {
-            IUserGoogleInfo info = _infoFactory.ExtractPayload(payload);
+            IUserGoogleInfo info = _infoFactory.ExtractPayload( payload );
             return LoginUser( ctx, info, actualLogin );
         }
 
         Task<CreateOrUpdateResult> IGenericAuthenticationProvider.CreateOrUpdateUserAsync( ISqlCallContext ctx, int actorId, int userId, object payload, CreateOrUpdateMode mode, CancellationToken cancellationToken )
         {
-            IUserGoogleInfo info = _infoFactory.ExtractPayload(payload);
+            IUserGoogleInfo info = _infoFactory.ExtractPayload( payload );
             return CreateOrUpdateGoogleUserAsync( ctx, actorId, userId, info, mode, cancellationToken );
         }
 
         Task<int> IGenericAuthenticationProvider.LoginUserAsync( ISqlCallContext ctx, object payload, bool actualLogin, CancellationToken cancellationToken )
         {
-            IUserGoogleInfo info = _infoFactory.ExtractPayload(payload);
+            IUserGoogleInfo info = _infoFactory.ExtractPayload( payload );
             return LoginUserAsync( ctx, info, actualLogin, cancellationToken );
         }
 

@@ -18,10 +18,10 @@ namespace CK.DB.User.UserOidc
     /// <summary>
     /// Oidc authentication provider.
     /// </summary>
-    [SqlTable( "tUserOidc", Package = typeof(Package), Schema = "CK" )]
-    [Versions("2.0.0")]
+    [SqlTable( "tUserOidc", Package = typeof( Package ), Schema = "CK" )]
+    [Versions( "2.0.0" )]
     [SqlObjectItem( "transform:sUserDestroy" )]
-    public abstract partial class UserOidcTable : SqlTable, IGenericAuthenticationProvider
+    public abstract partial class UserOidcTable : SqlTable, IGenericAuthenticationProvider<IUserOidcInfo>
     {
         IPocoFactory<IUserOidcInfo> _infoFactory;
 
@@ -35,6 +35,14 @@ namespace CK.DB.User.UserOidc
             _infoFactory = infoFactory;
         }
 
+        IUserOidcInfo IGenericAuthenticationProvider<IUserOidcInfo>.CreatePayload() => _infoFactory.Create();
+
+        /// <summary>
+        /// Creates a <see cref="IUserOidcInfo"/> poco.
+        /// </summary>
+        /// <returns>A new instance.</returns>
+        public T CreateUserInfo<T>() where T : IUserOidcInfo => (T)_infoFactory.Create();
+
         /// <summary>
         /// Creates or updates a user entry for this provider. 
         /// This is the "binding account" feature since it binds an external identity to 
@@ -47,7 +55,7 @@ namespace CK.DB.User.UserOidc
         /// <param name="mode">Optionnaly configures Create, Update only or WithLogin behavior.</param>
         /// <param name="cancellationToken">Optional cancellation token.</param>
         /// <returns>The operation result.</returns>
-        public async Task<CreateOrUpdateResult> CreateOrUpdateOidcUserAsync( ISqlCallContext ctx, int actorId, int userId, IUserOidcInfo info, CreateOrUpdateMode mode = CreateOrUpdateMode.CreateOrUpdate, CancellationToken cancellationToken = default(CancellationToken) )
+        public async Task<CreateOrUpdateResult> CreateOrUpdateOidcUserAsync( ISqlCallContext ctx, int actorId, int userId, IUserOidcInfo info, CreateOrUpdateMode mode = CreateOrUpdateMode.CreateOrUpdate, CancellationToken cancellationToken = default( CancellationToken ) )
         {
             var r = await RawCreateOrUpdateOidcUserAsync( ctx, actorId, userId, info, mode, cancellationToken ).ConfigureAwait( false );
             return r.Result;
@@ -192,14 +200,8 @@ namespace CK.DB.User.UserOidc
         protected virtual StringBuilder AppendUserInfoColumns( StringBuilder b )
         {
             var props = _infoFactory.PocoClassType.GetProperties().Where( p => p.Name != nameof( IUserOidcInfo.SchemeSuffix ) && p.Name != nameof( IUserOidcInfo.Sub ) );
-            return props.Any() ? b.Append("UserId, ").AppendStrings(props.Select(p => p.Name)) : b.Append( "UserId " );
+            return props.Any() ? b.Append( "UserId, " ).AppendStrings( props.Select( p => p.Name ) ) : b.Append( "UserId " );
         }
-
-        /// <summary>
-        /// Creates a <see cref="IUserOidcInfo"/> poco.
-        /// </summary>
-        /// <returns>A new instance.</returns>
-        public T CreateUserInfo<T>() where T : IUserOidcInfo => (T)_infoFactory.Create();
 
         /// <summary>
         /// Fill UserInfo properties from reader.
@@ -222,25 +224,25 @@ namespace CK.DB.User.UserOidc
 
         CreateOrUpdateResult IGenericAuthenticationProvider.CreateOrUpdateUser( ISqlCallContext ctx, int actorId, int userId, object payload, CreateOrUpdateMode mode )
         {
-            IUserOidcInfo info = _infoFactory.ExtractPayload(payload);
+            IUserOidcInfo info = _infoFactory.ExtractPayload( payload );
             return CreateOrUpdateOidcUser( ctx, actorId, userId, info, mode );
         }
 
         int IGenericAuthenticationProvider.LoginUser( ISqlCallContext ctx, object payload, bool actualLogin )
         {
-            IUserOidcInfo info = _infoFactory.ExtractPayload(payload);
+            IUserOidcInfo info = _infoFactory.ExtractPayload( payload );
             return LoginUser( ctx, info, actualLogin );
         }
 
         Task<CreateOrUpdateResult> IGenericAuthenticationProvider.CreateOrUpdateUserAsync( ISqlCallContext ctx, int actorId, int userId, object payload, CreateOrUpdateMode mode, CancellationToken cancellationToken )
         {
-            IUserOidcInfo info = _infoFactory.ExtractPayload(payload);
+            IUserOidcInfo info = _infoFactory.ExtractPayload( payload );
             return CreateOrUpdateOidcUserAsync( ctx, actorId, userId, info, mode, cancellationToken );
         }
 
         Task<int> IGenericAuthenticationProvider.LoginUserAsync( ISqlCallContext ctx, object payload, bool actualLogin, CancellationToken cancellationToken )
         {
-            IUserOidcInfo info = _infoFactory.ExtractPayload(payload);
+            IUserOidcInfo info = _infoFactory.ExtractPayload( payload );
             return LoginUserAsync( ctx, info, actualLogin, cancellationToken );
         }
 

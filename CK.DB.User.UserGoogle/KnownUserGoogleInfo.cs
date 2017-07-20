@@ -21,6 +21,6 @@ namespace CK.DB.User.UserGoogle
         /// Since <see cref="IUserGoogleInfo"/> is a <see cref="IPoco"/>, this can be casted
         /// to any specialized info interface defined by other packages.
         /// </summary>
-        public IUserGoogleInfo Info {get;set; }
+        public IUserGoogleInfo Info { get; set; }
     }
 }

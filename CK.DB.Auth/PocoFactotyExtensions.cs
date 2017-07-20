@@ -20,13 +20,13 @@ namespace CK.DB.Auth
         /// <param name="this">This POCO factory.</param>
         /// <param name="payload">The payload. Must not be null.</param>
         /// <returns>The resulting POCO.</returns>
-        public static T ExtractPayload<T>(this IPocoFactory<T> @this, object payload) where T : IPoco
+        public static T ExtractPayload<T>( this IPocoFactory<T> @this, object payload ) where T : IPoco
         {
-            if (payload == null) throw new ArgumentNullException(nameof(payload));
-            if (payload is T) return (T)payload;
+            if( payload == null ) throw new ArgumentNullException( nameof( payload ) );
+            if( payload is T ) return (T)payload;
             var kindOfDic = payload as IEnumerable<KeyValuePair<string, object>>;
-            if (kindOfDic != null) return ExtractPayload(@this, kindOfDic);
-            throw new ArgumentException($"Invalid payload. It must be a '{typeof(T).Name}' POCO or a IEnumerable<KeyValuePair<string, object>>.", nameof(payload));
+            if( kindOfDic != null ) return ExtractPayload( @this, kindOfDic );
+            throw new ArgumentException( $"Invalid payload. It must be a '{typeof( T ).Name}' POCO or a IEnumerable<KeyValuePair<string, object>>.", nameof( payload ) );
         }
 
         /// <summary>
@@ -37,43 +37,43 @@ namespace CK.DB.Auth
         /// <param name="payload">The payload. Must not be null.</param>
         /// <returns>The resulting POCO.</returns>
         public static T ExtractPayload<T>(
-            this IPocoFactory<T> @this, 
-            IEnumerable<KeyValuePair<string, object>> payload) where T : IPoco
+            this IPocoFactory<T> @this,
+            IEnumerable<KeyValuePair<string, object>> payload ) where T : IPoco
         {
-            if (payload == null) throw new ArgumentNullException(nameof(payload));
+            if( payload == null ) throw new ArgumentNullException( nameof( payload ) );
             T info = @this.Create();
-            var properties = @this.PocoClassType.GetProperties(BindingFlags.Public | BindingFlags.Instance);
-            foreach (var kv in payload)
+            var properties = @this.PocoClassType.GetProperties( BindingFlags.Public | BindingFlags.Instance );
+            foreach( var kv in payload )
             {
-                var property = properties.FirstOrDefault(p => StringComparer.OrdinalIgnoreCase.Equals(kv.Key, p.Name));
-                if (property != null)
+                var property = properties.FirstOrDefault( p => StringComparer.OrdinalIgnoreCase.Equals( kv.Key, p.Name ) );
+                if( property != null )
                 {
                     try
                     {
                         var targetType = property.PropertyType;
                         var pType = targetType.GetTypeInfo();
-                        if (pType.IsGenericType && (pType.GetGenericTypeDefinition() == typeof(Nullable<>)))
+                        if( pType.IsGenericType && (pType.GetGenericTypeDefinition() == typeof( Nullable<> )) )
                         {
-                            if (kv.Value == null)
+                            if( kv.Value == null )
                             {
-                                property.SetValue(info, null);
+                                property.SetValue( info, null );
                                 continue;
                             }
-                            targetType = Nullable.GetUnderlyingType(targetType);
+                            targetType = Nullable.GetUnderlyingType( targetType );
                             pType = targetType.GetTypeInfo();
                         }
                         object value;
                         string stringValue;
-                        if (pType.IsEnum && (stringValue = kv.Value as string) != null)
+                        if( pType.IsEnum && (stringValue = kv.Value as string) != null )
                         {
-                            value = Enum.Parse(targetType, stringValue);
+                            value = Enum.Parse( targetType, stringValue );
                         }
-                        else value = Convert.ChangeType(kv.Value, targetType);
-                        property.SetValue(info, value);
+                        else value = Convert.ChangeType( kv.Value, targetType );
+                        property.SetValue( info, value );
                     }
-                    catch (Exception ex)
+                    catch( Exception ex )
                     {
-                        throw new ArgumentException($"Invalid payload. Unable to set '{property.Name}'. See inner exceptions for details.", nameof(payload), ex);
+                        throw new ArgumentException( $"Invalid payload. Unable to set '{property.Name}'. See inner exceptions for details.", nameof( payload ), ex );
                     }
                 }
             }
