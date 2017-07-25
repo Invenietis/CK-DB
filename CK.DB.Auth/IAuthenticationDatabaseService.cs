@@ -34,7 +34,7 @@ namespace CK.DB.Auth
         /// The provider name (or ProviderName.SchemeSuffix) to find (lookup is case insensitive).
         /// </param>
         /// <returns>The provider or null.</returns>
-        IGenericAuthenticationProvider FindProvider(string schemeOrProviderName);
+        IGenericAuthenticationProvider FindProvider( string schemeOrProviderName );
 
         /// <summary>
         /// Reads a <see cref="IUserAuthInfo"/> for a user.
@@ -44,7 +44,7 @@ namespace CK.DB.Auth
         /// <param name="actorId">The acting actor identifier.</param>
         /// <param name="userId">The user identifier.</param>
         /// <returns>The user information or null if the user identifier does not exist.</returns>
-        IUserAuthInfo ReadUserAuthInfo(ISqlCallContext ctx, int actorId, int userId);
+        IUserAuthInfo ReadUserAuthInfo( ISqlCallContext ctx, int actorId, int userId );
 
         /// <summary>
         /// Reads a <see cref="IUserAuthInfo"/> for a user.
@@ -54,6 +54,6 @@ namespace CK.DB.Auth
         /// <param name="actorId">The acting actor identifier.</param>
         /// <param name="userId">The user identifier.</param>
         /// <returns>The user information or null if the user identifier does not exist.</returns>
-        Task<IUserAuthInfo> ReadUserAuthInfoAsync(ISqlCallContext ctx, int actorId, int userId);
+        Task<IUserAuthInfo> ReadUserAuthInfoAsync( ISqlCallContext ctx, int actorId, int userId );
     }
 }

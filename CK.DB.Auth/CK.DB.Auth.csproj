@@ -9,7 +9,13 @@
     <ProjectReference Include="..\CK.DB.Actor\CK.DB.Actor.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="**\*.sql;**\*.tql;**\*.y4" Exclude="bin\**;obj\**;CodeCakeBuilder\**;packages\**;@(EmbeddedResource)" />
+    <EmbeddedResource Include="Res\Model.CK.AuthProviderTable.Install.1.0.0.to.1.0.1.sql" />
+    <EmbeddedResource Include="Res\Model.CK.AuthProviderTable.Install.1.0.1.to.1.0.2.sql" />
+    <EmbeddedResource Include="Res\Model.CK.AuthProviderTable.Install.1.0.2.sql" />
+    <EmbeddedResource Include="Res\sAuthProviderRegister.sql" />
+    <EmbeddedResource Include="Res\sAuthUserInfoRead.sql" />
+    <EmbeddedResource Include="Res\sAuthUserOnLogin.sql" />
+    <EmbeddedResource Include="Res\vUserAuthProvider.sql" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />

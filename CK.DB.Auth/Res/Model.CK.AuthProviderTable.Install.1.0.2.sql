@@ -15,7 +15,6 @@ create table CK.tAuthProvider
 	constraint CK_CK_AuthProvider_ProviderName check (CharIndex( '.', ProviderName ) = 0),
 	-- Table name with its schema that holds at least UserId and LastLoginTime columns.
 	UserProviderSchemaTableName nvarchar(128) not null,
-	IsEnabled bit not null, 
     -- This bit indicates that this provider can handle more than one client sheme.
 	IsMultiScheme bit not null, 
 
@@ -23,7 +22,7 @@ create table CK.tAuthProvider
 	constraint UK_CK_AuthProvider_ProviderName unique( ProviderName )
 );
 
-insert into CK.tAuthProvider( ProviderName, UserProviderSchemaTableName, IsEnabled, IsMultiScheme ) 
-    values( '', N'', 0, 0 );
+insert into CK.tAuthProvider( ProviderName, UserProviderSchemaTableName, IsMultiScheme ) 
+    values( '', N'', 0 );
 
 --[endscript]

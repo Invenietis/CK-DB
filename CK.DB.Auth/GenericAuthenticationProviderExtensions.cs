@@ -17,7 +17,7 @@ namespace CK.DB.Auth
         /// </summary>
         /// <param name="this">This provider.</param>
         /// <returns>True if this provider has a payload.</returns>
-        public static bool HasPayload(this IGenericAuthenticationProvider @this)
+        public static bool HasPayload( this IGenericAuthenticationProvider @this )
         {
             var t = @this.GetType().GetTypeInfo();
             var eI = t.ImplementedInterfaces
@@ -31,7 +31,7 @@ namespace CK.DB.Auth
         /// </summary>
         /// <param name="this">This provider.</param>
         /// <returns>An empty payload object.</returns>
-        public static object CreatePayload(this IGenericAuthenticationProvider @this)
+        public static object CreatePayload( this IGenericAuthenticationProvider @this )
         {
             var t = @this.GetType().GetTypeInfo();
             var eI = t.ImplementedInterfaces

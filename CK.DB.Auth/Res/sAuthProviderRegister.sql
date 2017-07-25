@@ -6,7 +6,7 @@ create procedure CK.sAuthProviderRegister
 	@ProviderName varchar(64),
 	@UserProviderSchemaTableName nvarchar(128),
 	@IsMultiScheme bit,
-	@AuthProviderResult int output
+	@AuthProviderIdResult int output
 )
 as 
 begin
@@ -14,9 +14,9 @@ begin
 
 	--<PreCreate revert />
 
-	insert CK.tAuthProvider( ProviderName, UserProviderSchemaTableName, IsEnabled, IsMultiScheme ) 
-		values( @ProviderName, @UserProviderSchemaTableName, 1, @IsMultiScheme );
-	set @AuthProviderResult = scope_identity();
+	insert CK.tAuthProvider( ProviderName, UserProviderSchemaTableName, IsMultiScheme ) 
+		values( @ProviderName, @UserProviderSchemaTableName, @IsMultiScheme );
+	set @AuthProviderIdResult = scope_identity();
 
 	--<PostCreate />
 

@@ -287,24 +287,5 @@ namespace CK.DB.User.UserPassword.Tests
             }
         }
 
-        [Test]
-        public void Basic_provider_ignores_AuthProvider_IsEnabled_flag_as_required()
-        {
-            var provider = TestHelper.StObjMap.Default.Obtain<AuthProviderTable>();
-            var u = TestHelper.StObjMap.Default.Obtain<UserPasswordTable>();
-            var user = TestHelper.StObjMap.Default.Obtain<UserTable>();
-            using( var ctx = new SqlStandardCallContext() )
-            {
-                string userName = "Basic auth - " + Guid.NewGuid().ToString();
-                var idU = user.CreateUser( ctx, 1, userName );
-
-                provider.EnableProvider( ctx, 1, "Basic", false );
-
-                u.CreateOrUpdatePasswordUser( ctx, 1, idU, "password" );
-                Assert.That( u.LoginUser( ctx, idU, "password" ) == idU );
-
-                provider.EnableProvider( ctx, 1, "Basic" );
-            }
-        }
     }
 }

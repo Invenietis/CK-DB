@@ -105,32 +105,6 @@ namespace CK.DB.User.UserOidc.Tests
 
         [TestCase( "" )]
         [TestCase( "IdSrv" )]
-        public void Oidc_provider_ignores_AuthProvider_IsEnabled_flag_as_required( string schemeSuffix )
-        {
-            var provider = TestHelper.StObjMap.Default.Obtain<AuthProviderTable>();
-            var u = TestHelper.StObjMap.Default.Obtain<UserOidcTable>();
-            var user = TestHelper.StObjMap.Default.Obtain<UserTable>();
-            using( var ctx = new SqlStandardCallContext() )
-            {
-                string userName = "Oidc auth - " + Guid.NewGuid().ToString();
-                var sub = Guid.NewGuid().ToString( "N" );
-                var idU = user.CreateUser( ctx, 1, userName );
-
-                provider.EnableProvider( ctx, 1, "Oidc", false );
-                var info = u.CreateUserInfo<IUserOidcInfo>();
-                info.SchemeSuffix = schemeSuffix;
-                info.Sub = sub;
-                var created = u.CreateOrUpdateOidcUser( ctx, 1, idU, info );
-                Assert.That( created, Is.EqualTo( CreateOrUpdateResult.Created ) );
-                var loggedId = u.LoginUser( ctx, info, true );
-                Assert.That( loggedId, Is.EqualTo( idU ) );
-
-                provider.EnableProvider( ctx, 1, "Oidc" );
-            }
-        }
-
-        [TestCase( "" )]
-        [TestCase( "IdSrv" )]
         public void standard_generic_tests_for_Oidc_provider( string schemeSuffix )
         {
             string scheme = schemeSuffix.Length > 0 ? "Oidc." + schemeSuffix : "Oidc";

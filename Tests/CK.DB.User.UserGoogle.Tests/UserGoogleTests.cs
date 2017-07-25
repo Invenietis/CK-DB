@@ -95,30 +95,6 @@ namespace CK.DB.User.UserGoogle.Tests
         }
 
         [Test]
-        public void Google_provider_ignores_AuthProvider_IsEnabled_flag_as_required()
-        {
-            var provider = TestHelper.StObjMap.Default.Obtain<AuthProviderTable>();
-            var u = TestHelper.StObjMap.Default.Obtain<UserGoogleTable>();
-            var user = TestHelper.StObjMap.Default.Obtain<UserTable>();
-            using( var ctx = new SqlStandardCallContext() )
-            {
-                string userName = "Google auth - " + Guid.NewGuid().ToString();
-                var googleAccountId = Guid.NewGuid().ToString( "N" );
-                var idU = user.CreateUser( ctx, 1, userName );
-
-                provider.EnableProvider( ctx, 1, "Google", false );
-                var info = u.CreateUserInfo<IUserGoogleInfo>();
-                info.GoogleAccountId = googleAccountId;
-                var created = u.CreateOrUpdateGoogleUser( ctx, 1, idU, info );
-                Assert.That( created, Is.EqualTo( CreateOrUpdateResult.Created ) );
-                var loggedId = u.LoginUser( ctx, info, true );
-                Assert.That( loggedId, Is.EqualTo( idU ) );
-
-                provider.EnableProvider( ctx, 1, "Google" );
-            }
-        }
-
-        [Test]
         public void standard_generic_tests_for_Google_provider()
         {
             var auth = TestHelper.StObjMap.Default.Obtain<Auth.Package>();
