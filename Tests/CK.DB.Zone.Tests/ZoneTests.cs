@@ -40,6 +40,7 @@ namespace CK.DB.Zone.Tests
             {
                 int zoneId = t.CreateZone( ctx, 1 );
                 Assert.That( zoneId, Is.GreaterThan( 1 ) );
+                t.Database.AssertScalarEquals( true, "select IsZone from CK.vGroup where GroupId=@0", zoneId );
                 t.DestroyZone( ctx, 1, zoneId );
                 t.Database.AssertEmptyReader( "select * from CK.tZone where ZoneId=@0", zoneId );
             }

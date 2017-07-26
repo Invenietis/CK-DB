@@ -1,6 +1,7 @@
--- SetupConfig: {}
+﻿-- SetupConfig: {}
 create transformer on CK.vGroup
 as 
 begin
 	add column ZoneId = g.ZoneId;
+    add column IsZone = cast( (case when exists( select 1 from CK.tZone with(nolock) where ZoneId = g.GroupId) then 1 else 0 end) as bit);
 end
