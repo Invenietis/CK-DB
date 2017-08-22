@@ -5,8 +5,12 @@
     <CKDBVersion Condition=" '$(CKDBVersion)' == '' ">0.0.0-0</CKDBVersion>
   </PropertyGroup>
 
-  <ItemGroup>
+  <!-- Setting 'win' RID for .Net framework -->
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net461' ">
+    <RuntimeIdentifier>win</RuntimeIdentifier>
+  </PropertyGroup>
 
+  <ItemGroup>
     <PackageReference Include="CK.DB.Acl.AclType" Version="$(CKDBVersion)" />
     <PackageReference Include="CK.DB.Acl" Version="$(CKDBVersion)" />
     <PackageReference Include="CK.DB.Actor.ActorEMail" Version="$(CKDBVersion)" />

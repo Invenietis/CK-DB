@@ -7,8 +7,12 @@
     <CKDBVersion Condition=" '$(CKDBVersion)' == '' ">0.0.0-0</CKDBVersion>
   </PropertyGroup>
 
+  <!-- Setting 'win' RID for .Net framework -->
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net461' ">
+    <RuntimeIdentifier>win</RuntimeIdentifier>
+  </PropertyGroup>
+    
   <ItemGroup>
-
     <PackageReference Include="CK.Monitoring" Version="7.1.0" />
 
     <!-- This should not be needed, but since MSBuild sometimes fails to transitively consider

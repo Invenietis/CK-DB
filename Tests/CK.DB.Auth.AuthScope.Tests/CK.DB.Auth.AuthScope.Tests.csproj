@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-  <Import Project="..\..\Common\Shared.props" />
   <PropertyGroup>
     <TargetFramework>net461</TargetFramework>
     <Description>Tests for CK.DB.Auth.AuthScope (uses CK.DB.Tests.NUnit).</Description>
   </PropertyGroup>
+  <Import Project="..\..\Common\Shared.props" />
   <ItemGroup>
     <ProjectReference Include="..\..\CK.DB.Auth.AuthScope\CK.DB.Auth.AuthScope.csproj" />
   </ItemGroup>

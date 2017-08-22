@@ -139,7 +139,7 @@ namespace CodeCake
                {
                    var testDlls = projects
                                     .Where( p => p.Name.EndsWith( ".Tests" ) )
-                                    .Select( p => p.Path.GetDirectory().CombineWithFilePath( "bin/" + configuration + "/net461/" + p.Name + ".dll" ) );
+                                    .Select( p => p.Path.GetDirectory().CombineWithFilePath( "bin/" + configuration + "/net461/win/" + p.Name + ".dll" ) );
                    Cake.Information( "Testing: {0}", string.Join( ", ", testDlls.Select( p => p.GetFilename().ToString() ) ) );
                    Cake.NUnit( testDlls, new NUnitSettings() { Framework = "v4.5" } );
                } );
@@ -212,7 +212,7 @@ namespace CodeCake
                    }
 
                    var projectPath = integrationProjects.Single( p => p.Name == "AllPackages" ).Path.GetDirectory();
-                   var binPath = projectPath.Combine( $"bin/{configuration}/net461" );
+                   var binPath = projectPath.Combine( $"bin/{configuration}/net461/win" );
 
                    string c = Environment.GetEnvironmentVariable( "CK_DB_TEST_MASTER_CONNECTION_STRING" );
                    if( c == null ) c = System.Configuration.ConfigurationManager.AppSettings["CK_DB_TEST_MASTER_CONNECTION_STRING"];
@@ -244,7 +244,7 @@ namespace CodeCake
 
                   var testDlls = integrationTests
                                   .Select( p => System.IO.Path.Combine(
-                                                      p.Path.GetDirectory().ToString(), "bin", configuration, "net461", p.Name + ".dll" ) );
+                                                      p.Path.GetDirectory().ToString(), "bin", configuration, "net461/win", p.Name + ".dll" ) );
                   Cake.Information( "Testing: {0}", string.Join( ", ", testDlls ) );
                   Cake.NUnit( testDlls, new NUnitSettings() { Framework = "v4.5" } );
               } );

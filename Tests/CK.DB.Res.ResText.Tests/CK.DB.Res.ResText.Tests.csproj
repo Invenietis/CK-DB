@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-  <Import Project="..\..\Common\Shared.props" />
   <PropertyGroup>
     <TargetFramework>net461</TargetFramework>
     <Description>This package contains tests for CK.DB.Res.ResText (uses CK.DB.Tests.NUnit).</Description>
   </PropertyGroup>
+  <Import Project="..\..\Common\Shared.props" />
   <ItemGroup>
     <ProjectReference Include="..\..\CK.DB.Res.ResText\CK.DB.Res.ResText.csproj" />
     <ProjectReference Include="..\CK.DB.Res.Tests\CK.DB.Res.Tests.csproj" />
