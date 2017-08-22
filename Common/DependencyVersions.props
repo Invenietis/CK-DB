@@ -1,9 +1,9 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <!-- Centralized version dependencies. -->
   <PropertyGroup>
-    <CKDatabaseVersion>5.0.0-b03</CKDatabaseVersion>
+    <CKDatabaseVersion>5.0.0-b03-00-develop-0038</CKDatabaseVersion>
   </PropertyGroup>
 
 </Project>

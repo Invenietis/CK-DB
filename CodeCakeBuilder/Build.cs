@@ -1,4 +1,4 @@
-﻿using Cake.Common;
+using Cake.Common;
 using Cake.Common.Solution;
 using Cake.Common.IO;
 using Cake.Common.Tools.MSBuild;
@@ -113,7 +113,7 @@ namespace CodeCake
                         new DotNetCoreRestoreSettings().AddVersionArguments( gitInfo, c =>
                          {
                             // No impact see: https://github.com/NuGet/Home/issues/3772
-                            // c.Verbosity = DotNetCoreRestoreVerbosity.Minimal;
+                            c.Verbosity = DotNetCoreVerbosity.Minimal;
                         } ) );
                 } );
 
