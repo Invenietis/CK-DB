@@ -175,6 +175,7 @@ namespace CodeCake
                   Cake.DotNetCoreRestore( integrationSolution, new DotNetCoreRestoreSettings()
                   {
                       NoCache = true,
+                      Verbosity = DotNetCoreVerbosity.Minimal,
                       ArgumentCustomization = c => c.Append( $@"/p:CKDBVersion=""{version}""" )
                   } );
 
