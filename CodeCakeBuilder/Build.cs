@@ -147,7 +147,11 @@ namespace CodeCake
                 {
                     Cake.CreateDirectory( releasesDir );
                     var settings = new DotNetCorePackSettings();
-                    settings.ArgumentCustomization = args => args.Append( "--include-symbols" );
+                    settings.ArgumentCustomization = args => args.Append( "--include-symbols" )
+                                                                  // Why is it required for Tests package?
+                                                                  // Without this Pack on Tests projects does not
+                                                                  // generate nupkg.
+                                                                 .Append( "/p:IsPackable=true" );
                     // Waiting for netcore 2.1 (https://github.com/dotnet/cli/issues/5331).
                     //settings.NoBuild = true;
                     settings.Configuration = configuration;
