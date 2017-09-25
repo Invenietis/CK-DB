@@ -1,5 +1,6 @@
 # Basic appveyor configuration : CodeCakeBuilder does the job.
 version: build{build}
+image: Visual Studio 2017
 services: mssql2016
 branches:
   only:

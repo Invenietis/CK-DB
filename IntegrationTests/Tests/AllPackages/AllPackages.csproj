@@ -1,13 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.3;net461</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
     <CKDBVersion Condition=" '$(CKDBVersion)' == '' ">0.0.0-0</CKDBVersion>
-  </PropertyGroup>
-
-  <!-- Setting 'win' RID for .Net framework -->
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'net461' ">
-    <RuntimeIdentifier>win</RuntimeIdentifier>
   </PropertyGroup>
 
   <ItemGroup>

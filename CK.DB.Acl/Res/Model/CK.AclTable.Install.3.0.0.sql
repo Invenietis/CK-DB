@@ -8,7 +8,7 @@ create table CK.tAcl
 
 -- Acl from 0 to 7 are reserved for the defaults
 insert into CK.[tAcl] default values; -- 0 - Administrator level to anybody.
-insert into CK.[tAcl] default values; -- 1 - No rights to anybody (except memeber on System Group 1).  
+insert into CK.[tAcl] default values; -- 1 - No rights to anybody (except member of System Group 1).  
 insert into CK.[tAcl] default values; -- 2 - User level to anybody
 insert into CK.[tAcl] default values; -- 3 - Viewer level to anybody.
 insert into CK.[tAcl] default values; -- 4 - Contributor level to anybody.

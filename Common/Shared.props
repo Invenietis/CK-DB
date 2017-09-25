@@ -1,10 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-
-  <!-- Setting 'win' RID for .Net framework -->
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'net461' ">
-    <RuntimeIdentifier>win</RuntimeIdentifier>
-  </PropertyGroup>
     
   <!-- Centralized version dependencies. -->
   <Import Project="DependencyVersions.props" />
@@ -22,12 +17,10 @@
   
   <!-- 
     When building from the CI (ie. from Cake, hence directly with the msbuild tool, SolutionDir is not defined),
-    we unify the behavior here as well as setting the BaseIntermediateOutputPath (the /obj folder)
-    below CodeCakeBuilder/Releases/ so that compilation from external sources does not interfere with visual studio work.
+    we unify the behavior here.
   -->
   <PropertyGroup Condition=" '$(CakeBuild)' == 'true' ">
     <SolutionDir>$([System.IO.Path]::GetDirectoryName($([System.IO.Path]::GetDirectoryName($(MSBuildThisFileDirectory)))))\</SolutionDir>
-    <BaseIntermediateOutputPath>$(SolutionDir)CodeCakeBuilder\Releases\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
   </PropertyGroup>
   <!-- When not building from the CI, assemblies do not have any AssemblyInfo attributes. -->
   <PropertyGroup Condition=" '$(CakeBuild)' != 'true' ">

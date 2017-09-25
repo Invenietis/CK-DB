@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\Common\Shared.props" />
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.3;net461</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
     <Description>This package defines tActorEMail with its EMail nvarchar( 255 ) collate Latin1_General_100_CI_AS not null,
       IsPrimary bit and ValTime datetime2(2) columns.</Description>
   </PropertyGroup>

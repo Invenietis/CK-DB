@@ -1,4 +1,4 @@
-﻿using CK.Core;
+using CK.Core;
 using CK.Setup;
 using CK.SqlServer;
 using CK.SqlServer.Setup;
@@ -29,7 +29,7 @@ namespace CK.DB.Auth
 
         void StObjInitialize(IActivityMonitor m, IContextualStObjMap map)
         {
-            using (m.OpenInfo().Send($"Initializing CK.DB.Auth.Package : IAuthenticationDatabaseService"))
+            using (m.OpenInfo($"Initializing CK.DB.Auth.Package : IAuthenticationDatabaseService"))
             {
                 _allProviders = map.Implementations.OfType<IGenericAuthenticationProvider>().ToDictionary(p => p.ProviderName, StringComparer.OrdinalIgnoreCase);
                 if (BasicProvider != null) _allProviders.Add(BasicToGenericProviderAdapter.Name, new BasicToGenericProviderAdapter(BasicProvider));

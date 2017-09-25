@@ -27,6 +27,8 @@ using Cake.Common.Tools.DotNetCore.Pack;
 using Cake.Common.Build;
 using System.Data.SqlClient;
 using Cake.Common.Tools.NuGet.Install;
+using System.Net.Http;
+using Cake.Common.Net;
 
 namespace CodeCake
 {
@@ -70,6 +72,15 @@ namespace CodeCake
             // Configuration is either "Debug" or "Release".
             string configuration = "Debug";
 
+            var vCKDatabase = XDocument.Load( "Common/DependencyVersions.props" )
+                                          .Root
+                                          .Elements( msBuild + "PropertyGroup" )
+                                          .Elements( msBuild + "CKDatabaseVersion" )
+                                          .Single()
+                                          .Value;
+            Cake.Information( $"Using CK-Database version {vCKDatabase}." );
+            string ckSetupNet461Path = System.IO.Path.Combine( releasesDir, "CKSetup-Net461" );
+
             Task( "Check-Repository" )
                .Does( () =>
                {
@@ -105,22 +116,8 @@ namespace CodeCake
                      Cake.DeleteFiles( "Tests/**/TestResult*.xml" );
                  } );
 
-            Task( "Restore-NuGet-Packages" )
-                .IsDependentOn( "Check-Repository" )
-                .Does( () =>
-                {
-                    Cake.DotNetCoreRestore( coreBuildFile,
-                        new DotNetCoreRestoreSettings().AddVersionArguments( gitInfo, c =>
-                         {
-                            // No impact see: https://github.com/NuGet/Home/issues/3772
-                            c.Verbosity = DotNetCoreVerbosity.Minimal;
-                        } ) );
-                } );
-
-
             Task( "Build" )
                 .IsDependentOn( "Clean" )
-                .IsDependentOn( "Restore-NuGet-Packages" )
                 .IsDependentOn( "Check-Repository" )
                 .Does( () =>
                 {
@@ -139,7 +136,7 @@ namespace CodeCake
                {
                    var testDlls = projects
                                     .Where( p => p.Name.EndsWith( ".Tests" ) )
-                                    .Select( p => p.Path.GetDirectory().CombineWithFilePath( "bin/" + configuration + "/net461/win/" + p.Name + ".dll" ) );
+                                    .Select( p => p.Path.GetDirectory().CombineWithFilePath( "bin/" + configuration + "/net461/" + p.Name + ".dll" ) );
                    Cake.Information( "Testing: {0}", string.Join( ", ", testDlls.Select( p => p.GetFilename().ToString() ) ) );
                    Cake.NUnit( testDlls, new NUnitSettings() { Framework = "v4.5" } );
                } );
@@ -151,7 +148,8 @@ namespace CodeCake
                     Cake.CreateDirectory( releasesDir );
                     var settings = new DotNetCorePackSettings();
                     settings.ArgumentCustomization = args => args.Append( "--include-symbols" );
-                    settings.NoBuild = true;
+                    // Waiting for netcore 2.1 (https://github.com/dotnet/cli/issues/5331).
+                    //settings.NoBuild = true;
                     settings.Configuration = configuration;
                     settings.OutputDirectory = releasesDir;
                     settings.AddVersionArguments( gitInfo );
@@ -172,47 +170,26 @@ namespace CodeCake
                                     ? gitInfo.SafeNuGetVersion
                                     : CSemVer.SVersion.ZeroVersion.ToString();
 
-                  Cake.DotNetCoreRestore( integrationSolution, new DotNetCoreRestoreSettings()
-                  {
-                      NoCache = true,
-                      Verbosity = DotNetCoreVerbosity.Minimal,
-                      ArgumentCustomization = c => c.Append( $@"/p:CKDBVersion=""{version}""" )
-                  } );
-
                   Cake.DotNetCoreBuild( integrationSolution, new DotNetCoreBuildSettings()
                   {
                       ArgumentCustomization = c => c.Append( $@"/p:CKDBVersion=""{version}""" )
                   } );
               } );
 
-            Task( "Run-CKDBSetup-On-IntegrationTests-AllPackages" )
+            Task( "Download-CKSetup-Net461-From-Store-and-Unzip-it" )
+                .Does( () =>
+                {
+                    var tempFile = Cake.DownloadFile( "http://cksetup.invenietis.net/dl-zip/CKSetup/Net461" );
+                    Cake.Unzip( tempFile, ckSetupNet461Path );
+                } );
+
+            Task( "Run-CKSetup-On-IntegrationTests-AllPackages" )
               .IsDependentOn( "Compile-IntegrationTests" )
+              .IsDependentOn( "Download-CKSetup-Net461-From-Store-and-Unzip-it" )
               .Does( () =>
                {
-                   var vCKDatabase = XDocument.Load( "Common/DependencyVersions.props" )
-                     .Root
-                     .Elements( msBuild + "PropertyGroup" )
-                     .Elements( msBuild + "CKDatabaseVersion" )
-                     .Single()
-                     .Value;
-
-                   var exe = System.IO.Path.Combine( Cake.EnvironmentVariable( "UserProfile" ), ".nuget", "packages", "ckdbsetup", vCKDatabase, "tools", "CKDBSetup.exe" );
-                   if( !System.IO.File.Exists( exe ) )
-                   {
-                       Cake.NuGetInstall( "CKDBSetup", new NuGetInstallSettings()
-                       {
-                           Prerelease = true,
-                           Version = vCKDatabase,
-                           OutputDirectory = "packages"
-                       } );
-                   }
-                   if( !System.IO.File.Exists( exe ) )
-                   {
-                       throw new Exception( "Unable to install CKDBSetup " + vCKDatabase );
-                   }
-
                    var projectPath = integrationProjects.Single( p => p.Name == "AllPackages" ).Path.GetDirectory();
-                   var binPath = projectPath.Combine( $"bin/{configuration}/net461/win" );
+                   var binPath = projectPath.Combine( $"bin/{configuration}/net461" );
 
                    string c = Environment.GetEnvironmentVariable( "CK_DB_TEST_MASTER_CONNECTION_STRING" );
                    if( c == null ) c = System.Configuration.ConfigurationManager.AppSettings["CK_DB_TEST_MASTER_CONNECTION_STRING"];
@@ -221,16 +198,15 @@ namespace CodeCake
                    csB.InitialCatalog = "TEST_CK_DB_AllPackages";
                    var dbCon = csB.ToString();
 
-                   var cmdLine = $@"{exe} setup ""{dbCon}"" -ra ""AllPackages"" -n ""GenByCKDBSetup"" -p ""{binPath}""";
-
+                   var cmdLine = $@"{ckSetupNet461Path}\CKSetup.exe setup ""{dbCon}"" --binPath ""{binPath}"" -n ""GenByCKSetup"" -p ""{binPath}""";
                    {
                        int result = Cake.RunCmd( cmdLine );
-                       if( result != 0 ) throw new Exception( "CKDBSetup.exe failed for IL generation." );
+                       if( result != 0 ) throw new Exception( "CKSetup.exe failed for IL generation." );
                    }
-                   //{
-                   //    int result = Cake.RunCmd( cmdLine + " -sg" );
-                   //    if( result != 0 ) throw new Exception( "CKDBSetup.exe failed for Source Code generation." );
-                   //}
+                   {
+                       int result = Cake.RunCmd( cmdLine + " -sg" );
+                       if( result != 0 ) throw new Exception( "CKSetup.exe failed for Source Code generation." );
+                   }
                } );
 
             Task( "Run-IntegrationTests" )
@@ -244,14 +220,14 @@ namespace CodeCake
 
                   var testDlls = integrationTests
                                   .Select( p => System.IO.Path.Combine(
-                                                      p.Path.GetDirectory().ToString(), "bin", configuration, "net461/win", p.Name + ".dll" ) );
-                  Cake.Information( "Testing: {0}", string.Join( ", ", testDlls ) );
+                                                      p.Path.GetDirectory().ToString(), "bin", configuration, "net461", p.Name + ".dll" ) );
+                  Cake.Information( $"Testing: {string.Join( ", ", testDlls )}" );
                   Cake.NUnit( testDlls, new NUnitSettings() { Framework = "v4.5" } );
               } );
 
             Task( "Push-NuGet-Packages" )
                     .IsDependentOn( "Create-NuGet-Packages" )
-                    .IsDependentOn( "Run-CKDBSetup-On-IntegrationTests-AllPackages" )
+                    .IsDependentOn( "Run-CKSetup-On-IntegrationTests-AllPackages" )
                     .IsDependentOn( "Run-IntegrationTests" )
                     .WithCriteria( () => gitInfo.IsValid )
                     .Does( () =>
