@@ -205,11 +205,11 @@ namespace CodeCake
                    var cmdLine = $@"{ckSetupNet461Path}\CKSetup.exe setup ""{dbCon}"" --binPath ""{binPath}"" -n ""GenByCKSetup"" ";
                    {
                        int result = Cake.RunCmd( cmdLine );
-                       if( result != 0 ) throw new Exception( "CKSetup.exe failed for IL generation." );
+                       if( result != 0 ) throw new Exception( "CKSetup.exe failed for Source Code generation." );
                    }
                    {
-                       int result = Cake.RunCmd( cmdLine + " -sg" );
-                       if( result != 0 ) throw new Exception( "CKSetup.exe failed for Source Code generation." );
+                       int result = Cake.RunCmd( cmdLine + " -il" );
+                       if( result != 0 ) throw new Exception( "CKSetup.exe failed for IL generation." );
                    }
                } );
 

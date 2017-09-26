@@ -3,7 +3,7 @@
 
   <!-- Centralized version dependencies. -->
   <PropertyGroup>
-    <CKDatabaseVersion>5.0.0-b03-00-develop-0094</CKDatabaseVersion>
+    <CKDatabaseVersion>5.0.0-b03-00-develop-0098</CKDatabaseVersion>
   </PropertyGroup>
 
 </Project>
