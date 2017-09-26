@@ -79,7 +79,7 @@ namespace CodeCake
                                           .Single()
                                           .Value;
             Cake.Information( $"Using CK-Database version {vCKDatabase}." );
-            string ckSetupNet461Path = System.IO.Path.Combine( releasesDir, "CKSetup-Net461" );
+            string ckSetupNet461Path = System.IO.Path.GetFullPath( System.IO.Path.Combine( releasesDir, "CKSetup-Net461" ) );
 
             Task( "Check-Repository" )
                .Does( () =>
@@ -202,7 +202,7 @@ namespace CodeCake
                    csB.InitialCatalog = "TEST_CK_DB_AllPackages";
                    var dbCon = csB.ToString();
 
-                   var cmdLine = $@"{ckSetupNet461Path}\CKSetup.exe setup ""{dbCon}"" --binPath ""{binPath}"" -n ""GenByCKSetup"" -p ""{binPath}""";
+                   var cmdLine = $@"{ckSetupNet461Path}\CKSetup.exe setup ""{dbCon}"" --binPath ""{binPath}"" -n ""GenByCKSetup"" ";
                    {
                        int result = Cake.RunCmd( cmdLine );
                        if( result != 0 ) throw new Exception( "CKSetup.exe failed for IL generation." );

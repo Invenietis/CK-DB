@@ -5,5 +5,9 @@
       "executablePath": "..\\..\\packages\\NUnit.Runners.Net4.2.6.4\\tools\\nunit.exe",
       "commandLineArgs": "bin\\Debug\\net461\\CK.DB.Auth.Tests.dll"
     }
+  },
+  "NetCore": {
+    "commandName": "Project",
+    "commandLineArgs": "--wait"
   }
 }

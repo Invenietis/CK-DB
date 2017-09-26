@@ -1,10 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net461</TargetFramework>
+    <TargetFrameworks>netcoreapp2.0;net461</TargetFrameworks>
     <Description>This package contains tests for CK.DB.Acl.AclType (uses CK.DB.Tests.NUnit).</Description>
   </PropertyGroup>
+
   <Import Project="..\..\Common\Shared.props" />
+  
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\..\CK.DB.Acl.AclType\CK.DB.Acl.AclType.csproj" />
     <ProjectReference Include="..\CK.DB.Acl.Tests\CK.DB.Acl.Tests.csproj" />
