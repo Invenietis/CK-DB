@@ -29,6 +29,7 @@ using System.Data.SqlClient;
 using Cake.Common.Tools.NuGet.Install;
 using System.Net.Http;
 using Cake.Common.Net;
+using Cake.Common.Tools.DotNetCore.Publish;
 
 namespace CodeCake
 {
@@ -50,6 +51,8 @@ namespace CodeCake
             const string solutionName = "CK-DB";
             const string solutionFileName = solutionName + ".sln";
             const string integrationSolution = "IntegrationTests/IntegrationTests.sln";
+            const string integrationTestsDirectory = "IntegrationTests/Tests/AllPackages.Tests";
+            const string integrationTestsCSProj = integrationTestsDirectory+ "/AllPackages.Tests.csproj";
 
             var releasesDir = Cake.Directory( "CodeCakeBuilder/Releases" );
             var coreBuildFile = Cake.File( "CodeCakeBuilder/CoreBuild.proj" );
@@ -178,6 +181,11 @@ namespace CodeCake
                   {
                       ArgumentCustomization = c => c.Append( $@"/p:CKDBVersion=""{version}""" )
                   } );
+                  Cake.DotNetCorePublish( integrationTestsCSProj, new DotNetCorePublishSettings()
+                  {
+                      ArgumentCustomization = c => c.Append( $@"/p:CKDBVersion=""{version}""" ),
+                      Framework = "netcoreapp2.0"
+                  } );
               } );
 
             Task( "Download-CKSetup-Net461-From-Store-and-Unzip-it" )
@@ -187,31 +195,43 @@ namespace CodeCake
                     Cake.Unzip( tempFile, ckSetupNet461Path );
                 } );
 
-            Task( "Run-CKSetup-On-IntegrationTests-AllPackages" )
+            Task( "Run-CKSetup-On-IntegrationTests-AllPackages-Net461" )
               .IsDependentOn( "Compile-IntegrationTests" )
               .IsDependentOn( "Download-CKSetup-Net461-From-Store-and-Unzip-it" )
               .Does( () =>
-               {
-                   var projectPath = integrationProjects.Single( p => p.Name == "AllPackages" ).Path.GetDirectory();
-                   var binPath = projectPath.Combine( $"bin/{configuration}/net461" );
+              {
+                  var projectPath = integrationProjects.Single( p => p.Name == "AllPackages" ).Path.GetDirectory();
+                  var binPath = projectPath.Combine( $"bin/{configuration}/net461" );
 
-                   string c = Environment.GetEnvironmentVariable( "CK_DB_TEST_MASTER_CONNECTION_STRING" );
-                   if( c == null ) c = System.Configuration.ConfigurationManager.AppSettings["CK_DB_TEST_MASTER_CONNECTION_STRING"];
-                   if( c == null ) c = "Server=.;Database=master;Integrated Security=SSPI";
-                   var csB = new SqlConnectionStringBuilder( c );
-                   csB.InitialCatalog = "TEST_CK_DB_AllPackages";
-                   var dbCon = csB.ToString();
+                  string dbCon = GetConnectionStringForIntegrationTestsAllPackages();
 
-                   var cmdLine = $@"{ckSetupNet461Path}\CKSetup.exe setup ""{dbCon}"" --binPath ""{binPath}"" -n ""GenByCKSetup"" ";
-                   {
-                       int result = Cake.RunCmd( cmdLine );
-                       if( result != 0 ) throw new Exception( "CKSetup.exe failed for Source Code generation." );
-                   }
-                   {
-                       int result = Cake.RunCmd( cmdLine + " -il" );
-                       if( result != 0 ) throw new Exception( "CKSetup.exe failed for IL generation." );
-                   }
-               } );
+                  var cmdLine = $@"{ckSetupNet461Path}\CKSetup.exe setup ""{dbCon}"" --binPath ""{binPath}"" -n ""GenByCKSetup"" ";
+                  {
+                      int result = Cake.RunCmd( cmdLine );
+                      if( result != 0 ) throw new Exception( "CKSetup.exe failed for Source Code generation." );
+                  }
+                  {
+                      int result = Cake.RunCmd( cmdLine + " -il" );
+                      if( result != 0 ) throw new Exception( "CKSetup.exe failed for IL generation." );
+                  }
+              } );
+
+            Task( "Run-CKSetup-On-IntegrationTests-AllPackages-NetCoreApp" )
+              .IsDependentOn( "Compile-IntegrationTests" )
+              .IsDependentOn( "Download-CKSetup-Net461-From-Store-and-Unzip-it" )
+              .Does( () =>
+              {
+                  var projectPath = integrationProjects.Single( p => p.Name == "AllPackages" ).Path.GetDirectory();
+                  var binPath = projectPath.Combine( $"bin/{configuration}/netcoreapp20/publish" );
+
+                  string dbCon = GetConnectionStringForIntegrationTestsAllPackages();
+
+                  var cmdLine = $@"{ckSetupNet461Path}\CKSetup.exe setup ""{dbCon}"" --binPath ""{binPath}"" -n ""GenByCKSetup"" ";
+                  {
+                      int result = Cake.RunCmd( cmdLine );
+                      if( result != 0 ) throw new Exception( "CKSetup.exe failed for Source Code generation." );
+                  }
+              } );
 
             Task( "Run-IntegrationTests" )
               .IsDependentOn( "Compile-IntegrationTests" )
@@ -220,7 +240,6 @@ namespace CodeCake
               .Does( () =>
               {
                   var integrationTests = integrationProjects.Where( p => p.Name.EndsWith( ".Tests" ) );
-
 
                   var testDlls = integrationTests
                                   .Select( p => System.IO.Path.Combine(
@@ -231,7 +250,8 @@ namespace CodeCake
 
             Task( "Push-NuGet-Packages" )
                     .IsDependentOn( "Create-NuGet-Packages" )
-                    .IsDependentOn( "Run-CKSetup-On-IntegrationTests-AllPackages" )
+                    .IsDependentOn( "Run-CKSetup-On-IntegrationTests-AllPackages-Net461" )
+                    .IsDependentOn( "Run-CKSetup-On-IntegrationTests-AllPackages-NetCoreApp" )
                     .IsDependentOn( "Run-IntegrationTests" )
                     .WithCriteria( () => gitInfo.IsValid )
                     .Does( () =>
@@ -275,6 +295,17 @@ namespace CodeCake
                     } );
 
             Task( "Default" ).IsDependentOn( "Push-NuGet-Packages" );
+        }
+
+        private static string GetConnectionStringForIntegrationTestsAllPackages()
+        {
+            string c = Environment.GetEnvironmentVariable( "CK_DB_TEST_MASTER_CONNECTION_STRING" );
+            if( c == null ) c = System.Configuration.ConfigurationManager.AppSettings["CK_DB_TEST_MASTER_CONNECTION_STRING"];
+            if( c == null ) c = "Server=.;Database=master;Integrated Security=SSPI";
+            var csB = new SqlConnectionStringBuilder( c );
+            csB.InitialCatalog = "TEST_CK_DB_AllPackages";
+            var dbCon = csB.ToString();
+            return dbCon;
         }
 
         private void PushNuGetPackages( string apiKeyName, string pushUrl, IEnumerable<FilePath> nugetPackages )
