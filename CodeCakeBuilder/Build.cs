@@ -183,7 +183,7 @@ namespace CodeCake
                   } );
                   Cake.DotNetCorePublish( integrationTestsCSProj, new DotNetCorePublishSettings()
                   {
-                      ArgumentCustomization = c => c.Append( $@"/p:CKDBVersion=""{version}""" ),
+                      ArgumentCustomization = c => c.Append( $@"/p:CKDBVersion=""{version}""" ).Append( " /p:IsPackable=true" ),
                       Framework = "netcoreapp2.0"
                   } );
               } );
@@ -205,7 +205,7 @@ namespace CodeCake
 
                   string dbCon = GetConnectionStringForIntegrationTestsAllPackages();
 
-                  var cmdLine = $@"{ckSetupNet461Path}\CKSetup.exe setup ""{dbCon}"" -f Release --binPath ""{binPath}"" -n ""GenByCKSetup"" ";
+                  var cmdLine = $@"{ckSetupNet461Path}\CKSetup.exe setup ""{dbCon}"" -f Monitor --binPath ""{binPath}"" -n ""GenByCKSetup"" ";
                   {
                       int result = Cake.RunCmd( cmdLine );
                       if( result != 0 ) throw new Exception( "CKSetup.exe failed for Source Code generation." );
@@ -226,7 +226,7 @@ namespace CodeCake
 
                   string dbCon = GetConnectionStringForIntegrationTestsAllPackages();
 
-                  var cmdLine = $@"{ckSetupNet461Path}\CKSetup.exe setup ""{dbCon}"" -f Release --binPath ""{binPath}"" -n ""GenByCKSetup"" ";
+                  var cmdLine = $@"{ckSetupNet461Path}\CKSetup.exe setup ""{dbCon}"" -f Monitor --binPath ""{binPath}"" -n ""GenByCKSetup"" ";
                   {
                       int result = Cake.RunCmd( cmdLine );
                       if( result != 0 ) throw new Exception( "CKSetup.exe failed for Source Code generation." );
