@@ -4,7 +4,7 @@ using NUnitLite;
 using System;
 using System.Reflection;
 
-namespace CK.Text.Tests
+namespace CK.DB.Res.MCResString.Tests
 {
     public class Program
     {

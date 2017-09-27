@@ -4,7 +4,7 @@ using NUnitLite;
 using System;
 using System.Reflection;
 
-namespace CK.DB.User.UserGoogle.Tests
+namespace AllPackages.Tests
 {
     public class Program
     {

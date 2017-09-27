@@ -4,7 +4,7 @@ using NUnitLite;
 using System;
 using System.Reflection;
 
-namespace CK.Text.Tests
+namespace CK.DB.User.UserGoogle.EMailColumns.Tests
 {
     public class Program
     {

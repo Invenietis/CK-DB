@@ -1,11 +1,11 @@
-﻿using NUnit.Framework;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CK.DB.Culture.Tests.From
+namespace CK.DB.Culture.Tests
 {
     [TestFixture]
     public class DBSetup : CK.DB.Tests.DBSetup
