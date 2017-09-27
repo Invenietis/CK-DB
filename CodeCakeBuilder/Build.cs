@@ -216,14 +216,12 @@ namespace CodeCake
                   }
               } );
 
-            Task( "Run-CKSetup-On-IntegrationTests-AllPackages-NetCoreApp" )
+            Task( "Run-CKSetup-On-IntegrationTests-AllPackages-Tests-NetCoreApp" )
               .IsDependentOn( "Compile-IntegrationTests" )
               .IsDependentOn( "Download-CKSetup-Net461-From-Store-and-Unzip-it" )
               .Does( () =>
               {
-                  var projectPath = integrationProjects.Single( p => p.Name == "AllPackages" ).Path.GetDirectory();
-                  var binPath = projectPath.Combine( $"bin/{configuration}/netcoreapp2.0/publish" );
-
+                  var binPath = integrationTestsDirectory + $"/bin/{configuration}/netcoreapp2.0/publish";
                   string dbCon = GetConnectionStringForIntegrationTestsAllPackages();
 
                   var cmdLine = $@"{ckSetupNet461Path}\CKSetup.exe setup ""{dbCon}"" -f Monitor --binPath ""{binPath}"" -n ""GenByCKSetup"" ";
