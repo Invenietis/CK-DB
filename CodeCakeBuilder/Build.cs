@@ -249,7 +249,7 @@ namespace CodeCake
             Task( "Push-NuGet-Packages" )
                     .IsDependentOn( "Create-NuGet-Packages" )
                     .IsDependentOn( "Run-CKSetup-On-IntegrationTests-AllPackages-Net461" )
-                    .IsDependentOn( "Run-CKSetup-On-IntegrationTests-AllPackages-NetCoreApp" )
+                    .IsDependentOn( "Run-CKSetup-On-IntegrationTests-AllPackages-Tests-NetCoreApp" )
                     .IsDependentOn( "Run-IntegrationTests" )
                     .WithCriteria( () => gitInfo.IsValid )
                     .Does( () =>
