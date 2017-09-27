@@ -205,7 +205,7 @@ namespace CodeCake
 
                   string dbCon = GetConnectionStringForIntegrationTestsAllPackages();
 
-                  var cmdLine = $@"{ckSetupNet461Path}\CKSetup.exe setup ""{dbCon}"" -f Monitor --binPath ""{binPath}"" -n ""GenByCKSetup"" ";
+                  var cmdLine = $@"{ckSetupNet461Path}\CKSetup.exe setup ""{dbCon}"" -v Monitor --binPath ""{binPath}"" -n ""GenByCKSetup"" ";
                   {
                       int result = Cake.RunCmd( cmdLine );
                       if( result != 0 ) throw new Exception( "CKSetup.exe failed for Source Code generation." );
@@ -224,7 +224,7 @@ namespace CodeCake
                   var binPath = integrationTestsDirectory + $"/bin/{configuration}/netcoreapp2.0/publish";
                   string dbCon = GetConnectionStringForIntegrationTestsAllPackages();
 
-                  var cmdLine = $@"{ckSetupNet461Path}\CKSetup.exe setup ""{dbCon}"" -f Monitor --binPath ""{binPath}"" -n ""GenByCKSetup"" ";
+                  var cmdLine = $@"{ckSetupNet461Path}\CKSetup.exe setup ""{dbCon}"" -v Monitor --binPath ""{binPath}"" -n ""GenByCKSetup"" ";
                   {
                       int result = Cake.RunCmd( cmdLine );
                       if( result != 0 ) throw new Exception( "CKSetup.exe failed for Source Code generation." );
