@@ -1,4 +1,4 @@
-﻿-- SetupConfig: {}
+-- SetupConfig: {}
 --
 -- @GoogleAccountId can not be null. This is the key that identifies a Google user.
 -- @Mode (flags): CreateOnly = 1, UpdateOnly = 2, CreateOrUpdate = 3, WithLogin = 4  
@@ -20,7 +20,9 @@ create procedure CK.sUserGoogleCreateOrUpdate
 	@UserId int /*input*/output,
 	@GoogleAccountId varchar(36), 
 	@Mode int, -- not null enum { "CreateOnly" = 1, "UpdateOnly" = 2, "CreateOrUpdate" = 3, "WithLogin" = 4, "IgnoreOptimisticKey" = 8 }
-	@Result int output -- not null enum { None = 0, Created = 1, Updated = 2 }
+	@Result int output, -- not null enum { None = 0, Created = 1, Updated = 2 }
+    @FailureCode int output, -- Optional. Set by CK.sAuthUserOnLogin if login is rejected.
+    @FailureReason varchar(128) output -- Optional. Set by CK.sAuthUserOnLogin if login is rejected.
 )
 as
 begin
@@ -87,7 +89,7 @@ begin
 	end
 	if @Result <> 0 and @ActualLogin = 1
 	begin
-		exec CK.sAuthUserOnLogin 'Google', @Now, @UserId;  
+		exec CK.sAuthUserOnLogin 'Google', @Now, @UserId, @FailureCode output, @FailureReason output;  
 	end
 	--<PostCreateOrUpdate /> 
 

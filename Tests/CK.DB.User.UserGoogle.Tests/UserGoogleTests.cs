@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
 using CK.Core;
@@ -29,7 +29,7 @@ namespace CK.DB.User.UserGoogle.Tests
                 var info = infoFactory.Create();
                 info.GoogleAccountId = googleAccountId;
                 var created = u.CreateOrUpdateGoogleUser( ctx, 1, userId, info );
-                Assert.That( created, Is.EqualTo( CreateOrUpdateResult.Created ) );
+                Assert.That( created.OperationResult, Is.EqualTo( CreateOrUpdateOperationResult.Created ) );
                 var info2 = u.FindKnownUserInfo( ctx, googleAccountId );
 
                 Assert.That( info2.UserId, Is.EqualTo( userId ) );
@@ -56,7 +56,7 @@ namespace CK.DB.User.UserGoogle.Tests
                 var info = infoFactory.Create();
                 info.GoogleAccountId = googleAccountId;
                 var created = await u.CreateOrUpdateGoogleUserAsync( ctx, 1, userId, info );
-                Assert.That( created, Is.EqualTo( CreateOrUpdateResult.Created ) );
+                Assert.That( created.OperationResult, Is.EqualTo( CreateOrUpdateOperationResult.Created ) );
                 var info2 = await u.FindKnownUserInfoAsync( ctx, googleAccountId );
 
                 Assert.That( info2.UserId, Is.EqualTo( userId ) );

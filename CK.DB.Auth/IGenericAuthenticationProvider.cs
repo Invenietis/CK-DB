@@ -1,4 +1,4 @@
-﻿using CK.Core;
+using CK.Core;
 using CK.SqlServer;
 using System;
 using System.Collections.Generic;
@@ -69,7 +69,7 @@ namespace CK.DB.Auth
         /// <param name="userId">The user identifier that must be registered.</param>
         /// <param name="payload">Provider specific data.</param>
         /// <param name="mode">Optionnaly configures Create, Update only or WithLogin behavior.</param>
-        /// <returns>The operation result.</returns>
+        /// <returns>The result.</returns>
         CreateOrUpdateResult CreateOrUpdateUser( ISqlCallContext ctx, int actorId, int userId, object payload, CreateOrUpdateMode mode = CreateOrUpdateMode.CreateOrUpdate );
 
         /// <summary>
@@ -93,10 +93,8 @@ namespace CK.DB.Auth
         /// <param name="ctx">The call context to use.</param>
         /// <param name="payload">The payload to challenge.</param>
         /// <param name="actualLogin">Set it to false to avoid login side-effect (such as updating the LastLoginTime) on success.</param>
-        /// <returns>
-        /// Non zero identifier of the user on success, 0 if the login fails.
-        /// </returns>
-        int LoginUser( ISqlCallContext ctx, object payload, bool actualLogin = true );
+        /// <returns>The login result.</returns>
+        LoginResult LoginUser( ISqlCallContext ctx, object payload, bool actualLogin = true );
 
         /// <summary>
         /// Creates or updates a user entry for this provider. 
@@ -109,7 +107,7 @@ namespace CK.DB.Auth
         /// <param name="payload">Provider specific data.</param>
         /// <param name="mode">Optionnaly configures Create, Update only or WithLogin behavior.</param>
         /// <param name="cancellationToken">Optional cancellation token.</param>
-        /// <returns>The operation result.</returns>
+        /// <returns>The result.</returns>
         Task<CreateOrUpdateResult> CreateOrUpdateUserAsync( ISqlCallContext ctx, int actorId, int userId, object payload, CreateOrUpdateMode mode = CreateOrUpdateMode.CreateOrUpdate, CancellationToken cancellationToken = default( CancellationToken ) );
 
         /// <summary>
@@ -135,10 +133,8 @@ namespace CK.DB.Auth
         /// <param name="payload">The payload to challenge.</param>
         /// <param name="actualLogin">Set it to false to avoid login side-effect (such as updating the LastLoginTime) on success.</param>
         /// <param name="cancellationToken">Optional cancellation token.</param>
-        /// <returns>
-        /// Non zero identifier of the user on success, 0 if the login fails.
-        /// </returns>
-        Task<int> LoginUserAsync( ISqlCallContext ctx, object payload, bool actualLogin = true, CancellationToken cancellationToken = default( CancellationToken ) );
+        /// <returns>The login result.</returns>
+        Task<LoginResult> LoginUserAsync( ISqlCallContext ctx, object payload, bool actualLogin = true, CancellationToken cancellationToken = default( CancellationToken ) );
 
     }
 }

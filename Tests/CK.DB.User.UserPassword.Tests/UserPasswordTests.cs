@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
 using CK.Core;
@@ -27,13 +27,13 @@ namespace CK.DB.User.UserPassword.Tests
                 var pwd = "pwddetestcrrr";
                 var pwd2 = "pwddetestcrdfezfrefzzfrr";
 
-                Assert.That( u.CreateOrUpdatePasswordUser( ctx, 1, userId, pwd ), Is.EqualTo( CreateOrUpdateResult.Created ) );
-                Assert.That( u.LoginUser( ctx, userId, pwd ) == userId );
-                Assert.That( u.LoginUser( ctx, userId, pwd2 ) == 0 );
+                Assert.That( u.CreateOrUpdatePasswordUser( ctx, 1, userId, pwd ).OperationResult, Is.EqualTo( CreateOrUpdateOperationResult.Created ) );
+                Assert.That( u.LoginUser( ctx, userId, pwd ).UserId == userId );
+                Assert.That( u.LoginUser( ctx, userId, pwd2 ).UserId == 0 );
 
                 u.SetPassword( ctx, 1, userId, pwd2 );
-                Assert.That( u.LoginUser( ctx, userId, pwd2 ) == userId );
-                Assert.That( u.LoginUser( ctx, userId, pwd ) == 0 );
+                Assert.That( u.LoginUser( ctx, userId, pwd2 ).UserId == userId );
+                Assert.That( u.LoginUser( ctx, userId, pwd ).UserId == 0 );
 
             }
         }
@@ -80,13 +80,13 @@ namespace CK.DB.User.UserPassword.Tests
                 var hash1 = u.Database.ExecuteScalar<byte[]>( $"select PwdHash from CK.tUserPassword where UserId={userId}" );
 
                 UserPasswordTable.HashIterationCount = 2000;
-                Assert.That( u.LoginUser( ctx, userId, pwd ) == userId );
+                Assert.That( u.LoginUser( ctx, userId, pwd ).UserId == userId );
                 var hash2 = u.Database.ExecuteScalar<byte[]>( $"select PwdHash from CK.tUserPassword where UserId={userId}" );
 
                 Assert.That( hash1.SequenceEqual( hash2 ), Is.False, "Hash has been updated." );
 
                 UserPasswordTable.HashIterationCount = UserPasswordTable.DefaultHashIterationCount;
-                Assert.That( u.LoginUser( ctx, userId, pwd ) == userId );
+                Assert.That( u.LoginUser( ctx, userId, pwd ).UserId == userId );
                 var hash3 = u.Database.ExecuteScalar<byte[]>( $"select PwdHash from CK.tUserPassword where UserId={userId}" );
 
                 Assert.That( hash1.SequenceEqual( hash3 ), Is.False, "Hash has been updated." );
@@ -105,17 +105,19 @@ namespace CK.DB.User.UserPassword.Tests
                 string name = Guid.NewGuid().ToString();
                 int userId = user.CreateUser( ctx, 1, name );
                 string pwd = "lklkl";
-                Assert.That( basic.CreateOrUpdatePasswordUser( ctx, 1, userId, pwd, CreateOrUpdateMode.CreateOnly ), Is.EqualTo( CreateOrUpdateResult.Created ) );
-                Assert.That( basic.CreateOrUpdatePasswordUser( ctx, 1, userId, pwd + "no", CreateOrUpdateMode.CreateOnly ), Is.EqualTo( CreateOrUpdateResult.None ) );
-                Assert.That( basic.LoginUser( ctx, userId, pwd ), Is.EqualTo( userId ) );
-                Assert.That( basic.LoginUser( ctx, userId, pwd + "no" ), Is.EqualTo( 0 ) );
-                Assert.That( basic.LoginUser( ctx, name, pwd ), Is.EqualTo( userId ) );
-                Assert.That( basic.LoginUser( ctx, name, pwd + "no" ), Is.EqualTo( 0 ) );
+                var result = basic.CreateOrUpdatePasswordUser( ctx, 1, userId, pwd, CreateOrUpdateMode.CreateOnly );
+                Assert.That( result.OperationResult, Is.EqualTo( CreateOrUpdateOperationResult.Created ) );
+                result = basic.CreateOrUpdatePasswordUser( ctx, 1, userId, pwd + "no", CreateOrUpdateMode.CreateOnly );
+                Assert.That( result.OperationResult, Is.EqualTo( CreateOrUpdateOperationResult.None ) );
+                Assert.That( basic.LoginUser( ctx, userId, pwd ).UserId, Is.EqualTo( userId ) );
+                Assert.That( basic.LoginUser( ctx, userId, pwd + "no" ).UserId, Is.EqualTo( 0 ) );
+                Assert.That( basic.LoginUser( ctx, name, pwd ).UserId, Is.EqualTo( userId ) );
+                Assert.That( basic.LoginUser( ctx, name, pwd + "no" ).UserId, Is.EqualTo( 0 ) );
                 basic.SetPassword( ctx, 1, userId, (pwd = pwd + "BIS") );
-                Assert.That( basic.LoginUser( ctx, userId, pwd ), Is.EqualTo( userId ) );
-                Assert.That( basic.LoginUser( ctx, userId, pwd + "no" ), Is.EqualTo( 0 ) );
-                Assert.That( basic.LoginUser( ctx, name, pwd ), Is.EqualTo( userId ) );
-                Assert.That( basic.LoginUser( ctx, name, pwd + "no" ), Is.EqualTo( 0 ) );
+                Assert.That( basic.LoginUser( ctx, userId, pwd ).UserId, Is.EqualTo( userId ) );
+                Assert.That( basic.LoginUser( ctx, userId, pwd + "no" ).UserId, Is.EqualTo( 0 ) );
+                Assert.That( basic.LoginUser( ctx, name, pwd ).UserId, Is.EqualTo( userId ) );
+                Assert.That( basic.LoginUser( ctx, name, pwd + "no" ).UserId, Is.EqualTo( 0 ) );
                 basic.DestroyPasswordUser( ctx, 1, userId );
                 user.Database.AssertEmptyReader( "select * from CK.tUserPassword where UserId = @0", userId );
                 user.DestroyUser( ctx, 1, userId );
@@ -132,17 +134,19 @@ namespace CK.DB.User.UserPassword.Tests
                 string name = Guid.NewGuid().ToString();
                 int userId = await user.CreateUserAsync( ctx, 1, name );
                 string pwd = "lklkl";
-                Assert.That( await basic.CreateOrUpdatePasswordUserAsync( ctx, 1, userId, pwd, CreateOrUpdateMode.CreateOnly ), Is.EqualTo( CreateOrUpdateResult.Created ) );
-                Assert.That( await basic.CreateOrUpdatePasswordUserAsync( ctx, 1, userId, pwd + "no", CreateOrUpdateMode.CreateOnly ), Is.EqualTo( CreateOrUpdateResult.None ) );
-                Assert.That( await basic.LoginUserAsync( ctx, userId, pwd ), Is.EqualTo( userId ) );
-                Assert.That( await basic.LoginUserAsync( ctx, userId, pwd + "no" ), Is.EqualTo( 0 ) );
-                Assert.That( await basic.LoginUserAsync( ctx, name, pwd ), Is.EqualTo( userId ) );
-                Assert.That( await basic.LoginUserAsync( ctx, name, pwd + "no" ), Is.EqualTo( 0 ) );
+                var result = await basic.CreateOrUpdatePasswordUserAsync( ctx, 1, userId, pwd, CreateOrUpdateMode.CreateOnly );
+                Assert.That( result.OperationResult, Is.EqualTo( CreateOrUpdateOperationResult.Created ) );
+                result = await basic.CreateOrUpdatePasswordUserAsync( ctx, 1, userId, pwd + "no", CreateOrUpdateMode.CreateOnly );
+                Assert.That( result.OperationResult, Is.EqualTo( CreateOrUpdateOperationResult.None ) );
+                Assert.That( (await basic.LoginUserAsync( ctx, userId, pwd )).UserId, Is.EqualTo( userId ) );
+                Assert.That( (await basic.LoginUserAsync( ctx, userId, pwd + "no" )).UserId, Is.EqualTo( 0 ) );
+                Assert.That( (await basic.LoginUserAsync( ctx, name, pwd )).UserId, Is.EqualTo( userId ) );
+                Assert.That( (await basic.LoginUserAsync( ctx, name, pwd + "no" )).UserId, Is.EqualTo( 0 ) );
                 await basic.SetPasswordAsync( ctx, 1, userId, (pwd = pwd + "BIS") );
-                Assert.That( await basic.LoginUserAsync( ctx, userId, pwd ), Is.EqualTo( userId ) );
-                Assert.That( await basic.LoginUserAsync( ctx, userId, pwd + "no" ), Is.EqualTo( 0 ) );
-                Assert.That( await basic.LoginUserAsync( ctx, name, pwd ), Is.EqualTo( userId ) );
-                Assert.That( await basic.LoginUserAsync( ctx, name, pwd + "no" ), Is.EqualTo( 0 ) );
+                Assert.That( (await basic.LoginUserAsync( ctx, userId, pwd )).UserId, Is.EqualTo( userId ) );
+                Assert.That( (await basic.LoginUserAsync( ctx, userId, pwd + "no" )).UserId, Is.EqualTo( 0 ) );
+                Assert.That( (await basic.LoginUserAsync( ctx, name, pwd )).UserId, Is.EqualTo( userId ) );
+                Assert.That( (await basic.LoginUserAsync( ctx, name, pwd + "no" )).UserId, Is.EqualTo( 0 ) );
                 await basic.DestroyPasswordUserAsync( ctx, 1, userId );
                 user.Database.AssertEmptyReader( "select * from CK.tUserPassword where UserId = @0", userId );
                 await user.DestroyUserAsync( ctx, 1, userId );
@@ -183,22 +187,22 @@ namespace CK.DB.User.UserPassword.Tests
                     string userName = Guid.NewGuid().ToString();
                     var idU = user.CreateUser( ctx, 1, userName );
                     p.PasswordMigrator = new MigrationSupport( idU, "toto" );
-                    Assert.That( u.LoginUser( ctx, idU, "failed" ) == 0 );
+                    Assert.That( u.LoginUser( ctx, idU, "failed" ).UserId == 0 );
                     p.Database.AssertEmptyReader( $"select 1 from CK.tUserPassword where UserId={idU}" );
-                    Assert.That( u.LoginUser( ctx, idU, "toto" ) == idU );
+                    Assert.That( u.LoginUser( ctx, idU, "toto" ).UserId == idU );
                     p.Database.AssertScalarEquals( 1, $"select 1 from CK.tUserPassword where UserId={idU}" );
-                    Assert.That( u.LoginUser( ctx, idU, "toto" ) == idU );
+                    Assert.That( u.LoginUser( ctx, idU, "toto" ).UserId == idU );
                 }
                 // By user name
                 {
                     string userName = Guid.NewGuid().ToString();
                     var idU = user.CreateUser( ctx, 1, userName );
                     p.PasswordMigrator = new MigrationSupport( idU, "toto" );
-                    Assert.That( u.LoginUser( ctx, userName, "failed" ) == 0 );
+                    Assert.That( u.LoginUser( ctx, userName, "failed" ).UserId == 0 );
                     p.Database.AssertEmptyReader( $"select 1 from CK.tUserPassword where UserId={idU}" );
-                    Assert.That( u.LoginUser( ctx, userName, "toto" ) == idU );
+                    Assert.That( u.LoginUser( ctx, userName, "toto" ).UserId == idU );
                     p.Database.AssertScalarEquals( 1, $"select 1 from CK.tUserPassword where UserId={idU}" );
-                    Assert.That( u.LoginUser( ctx, userName, "toto" ) == idU );
+                    Assert.That( u.LoginUser( ctx, userName, "toto" ).UserId == idU );
                 }
             }
         }
@@ -216,22 +220,22 @@ namespace CK.DB.User.UserPassword.Tests
                     string userName = Guid.NewGuid().ToString();
                     var idU = await user.CreateUserAsync( ctx, 1, userName );
                     p.PasswordMigrator = new MigrationSupport( idU, "toto" );
-                    Assert.That( await u.LoginUserAsync( ctx, idU, "failed" ) == 0 );
+                    Assert.That( (await u.LoginUserAsync( ctx, idU, "failed" )).UserId == 0 );
                     p.Database.AssertEmptyReader( $"select 1 from CK.tUserPassword where UserId={idU}" );
-                    Assert.That( await u.LoginUserAsync( ctx, idU, "toto" ) == idU );
+                    Assert.That( (await u.LoginUserAsync( ctx, idU, "toto" )).UserId == idU );
                     p.Database.AssertScalarEquals( 1, $"select 1 from CK.tUserPassword where UserId={idU}" );
-                    Assert.That( await u.LoginUserAsync( ctx, idU, "toto" ) == idU );
+                    Assert.That( (await u.LoginUserAsync( ctx, idU, "toto" )).UserId == idU );
                 }
                 // By user name
                 {
                     string userName = Guid.NewGuid().ToString();
                     var idU = await user.CreateUserAsync( ctx, 1, userName );
                     p.PasswordMigrator = new MigrationSupport( idU, "toto" );
-                    Assert.That( await u.LoginUserAsync( ctx, userName, "failed" ) == 0 );
+                    Assert.That( (await u.LoginUserAsync( ctx, userName, "failed" )).UserId == 0 );
                     p.Database.AssertEmptyReader( $"select 1 from CK.tUserPassword where UserId={idU}" );
-                    Assert.That( await u.LoginUserAsync( ctx, userName, "toto" ) == idU );
+                    Assert.That( (await u.LoginUserAsync( ctx, userName, "toto" )).UserId == idU );
                     p.Database.AssertScalarEquals( 1, $"select 1 from CK.tUserPassword where UserId={idU}" );
-                    Assert.That( await u.LoginUserAsync( ctx, userName, "toto" ) == idU );
+                    Assert.That( (await u.LoginUserAsync( ctx, userName, "toto" )).UserId == idU );
                 }
             }
         }
@@ -252,10 +256,10 @@ namespace CK.DB.User.UserPassword.Tests
                     var firstTime = u.Database.ExecuteScalar<DateTime>( $"select LastLoginTime from CK.tUserPassword where UserId={idU}" );
                     Assert.That( firstTime.Ticks, Is.EqualTo( baseTime.Ticks ).Within( TimeSpan.FromMilliseconds( 1000 ).Ticks ) );
                     Thread.Sleep( 100 );
-                    Assert.That( u.LoginUser( ctx, userName, "failed login", actualLogin: true ) == 0 );
+                    Assert.That( u.LoginUser( ctx, userName, "failed login", actualLogin: true ).UserId == 0 );
                     var firstTimeNo = u.Database.ExecuteScalar<DateTime>( $"select LastLoginTime from CK.tUserPassword where UserId={idU}" );
                     Assert.That( firstTimeNo, Is.EqualTo( firstTime ) );
-                    Assert.That( u.LoginUser( ctx, userName, "password", actualLogin: true ) == idU );
+                    Assert.That( u.LoginUser( ctx, userName, "password", actualLogin: true ).UserId == idU );
                     var firstTimeYes = u.Database.ExecuteScalar<DateTime>( $"select LastLoginTime from CK.tUserPassword where UserId={idU}" );
                     Assert.That( firstTimeYes, Is.GreaterThan( firstTimeNo ) );
                 }

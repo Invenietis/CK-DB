@@ -89,7 +89,7 @@ namespace CK.DB.Auth
         /// <param name="userId">The user identifier.</param>
         /// <returns>The awaitable.</returns>
         [SqlProcedure( "sAuthUserOnLogin" )]
-        public abstract Task OnUserLoginAsync( ISqlCallContext ctx, string scheme, DateTime loginTime, int userId );
+        public abstract Task<LoginResult> OnUserLoginAsync( ISqlCallContext ctx, string scheme, DateTime loginTime, int userId );
 
         /// <summary>
         /// Reads a <see cref="IUserAuthInfo"/> for a user.

@@ -1,11 +1,13 @@
-﻿using CK.Core;
+using CK.Core;
 using CK.SqlServer;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CK.DB.Tests;
 
 namespace CK.DB.Auth.Tests
 {
@@ -14,14 +16,69 @@ namespace CK.DB.Auth.Tests
     {
 
         [Test]
+        public void calling_OnUserLogin_directlty_works_but_is_reserved_for_very_rare_scenarii()
+        {
+            var auth = TestHelper.StObjMap.Default.Obtain<Package>();
+            var user = TestHelper.StObjMap.Default.Obtain<Actor.UserTable>();
+            using( var ctx = new SqlStandardCallContext() )
+            using( auth.Database.TemporaryTransform( @"
+                    create transformer on CK.sAuthUserOnLogin
+                    as
+                    begin
+                        inject
+                        "" if @Scheme = 'test-fail'
+                           begin
+                                set @FailureReason = 'The failure';
+                                set @FailureCode = 3712;
+                           end
+                           if @Scheme = 'test-fail-reason-only'
+                           begin
+                                set @FailureReason = 'The failure text';
+                           end
+                           if @Scheme = 'test-fail-code-only'
+                           begin
+                                set @FailureCode = 42;
+                           end
+                        "" before single statement {return};
+                    end
+                    " ) )
+            {
+                int idUser = user.CreateUser( ctx, 1, Guid.NewGuid().ToString() );
+                var result = auth.OnUserLogin( ctx, "test-success", DateTime.UtcNow, idUser );
+                Assert.That( result.FailureCode, Is.EqualTo( 0 ) );
+                Assert.That( result.FailureReason, Is.Null );
+                Assert.That( result.IsSuccessful );
+                Assert.That( result.UserId, Is.EqualTo( idUser ) );
+
+                result = auth.OnUserLogin( ctx, "test-fail", DateTime.UtcNow, idUser );
+                Assert.That( result.FailureCode, Is.EqualTo( 3712 ) );
+                Assert.That( result.FailureReason, Is.EqualTo( "The failure" ) );
+                Assert.That( result.IsSuccessful, Is.False );
+                Assert.That( result.UserId, Is.EqualTo( 0 ) );
+
+                result = auth.OnUserLogin( ctx, "test-fail-reason-only", DateTime.UtcNow, idUser );
+                Assert.That( result.FailureCode, Is.EqualTo( 0 ) );
+                Assert.That( result.FailureReason, Is.EqualTo( "The failure text" ) );
+                Assert.That( result.IsSuccessful, Is.False );
+                Assert.That( result.UserId, Is.EqualTo( 0 ) );
+
+                result = auth.OnUserLogin( ctx, "test-fail-code-only", DateTime.UtcNow, idUser );
+                Assert.That( result.FailureCode, Is.EqualTo( 42 ) );
+                Assert.That( result.FailureReason, Is.EqualTo( "Unspecified reason." ) );
+                Assert.That( result.IsSuccessful, Is.False );
+                Assert.That( result.UserId, Is.EqualTo( 0 ) );
+            }
+        }
+
+        [Test]
         public void when_basic_provider_exists_it_is_registered_in_tAuthProvider_and_available_as_IGenericAuthenticationProvider()
         {
             var auth = TestHelper.StObjMap.Default.Obtain<Package>();
-            Assume.That(auth.BasicProvider != null);
+            Assume.That( auth.BasicProvider != null );
 
-            Assert.That(auth.AllProviders.Single(provider => provider.ProviderName == "Basic"), Is.Not.Null);
-            Assert.That(auth.FindProvider("Basic"), Is.Not.Null);
-            Assert.That(auth.FindProvider("bASIC"), Is.Not.Null);
+            Assert.That( auth.AllProviders.Single( provider => provider.ProviderName == "Basic" ), Is.Not.Null );
+            Assert.That( auth.FindProvider( "Basic" ), Is.Not.Null );
+            Assert.That( auth.FindProvider( "bASIC" ), Is.Not.Null );
         }
 
         static public void StandardTestForGenericAuthenticationProvider(
@@ -47,15 +104,15 @@ namespace CK.DB.Auth.Tests
                 {
                     #region CreateOrUpdateUser without WithLogin
 
-                    Assert.That(g.CreateOrUpdateUser(ctx, 1, userId, payloadForCreateOrUpdate(userId, userName)), Is.EqualTo(CreateOrUpdateResult.Created));
+                    Assert.That(g.CreateOrUpdateUser(ctx, 1, userId, payloadForCreateOrUpdate(userId, userName)).OperationResult, Is.EqualTo(CreateOrUpdateOperationResult.Created));
                     info = auth.ReadUserAuthInfo(ctx, 1, userId);
                     Assert.That(info.Schemes.Count, Is.EqualTo(0), "Still no scheme since we did not use WithLogin.");
 
-                    Assert.That(g.LoginUser(ctx, payloadForLogin(userId, userName), actualLogin: false), Is.EqualTo(userId));
+                    Assert.That(g.LoginUser(ctx, payloadForLogin(userId, userName), actualLogin: false).UserId, Is.EqualTo(userId));
                     info = auth.ReadUserAuthInfo(ctx, 1, userId);
                     Assert.That(info.Schemes.Count, Is.EqualTo(0), "Still no scheme since we challenge login but not use WithLogin." );
 
-                    Assert.That(g.LoginUser(ctx, payloadForLogin(userId, userName)), Is.EqualTo(userId));
+                    Assert.That(g.LoginUser(ctx, payloadForLogin(userId, userName)).UserId, Is.EqualTo(userId));
                     info = auth.ReadUserAuthInfo(ctx, 1, userId);
                     Assert.That(info.Schemes.Count, Is.EqualTo(1));
                     Assert.That( info.Schemes[0].Name, Does.StartWith( g.ProviderName ) );
@@ -74,14 +131,16 @@ namespace CK.DB.Auth.Tests
                     Assert.That(info.UserName, Is.EqualTo(userName));
                     Assert.That(info.Schemes.Count, Is.EqualTo(0));
 
-                    Assert.That(g.CreateOrUpdateUser(ctx, 1, userId, payloadForCreateOrUpdate(userId, userName), CreateOrUpdateMode.CreateOnly | CreateOrUpdateMode.WithLogin), Is.EqualTo(CreateOrUpdateResult.Created));
+                    var result = g.CreateOrUpdateUser( ctx, 1, userId, payloadForCreateOrUpdate( userId, userName ), CreateOrUpdateMode.CreateOnly | CreateOrUpdateMode.WithLogin );
+                    Assert.That( result.OperationResult, Is.EqualTo( CreateOrUpdateOperationResult.Created ) );
+                    Assert.That( result.LoginResult.UserId, Is.EqualTo( userId ) );
                     info = auth.ReadUserAuthInfo(ctx, 1, userId);
                     Assert.That(info.Schemes.Count, Is.EqualTo(1));
                     Assert.That( info.Schemes[0].Name, Does.StartWith( g.ProviderName ) );
                     Assert.That( info.Schemes[0].Name, Is.EqualTo( schemeOrProviderName ).IgnoreCase );
                     Assert.That(info.Schemes[0].LastUsed, Is.GreaterThan(DateTime.UtcNow.AddSeconds(-1)));
 
-                    Assert.That(g.LoginUser(ctx, payloadForLoginFail(userId, userName)), Is.EqualTo(0));
+                    Assert.That(g.LoginUser(ctx, payloadForLoginFail(userId, userName)).UserId, Is.EqualTo(0));
 
                     g.DestroyUser(ctx, 1, userId);
                     info = auth.ReadUserAuthInfo(ctx, 1, userId);
@@ -125,15 +184,15 @@ namespace CK.DB.Auth.Tests
                 {
                     #region CreateOrUpdateUser without WithLogin
 
-                    Assert.That(await g.CreateOrUpdateUserAsync(ctx, 1, userId, payloadForCreateOrUpdate(userId, userName)), Is.EqualTo(CreateOrUpdateResult.Created));
+                    Assert.That((await g.CreateOrUpdateUserAsync(ctx, 1, userId, payloadForCreateOrUpdate(userId, userName))).OperationResult, Is.EqualTo(CreateOrUpdateOperationResult.Created));
                     info = await auth.ReadUserAuthInfoAsync(ctx, 1, userId);
                     Assert.That(info.Schemes.Count, Is.EqualTo(0), "Still no scheme since we did not use WithLogin." );
 
-                    Assert.That(await g.LoginUserAsync(ctx, payloadForLogin(userId, userName), actualLogin: false), Is.EqualTo(userId));
+                    Assert.That((await g.LoginUserAsync(ctx, payloadForLogin(userId, userName), actualLogin: false)).UserId, Is.EqualTo(userId));
                     info = await auth.ReadUserAuthInfoAsync(ctx, 1, userId);
                     Assert.That(info.Schemes.Count, Is.EqualTo(0), "Still no scheme since we challenge login but not use WithLogin.");
 
-                    Assert.That(await g.LoginUserAsync(ctx, payloadForLogin(userId, userName)), Is.EqualTo(userId));
+                    Assert.That((await g.LoginUserAsync(ctx, payloadForLogin(userId, userName))).UserId, Is.EqualTo(userId));
                     info = await auth.ReadUserAuthInfoAsync(ctx, 1, userId);
                     Assert.That(info.Schemes.Count, Is.EqualTo(1));
                     Assert.That( info.Schemes[0].Name, Does.StartWith( g.ProviderName ) );
@@ -152,14 +211,16 @@ namespace CK.DB.Auth.Tests
                     Assert.That(info.UserName, Is.EqualTo(userName));
                     Assert.That(info.Schemes.Count, Is.EqualTo(0));
 
-                    Assert.That(await g.CreateOrUpdateUserAsync(ctx, 1, userId, payloadForCreateOrUpdate(userId, userName), CreateOrUpdateMode.CreateOnly | CreateOrUpdateMode.WithLogin), Is.EqualTo(CreateOrUpdateResult.Created));
+                    var result = await g.CreateOrUpdateUserAsync( ctx, 1, userId, payloadForCreateOrUpdate( userId, userName ), CreateOrUpdateMode.CreateOnly | CreateOrUpdateMode.WithLogin );
+                    Assert.That( result.OperationResult, Is.EqualTo( CreateOrUpdateOperationResult.Created ) );
+                    Assert.That( result.LoginResult.UserId, Is.EqualTo( userId ) );
                     info = await auth.ReadUserAuthInfoAsync(ctx, 1, userId);
                     Assert.That(info.Schemes.Count, Is.EqualTo(1));
                     Assert.That( info.Schemes[0].Name, Does.StartWith( g.ProviderName ) );
                     Assert.That( info.Schemes[0].Name, Is.EqualTo( schemeOrProviderName ).IgnoreCase );
                     Assert.That(info.Schemes[0].LastUsed, Is.GreaterThan(DateTime.UtcNow.AddSeconds(-1)));
 
-                    Assert.That(await g.LoginUserAsync(ctx, payloadForLoginFail(userId, userName)), Is.EqualTo(0));
+                    Assert.That((await g.LoginUserAsync(ctx, payloadForLoginFail(userId, userName))).UserId, Is.EqualTo(0));
 
                     await g.DestroyUserAsync(ctx, 1, userId);
                     info = await auth.ReadUserAuthInfoAsync(ctx, 1, userId);

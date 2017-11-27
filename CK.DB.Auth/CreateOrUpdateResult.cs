@@ -1,37 +1,38 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace CK.DB.Auth
 {
     /// <summary>
-    /// Captures <see cref="IGenericAuthenticationProvider.CreateOrUpdateUser"/> result.
+    /// Captures the result of <see cref="IGenericAuthenticationProvider.CreateOrUpdateUser"/>
+    /// or <see cref="IGenericAuthenticationProvider.CreateOrUpdateUserAsync"/>.
     /// </summary>
-    public enum CreateOrUpdateResult
+    public struct CreateOrUpdateResult
     {
         /// <summary>
-        /// Nothing happened: <see cref="IGenericAuthenticationProvider.CreateOrUpdateUser"/> was called
-        /// with <see cref="CreateOrUpdateMode.CreateOnly"/> and the user is already registered for the provider 
-        /// OR with <see cref="CreateOrUpdateMode.UpdateOnly"/> and the user is not yet registered.
+        /// The <see cref="LoginResult"/>.
+        /// Meaningful only when <see cref="CreateOrUpdateMode.WithLogin"/> is used.
         /// </summary>
-        None = 0,
+        public readonly LoginResult LoginResult;
 
         /// <summary>
-        /// The user has been registered for the first time.
+        /// The create/update operation result.
         /// </summary>
-        Created = 1,
+        public readonly CreateOrUpdateOperationResult OperationResult;
 
         /// <summary>
-        /// Existing user registration information have been updated.
+        /// Initializes a new <see cref="CreateOrUpdateResult"/>.
         /// </summary>
-        Updated = 2,
-
-        /// <summary>
-        /// Whenever optimistic concurrency is supported
-        /// and a concurrency error has been detected.
-        /// </summary>
-        OptimisticConcurrencyFailure = 3
+        /// <param name="userId">User identifier.</param>
+        /// <param name="result">Operation result.</param>
+        /// <param name="failureReason">Optional login failure reason.</param>
+        /// <param name="failureCode">Optional login failure error code.</param>
+        public CreateOrUpdateResult( int userId, CreateOrUpdateOperationResult result, string failureReason, int? failureCode )
+        {
+            LoginResult = new LoginResult( userId, failureReason, failureCode );
+            OperationResult = result;
+        }
     }
+
 }

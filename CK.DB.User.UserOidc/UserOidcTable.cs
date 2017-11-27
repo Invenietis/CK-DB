@@ -1,4 +1,4 @@
-﻿using CK.Setup;
+using CK.Setup;
 using CK.SqlServer;
 using CK.SqlServer.Setup;
 using System;
@@ -54,11 +54,11 @@ namespace CK.DB.User.UserOidc
         /// <param name="info">Provider specific data: the <see cref="IUserOidcInfo"/> poco.</param>
         /// <param name="mode">Optionnaly configures Create, Update only or WithLogin behavior.</param>
         /// <param name="cancellationToken">Optional cancellation token.</param>
-        /// <returns>The operation result.</returns>
+        /// <returns>The result.</returns>
         public async Task<CreateOrUpdateResult> CreateOrUpdateOidcUserAsync( ISqlCallContext ctx, int actorId, int userId, IUserOidcInfo info, CreateOrUpdateMode mode = CreateOrUpdateMode.CreateOrUpdate, CancellationToken cancellationToken = default( CancellationToken ) )
         {
             var r = await RawCreateOrUpdateOidcUserAsync( ctx, actorId, userId, info, mode, cancellationToken ).ConfigureAwait( false );
-            return r.Result;
+            return r;
         }
 
         /// <summary>
@@ -70,14 +70,14 @@ namespace CK.DB.User.UserOidc
         /// <param name="info">The payload to challenge.</param>
         /// <param name="actualLogin">Set it to false to avoid login side-effect (such as updating the LastLoginTime) on success.</param>
         /// <param name="cancellationToken">Optional cancellation token.</param>
-        /// <returns>The positive identifier of the user on success or 0 if the Oidc user does not exist.</returns>
-        public async Task<int> LoginUserAsync( ISqlCallContext ctx, IUserOidcInfo info, bool actualLogin = true, CancellationToken cancellationToken = default( CancellationToken ) )
+        /// <returns>The login result.</returns>
+        public async Task<LoginResult> LoginUserAsync( ISqlCallContext ctx, IUserOidcInfo info, bool actualLogin = true, CancellationToken cancellationToken = default( CancellationToken ) )
         {
             var mode = actualLogin
                         ? CreateOrUpdateMode.UpdateOnly | CreateOrUpdateMode.WithLogin
                         : CreateOrUpdateMode.UpdateOnly;
             var r = await RawCreateOrUpdateOidcUserAsync( ctx, 1, 0, info, mode, cancellationToken ).ConfigureAwait( false );
-            return r.Result == CreateOrUpdateResult.Updated ? r.UserId : 0;
+            return r.LoginResult;
         }
 
         /// <summary>
@@ -96,33 +96,6 @@ namespace CK.DB.User.UserOidc
         public abstract Task DestroyOidcUserAsync( ISqlCallContext ctx, int actorId, int userId, string schemeSuffix, CancellationToken cancellationToken = default( CancellationToken ) );
 
         /// <summary>
-        /// Captures the result of <see cref="RawCreateOrUpdateOidcUser"/> and <see cref="RawCreateOrUpdateOidcUserAsync"/>.
-        /// </summary>
-        public struct RawResult
-        {
-            /// <summary>
-            /// The user identifier.
-            /// </summary>
-            public readonly int UserId;
-
-            /// <summary>
-            /// The operation result.
-            /// </summary>
-            public readonly CreateOrUpdateResult Result;
-
-            /// <summary>
-            /// Initializes a new <see cref="RawResult"/>.
-            /// </summary>
-            /// <param name="userId">User identifier.</param>
-            /// <param name="result">Operation result.</param>
-            public RawResult( int userId, CreateOrUpdateResult result )
-            {
-                UserId = userId;
-                Result = result;
-            }
-        }
-
-        /// <summary>
         /// Raw call to manage OidcUser. Since this should not be used directly, it is protected.
         /// Actual implementation of the centralized create, update or login procedure.
         /// </summary>
@@ -134,7 +107,7 @@ namespace CK.DB.User.UserOidc
         /// <param name="cancellationToken">Optional cancellation token.</param>
         /// <returns>The user identifier (when <paramref name="userId"/> is 0, this is a login) and the operation result.</returns>
         [SqlProcedure( "sUserOidcCreateOrUpdate" )]
-        protected abstract Task<RawResult> RawCreateOrUpdateOidcUserAsync(
+        protected abstract Task<CreateOrUpdateResult> RawCreateOrUpdateOidcUserAsync(
             ISqlCallContext ctx,
             int actorId,
             int userId,
@@ -228,7 +201,7 @@ namespace CK.DB.User.UserOidc
             return CreateOrUpdateOidcUser( ctx, actorId, userId, info, mode );
         }
 
-        int IGenericAuthenticationProvider.LoginUser( ISqlCallContext ctx, object payload, bool actualLogin )
+        LoginResult IGenericAuthenticationProvider.LoginUser( ISqlCallContext ctx, object payload, bool actualLogin )
         {
             IUserOidcInfo info = _infoFactory.ExtractPayload( payload );
             return LoginUser( ctx, info, actualLogin );
@@ -240,7 +213,7 @@ namespace CK.DB.User.UserOidc
             return CreateOrUpdateOidcUserAsync( ctx, actorId, userId, info, mode, cancellationToken );
         }
 
-        Task<int> IGenericAuthenticationProvider.LoginUserAsync( ISqlCallContext ctx, object payload, bool actualLogin, CancellationToken cancellationToken )
+        Task<LoginResult> IGenericAuthenticationProvider.LoginUserAsync( ISqlCallContext ctx, object payload, bool actualLogin, CancellationToken cancellationToken )
         {
             IUserOidcInfo info = _infoFactory.ExtractPayload( payload );
             return LoginUserAsync( ctx, info, actualLogin, cancellationToken );

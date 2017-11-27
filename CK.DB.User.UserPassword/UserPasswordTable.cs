@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Diagnostics;
@@ -79,7 +79,7 @@ namespace CK.DB.User.UserPassword
         /// <param name="password">The initial password. Can not be null nor empty.</param>
         /// <param name="mode">Optionnaly configures Create, Update only or WithLogin behavior.</param>
         /// <param name="cancellationToken">Optional cancellation token.</param>
-        /// <returns>The operation result.</returns>
+        /// <returns>The result.</returns>
         public Task<CreateOrUpdateResult> CreateOrUpdatePasswordUserAsync( ISqlCallContext ctx, int actorId, int userId, string password, CreateOrUpdateMode mode = CreateOrUpdateMode.CreateOrUpdate, CancellationToken cancellationToken = default( CancellationToken ) )
         {
             if( string.IsNullOrEmpty( password ) ) throw new ArgumentNullException( nameof( password ) );
@@ -113,8 +113,8 @@ namespace CK.DB.User.UserPassword
         /// <param name="password">The password to challenge.</param>
         /// <param name="actualLogin">Sets to false to avoid any login side-effect (such as updating the LastLoginTime) on success.</param>
         /// <param name="cancellationToken">Optional cancellation token.</param>
-        /// <returns>Non zero identifier of the user on success, 0 if the password does not match.</returns>
-        public Task<int> LoginUserAsync( ISqlCallContext ctx, int userId, string password, bool actualLogin = true, CancellationToken cancellationToken = default( CancellationToken ) )
+        /// <returns>The login result.</returns>
+        public Task<LoginResult> LoginUserAsync( ISqlCallContext ctx, int userId, string password, bool actualLogin = true, CancellationToken cancellationToken = default( CancellationToken ) )
         {
             using( var c = new SqlCommand( $"select PwdHash, @UserId from CK.tUserPassword where UserId=@UserId" ) )
             {
@@ -133,8 +133,8 @@ namespace CK.DB.User.UserPassword
         /// <param name="password">The password to challenge.</param>
         /// <param name="actualLogin">Sets to false to avoid any login side-effect (such as updating the LastLoginTime) on success.</param>
         /// <param name="cancellationToken">Optional cancellation token.</param>
-        /// <returns>Non zero identifier of the user on success, 0 if the password does not match.</returns>
-        public Task<int> LoginUserAsync( ISqlCallContext ctx, string userName, string password, bool actualLogin = true, CancellationToken cancellationToken = default(CancellationToken) )
+        /// <returns>The login result.</returns>
+        public Task<LoginResult> LoginUserAsync( ISqlCallContext ctx, string userName, string password, bool actualLogin = true, CancellationToken cancellationToken = default(CancellationToken) )
         {
             using( var c = CreateReadByNameCommand( userName ) )
             {
@@ -156,9 +156,9 @@ namespace CK.DB.User.UserPassword
             return c;
         }
 
-        async Task<int> DoVerifyAsync( ISqlCallContext ctx, SqlCommand hashReader, string password, object objectKey, bool actualLogin, CancellationToken cancellationToken )
+        async Task<LoginResult> DoVerifyAsync( ISqlCallContext ctx, SqlCommand hashReader, string password, object objectKey, bool actualLogin, CancellationToken cancellationToken )
         {
-            if( string.IsNullOrEmpty( password ) ) return 0;
+            if( string.IsNullOrEmpty( password ) ) return new LoginResult( "InvalidPassword" );
             // 1 - Get the PwdHash and UserId.
             //     hash is null if the user is not a UserPassword: we'll try to migrate it.
             byte[] hash = null;
@@ -170,7 +170,7 @@ namespace CK.DB.User.UserPassword
                 {
                     hash = r.GetSqlBytes( 0 ).Buffer;
                     userId = r.GetInt32( 1 );
-                    if( userId == 0 ) return 0;
+                    if( userId == 0 ) return new LoginResult("InvalidUserKey");
                 }
             }
             PasswordVerificationResult result = PasswordVerificationResult.Failed;
@@ -190,7 +190,7 @@ namespace CK.DB.User.UserPassword
                     {
                         Debug.Assert( objectKey is string );
                         userId = await _userTable.FindByNameAsync( ctx, (string)objectKey ).ConfigureAwait( false );
-                        if( userId == 0 ) return 0;
+                        if( userId == 0 ) return new LoginResult( "InvalidUserName" );
                     }
                     if( migrator.VerifyPassword( ctx, userId, password ) )
                     {
@@ -205,7 +205,7 @@ namespace CK.DB.User.UserPassword
                 result = p.VerifyHashedPassword( hash, password );
             }
             // 3 - Handle result.
-            if( result == PasswordVerificationResult.Failed ) return 0;
+            if( result == PasswordVerificationResult.Failed ) return new LoginResult("InvalidPassword");
             if( result == PasswordVerificationResult.SuccessRehashNeeded )
             {
                 // 3.1 - If migration occurred, create the user with its password.
@@ -218,9 +218,9 @@ namespace CK.DB.User.UserPassword
             }
             if( actualLogin )
             {
-                await OnLoginAsync( ctx, userId ).ConfigureAwait( false );
+                return await OnLoginAsync( ctx, userId ).ConfigureAwait( false );
             }
-            return userId;
+            return new LoginResult( userId );
         }
 
         /// <summary>
@@ -258,7 +258,7 @@ namespace CK.DB.User.UserPassword
         /// <param name="cancellationToken">Optional cancellation token.</param>
         /// <returns>The awaitable.</returns>
         [SqlProcedure( "sUserPasswordOnLogin" )]
-        protected abstract Task OnLoginAsync( ISqlCallContext ctx, int userId, CancellationToken cancellationToken = default( CancellationToken ) );
+        protected abstract Task<LoginResult> OnLoginAsync( ISqlCallContext ctx, int userId, CancellationToken cancellationToken = default( CancellationToken ) );
 
 
     }

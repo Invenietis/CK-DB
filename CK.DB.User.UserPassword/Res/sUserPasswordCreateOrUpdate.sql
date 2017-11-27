@@ -1,4 +1,4 @@
-﻿-- SetupConfig: {}
+-- SetupConfig: {}
 --
 -- @Mode: CreateOnly = 1, UpdateOnly = 2, CreateOrUpdate = 3, WithLogin = 4
 -- @Result: None = 0, Created = 1, Updated = 2
@@ -9,7 +9,9 @@ create procedure CK.sUserPasswordCreateOrUpdate
 	@UserId int /*input*/output, 
 	@PwdHash varbinary(64),
 	@Mode int, -- not null enum { "CreateOnly" = 1, "UpdateOnly" = 2, "CreateOrUpdate" = 3, "WithLogin" = 4, "IgnoreOptimisticKey" = 8 }
-	@Result int output -- not null enum { None = 0, Created = 1, Updated = 2 }
+	@Result int output, -- not null enum { None = 0, Created = 1, Updated = 2 }
+    @FailureCode int output, -- Optional. Set by CK.sAuthUserOnLogin if login is rejected.
+    @FailureReason varchar(128) output -- Optional. Set by CK.sAuthUserOnLogin if login is rejected.
 )
 as
 begin
@@ -60,9 +62,10 @@ begin
 		end
 		else set @Result = 0;
 	end
-		if @Result <> 0 and @ActualLogin = 1
+
+    if @Result <> 0 and @ActualLogin = 1
 	begin
-		exec CK.sAuthUserOnLogin 'Basic', @LastLoginTime, @UserId;  
+		exec CK.sAuthUserOnLogin 'Basic', @LastLoginTime, @UserId, @FailureCode output, @FailureReason output;  
 	end
 
 	--[endsp]

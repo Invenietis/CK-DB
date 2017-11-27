@@ -1,4 +1,4 @@
-﻿using CK.Core;
+using CK.Core;
 using CK.SqlServer;
 using System;
 using System.Collections.Generic;
@@ -23,7 +23,7 @@ namespace CK.DB.Auth
         /// <param name="userId">The user identifier that must have a password.</param>
         /// <param name="password">The initial password. Can not be null nor empty.</param>
         /// <param name="mode">Optionnaly configures Create, Update only or WithLogin behavior.</param>
-        /// <returns>The operation result.</returns>
+        /// <returns>The result.</returns>
         CreateOrUpdateResult CreateOrUpdatePasswordUser( ISqlCallContext ctx, int actorId, int userId, string password, CreateOrUpdateMode mode = CreateOrUpdateMode.CreateOrUpdate );
 
         /// <summary>
@@ -35,7 +35,7 @@ namespace CK.DB.Auth
         /// <param name="password">The initial password. Can not be null nor empty.</param>
         /// <param name="mode">Optionnaly configures Create, Update only or WithLogin behavior.</param>
         /// <param name="cancellationToken">Optional cancellation token.</param>
-        /// <returns>The operation result.</returns>
+        /// <returns>The result.</returns>
         Task<CreateOrUpdateResult> CreateOrUpdatePasswordUserAsync( ISqlCallContext ctx, int actorId, int userId, string password, CreateOrUpdateMode mode = CreateOrUpdateMode.CreateOrUpdate, CancellationToken cancellationToken = default( CancellationToken ) );
 
         /// <summary>
@@ -84,8 +84,8 @@ namespace CK.DB.Auth
         /// <param name="userName">The user name.</param>
         /// <param name="password">The password to challenge.</param>
         /// <param name="actualLogin">Sets to false to avoid login side-effect (such as updating the LastLoginTime) on success.</param>
-        /// <returns>Non zero identifier of the user on success, 0 if the password does not match.</returns>
-        int LoginUser( ISqlCallContext ctx, string userName, string password, bool actualLogin = true );
+        /// <returns>Login result.</returns>
+        LoginResult LoginUser( ISqlCallContext ctx, string userName, string password, bool actualLogin = true );
 
         /// <summary>
         /// Verifies a password for a user identifier.
@@ -95,8 +95,8 @@ namespace CK.DB.Auth
         /// <param name="userId">The user identifier.</param>
         /// <param name="password">The password to challenge.</param>
         /// <param name="actualLogin">Sets to false to avoid login side-effect (such as updating the LastLoginTime) on success.</param>
-        /// <returns>Non zero identifier of the user on success, 0 if the password does not match.</returns>
-        int LoginUser( ISqlCallContext ctx, int userId, string password, bool actualLogin = true );
+        /// <returns>Login result.</returns>
+        LoginResult LoginUser( ISqlCallContext ctx, int userId, string password, bool actualLogin = true );
 
         /// <summary>
         /// Verifies a password for a user name.
@@ -107,8 +107,8 @@ namespace CK.DB.Auth
         /// <param name="password">The password to challenge.</param>
         /// <param name="actualLogin">Sets to false to avoid login side-effect (such as updating the LastLoginTime) on success.</param>
         /// <param name="cancellationToken">Optional cancellation token.</param>
-        /// <returns>Non zero identifier of the user on success, 0 if the password does not match.</returns>
-        Task<int> LoginUserAsync( ISqlCallContext ctx, string userName, string password, bool actualLogin = true, CancellationToken cancellationToken = default( CancellationToken ) );
+        /// <returns>Login result.</returns>
+        Task<LoginResult> LoginUserAsync( ISqlCallContext ctx, string userName, string password, bool actualLogin = true, CancellationToken cancellationToken = default( CancellationToken ) );
 
         /// <summary>
         /// Verifies a password for a user identifier.
@@ -119,7 +119,7 @@ namespace CK.DB.Auth
         /// <param name="password">The password to challenge.</param>
         /// <param name="actualLogin">Sets to false to avoid login side-effect (such as updating the LastLoginTime) on success.</param>
         /// <param name="cancellationToken">Optional cancellation token.</param>
-        /// <returns>Non zero identifier of the user on success, 0 if the password does not match.</returns>
-        Task<int> LoginUserAsync( ISqlCallContext ctx, int userId, string password, bool actualLogin = true, CancellationToken cancellationToken = default( CancellationToken ) );
+        /// <returns>Login result.</returns>
+        Task<LoginResult> LoginUserAsync( ISqlCallContext ctx, int userId, string password, bool actualLogin = true, CancellationToken cancellationToken = default( CancellationToken ) );
     }
 }

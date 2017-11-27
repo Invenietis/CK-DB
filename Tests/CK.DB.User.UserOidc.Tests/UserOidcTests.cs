@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
 using CK.Core;
@@ -31,7 +31,7 @@ namespace CK.DB.User.UserOidc.Tests
                 info.SchemeSuffix = schemeSuffix;
                 info.Sub = sub;
                 var created = u.CreateOrUpdateOidcUser( ctx, 1, userId, info );
-                Assert.That( created, Is.EqualTo( CreateOrUpdateResult.Created ) );
+                Assert.That( created.OperationResult, Is.EqualTo( CreateOrUpdateOperationResult.Created ) );
                 var info2 = u.FindKnownUserInfo( ctx, schemeSuffix, sub );
 
                 Assert.That( info2.UserId, Is.EqualTo( userId ) );
@@ -61,7 +61,7 @@ namespace CK.DB.User.UserOidc.Tests
                 info.SchemeSuffix = schemeSuffix;
                 info.Sub = sub;
                 var created = await u.CreateOrUpdateOidcUserAsync( ctx, 1, userId, info );
-                Assert.That( created, Is.EqualTo( CreateOrUpdateResult.Created ) );
+                Assert.That( created.OperationResult, Is.EqualTo( CreateOrUpdateOperationResult.Created ) );
                 var info2 = await u.FindKnownUserInfoAsync( ctx, schemeSuffix, sub );
 
                 Assert.That( info2.UserId, Is.EqualTo( userId ) );

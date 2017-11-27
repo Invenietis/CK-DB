@@ -1,4 +1,4 @@
-﻿-- SetupConfig: {}
+-- SetupConfig: {}
 --
 -- @SchemeSuffix can not be null. This is the key that identifies a Oidc user.
 -- @Mode (flags): CreateOnly = 1, UpdateOnly = 2, CreateOrUpdate = 3, WithLogin = 4  
@@ -21,7 +21,9 @@ create procedure CK.sUserOidcCreateOrUpdate
 	@SchemeSuffix varchar(64),
     @Sub nvarchar(64),
 	@Mode int, -- not null enum { "CreateOnly" = 1, "UpdateOnly" = 2, "CreateOrUpdate" = 3, "WithLogin" = 4, "IgnoreOptimisticKey" = 8 }
-	@Result int output -- not null enum { None = 0, Created = 1, Updated = 2 }
+	@Result int output, -- not null enum { None = 0, Created = 1, Updated = 2 }
+    @FailureCode int output, -- Optional. Set by CK.sAuthUserOnLogin if login is rejected.
+    @FailureReason varchar(128) output -- Optional. Set by CK.sAuthUserOnLogin if login is rejected.
 )
 as
 begin
@@ -99,7 +101,7 @@ begin
         begin
             set @SchemeSuffix = 'Oidc.'+@SchemeSuffix;
         end
-		exec CK.sAuthUserOnLogin @SchemeSuffix, @Now, @UserId;  
+		exec CK.sAuthUserOnLogin @SchemeSuffix, @Now, @UserId, @FailureCode output, @FailureReason output;  
 	end
 	--<PostCreateOrUpdate /> 
 

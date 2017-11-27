@@ -1,4 +1,4 @@
-﻿using CK.DB.Auth;
+using CK.DB.Auth;
 using CK.SqlServer;
 using CK.SqlServer.Setup;
 using System;
@@ -25,8 +25,7 @@ namespace CK.DB.User.UserGoogle
         /// <returns>The operation result.</returns>
         public CreateOrUpdateResult CreateOrUpdateGoogleUser( ISqlCallContext ctx, int actorId, int userId, IUserGoogleInfo info, CreateOrUpdateMode mode = CreateOrUpdateMode.CreateOrUpdate )
         {
-            var r = RawCreateOrUpdateGoogleUser( ctx, actorId, userId, info, mode );
-            return r.Result;
+            return RawCreateOrUpdateGoogleUser( ctx, actorId, userId, info, mode );
         }
 
         /// <summary>
@@ -37,14 +36,14 @@ namespace CK.DB.User.UserGoogle
         /// <param name="ctx">The call context to use.</param>
         /// <param name="info">The payload to challenge.</param>
         /// <param name="actualLogin">Set it to false to avoid login side-effect (such as updating the LastLoginTime) on success.</param>
-        /// <returns>The positive identifier of the user on success or 0 if the Google user does not exist.</returns>
-        public int LoginUser( ISqlCallContext ctx, IUserGoogleInfo info, bool actualLogin = true )
+        /// <returns>The login result.</returns>
+        public LoginResult LoginUser( ISqlCallContext ctx, IUserGoogleInfo info, bool actualLogin = true )
         {
             var mode = actualLogin
                         ? CreateOrUpdateMode.UpdateOnly | CreateOrUpdateMode.WithLogin
                         : CreateOrUpdateMode.UpdateOnly;
             var r = RawCreateOrUpdateGoogleUser( ctx, 1, 0, info, mode );
-            return r.Result == CreateOrUpdateResult.Updated ? r.UserId : 0;
+            return r.LoginResult;
         }
 
         /// <summary>
@@ -85,7 +84,7 @@ namespace CK.DB.User.UserGoogle
         /// <param name="mode">Configures Create, Update only or WithLogin behavior.</param>
         /// <returns>The user identifier (when <paramref name="userId"/> is 0, this is a login) and the operation result.</returns>
         [SqlProcedure( "sUserGoogleCreateOrUpdate" )]
-        protected abstract RawResult RawCreateOrUpdateGoogleUser(
+        protected abstract CreateOrUpdateResult RawCreateOrUpdateGoogleUser(
             ISqlCallContext ctx,
             int actorId,
             int userId,

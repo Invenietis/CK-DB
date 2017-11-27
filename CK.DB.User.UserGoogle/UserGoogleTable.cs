@@ -1,4 +1,4 @@
-﻿using CK.Setup;
+using CK.Setup;
 using CK.SqlServer;
 using CK.SqlServer.Setup;
 using System;
@@ -54,11 +54,11 @@ namespace CK.DB.User.UserGoogle
         /// <param name="info">Provider specific data: the <see cref="IUserGoogleInfo"/> poco.</param>
         /// <param name="mode">Optionnaly configures Create, Update only or WithLogin behavior.</param>
         /// <param name="cancellationToken">Optional cancellation token.</param>
-        /// <returns>The operation result.</returns>
+        /// <returns>The result.</returns>
         public async Task<CreateOrUpdateResult> CreateOrUpdateGoogleUserAsync( ISqlCallContext ctx, int actorId, int userId, IUserGoogleInfo info, CreateOrUpdateMode mode = CreateOrUpdateMode.CreateOrUpdate, CancellationToken cancellationToken = default( CancellationToken ) )
         {
             var r = await RawCreateOrUpdateGoogleUserAsync( ctx, actorId, userId, info, mode, cancellationToken ).ConfigureAwait( false );
-            return r.Result;
+            return r;
         }
 
         /// <summary>
@@ -71,13 +71,13 @@ namespace CK.DB.User.UserGoogle
         /// <param name="actualLogin">Set it to false to avoid login side-effect (such as updating the LastLoginTime) on success.</param>
         /// <param name="cancellationToken">Optional cancellation token.</param>
         /// <returns>The positive identifier of the user on success or 0 if the Google user does not exist.</returns>
-        public async Task<int> LoginUserAsync( ISqlCallContext ctx, IUserGoogleInfo info, bool actualLogin = true, CancellationToken cancellationToken = default( CancellationToken ) )
+        public async Task<LoginResult> LoginUserAsync( ISqlCallContext ctx, IUserGoogleInfo info, bool actualLogin = true, CancellationToken cancellationToken = default( CancellationToken ) )
         {
             var mode = actualLogin
                         ? CreateOrUpdateMode.UpdateOnly | CreateOrUpdateMode.WithLogin
                         : CreateOrUpdateMode.UpdateOnly;
             var r = await RawCreateOrUpdateGoogleUserAsync( ctx, 1, 0, info, mode, cancellationToken ).ConfigureAwait( false );
-            return r.Result == CreateOrUpdateResult.Updated ? r.UserId : 0;
+            return r.LoginResult;
         }
 
         /// <summary>
@@ -92,33 +92,6 @@ namespace CK.DB.User.UserGoogle
         public abstract Task DestroyGoogleUserAsync( ISqlCallContext ctx, int actorId, int userId, CancellationToken cancellationToken = default( CancellationToken ) );
 
         /// <summary>
-        /// Captures the result of <see cref="RawCreateOrUpdateGoogleUser"/> and <see cref="RawCreateOrUpdateGoogleUserAsync"/>.
-        /// </summary>
-        public struct RawResult
-        {
-            /// <summary>
-            /// The user identifier.
-            /// </summary>
-            public readonly int UserId;
-
-            /// <summary>
-            /// The operation result.
-            /// </summary>
-            public readonly CreateOrUpdateResult Result;
-
-            /// <summary>
-            /// Initializes a new <see cref="RawResult"/>.
-            /// </summary>
-            /// <param name="userId">User identifier.</param>
-            /// <param name="result">Operation result.</param>
-            public RawResult( int userId, CreateOrUpdateResult result )
-            {
-                UserId = userId;
-                Result = result;
-            }
-        }
-
-        /// <summary>
         /// Raw call to manage GoogleUser. Since this should not be used directly, it is protected.
         /// Actual implementation of the centralized create, update or login procedure.
         /// </summary>
@@ -130,7 +103,7 @@ namespace CK.DB.User.UserGoogle
         /// <param name="cancellationToken">Optional cancellation token.</param>
         /// <returns>The user identifier (when <paramref name="userId"/> is 0, this is a login) and the operation result.</returns>
         [SqlProcedure( "sUserGoogleCreateOrUpdate" )]
-        protected abstract Task<RawResult> RawCreateOrUpdateGoogleUserAsync(
+        protected abstract Task<CreateOrUpdateResult> RawCreateOrUpdateGoogleUserAsync(
             ISqlCallContext ctx,
             int actorId,
             int userId,
@@ -220,7 +193,7 @@ namespace CK.DB.User.UserGoogle
             return CreateOrUpdateGoogleUser( ctx, actorId, userId, info, mode );
         }
 
-        int IGenericAuthenticationProvider.LoginUser( ISqlCallContext ctx, object payload, bool actualLogin )
+        LoginResult IGenericAuthenticationProvider.LoginUser( ISqlCallContext ctx, object payload, bool actualLogin )
         {
             IUserGoogleInfo info = _infoFactory.ExtractPayload( payload );
             return LoginUser( ctx, info, actualLogin );
@@ -232,7 +205,7 @@ namespace CK.DB.User.UserGoogle
             return CreateOrUpdateGoogleUserAsync( ctx, actorId, userId, info, mode, cancellationToken );
         }
 
-        Task<int> IGenericAuthenticationProvider.LoginUserAsync( ISqlCallContext ctx, object payload, bool actualLogin, CancellationToken cancellationToken )
+        Task<LoginResult> IGenericAuthenticationProvider.LoginUserAsync( ISqlCallContext ctx, object payload, bool actualLogin, CancellationToken cancellationToken )
         {
             IUserGoogleInfo info = _infoFactory.ExtractPayload( payload );
             return LoginUserAsync( ctx, info, actualLogin, cancellationToken );

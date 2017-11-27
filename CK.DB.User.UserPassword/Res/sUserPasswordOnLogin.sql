@@ -1,8 +1,10 @@
-﻿-- SetupConfig: {}
+-- SetupConfig: {}
 --
 create procedure CK.sUserPasswordOnLogin
 (
-	@UserId int
+	@UserId int,
+    @FailureCode int output, -- Optional. Set by CK.sAuthUserOnLogin if login is rejected.
+    @FailureReason varchar(128) output -- Optional. Set by CK.sAuthUserOnLogin if login is rejected.
 )
 as
 begin
@@ -12,7 +14,7 @@ begin
 	
 	--<PreOnLogin revert /> 
 	update CK.tUserPassword set LastLoginTime = @Now where UserId = @UserId;
-	exec CK.sAuthUserOnLogin 'Basic', @Now, @UserId;
+	exec CK.sAuthUserOnLogin 'Basic', @Now, @UserId, @FailureCode output, @FailureReason output;
 	--<PostOnLogin /> 
 
 	--[endsp]

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Diagnostics;
@@ -54,8 +54,8 @@ namespace CK.DB.User.UserPassword
         /// <param name="userId">The user identifier.</param>
         /// <param name="password">The password to challenge.</param>
         /// <param name="actualLogin">Sets to false to avoid any login side-effect (such as updating the LastLoginTime) on success.</param>
-        /// <returns>Non zero identifier of the user on success, 0 if the password does not match.</returns>
-        public int LoginUser( ISqlCallContext ctx, int userId, string password, bool actualLogin = true )
+        /// <returns>The login result.</returns>
+        public LoginResult LoginUser( ISqlCallContext ctx, int userId, string password, bool actualLogin = true )
         {
             using( var c = new SqlCommand( $"select PwdHash, @UserId from CK.tUserPassword where UserId=@UserId" ) )
             {
@@ -74,7 +74,7 @@ namespace CK.DB.User.UserPassword
         /// <param name="password">The password to challenge.</param>
         /// <param name="actualLogin">Sets to false to avoid any login side-effect (such as updating the LastLoginTime) on success.</param>
         /// <returns>Non zero identifier of the user on success, 0 if the password does not match.</returns>
-        public int LoginUser( ISqlCallContext ctx, string userName, string password, bool actualLogin = true )
+        public LoginResult LoginUser( ISqlCallContext ctx, string userName, string password, bool actualLogin = true )
         {
             using( var c = CreateReadByNameCommand( userName ) )
             {
@@ -82,9 +82,9 @@ namespace CK.DB.User.UserPassword
             }
         }
 
-        int DoVerify( ISqlCallContext ctx, SqlCommand hashReader, string password, object objectKey, bool actualLogin )
+        LoginResult DoVerify( ISqlCallContext ctx, SqlCommand hashReader, string password, object objectKey, bool actualLogin )
         {
-            if( string.IsNullOrEmpty( password ) ) return 0;
+            if( string.IsNullOrEmpty( password ) ) return new LoginResult( "InvalidPassword" );
             // 1 - Get the PwdHash and UserId.
             //     hash is null if the user is not a UserPassword: we'll try to migrate it.
             byte[] hash = null;
@@ -96,7 +96,7 @@ namespace CK.DB.User.UserPassword
                 {
                     hash = r.GetSqlBytes( 0 ).Buffer;
                     userId = r.GetInt32( 1 );
-                    if( userId == 0 ) return 0;
+                    if( userId == 0 ) return new LoginResult( "InvalidUserKey" );
                 }
             }
             // If hash is null here, it means that the user is not registered.
@@ -117,7 +117,7 @@ namespace CK.DB.User.UserPassword
                     {
                         Debug.Assert( objectKey is string );
                         userId = _userTable.FindByName( ctx, (string)objectKey );
-                        if( userId == 0 ) return 0;
+                        if( userId == 0 ) return new LoginResult( "InvalidUserName" );
                     }
                     if( migrator.VerifyPassword( ctx, userId, password ) )
                     {
@@ -132,7 +132,7 @@ namespace CK.DB.User.UserPassword
                 result = p.VerifyHashedPassword( hash, password );
             }
             // 3 - Handle result.
-            if( result == PasswordVerificationResult.Failed ) return 0;
+            if( result == PasswordVerificationResult.Failed ) return new LoginResult( "InvalidPassword" );
             if( result == PasswordVerificationResult.SuccessRehashNeeded )
             {
                 // 3.1 - If migration occurred, create the user with its password.
@@ -146,10 +146,10 @@ namespace CK.DB.User.UserPassword
             // 4 - Side-effect of successful login.
             if( actualLogin )
             {
-                OnLogin( ctx, userId );
+                return OnLogin( ctx, userId );
             }
-            return userId;
-       }
+            return new LoginResult( userId );
+        }
 
         /// <summary>
         /// Destroys a PasswordUser for a user.
@@ -170,7 +170,7 @@ namespace CK.DB.User.UserPassword
         /// <param name="userId">The user identifier for wich a PassworUser must be created.</param>
         /// <param name="pwdHash">The initial raw hash (no more than 64 bytes).</param>
         /// <param name="mode">Optionnaly configures Create or Update only behavior.</param>
-        /// <returns>The operation result.</returns>
+        /// <returns>The result.</returns>
         [SqlProcedure( "sUserPasswordCreateOrUpdate" )]
         public abstract CreateOrUpdateResult CreateOrUpdatePasswordUserWithPwdRawHash( ISqlCallContext ctx, int actorId, int userId, byte[] pwdHash, CreateOrUpdateMode mode );
 
@@ -181,6 +181,6 @@ namespace CK.DB.User.UserPassword
         /// <param name="ctx">The call context to use.</param>
         /// <param name="userId">The user identifier that logged in.</param>
         [SqlProcedure( "sUserPasswordOnLogin" )]
-        protected abstract void OnLogin( ISqlCallContext ctx, int userId );
+        protected abstract LoginResult OnLogin( ISqlCallContext ctx, int userId );
     }
 }

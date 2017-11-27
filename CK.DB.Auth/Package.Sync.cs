@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using CK.SqlServer;
@@ -19,7 +19,7 @@ namespace CK.DB.Auth
         /// <param name="loginTime">Login time.</param>
         /// <param name="userId">The user identifier.</param>
         [SqlProcedure("sAuthUserOnLogin")]
-        public abstract void OnUserLogin(ISqlCallContext ctx, string scheme, DateTime loginTime, int userId);
+        public abstract LoginResult OnUserLogin(ISqlCallContext ctx, string scheme, DateTime loginTime, int userId);
 
         class AuthInfo : IUserAuthInfo
         {
