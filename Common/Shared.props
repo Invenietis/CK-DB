@@ -18,7 +18,7 @@
 
         This must be adapted for each solution/repository.
     -->
-    <PropertyGroup>
+    <PropertyGroup Condition=" '$(CakeBuild)' == 'true' " >
         <Deterministic>true</Deterministic>
         <CKWorldPath>$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), CK-World))</CKWorldPath>
         <PathMap Condition=" '$(CKWorldPath)' != '' ">$(CKWorldPath)=C:\CK-World</PathMap>
