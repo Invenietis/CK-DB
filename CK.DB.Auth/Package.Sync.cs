@@ -16,10 +16,13 @@ namespace CK.DB.Auth
         /// </summary>
         /// <param name="ctx">The call context to use.</param>
         /// <param name="scheme">The scheme used.</param>
-        /// <param name="loginTime">Login time.</param>
+        /// <param name="lastLoginTime">Last login time (<see cref="Util.UtcMinValue"/> for first login).</param>
         /// <param name="userId">The user identifier.</param>
-        [SqlProcedure("sAuthUserOnLogin")]
-        public abstract LoginResult OnUserLogin(ISqlCallContext ctx, string scheme, DateTime loginTime, int userId);
+        /// <param name="actualLogin">True for an actual login, false otherwise (only checks must be done).</param>
+        /// <param name="loginTimeNow">Current login time.</param>
+        /// <returns>The login result.</returns>
+        [SqlProcedure( "sAuthUserOnLogin" )]
+        public abstract LoginResult OnUserLogin( ISqlCallContext ctx, string scheme, DateTime lastLoginTime, int userId, bool actualLogin, DateTime loginTimeNow );
 
         class AuthInfo : IUserAuthInfo
         {
@@ -36,35 +39,35 @@ namespace CK.DB.Auth
         /// <param name="actorId">The acting actor identifier.</param>
         /// <param name="userId">The user identifier.</param>
         /// <returns>The user information or null if the user identifier does not exist.</returns>
-        public IUserAuthInfo ReadUserAuthInfo(ISqlCallContext ctx, int actorId, int userId)
+        public IUserAuthInfo ReadUserAuthInfo( ISqlCallContext ctx, int actorId, int userId )
         {
-            using (var cmd = CmdReadUserAuthInfo(actorId, userId))
+            using( var cmd = CmdReadUserAuthInfo( actorId, userId ) )
                 try
                 {
-                    using ((cmd.Connection = ctx.GetConnection(this)).EnsureOpen())
-                    using (var reader = cmd.ExecuteReader())
+                    using( (cmd.Connection = ctx.GetConnection( this )).EnsureOpen() )
+                    using( var reader = cmd.ExecuteReader() )
                     {
-                        if (!reader.Read()) return null;
+                        if( !reader.Read() ) return null;
                         var info = new AuthInfo();
-                        info.UserId = reader.GetInt32(0);
-                        info.UserName = reader.GetString(1);
-                        if (reader.NextResult() && reader.Read())
+                        info.UserId = reader.GetInt32( 0 );
+                        info.UserName = reader.GetString( 1 );
+                        if( reader.NextResult() && reader.Read() )
                         {
                             var providers = new List<UserAuthSchemeInfo>();
                             do
                             {
-                                providers.Add(new UserAuthSchemeInfo(reader.GetString(0), reader.GetDateTime(1)));
+                                providers.Add( new UserAuthSchemeInfo( reader.GetString( 0 ), reader.GetDateTime( 1 ) ) );
                             }
-                            while (reader.Read());
+                            while( reader.Read() );
                             info.Schemes = providers;
                         }
                         else info.Schemes = Util.Array.Empty<UserAuthSchemeInfo>();
                         return info;
                     }
                 }
-                catch (SqlException ex)
+                catch( SqlException ex )
                 {
-                    throw SqlDetailedException.Create(cmd, ex);
+                    throw SqlDetailedException.Create( cmd, ex );
                 }
         }
 

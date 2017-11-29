@@ -7,14 +7,14 @@ using System.Threading.Tasks;
 namespace CK.DB.Auth
 {
     /// <summary>
-    /// Captures <see cref="IGenericAuthenticationProvider.CreateOrUpdateUser"/> result.
+    /// Captures creation or update result.
     /// </summary>
-    public enum CreateOrUpdateOperationResult
+    public enum UCResult
     {
         /// <summary>
         /// Nothing happened: <see cref="IGenericAuthenticationProvider.CreateOrUpdateUser"/> was called
-        /// with <see cref="CreateOrUpdateMode.CreateOnly"/> and the user is already registered for the provider 
-        /// OR with <see cref="CreateOrUpdateMode.UpdateOnly"/> and the user is not yet registered.
+        /// with <see cref="UCLMode.CreateOnly"/> and the user is already registered for the provider 
+        /// OR with <see cref="UCLMode.UpdateOnly"/> and the user is not yet registered.
         /// </summary>
         None = 0,
 

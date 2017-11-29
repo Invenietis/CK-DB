@@ -23,9 +23,9 @@ namespace CK.DB.User.UserOidc
         /// <param name="info">Provider specific data: the <see cref="IUserOidcInfo"/> poco.</param>
         /// <param name="mode">Optionnaly configures Create, Update only or WithLogin behavior.</param>
         /// <returns>The result.</returns>
-        public CreateOrUpdateResult CreateOrUpdateOidcUser( ISqlCallContext ctx, int actorId, int userId, IUserOidcInfo info, CreateOrUpdateMode mode = CreateOrUpdateMode.CreateOrUpdate )
+        public UCLResult CreateOrUpdateOidcUser( ISqlCallContext ctx, int actorId, int userId, IUserOidcInfo info, UCLMode mode = UCLMode.CreateOrUpdate )
         {
-            return RawCreateOrUpdateOidcUser( ctx, actorId, userId, info, mode );
+            return UserOidcUCL( ctx, actorId, userId, info, mode );
         }
 
         /// <summary>
@@ -40,9 +40,9 @@ namespace CK.DB.User.UserOidc
         public LoginResult LoginUser( ISqlCallContext ctx, IUserOidcInfo info, bool actualLogin = true )
         {
             var mode = actualLogin
-                        ? CreateOrUpdateMode.UpdateOnly | CreateOrUpdateMode.WithLogin
-                        : CreateOrUpdateMode.UpdateOnly;
-            var r = RawCreateOrUpdateOidcUser( ctx, 1, 0, info, mode );
+                        ? UCLMode.UpdateOnly | UCLMode.WithActualLogin
+                        : UCLMode.UpdateOnly | UCLMode.WithCheckLogin;
+            var r = UserOidcUCL( ctx, 1, 0, info, mode );
             return r.LoginResult;
         }
 
@@ -88,13 +88,13 @@ namespace CK.DB.User.UserOidc
         /// <param name="info">User information to create or update.</param>
         /// <param name="mode">Configures Create, Update only or WithLogin behavior.</param>
         /// <returns>The user identifier (when <paramref name="userId"/> is 0, this is a login) and the operation result.</returns>
-        [SqlProcedure( "sUserOidcCreateOrUpdate" )]
-        protected abstract CreateOrUpdateResult RawCreateOrUpdateOidcUser(
+        [SqlProcedure( "sUserOidcUCL" )]
+        protected abstract UCLResult UserOidcUCL(
             ISqlCallContext ctx,
             int actorId,
             int userId,
             [ParameterSource]IUserOidcInfo info,
-            CreateOrUpdateMode mode );
+            UCLMode mode );
 
 
     }

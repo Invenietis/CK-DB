@@ -19,7 +19,7 @@ namespace CK.DB.User.UserOidc
     /// Oidc authentication provider.
     /// </summary>
     [SqlTable( "tUserOidc", Package = typeof( Package ), Schema = "CK" )]
-    [Versions( "2.0.0" )]
+    [Versions( "2.0.0, 2.0.1" )]
     [SqlObjectItem( "transform:sUserDestroy" )]
     public abstract partial class UserOidcTable : SqlTable, IGenericAuthenticationProvider<IUserOidcInfo>
     {
@@ -55,9 +55,9 @@ namespace CK.DB.User.UserOidc
         /// <param name="mode">Optionnaly configures Create, Update only or WithLogin behavior.</param>
         /// <param name="cancellationToken">Optional cancellation token.</param>
         /// <returns>The result.</returns>
-        public async Task<CreateOrUpdateResult> CreateOrUpdateOidcUserAsync( ISqlCallContext ctx, int actorId, int userId, IUserOidcInfo info, CreateOrUpdateMode mode = CreateOrUpdateMode.CreateOrUpdate, CancellationToken cancellationToken = default( CancellationToken ) )
+        public async Task<UCLResult> CreateOrUpdateOidcUserAsync( ISqlCallContext ctx, int actorId, int userId, IUserOidcInfo info, UCLMode mode = UCLMode.CreateOrUpdate, CancellationToken cancellationToken = default( CancellationToken ) )
         {
-            var r = await RawCreateOrUpdateOidcUserAsync( ctx, actorId, userId, info, mode, cancellationToken ).ConfigureAwait( false );
+            var r = await UserOidcULC( ctx, actorId, userId, info, mode, cancellationToken ).ConfigureAwait( false );
             return r;
         }
 
@@ -74,9 +74,9 @@ namespace CK.DB.User.UserOidc
         public async Task<LoginResult> LoginUserAsync( ISqlCallContext ctx, IUserOidcInfo info, bool actualLogin = true, CancellationToken cancellationToken = default( CancellationToken ) )
         {
             var mode = actualLogin
-                        ? CreateOrUpdateMode.UpdateOnly | CreateOrUpdateMode.WithLogin
-                        : CreateOrUpdateMode.UpdateOnly;
-            var r = await RawCreateOrUpdateOidcUserAsync( ctx, 1, 0, info, mode, cancellationToken ).ConfigureAwait( false );
+                        ? UCLMode.UpdateOnly | UCLMode.WithActualLogin
+                        : UCLMode.UpdateOnly | UCLMode.WithCheckLogin;
+            var r = await UserOidcULC( ctx, 1, 0, info, mode, cancellationToken ).ConfigureAwait( false );
             return r.LoginResult;
         }
 
@@ -106,13 +106,13 @@ namespace CK.DB.User.UserOidc
         /// <param name="mode">Configures Create, Update only or WithLogin behavior.</param>
         /// <param name="cancellationToken">Optional cancellation token.</param>
         /// <returns>The user identifier (when <paramref name="userId"/> is 0, this is a login) and the operation result.</returns>
-        [SqlProcedure( "sUserOidcCreateOrUpdate" )]
-        protected abstract Task<CreateOrUpdateResult> RawCreateOrUpdateOidcUserAsync(
+        [SqlProcedure( "sUserOidcUCL" )]
+        protected abstract Task<UCLResult> UserOidcULC(
             ISqlCallContext ctx,
             int actorId,
             int userId,
             [ParameterSource]IUserOidcInfo info,
-            CreateOrUpdateMode mode,
+            UCLMode mode,
             CancellationToken cancellationToken );
 
         /// <summary>
@@ -195,7 +195,7 @@ namespace CK.DB.User.UserOidc
 
         #region IGenericAuthenticationProvider explicit implementation.
 
-        CreateOrUpdateResult IGenericAuthenticationProvider.CreateOrUpdateUser( ISqlCallContext ctx, int actorId, int userId, object payload, CreateOrUpdateMode mode )
+        UCLResult IGenericAuthenticationProvider.CreateOrUpdateUser( ISqlCallContext ctx, int actorId, int userId, object payload, UCLMode mode )
         {
             IUserOidcInfo info = _infoFactory.ExtractPayload( payload );
             return CreateOrUpdateOidcUser( ctx, actorId, userId, info, mode );
@@ -207,7 +207,7 @@ namespace CK.DB.User.UserOidc
             return LoginUser( ctx, info, actualLogin );
         }
 
-        Task<CreateOrUpdateResult> IGenericAuthenticationProvider.CreateOrUpdateUserAsync( ISqlCallContext ctx, int actorId, int userId, object payload, CreateOrUpdateMode mode, CancellationToken cancellationToken )
+        Task<UCLResult> IGenericAuthenticationProvider.CreateOrUpdateUserAsync( ISqlCallContext ctx, int actorId, int userId, object payload, UCLMode mode, CancellationToken cancellationToken )
         {
             IUserOidcInfo info = _infoFactory.ExtractPayload( payload );
             return CreateOrUpdateOidcUserAsync( ctx, actorId, userId, info, mode, cancellationToken );

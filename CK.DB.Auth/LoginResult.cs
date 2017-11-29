@@ -26,13 +26,13 @@ namespace CK.DB.Auth
         }
 
         /// <summary>
-        /// Initializes a new failued login with a non empty reason and an optional error code.
+        /// Initializes a new failed login with a non empty reason and an optional error code.
         /// </summary>
         /// <param name="failureReason">The reason of the failure. Must not be null or empty.</param>
-        /// <param name="failureCode">Optional error code. Must be greater or equal to 0.</param>
-        public LoginResult( string failureReason, int failureCode = 0 )
+        /// <param name="failureCode">Optional error code. Must be greater or equal to 1.</param>
+        public LoginResult( string failureReason, int failureCode = 1 )
         {
-            if( failureCode < 0 ) throw new ArgumentException( "Must be greater or equal to 0.", nameof( failureCode ) );
+            if( failureCode < 1 ) throw new ArgumentException( "Must be greater or equal to 1.", nameof( failureCode ) );
             if( String.IsNullOrWhiteSpace( failureReason ) ) throw new ArgumentException( "Must not be empty.", nameof( failureReason ) );
             _code = ~failureCode;
             FailureReason = failureReason;
@@ -43,26 +43,44 @@ namespace CK.DB.Auth
         /// If <paramref name="failureReason"/> is not empty or <see cref="failureCode"/> is not null,
         /// the <see cref="IsSuccessful"/> property is false and the <see cref="UserId"/> is
         /// automatically set to 0.
+        /// Special case is when failureCode is zero or userId is zero and both failure reason
+        /// and failure code are null: this result <see cref="IsEmpty"/>.
         /// </summary>
         /// <param name="userId">The user identifier. Must be greater or equal to 0.</param>
         /// <param name="failureReason">Reason can be null or empty.</param>
         /// <param name="failureCode">Optional error code.</param>
         public LoginResult( int userId, string failureReason, int? failureCode )
         {
-            if( userId < 0 ) throw new ArgumentException( "Must be zero or positive.", nameof( userId ) );
-            if( failureCode.HasValue && failureCode.Value <= 0 ) throw new ArgumentException( "Must be positive.", nameof( failureCode ) );
+            if( failureCode.HasValue )
+            {
+                if( failureCode.Value < 0 ) throw new ArgumentException( "Must be zero or positive.", nameof( failureCode ) );
+                if( failureCode.Value == 0 )
+                {
+                    _code = 0;
+                    FailureReason = null;
+                    return;
+                }
+            }
             bool hasReason = !String.IsNullOrWhiteSpace( failureReason );
             if( hasReason || failureCode.HasValue )
             {
-                _code = ~(failureCode ?? 0);
-                FailureReason = hasReason ? failureReason : "Unspecified reason.";
+                _code = ~(failureCode ?? 1);
+                FailureReason = hasReason
+                                    ? failureReason
+                                    : KnownLoginFailureCodeExtensions.ToKnownString( failureCode.Value );
             }
             else
             {
+                if( userId < 0 ) throw new ArgumentException( "Must be zero or positive.", nameof( userId ) );
                 _code = userId;
                 FailureReason = null;
             }
         }
+
+        /// <summary>
+        /// Gets whether this result is empty: it has not been challenged.
+        /// </summary>
+        public bool IsEmpty => _code == 0;
 
         /// <summary>
         /// Gets the user identifier.
@@ -74,10 +92,10 @@ namespace CK.DB.Auth
         /// Gets an optional error code.
         /// May be 0 even if <see cref="IsSuccessful"/> is false.
         /// </summary>
-        public int FailureCode => _code <= 0 ? ~_code : 0;
+        public int FailureCode => _code < 0 ? ~_code : 0;
 
         /// <summary>
-        /// Gets a reason for login failure. Never null or empty if <see cref="IsSuccessful"/> is false.
+        /// Gets a reason for login failure.
         /// </summary>
         public string FailureReason { get; }
 

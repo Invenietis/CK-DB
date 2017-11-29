@@ -24,11 +24,11 @@ namespace CK.DB.User.UserPassword
         /// <param name="password">The initial password. Can not be null nor empty.</param>
         /// <param name="mode">Optionnaly configures Create or Update only behavior.</param>
         /// <returns>The operation result.</returns>
-        public CreateOrUpdateResult CreateOrUpdatePasswordUser( ISqlCallContext ctx, int actorId, int userId, string password, CreateOrUpdateMode mode = CreateOrUpdateMode.CreateOrUpdate )
+        public UCLResult CreateOrUpdatePasswordUser( ISqlCallContext ctx, int actorId, int userId, string password, UCLMode mode = UCLMode.CreateOrUpdate )
         {
             if( string.IsNullOrEmpty( password ) ) throw new ArgumentNullException( nameof( password ) );
             PasswordHasher p = new PasswordHasher( HashIterationCount );
-            return CreateOrUpdatePasswordUserWithPwdRawHash( ctx, actorId, userId, p.HashPassword( password ), mode );
+            return PasswordUserUCL( ctx, actorId, userId, p.HashPassword( password ), mode, null );
         }
 
         /// <summary>
@@ -42,7 +42,7 @@ namespace CK.DB.User.UserPassword
         {
             if( string.IsNullOrEmpty( password ) ) throw new ArgumentNullException( nameof( password ) );
             PasswordHasher p = new PasswordHasher( HashIterationCount );
-            CreateOrUpdatePasswordUserWithPwdRawHash( ctx, actorId, userId, p.HashPassword( password ), CreateOrUpdateMode.UpdateOnly );
+            PasswordUserUCL( ctx, actorId, userId, p.HashPassword( password ), UCLMode.UpdateOnly, null );
         }
 
         /// <summary>
@@ -132,23 +132,23 @@ namespace CK.DB.User.UserPassword
                 result = p.VerifyHashedPassword( hash, password );
             }
             // 3 - Handle result.
-            if( result == PasswordVerificationResult.Failed ) return new LoginResult( "InvalidPassword" );
+            var mode = actualLogin ? UCLMode.WithActualLogin : UCLMode.WithCheckLogin;
             if( result == PasswordVerificationResult.SuccessRehashNeeded )
             {
                 // 3.1 - If migration occurred, create the user with its password.
                 //       Else rehash the password and update the database.
-                CreateOrUpdatePasswordUserWithPwdRawHash( ctx, 1, userId, p.HashPassword( password ), CreateOrUpdateMode.CreateOrUpdate );
-                if( migrator != null )
+                mode |= UCLMode.CreateOrUpdate;
+                UCLResult r = PasswordUserUCL( ctx, 1, userId, p.HashPassword( password ), mode, null );
+                if( r.OperationResult != UCResult.None && migrator != null )
                 {
                     migrator.MigrationDone( ctx, userId );
                 }
+                return r.LoginResult;
             }
-            // 4 - Side-effect of successful login.
-            if( actualLogin )
-            {
-                return OnLogin( ctx, userId );
-            }
-            return new LoginResult( userId );
+            // 4 - Challenges the database login checks.
+            int? failureCode = null;
+            if( result == PasswordVerificationResult.Failed ) failureCode = (int)KnownLoginFailureCode.InvalidCredentials;
+            return PasswordUserUCL( ctx, 1, userId, null, mode, failureCode ).LoginResult;
         }
 
         /// <summary>
@@ -161,7 +161,7 @@ namespace CK.DB.User.UserPassword
         public abstract void DestroyPasswordUser( ISqlCallContext ctx, int actorId, int userId );
 
         /// <summary>
-        /// Creates a PasswordUser with an initial raw hash for an existing user.
+        /// Low level stored procedure.
         /// This method should be used only if the standard password hasher and verification 
         /// mechanism is not used.
         /// </summary>
@@ -169,18 +169,14 @@ namespace CK.DB.User.UserPassword
         /// <param name="actorId">The acting actor identifier.</param>
         /// <param name="userId">The user identifier for wich a PassworUser must be created.</param>
         /// <param name="pwdHash">The initial raw hash (no more than 64 bytes).</param>
-        /// <param name="mode">Optionnaly configures Create or Update only behavior.</param>
+        /// <param name="mode">Configures Create, Update and/or WithLogin behaviors.</param>
+        /// <param name="loginFailureCode">
+        /// Login failure code (it is the <see cref="KnownLoginFailureCode.InvalidCredentials"/> when
+        /// password match has failed).
+        /// </param>
         /// <returns>The result.</returns>
-        [SqlProcedure( "sUserPasswordCreateOrUpdate" )]
-        public abstract CreateOrUpdateResult CreateOrUpdatePasswordUserWithPwdRawHash( ISqlCallContext ctx, int actorId, int userId, byte[] pwdHash, CreateOrUpdateMode mode );
+        [SqlProcedure( "sUserPasswordUCL" )]
+        protected abstract UCLResult PasswordUserUCL( ISqlCallContext ctx, int actorId, int userId, byte[] pwdHash, UCLMode mode, int? loginFailureCode );
 
-        /// <summary>
-        /// Called once a login succeed (password hash verification done) and actualLogin parameter is true 
-        /// or <see cref="CreateOrUpdateMode.WithLogin"/> is set.
-        /// </summary>
-        /// <param name="ctx">The call context to use.</param>
-        /// <param name="userId">The user identifier that logged in.</param>
-        [SqlProcedure( "sUserPasswordOnLogin" )]
-        protected abstract LoginResult OnLogin( ISqlCallContext ctx, int userId );
     }
 }

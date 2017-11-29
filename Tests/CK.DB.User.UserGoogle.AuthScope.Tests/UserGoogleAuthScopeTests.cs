@@ -63,7 +63,7 @@ namespace CK.DB.User.UserGoogle.AuthScope.Tests
                     int id = await user.CreateUserAsync( ctx, 1, Guid.NewGuid().ToString() );
                     IUserGoogleInfo userInfo = p.UserGoogleTable.CreateUserInfo<IUserGoogleInfo>();
                     userInfo.GoogleAccountId = Guid.NewGuid().ToString();
-                    await p.UserGoogleTable.CreateOrUpdateGoogleUserAsync( ctx, 1, id, userInfo, CreateOrUpdateMode.CreateOnly|CreateOrUpdateMode.UpdateOnly );
+                    await p.UserGoogleTable.CreateOrUpdateGoogleUserAsync( ctx, 1, id, userInfo, UCLMode.CreateOnly|UCLMode.UpdateOnly );
                     userInfo = (IUserGoogleInfo)(await p.UserGoogleTable.FindKnownUserInfoAsync( ctx, userInfo.GoogleAccountId )).Info;
                     AuthScopeSet userSet = await p.ReadScopeSetAsync( ctx, id );
                     Assert.That( userSet.ToString(), Does.Contain( "[W]thing" ) );

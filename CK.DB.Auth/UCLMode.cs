@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,7 +10,7 @@ namespace CK.DB.Auth
     /// Defines <see cref="IGenericAuthenticationProvider.CreateOrUpdateUser"/> behavior.
     /// </summary>
     [Flags]
-    public enum CreateOrUpdateMode
+    public enum UCLMode
     {
         /// <summary>
         /// Not applicable.
@@ -33,10 +33,17 @@ namespace CK.DB.Auth
         CreateOrUpdate = 3,
 
         /// <summary>
-        /// Consider the create or update as a login: the LastLoginTime
-        /// is updated and login side effects are triggered.
+        /// Consider the create or update as a "fake" login: login checks are
+        /// done but no side effect (other than the potential update or create work)
+        /// must occur.
         /// </summary>
-        WithLogin = 4,
+        WithCheckLogin = 4,
+
+        /// <summary>
+        /// Consider the create or update as a login: checks are done and on success
+        /// login side effects are triggered the LastLoginTime is updated.
+        /// </summary>
+        WithActualLogin = 8,
 
         /// <summary>
         /// Optimistic update requires a timestamp/version key.
@@ -44,6 +51,6 @@ namespace CK.DB.Auth
         /// to handle the case where such key can not be provided (or is known to be invalid) 
         /// and hence, work as if no optimistic concurrency has been implemented.
         /// </summary>
-        IgnoreOptimisticKey = 8
+        IgnoreOptimisticKey = 16
     }
 }

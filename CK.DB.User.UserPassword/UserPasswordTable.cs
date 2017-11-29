@@ -10,6 +10,7 @@ using CK.SqlServer;
 using CK.SqlServer.Setup;
 using CK.DB.Auth;
 using System.Threading;
+using CK.Core;
 
 namespace CK.DB.User.UserPassword
 {
@@ -20,7 +21,7 @@ namespace CK.DB.User.UserPassword
     /// Static <see cref="HashIterationCount"/> may be changed (typically at starting time).
     /// </summary>
     [SqlTable("tUserPassword", Package = typeof(Package))]
-    [Versions("1.0.0,1.0.1")]
+    [Versions( "1.0.0,1.0.1,1.0.2" )]
     [SqlObjectItem("transform:sUserDestroy")]
     public abstract partial class UserPasswordTable : SqlTable, IBasicAuthenticationProvider
     {
@@ -80,11 +81,11 @@ namespace CK.DB.User.UserPassword
         /// <param name="mode">Optionnaly configures Create, Update only or WithLogin behavior.</param>
         /// <param name="cancellationToken">Optional cancellation token.</param>
         /// <returns>The result.</returns>
-        public Task<CreateOrUpdateResult> CreateOrUpdatePasswordUserAsync( ISqlCallContext ctx, int actorId, int userId, string password, CreateOrUpdateMode mode = CreateOrUpdateMode.CreateOrUpdate, CancellationToken cancellationToken = default( CancellationToken ) )
+        public Task<UCLResult> CreateOrUpdatePasswordUserAsync( ISqlCallContext ctx, int actorId, int userId, string password, UCLMode mode = UCLMode.CreateOrUpdate, CancellationToken cancellationToken = default( CancellationToken ) )
         {
             if( string.IsNullOrEmpty( password ) ) throw new ArgumentNullException( nameof( password ) );
             PasswordHasher p = new PasswordHasher( HashIterationCount );
-            return CreateOrUpdatePasswordUserWithRawPwdHashAsync( ctx, actorId, userId, p.HashPassword( password ), mode, cancellationToken );
+            return PasswordUserUCLAsync( ctx, actorId, userId, p.HashPassword( password ), mode, null, cancellationToken );
         }
 
         /// <summary>
@@ -100,7 +101,7 @@ namespace CK.DB.User.UserPassword
         {
             if( string.IsNullOrEmpty( password ) ) throw new ArgumentNullException( nameof( password ) );
             PasswordHasher p = new PasswordHasher( HashIterationCount );
-            return CreateOrUpdatePasswordUserWithRawPwdHashAsync( ctx, actorId, userId, p.HashPassword( password ), CreateOrUpdateMode.UpdateOnly, cancellationToken );
+            return PasswordUserUCLAsync( ctx, actorId, userId, p.HashPassword( password ), UCLMode.UpdateOnly, null, cancellationToken );
         }
 
         /// <summary>
@@ -143,7 +144,7 @@ namespace CK.DB.User.UserPassword
         }
 
         /// <summary>
-        /// Creates the command to read the user hash and identifier fromits name.
+        /// Creates the command to read the user hash, last login time and identifier from its name.
         /// Defaults to: "select p.PwdHash, p.UserId from CK.tUserPassword p inner join CK.tUser u on u.UserId = p.UserId where u.UserName=@UserName".
         /// By overriding this, what is considered as the login name (currently the tUser.UserName) can be changed. 
         /// </summary>
@@ -163,6 +164,7 @@ namespace CK.DB.User.UserPassword
             //     hash is null if the user is not a UserPassword: we'll try to migrate it.
             byte[] hash = null;
             int userId = 0;
+            DateTime lastLoginTime = Util.UtcMinValue;
             using( await (hashReader.Connection = ctx[Database]).EnsureOpenAsync( cancellationToken ).ConfigureAwait( false ) )
             using( var r = await hashReader.ExecuteReaderAsync( System.Data.CommandBehavior.SingleRow, cancellationToken ).ConfigureAwait( false ) )
             {
@@ -170,7 +172,7 @@ namespace CK.DB.User.UserPassword
                 {
                     hash = r.GetSqlBytes( 0 ).Buffer;
                     userId = r.GetInt32( 1 );
-                    if( userId == 0 ) return new LoginResult("InvalidUserKey");
+                    if( userId == 0 ) return new LoginResult( "InvalidUserKey" );
                 }
             }
             PasswordVerificationResult result = PasswordVerificationResult.Failed;
@@ -205,22 +207,24 @@ namespace CK.DB.User.UserPassword
                 result = p.VerifyHashedPassword( hash, password );
             }
             // 3 - Handle result.
-            if( result == PasswordVerificationResult.Failed ) return new LoginResult("InvalidPassword");
+            var mode = actualLogin ? UCLMode.WithActualLogin : UCLMode.WithCheckLogin;
             if( result == PasswordVerificationResult.SuccessRehashNeeded )
             {
-                // 3.1 - If migration occurred, create the user with its password.
-                //       Else rehash the password and update the database.
-                await CreateOrUpdatePasswordUserWithRawPwdHashAsync( ctx, 1, userId, p.HashPassword( password ), CreateOrUpdateMode.CreateOrUpdate, cancellationToken ).ConfigureAwait( false );
-                if( migrator != null )
+                // 3.1 - If migration occurred, create the user with its hashed password.
+                //       Otherwise, rehash the password and update the database.
+                mode |= UCLMode.CreateOrUpdate;
+                UCLResult r = await PasswordUserUCLAsync( ctx, 1, userId, p.HashPassword( password ), mode, null, cancellationToken ).ConfigureAwait( false );
+                if( r.OperationResult != UCResult.None && migrator != null )
                 {
                     migrator.MigrationDone( ctx, userId );
                 }
+                return r.LoginResult;
             }
-            if( actualLogin )
-            {
-                return await OnLoginAsync( ctx, userId ).ConfigureAwait( false );
-            }
-            return new LoginResult( userId );
+            // 4 - Challenges the database login checks.
+            int? failureCode = null;
+            if( result == PasswordVerificationResult.Failed ) failureCode = (int)KnownLoginFailureCode.InvalidCredentials;
+            return (await PasswordUserUCLAsync( ctx, 1, userId, null, mode, failureCode, cancellationToken )
+                                    .ConfigureAwait( false )).LoginResult;
         }
 
         /// <summary>
@@ -235,7 +239,7 @@ namespace CK.DB.User.UserPassword
         public abstract Task DestroyPasswordUserAsync( ISqlCallContext ctx, int actorId, int userId, CancellationToken cancellationToken = default( CancellationToken ) );
 
         /// <summary>
-        /// Creates a PasswordUser with an initial raw hash for an existing user.
+        /// Low level stored procedure.
         /// This method should be used only if the standard password hasher and verification 
         /// mechanism is not used.
         /// </summary>
@@ -243,23 +247,15 @@ namespace CK.DB.User.UserPassword
         /// <param name="actorId">The acting actor identifier.</param>
         /// <param name="userId">The user identifier for wich a PassworUser must be created.</param>
         /// <param name="pwdHash">The initial raw hash (no more than 64 bytes).</param>
-        /// <param name="mode">Configures Create or Update only behavior.</param>
+        /// <param name="mode">Configures Create, Update and/or WithLogin behaviors.</param>
+        /// <param name="loginFailureCode">
+        /// Login failure code (it is the <see cref="KnownLoginFailureCode.InvalidCredentials"/> when
+        /// password match has failed).
+        /// </param>
         /// <param name="cancellationToken">Optional cancellation token.</param>
         /// <returns>The operation result.</returns>
-        [SqlProcedure("sUserPasswordCreateOrUpdate")]
-        public abstract Task<CreateOrUpdateResult> CreateOrUpdatePasswordUserWithRawPwdHashAsync( ISqlCallContext ctx, int actorId, int userId, byte[] pwdHash, CreateOrUpdateMode mode, CancellationToken cancellationToken = default( CancellationToken ) );
-
-        /// <summary>
-        /// Called once a login succeed (password hash verification done) and actualLogin parameter is true 
-        /// or <see cref="CreateOrUpdateMode.WithLogin"/> is set.
-        /// </summary>
-        /// <param name="ctx">The call context to use.</param>
-        /// <param name="userId">The user identifier that logged in.</param>
-        /// <param name="cancellationToken">Optional cancellation token.</param>
-        /// <returns>The awaitable.</returns>
-        [SqlProcedure( "sUserPasswordOnLogin" )]
-        protected abstract Task<LoginResult> OnLoginAsync( ISqlCallContext ctx, int userId, CancellationToken cancellationToken = default( CancellationToken ) );
-
+        [SqlProcedure("sUserPasswordUCL")]
+        protected abstract Task<UCLResult> PasswordUserUCLAsync( ISqlCallContext ctx, int actorId, int userId, byte[] pwdHash, UCLMode mode, int? loginFailureCode = null, CancellationToken cancellationToken = default( CancellationToken ) );
 
     }
 }

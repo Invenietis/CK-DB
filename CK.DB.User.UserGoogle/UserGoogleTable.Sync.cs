@@ -23,9 +23,9 @@ namespace CK.DB.User.UserGoogle
         /// <param name="info">Provider specific data: the <see cref="IUserGoogleInfo"/> poco.</param>
         /// <param name="mode">Optionnaly configures Create, Update only or WithLogin behavior.</param>
         /// <returns>The operation result.</returns>
-        public CreateOrUpdateResult CreateOrUpdateGoogleUser( ISqlCallContext ctx, int actorId, int userId, IUserGoogleInfo info, CreateOrUpdateMode mode = CreateOrUpdateMode.CreateOrUpdate )
+        public UCLResult CreateOrUpdateGoogleUser( ISqlCallContext ctx, int actorId, int userId, IUserGoogleInfo info, UCLMode mode = UCLMode.CreateOrUpdate )
         {
-            return RawCreateOrUpdateGoogleUser( ctx, actorId, userId, info, mode );
+            return UserGoogleUCL( ctx, actorId, userId, info, mode );
         }
 
         /// <summary>
@@ -40,9 +40,9 @@ namespace CK.DB.User.UserGoogle
         public LoginResult LoginUser( ISqlCallContext ctx, IUserGoogleInfo info, bool actualLogin = true )
         {
             var mode = actualLogin
-                        ? CreateOrUpdateMode.UpdateOnly | CreateOrUpdateMode.WithLogin
-                        : CreateOrUpdateMode.UpdateOnly;
-            var r = RawCreateOrUpdateGoogleUser( ctx, 1, 0, info, mode );
+                        ? UCLMode.UpdateOnly | UCLMode.WithActualLogin
+                        : UCLMode.UpdateOnly | UCLMode.WithCheckLogin;
+            var r = UserGoogleUCL( ctx, 1, 0, info, mode );
             return r.LoginResult;
         }
 
@@ -75,21 +75,21 @@ namespace CK.DB.User.UserGoogle
 
         /// <summary>
         /// Raw call to manage GoogleUser. Since this should not be used directly, it is protected.
-        /// Actual implementation of the centralized create, update or login procedure.
+        /// Actual implementation of the centralized update, create or login procedure.
         /// </summary>
         /// <param name="ctx">The call context to use.</param>
         /// <param name="actorId">The acting actor identifier.</param>
         /// <param name="userId">The user identifier for which a Google account must be created or updated.</param>
         /// <param name="info">User information to create or update.</param>
-        /// <param name="mode">Configures Create, Update only or WithLogin behavior.</param>
+        /// <param name="mode">Configures Create, Update only or WithCheck/ActualLogin behavior.</param>
         /// <returns>The user identifier (when <paramref name="userId"/> is 0, this is a login) and the operation result.</returns>
-        [SqlProcedure( "sUserGoogleCreateOrUpdate" )]
-        protected abstract CreateOrUpdateResult RawCreateOrUpdateGoogleUser(
+        [SqlProcedure( "sUserGoogleUCL" )]
+        protected abstract UCLResult UserGoogleUCL(
             ISqlCallContext ctx,
             int actorId,
             int userId,
             [ParameterSource]IUserGoogleInfo info,
-            CreateOrUpdateMode mode );
+            UCLMode mode );
 
 
     }

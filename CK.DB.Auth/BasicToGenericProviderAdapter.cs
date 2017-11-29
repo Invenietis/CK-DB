@@ -22,14 +22,14 @@ namespace CK.DB.Auth
 
         string IGenericAuthenticationProvider.ProviderName => Name;
 
-        CreateOrUpdateResult IGenericAuthenticationProvider.CreateOrUpdateUser( ISqlCallContext ctx, int actorId, int userId, object payload, CreateOrUpdateMode mode )
+        UCLResult IGenericAuthenticationProvider.CreateOrUpdateUser( ISqlCallContext ctx, int actorId, int userId, object payload, UCLMode mode )
         {
             string password = payload as string;
             if( password == null ) throw new ArgumentException( "Must be a string (the password).", nameof( payload ) );
             return _basic.CreateOrUpdatePasswordUser( ctx, actorId, userId, password, mode );
         }
 
-        Task<CreateOrUpdateResult> IGenericAuthenticationProvider.CreateOrUpdateUserAsync( ISqlCallContext ctx, int actorId, int userId, object payload, CreateOrUpdateMode mode, CancellationToken cancellationToken )
+        Task<UCLResult> IGenericAuthenticationProvider.CreateOrUpdateUserAsync( ISqlCallContext ctx, int actorId, int userId, object payload, UCLMode mode, CancellationToken cancellationToken )
         {
             string password = payload as string;
             if( password == null ) throw new ArgumentException( "Must be a string (the password).", nameof( payload ) );

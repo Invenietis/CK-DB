@@ -60,7 +60,7 @@ namespace CK.DB.Auth
         string ProviderName { get; }
 
         /// <summary>
-        /// Creates or updates a user entry for this provider. 
+        /// Creates or updates a user entry for this provider and optionally logs the user. 
         /// This is the "binding account" feature since it binds an external identity to 
         /// an already existing user that may already be registered into other authencation providers.
         /// </summary>
@@ -68,9 +68,9 @@ namespace CK.DB.Auth
         /// <param name="actorId">The acting actor identifier.</param>
         /// <param name="userId">The user identifier that must be registered.</param>
         /// <param name="payload">Provider specific data.</param>
-        /// <param name="mode">Optionnaly configures Create, Update only or WithLogin behavior.</param>
+        /// <param name="mode">Optionnaly configures Create, Update only or WithCheck/ActualLogin behavior.</param>
         /// <returns>The result.</returns>
-        CreateOrUpdateResult CreateOrUpdateUser( ISqlCallContext ctx, int actorId, int userId, object payload, CreateOrUpdateMode mode = CreateOrUpdateMode.CreateOrUpdate );
+        UCLResult CreateOrUpdateUser( ISqlCallContext ctx, int actorId, int userId, object payload, UCLMode mode = UCLMode.CreateOrUpdate );
 
         /// <summary>
         /// Destroys a registered user entry for this provider. 
@@ -97,7 +97,7 @@ namespace CK.DB.Auth
         LoginResult LoginUser( ISqlCallContext ctx, object payload, bool actualLogin = true );
 
         /// <summary>
-        /// Creates or updates a user entry for this provider. 
+        /// Creates or updates a user entry for this provider and optionally logs the user. 
         /// This is the "binding account" feature since it binds an external identity to 
         /// an already existing user that may already be registered into other authencation providers.
         /// </summary>
@@ -105,10 +105,10 @@ namespace CK.DB.Auth
         /// <param name="actorId">The acting actor identifier.</param>
         /// <param name="userId">The user identifier that must be registered.</param>
         /// <param name="payload">Provider specific data.</param>
-        /// <param name="mode">Optionnaly configures Create, Update only or WithLogin behavior.</param>
+        /// <param name="mode">Optionnaly configures Create, Update only or WithCheck/ActualLogin behavior.</param>
         /// <param name="cancellationToken">Optional cancellation token.</param>
         /// <returns>The result.</returns>
-        Task<CreateOrUpdateResult> CreateOrUpdateUserAsync( ISqlCallContext ctx, int actorId, int userId, object payload, CreateOrUpdateMode mode = CreateOrUpdateMode.CreateOrUpdate, CancellationToken cancellationToken = default( CancellationToken ) );
+        Task<UCLResult> CreateOrUpdateUserAsync( ISqlCallContext ctx, int actorId, int userId, object payload, UCLMode mode = UCLMode.CreateOrUpdate, CancellationToken cancellationToken = default( CancellationToken ) );
 
         /// <summary>
         /// Destroys a registered user entry for this provider. 

@@ -85,11 +85,13 @@ namespace CK.DB.Auth
         /// </summary>
         /// <param name="ctx">The call context to use.</param>
         /// <param name="scheme">The scheme used.</param>
-        /// <param name="loginTime">Login time.</param>
+        /// <param name="lastLoginTime">Last login time (<see cref="Util.UtcMinValue"/> for first login).</param>
         /// <param name="userId">The user identifier.</param>
-        /// <returns>The awaitable.</returns>
+        /// <param name="actualLogin">True for an actual login, false otherwise (only checks must be done).</param>
+        /// <param name="loginTimeNow">Current login time.</param>
+        /// <returns>The login result.</returns>
         [SqlProcedure( "sAuthUserOnLogin" )]
-        public abstract Task<LoginResult> OnUserLoginAsync( ISqlCallContext ctx, string scheme, DateTime loginTime, int userId );
+        public abstract Task<LoginResult> OnUserLoginAsync( ISqlCallContext ctx, string scheme, DateTime lastLoginTime, int userId, bool actualLogin, DateTime loginTimeNow );
 
         /// <summary>
         /// Reads a <see cref="IUserAuthInfo"/> for a user.

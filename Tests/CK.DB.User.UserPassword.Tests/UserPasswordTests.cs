@@ -8,12 +8,40 @@ using NUnit.Framework;
 using System.Linq;
 using System.Threading;
 using CK.DB.Auth;
+using System.Collections.Generic;
 
 namespace CK.DB.User.UserPassword.Tests
 {
     [TestFixture]
     public class UserPasswordTests
     {
+
+        [Test]
+        public void standard_generic_tests_for_Basic_provider()
+        {
+            var auth = TestHelper.StObjMap.Default.Obtain<Auth.Package>();
+            CK.DB.Auth.Tests.AuthTests.StandardTestForGenericAuthenticationProvider(
+                auth,
+                "Basic",
+                payloadForCreateOrUpdate: ( userId, userName ) => "pwd",
+                payloadForLogin: ( userId, userName ) => Tuple.Create( userId, "pwd" ),
+                payloadForLoginFail: ( userId, userName ) => Tuple.Create( userId, "PWD" )
+                );
+        }
+
+        [Test]
+        public async Task standard_generic_tests_for_Basic_provider_Async()
+        {
+            var auth = TestHelper.StObjMap.Default.Obtain<Auth.Package>();
+            await Auth.Tests.AuthTests.StandardTestForGenericAuthenticationProviderAsync(
+                auth,
+                "Basic",
+                payloadForCreateOrUpdate: ( userId, userName ) => "pwd",
+                payloadForLogin: ( userId, userName ) => Tuple.Create( userId, "pwd" ),
+                payloadForLoginFail: ( userId, userName ) => Tuple.Create( userId, "PWD" )
+                );
+        }
+
 
         [Test]
         public void create_password_and_check_Verify_method()
@@ -27,7 +55,7 @@ namespace CK.DB.User.UserPassword.Tests
                 var pwd = "pwddetestcrrr";
                 var pwd2 = "pwddetestcrdfezfrefzzfrr";
 
-                Assert.That( u.CreateOrUpdatePasswordUser( ctx, 1, userId, pwd ).OperationResult, Is.EqualTo( CreateOrUpdateOperationResult.Created ) );
+                Assert.That( u.CreateOrUpdatePasswordUser( ctx, 1, userId, pwd ).OperationResult, Is.EqualTo( UCResult.Created ) );
                 Assert.That( u.LoginUser( ctx, userId, pwd ).UserId == userId );
                 Assert.That( u.LoginUser( ctx, userId, pwd2 ).UserId == 0 );
 
@@ -46,8 +74,8 @@ namespace CK.DB.User.UserPassword.Tests
             {
                 Assert.Throws<SqlDetailedException>( () => u.CreateOrUpdatePasswordUser( ctx, 1, 0, "x" ) );
                 Assert.Throws<SqlDetailedException>( () => u.CreateOrUpdatePasswordUser( ctx, 0, 1, "toto" ) );
-                Assert.Throws<SqlDetailedException>( () => u.CreateOrUpdatePasswordUser( ctx, 1, 0, "x", CreateOrUpdateMode.UpdateOnly ) );
-                Assert.Throws<SqlDetailedException>( () => u.CreateOrUpdatePasswordUser( ctx, 0, 1, "toto", CreateOrUpdateMode.UpdateOnly ) );
+                Assert.Throws<SqlDetailedException>( () => u.CreateOrUpdatePasswordUser( ctx, 1, 0, "x", UCLMode.UpdateOnly ) );
+                Assert.Throws<SqlDetailedException>( () => u.CreateOrUpdatePasswordUser( ctx, 0, 1, "toto", UCLMode.UpdateOnly ) );
             }
         }
 
@@ -105,10 +133,10 @@ namespace CK.DB.User.UserPassword.Tests
                 string name = Guid.NewGuid().ToString();
                 int userId = user.CreateUser( ctx, 1, name );
                 string pwd = "lklkl";
-                var result = basic.CreateOrUpdatePasswordUser( ctx, 1, userId, pwd, CreateOrUpdateMode.CreateOnly );
-                Assert.That( result.OperationResult, Is.EqualTo( CreateOrUpdateOperationResult.Created ) );
-                result = basic.CreateOrUpdatePasswordUser( ctx, 1, userId, pwd + "no", CreateOrUpdateMode.CreateOnly );
-                Assert.That( result.OperationResult, Is.EqualTo( CreateOrUpdateOperationResult.None ) );
+                var result = basic.CreateOrUpdatePasswordUser( ctx, 1, userId, pwd, UCLMode.CreateOnly );
+                Assert.That( result.OperationResult, Is.EqualTo( UCResult.Created ) );
+                result = basic.CreateOrUpdatePasswordUser( ctx, 1, userId, pwd + "no", UCLMode.CreateOnly );
+                Assert.That( result.OperationResult, Is.EqualTo( UCResult.None ) );
                 Assert.That( basic.LoginUser( ctx, userId, pwd ).UserId, Is.EqualTo( userId ) );
                 Assert.That( basic.LoginUser( ctx, userId, pwd + "no" ).UserId, Is.EqualTo( 0 ) );
                 Assert.That( basic.LoginUser( ctx, name, pwd ).UserId, Is.EqualTo( userId ) );
@@ -134,10 +162,10 @@ namespace CK.DB.User.UserPassword.Tests
                 string name = Guid.NewGuid().ToString();
                 int userId = await user.CreateUserAsync( ctx, 1, name );
                 string pwd = "lklkl";
-                var result = await basic.CreateOrUpdatePasswordUserAsync( ctx, 1, userId, pwd, CreateOrUpdateMode.CreateOnly );
-                Assert.That( result.OperationResult, Is.EqualTo( CreateOrUpdateOperationResult.Created ) );
-                result = await basic.CreateOrUpdatePasswordUserAsync( ctx, 1, userId, pwd + "no", CreateOrUpdateMode.CreateOnly );
-                Assert.That( result.OperationResult, Is.EqualTo( CreateOrUpdateOperationResult.None ) );
+                var result = await basic.CreateOrUpdatePasswordUserAsync( ctx, 1, userId, pwd, UCLMode.CreateOnly );
+                Assert.That( result.OperationResult, Is.EqualTo( UCResult.Created ) );
+                result = await basic.CreateOrUpdatePasswordUserAsync( ctx, 1, userId, pwd + "no", UCLMode.CreateOnly );
+                Assert.That( result.OperationResult, Is.EqualTo( UCResult.None ) );
                 Assert.That( (await basic.LoginUserAsync( ctx, userId, pwd )).UserId, Is.EqualTo( userId ) );
                 Assert.That( (await basic.LoginUserAsync( ctx, userId, pwd + "no" )).UserId, Is.EqualTo( 0 ) );
                 Assert.That( (await basic.LoginUserAsync( ctx, name, pwd )).UserId, Is.EqualTo( userId ) );
@@ -252,7 +280,7 @@ namespace CK.DB.User.UserPassword.Tests
                     string userName = Guid.NewGuid().ToString();
                     var idU = user.CreateUser( ctx, 1, userName );
                     var baseTime = u.Database.ExecuteScalar<DateTime>( "select sysutcdatetime();" );
-                    u.CreateOrUpdatePasswordUser( ctx, 1, idU, "password", CreateOrUpdateMode.CreateOrUpdate|CreateOrUpdateMode.WithLogin );
+                    u.CreateOrUpdatePasswordUser( ctx, 1, idU, "password", UCLMode.CreateOrUpdate|UCLMode.WithActualLogin );
                     var firstTime = u.Database.ExecuteScalar<DateTime>( $"select LastLoginTime from CK.tUserPassword where UserId={idU}" );
                     Assert.That( firstTime.Ticks, Is.EqualTo( baseTime.Ticks ).Within( TimeSpan.FromMilliseconds( 1000 ).Ticks ) );
                     Thread.Sleep( 100 );
