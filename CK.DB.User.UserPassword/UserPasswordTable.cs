@@ -25,6 +25,7 @@ namespace CK.DB.User.UserPassword
     [SqlObjectItem("transform:sUserDestroy")]
     public abstract partial class UserPasswordTable : SqlTable, IBasicAuthenticationProvider
     {
+        const string _commandReadByUserId = "select p.PwdHash, u.UserId from CK.tUser u left outer join CK.tUserPassword p on p.UserId = u.UserId where u.UserId= @UserId";
         Package _package;
         Actor.UserTable _userTable;
 
@@ -117,7 +118,7 @@ namespace CK.DB.User.UserPassword
         /// <returns>The login result.</returns>
         public Task<LoginResult> LoginUserAsync( ISqlCallContext ctx, int userId, string password, bool actualLogin = true, CancellationToken cancellationToken = default( CancellationToken ) )
         {
-            using( var c = new SqlCommand( $"select PwdHash, @UserId from CK.tUserPassword where UserId=@UserId" ) )
+            using( var c = new SqlCommand( _commandReadByUserId ) )
             {
                 c.Parameters.AddWithValue( "@UserId", userId );
                 return DoVerifyAsync( ctx, c, password, userId, actualLogin, cancellationToken );
@@ -145,36 +146,37 @@ namespace CK.DB.User.UserPassword
 
         /// <summary>
         /// Creates the command to read the user hash, last login time and identifier from its name.
-        /// Defaults to: "select p.PwdHash, p.UserId from CK.tUserPassword p inner join CK.tUser u on u.UserId = p.UserId where u.UserName=@UserName".
+        /// Defaults to: "select p.PwdHash, u.UserId from CK.tUser u left outer join CK.tUserPassword p on p.UserId = u.UserId where u.UserName=@UserName".
         /// By overriding this, what is considered as the login name (currently the tUser.UserName) can be changed. 
         /// </summary>
         /// <param name="userName">The user name to lookup.</param>
         /// <returns>The command that must select the hash and user identifier.</returns>
         protected virtual SqlCommand CreateReadByNameCommand( string userName )
         {
-            var c = new SqlCommand( "select p.PwdHash, p.UserId from CK.tUserPassword p inner join CK.tUser u on u.UserId = p.UserId where u.UserName=@UserName" );
+            var c = new SqlCommand( "select p.PwdHash, u.UserId from CK.tUser u left outer join CK.tUserPassword p on p.UserId = u.UserId where u.UserName=@UserName" );
             c.Parameters.AddWithValue( "@UserName", userName );
             return c;
         }
 
         async Task<LoginResult> DoVerifyAsync( ISqlCallContext ctx, SqlCommand hashReader, string password, object objectKey, bool actualLogin, CancellationToken cancellationToken )
         {
-            if( string.IsNullOrEmpty( password ) ) return new LoginResult( "InvalidPassword" );
+            if( string.IsNullOrEmpty( password ) ) return new LoginResult( KnownLoginFailureCode.InvalidCredentials );
             // 1 - Get the PwdHash and UserId.
             //     hash is null if the user is not a UserPassword: we'll try to migrate it.
             byte[] hash = null;
             int userId = 0;
-            DateTime lastLoginTime = Util.UtcMinValue;
             using( await (hashReader.Connection = ctx[Database]).EnsureOpenAsync( cancellationToken ).ConfigureAwait( false ) )
             using( var r = await hashReader.ExecuteReaderAsync( System.Data.CommandBehavior.SingleRow, cancellationToken ).ConfigureAwait( false ) )
             {
                 if( await r.ReadAsync( cancellationToken ).ConfigureAwait( false ) )
                 {
-                    hash = r.GetSqlBytes( 0 ).Buffer;
+                    if( !r.IsDBNull( 0 ) ) hash = r.GetSqlBytes( 0 ).Buffer;
                     userId = r.GetInt32( 1 );
-                    if( userId == 0 ) return new LoginResult( "InvalidUserKey" );
+                    if( userId == 0 ) return new LoginResult( KnownLoginFailureCode.InvalidUserKey );
                 }
+                else return new LoginResult( KnownLoginFailureCode.InvalidUserKey );
             }
+            Debug.Assert( userId != 0 );
             PasswordVerificationResult result = PasswordVerificationResult.Failed;
             PasswordHasher p = null;
             IUserPasswordMigrator migrator = null;
@@ -182,23 +184,10 @@ namespace CK.DB.User.UserPassword
             if( hash == null )
             {
                 migrator = _package.PasswordMigrator;
-                if( migrator != null  )
+                if( migrator != null && migrator.VerifyPassword( ctx, userId, password ) )
                 {
-                    if( objectKey is int )
-                    {
-                        userId = (int)objectKey;
-                    }
-                    else
-                    {
-                        Debug.Assert( objectKey is string );
-                        userId = await _userTable.FindByNameAsync( ctx, (string)objectKey ).ConfigureAwait( false );
-                        if( userId == 0 ) return new LoginResult( "InvalidUserName" );
-                    }
-                    if( migrator.VerifyPassword( ctx, userId, password ) )
-                    {
-                        result = PasswordVerificationResult.SuccessRehashNeeded;
-                        p = new PasswordHasher( HashIterationCount );
-                    }
+                    result = PasswordVerificationResult.SuccessRehashNeeded;
+                    p = new PasswordHasher( HashIterationCount );
                 }
             }
             else

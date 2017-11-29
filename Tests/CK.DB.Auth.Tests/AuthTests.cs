@@ -105,86 +105,79 @@ namespace CK.DB.Auth.Tests
             {
                 string userName = Guid.NewGuid().ToString();
                 int userId = user.CreateUser( ctx, 1, userName );
-                IUserAuthInfo info = auth.ReadUserAuthInfo( ctx, 1, userId );
-
-                Assert.That( info.UserId, Is.EqualTo( userId ) );
-                Assert.That( info.UserName, Is.EqualTo( userName ) );
-                Assert.That( info.Schemes.Count, Is.EqualTo( 0 ) );
-
+                using( TestHelper.Monitor.OpenInfo( $"StandardTest for generic {schemeOrProviderName} with userId:{userId} and userName:{userName}." ) )
                 {
-                    #region CreateOrUpdateUser without login
 
-                    Assert.That( g.CreateOrUpdateUser( ctx, 1, userId, payloadForCreateOrUpdate( userId, userName ) ).OperationResult, Is.EqualTo( UCResult.Created ) );
-                    info = auth.ReadUserAuthInfo( ctx, 1, userId );
-                    Assert.That( info.Schemes.Count, Is.EqualTo( 0 ), "Still no scheme since we did not use WithActualLogin." );
-
-                    Assert.That( g.LoginUser( ctx, payloadForLogin( userId, userName ), actualLogin: false ).UserId, Is.EqualTo( userId ) );
-                    info = auth.ReadUserAuthInfo( ctx, 1, userId );
-                    Assert.That( info.Schemes.Count, Is.EqualTo( 0 ), "Still no scheme since we challenge login but not use WithActualLogin." );
-
-                    Assert.That( g.LoginUser( ctx, payloadForLogin( userId, userName ) ).UserId, Is.EqualTo( userId ) );
-                    info = auth.ReadUserAuthInfo( ctx, 1, userId );
-                    Assert.That( info.Schemes.Count, Is.EqualTo( 1 ) );
-                    Assert.That( info.Schemes[0].Name, Does.StartWith( g.ProviderName ) );
-                    Assert.That( info.Schemes[0].Name, Is.EqualTo( schemeOrProviderName ).IgnoreCase );
-                    Assert.That( info.Schemes[0].LastUsed, Is.GreaterThan( DateTime.UtcNow.AddSeconds( -1 ) ) );
-
-                    g.DestroyUser( ctx, 1, userId );
-                    info = auth.ReadUserAuthInfo( ctx, 1, userId );
-                    Assert.That( info.Schemes.Count, Is.EqualTo( 0 ) );
-
-                    #endregion 
-                }
-                {
-                    #region CreateOrUpdateUser WithActualLogin
+                    IUserAuthInfo info = auth.ReadUserAuthInfo( ctx, 1, userId );
                     Assert.That( info.UserId, Is.EqualTo( userId ) );
                     Assert.That( info.UserName, Is.EqualTo( userName ) );
                     Assert.That( info.Schemes.Count, Is.EqualTo( 0 ) );
 
-                    var result = g.CreateOrUpdateUser( ctx, 1, userId, payloadForCreateOrUpdate( userId, userName ), UCLMode.CreateOnly | UCLMode.WithActualLogin );
-                    Assert.That( result.OperationResult, Is.EqualTo( UCResult.Created ) );
-                    Assert.That( result.LoginResult.UserId, Is.EqualTo( userId ) );
-                    info = auth.ReadUserAuthInfo( ctx, 1, userId );
-                    Assert.That( info.Schemes.Count, Is.EqualTo( 1 ) );
-                    Assert.That( info.Schemes[0].Name, Does.StartWith( g.ProviderName ) );
-                    Assert.That( info.Schemes[0].Name, Is.EqualTo( schemeOrProviderName ).IgnoreCase );
-                    Assert.That( info.Schemes[0].LastUsed, Is.GreaterThan( DateTime.UtcNow.AddSeconds( -1 ) ) );
+                    using( TestHelper.Monitor.OpenInfo( "CreateOrUpdateUser without login" ) )
+                    {
+                        Assert.That( g.CreateOrUpdateUser( ctx, 1, userId, payloadForCreateOrUpdate( userId, userName ) ).OperationResult, Is.EqualTo( UCResult.Created ) );
+                        info = auth.ReadUserAuthInfo( ctx, 1, userId );
+                        Assert.That( info.Schemes.Count, Is.EqualTo( 0 ), "Still no scheme since we did not use WithActualLogin." );
 
-                    Assert.That( g.LoginUser( ctx, payloadForLoginFail( userId, userName ) ).UserId, Is.EqualTo( 0 ) );
+                        Assert.That( g.LoginUser( ctx, payloadForLogin( userId, userName ), actualLogin: false ).UserId, Is.EqualTo( userId ) );
+                        info = auth.ReadUserAuthInfo( ctx, 1, userId );
+                        Assert.That( info.Schemes.Count, Is.EqualTo( 0 ), "Still no scheme since we challenge login but not use WithActualLogin." );
 
-                    g.DestroyUser( ctx, 1, userId );
-                    info = auth.ReadUserAuthInfo( ctx, 1, userId );
-                    Assert.That( info.Schemes.Count, Is.EqualTo( 0 ) );
+                        Assert.That( g.LoginUser( ctx, payloadForLogin( userId, userName ) ).UserId, Is.EqualTo( userId ) );
+                        info = auth.ReadUserAuthInfo( ctx, 1, userId );
+                        Assert.That( info.Schemes.Count, Is.EqualTo( 1 ) );
+                        Assert.That( info.Schemes[0].Name, Does.StartWith( g.ProviderName ) );
+                        Assert.That( info.Schemes[0].Name, Is.EqualTo( schemeOrProviderName ).IgnoreCase );
+                        Assert.That( info.Schemes[0].LastUsed, Is.GreaterThan( DateTime.UtcNow.AddSeconds( -1 ) ) );
 
-                    #endregion
-                }
-                {
-                    #region Login for an unregistered user.
-                    Assert.That( info.UserId, Is.EqualTo( userId ) );
-                    Assert.That( info.UserName, Is.EqualTo( userName ) );
-                    Assert.That( info.Schemes.Count, Is.EqualTo( 0 ) );
+                        g.DestroyUser( ctx, 1, userId );
+                        info = auth.ReadUserAuthInfo( ctx, 1, userId );
+                        Assert.That( info.Schemes.Count, Is.EqualTo( 0 ) );
+                    }
+                    using( TestHelper.Monitor.OpenInfo( "CreateOrUpdateUser WithActualLogin" ) )
+                    {
+                        Assert.That( info.UserId, Is.EqualTo( userId ) );
+                        Assert.That( info.UserName, Is.EqualTo( userName ) );
+                        Assert.That( info.Schemes.Count, Is.EqualTo( 0 ) );
 
-                    var result = g.LoginUser( ctx, payloadForLogin( userId, userName ) );
-                    Assert.That( result.IsSuccessful, Is.False );
-                    Assert.That( result.UserId, Is.EqualTo( 0 ) );
-                    Assert.That( result.FailureCode, Is.EqualTo( (int)KnownLoginFailureCode.UnregisteredUser ) );
-                    Assert.That( result.FailureReason, Is.EqualTo( "Unregistered user." ) );
-                    info = auth.ReadUserAuthInfo( ctx, 1, userId );
-                    Assert.That( info.Schemes.Count, Is.EqualTo( 0 ) );
+                        var result = g.CreateOrUpdateUser( ctx, 1, userId, payloadForCreateOrUpdate( userId, userName ), UCLMode.CreateOnly | UCLMode.WithActualLogin );
+                        Assert.That( result.OperationResult, Is.EqualTo( UCResult.Created ) );
+                        Assert.That( result.LoginResult.UserId, Is.EqualTo( userId ) );
+                        info = auth.ReadUserAuthInfo( ctx, 1, userId );
+                        Assert.That( info.Schemes.Count, Is.EqualTo( 1 ) );
+                        Assert.That( info.Schemes[0].Name, Does.StartWith( g.ProviderName ) );
+                        Assert.That( info.Schemes[0].Name, Is.EqualTo( schemeOrProviderName ).IgnoreCase );
+                        Assert.That( info.Schemes[0].LastUsed, Is.GreaterThan( DateTime.UtcNow.AddSeconds( -1 ) ) );
 
-                    g.DestroyUser( ctx, 1, userId );
-                    info = auth.ReadUserAuthInfo( ctx, 1, userId );
-                    Assert.That( info.Schemes.Count, Is.EqualTo( 0 ) );
+                        Assert.That( g.LoginUser( ctx, payloadForLoginFail( userId, userName ) ).UserId, Is.EqualTo( 0 ) );
 
-                    #endregion
-                }
-                {
-                    #region Invalid payload MUST throw an ArgumentException
+                        g.DestroyUser( ctx, 1, userId );
+                        info = auth.ReadUserAuthInfo( ctx, 1, userId );
+                        Assert.That( info.Schemes.Count, Is.EqualTo( 0 ) );
+                    }
+                    using( TestHelper.Monitor.OpenInfo( "Login for an unregistered user." ) )
+                    {
+                        Assert.That( info.UserId, Is.EqualTo( userId ) );
+                        Assert.That( info.UserName, Is.EqualTo( userName ) );
+                        Assert.That( info.Schemes.Count, Is.EqualTo( 0 ) );
 
-                    Assert.Throws<ArgumentException>( () => g.CreateOrUpdateUser( ctx, 1, userId, DBNull.Value ) );
-                    Assert.Throws<ArgumentException>( () => g.LoginUser( ctx, DBNull.Value ) );
+                        var result = g.LoginUser( ctx, payloadForLogin( userId, userName ) );
+                        Assert.That( result.IsSuccessful, Is.False );
+                        Assert.That( result.UserId, Is.EqualTo( 0 ) );
+                        Assert.That( result.FailureCode, Is.EqualTo( (int)KnownLoginFailureCode.UnregisteredUser ) );
+                        Assert.That( result.FailureReason, Is.EqualTo( "Unregistered user." ) );
+                        info = auth.ReadUserAuthInfo( ctx, 1, userId );
+                        Assert.That( info.Schemes.Count, Is.EqualTo( 0 ) );
 
-                    #endregion
+                        g.DestroyUser( ctx, 1, userId );
+                        info = auth.ReadUserAuthInfo( ctx, 1, userId );
+                        Assert.That( info.Schemes.Count, Is.EqualTo( 0 ) );
+                    }
+                    using( TestHelper.Monitor.OpenInfo( "Invalid payload MUST throw an ArgumentException." ) )
+                    {
+                        Assert.Throws<ArgumentException>( () => g.CreateOrUpdateUser( ctx, 1, userId, DBNull.Value ) );
+                        Assert.Throws<ArgumentException>( () => g.LoginUser( ctx, DBNull.Value ) );
+                    }
                 }
                 user.DestroyUser( ctx, 1, userId );
             }
@@ -204,86 +197,102 @@ namespace CK.DB.Auth.Tests
             {
                 string userName = Guid.NewGuid().ToString();
                 int userId = await user.CreateUserAsync( ctx, 1, userName );
-                IUserAuthInfo info = await auth.ReadUserAuthInfoAsync( ctx, 1, userId );
-
-                Assert.That( info.UserId, Is.EqualTo( userId ) );
-                Assert.That( info.UserName, Is.EqualTo( userName ) );
-                Assert.That( info.Schemes.Count, Is.EqualTo( 0 ) );
-
+                using( TestHelper.Monitor.OpenInfo( $"StandardTestAsync for generic {schemeOrProviderName} with userId:{userId} and userName:{userName}." ) )
                 {
-                    #region CreateOrUpdateUser without login
+                    IUserAuthInfo info = await auth.ReadUserAuthInfoAsync( ctx, 1, userId );
 
-                    Assert.That( (await g.CreateOrUpdateUserAsync( ctx, 1, userId, payloadForCreateOrUpdate( userId, userName ) )).OperationResult, Is.EqualTo( UCResult.Created ) );
-                    info = await auth.ReadUserAuthInfoAsync( ctx, 1, userId );
-                    Assert.That( info.Schemes.Count, Is.EqualTo( 0 ), "Still no scheme since we did not use WithLogin." );
-
-                    Assert.That( (await g.LoginUserAsync( ctx, payloadForLogin( userId, userName ), actualLogin: false )).UserId, Is.EqualTo( userId ) );
-                    info = await auth.ReadUserAuthInfoAsync( ctx, 1, userId );
-                    Assert.That( info.Schemes.Count, Is.EqualTo( 0 ), "Still no scheme since we challenge login but not use WithLogin." );
-
-                    Assert.That( (await g.LoginUserAsync( ctx, payloadForLogin( userId, userName ) )).UserId, Is.EqualTo( userId ) );
-                    info = await auth.ReadUserAuthInfoAsync( ctx, 1, userId );
-                    Assert.That( info.Schemes.Count, Is.EqualTo( 1 ) );
-                    Assert.That( info.Schemes[0].Name, Does.StartWith( g.ProviderName ) );
-                    Assert.That( info.Schemes[0].Name, Is.EqualTo( schemeOrProviderName ).IgnoreCase );
-                    Assert.That( info.Schemes[0].LastUsed, Is.GreaterThan( DateTime.UtcNow.AddSeconds( -1 ) ) );
-
-                    await g.DestroyUserAsync( ctx, 1, userId );
-                    info = await auth.ReadUserAuthInfoAsync( ctx, 1, userId );
-                    Assert.That( info.Schemes.Count, Is.EqualTo( 0 ) );
-
-                    #endregion 
-                }
-                {
-                    #region CreateOrUpdateUser WithActualLogin
                     Assert.That( info.UserId, Is.EqualTo( userId ) );
                     Assert.That( info.UserName, Is.EqualTo( userName ) );
                     Assert.That( info.Schemes.Count, Is.EqualTo( 0 ) );
 
-                    var result = await g.CreateOrUpdateUserAsync( ctx, 1, userId, payloadForCreateOrUpdate( userId, userName ), UCLMode.CreateOnly | UCLMode.WithActualLogin );
-                    Assert.That( result.OperationResult, Is.EqualTo( UCResult.Created ) );
-                    Assert.That( result.LoginResult.UserId, Is.EqualTo( userId ) );
-                    info = await auth.ReadUserAuthInfoAsync( ctx, 1, userId );
-                    Assert.That( info.Schemes.Count, Is.EqualTo( 1 ) );
-                    Assert.That( info.Schemes[0].Name, Does.StartWith( g.ProviderName ) );
-                    Assert.That( info.Schemes[0].Name, Is.EqualTo( schemeOrProviderName ).IgnoreCase );
-                    Assert.That( info.Schemes[0].LastUsed, Is.GreaterThan( DateTime.UtcNow.AddSeconds( -1 ) ) );
+                    using( TestHelper.Monitor.OpenInfo( "CreateOrUpdateUser without login." ) )
+                    {
+                        Assert.That( (await g.CreateOrUpdateUserAsync( ctx, 1, userId, payloadForCreateOrUpdate( userId, userName ) )).OperationResult, Is.EqualTo( UCResult.Created ) );
+                        info = await auth.ReadUserAuthInfoAsync( ctx, 1, userId );
+                        Assert.That( info.Schemes.Count, Is.EqualTo( 0 ), "Still no scheme since we did not use WithLogin." );
 
-                    Assert.That( (await g.LoginUserAsync( ctx, payloadForLoginFail( userId, userName ) )).UserId, Is.EqualTo( 0 ) );
+                        Assert.That( (await g.LoginUserAsync( ctx, payloadForLogin( userId, userName ), actualLogin: false )).UserId, Is.EqualTo( userId ) );
+                        info = await auth.ReadUserAuthInfoAsync( ctx, 1, userId );
+                        Assert.That( info.Schemes.Count, Is.EqualTo( 0 ), "Still no scheme since we challenge login but not use WithLogin." );
 
-                    await g.DestroyUserAsync( ctx, 1, userId );
-                    info = await auth.ReadUserAuthInfoAsync( ctx, 1, userId );
-                    Assert.That( info.Schemes.Count, Is.EqualTo( 0 ) );
+                        Assert.That( (await g.LoginUserAsync( ctx, payloadForLogin( userId, userName ) )).UserId, Is.EqualTo( userId ) );
+                        info = await auth.ReadUserAuthInfoAsync( ctx, 1, userId );
+                        Assert.That( info.Schemes.Count, Is.EqualTo( 1 ) );
+                        Assert.That( info.Schemes[0].Name, Does.StartWith( g.ProviderName ) );
+                        Assert.That( info.Schemes[0].Name, Is.EqualTo( schemeOrProviderName ).IgnoreCase );
+                        Assert.That( info.Schemes[0].LastUsed, Is.GreaterThan( DateTime.UtcNow.AddSeconds( -1 ) ) );
 
-                    #endregion
-                }
-                {
-                    #region Login for an unregistered user.
-                    Assert.That( info.UserId, Is.EqualTo( userId ) );
-                    Assert.That( info.UserName, Is.EqualTo( userName ) );
-                    Assert.That( info.Schemes.Count, Is.EqualTo( 0 ) );
+                        await g.DestroyUserAsync( ctx, 1, userId );
+                        info = await auth.ReadUserAuthInfoAsync( ctx, 1, userId );
+                        Assert.That( info.Schemes.Count, Is.EqualTo( 0 ) );
+                    }
+                    using( TestHelper.Monitor.OpenInfo( "CreateOrUpdateUser WithActualLogin." ) )
+                    {
+                        Assert.That( info.UserId, Is.EqualTo( userId ) );
+                        Assert.That( info.UserName, Is.EqualTo( userName ) );
+                        Assert.That( info.Schemes.Count, Is.EqualTo( 0 ) );
 
-                    var result = await g.LoginUserAsync( ctx, payloadForLogin( userId, userName ) );
-                    Assert.That( result.IsSuccessful, Is.False );
-                    Assert.That( result.UserId, Is.EqualTo( 0 ) );
-                    Assert.That( result.FailureCode, Is.EqualTo( (int)KnownLoginFailureCode.UnregisteredUser ) );
-                    Assert.That( result.FailureReason, Is.EqualTo( "Unregistered user." ) );
-                    info = await auth.ReadUserAuthInfoAsync( ctx, 1, userId );
-                    Assert.That( info.Schemes.Count, Is.EqualTo( 0 ) );
+                        var result = await g.CreateOrUpdateUserAsync( ctx, 1, userId, payloadForCreateOrUpdate( userId, userName ), UCLMode.CreateOnly | UCLMode.WithActualLogin );
+                        Assert.That( result.OperationResult, Is.EqualTo( UCResult.Created ) );
+                        Assert.That( result.LoginResult.UserId, Is.EqualTo( userId ) );
+                        info = await auth.ReadUserAuthInfoAsync( ctx, 1, userId );
+                        Assert.That( info.Schemes.Count, Is.EqualTo( 1 ) );
+                        Assert.That( info.Schemes[0].Name, Does.StartWith( g.ProviderName ) );
+                        Assert.That( info.Schemes[0].Name, Is.EqualTo( schemeOrProviderName ).IgnoreCase );
+                        Assert.That( info.Schemes[0].LastUsed, Is.GreaterThan( DateTime.UtcNow.AddSeconds( -1 ) ) );
 
-                    await g.DestroyUserAsync( ctx, 1, userId );
-                    info = await auth.ReadUserAuthInfoAsync( ctx, 1, userId );
-                    Assert.That( info.Schemes.Count, Is.EqualTo( 0 ) );
+                        Assert.That( (await g.LoginUserAsync( ctx, payloadForLoginFail( userId, userName ) )).UserId, Is.EqualTo( 0 ) );
 
-                    #endregion
-                }
-                {
-                    #region Invalid payload MUST throw an ArgumentException
+                        await g.DestroyUserAsync( ctx, 1, userId );
+                        info = await auth.ReadUserAuthInfoAsync( ctx, 1, userId );
+                        Assert.That( info.Schemes.Count, Is.EqualTo( 0 ) );
+                    }
+                    using( TestHelper.Monitor.OpenInfo( "Login for an unregistered user." ) )
+                    {
+                        Assert.That( info.UserId, Is.EqualTo( userId ) );
+                        Assert.That( info.UserName, Is.EqualTo( userName ) );
+                        Assert.That( info.Schemes.Count, Is.EqualTo( 0 ) );
 
-                    Assert.Throws<ArgumentException>( async () => await g.CreateOrUpdateUserAsync( ctx, 1, userId, DBNull.Value ) );
-                    Assert.Throws<ArgumentException>( async () => await g.LoginUserAsync( ctx, DBNull.Value ) );
+                        var result = await g.LoginUserAsync( ctx, payloadForLogin( userId, userName ) );
+                        Assert.That( result.IsSuccessful, Is.False );
+                        Assert.That( result.UserId, Is.EqualTo( 0 ) );
+                        Assert.That( result.FailureCode, Is.EqualTo( (int)KnownLoginFailureCode.UnregisteredUser ) );
+                        Assert.That( result.FailureReason, Is.EqualTo( "Unregistered user." ) );
+                        info = await auth.ReadUserAuthInfoAsync( ctx, 1, userId );
+                        Assert.That( info.Schemes.Count, Is.EqualTo( 0 ) );
 
-                    #endregion
+                        await g.DestroyUserAsync( ctx, 1, userId );
+                        info = await auth.ReadUserAuthInfoAsync( ctx, 1, userId );
+                        Assert.That( info.Schemes.Count, Is.EqualTo( 0 ) );
+                    }
+                    using( TestHelper.Monitor.OpenInfo( "Invalid payload MUST throw an ArgumentException." ) )
+                    {
+                        Assert.Throws<ArgumentException>( async () => await g.CreateOrUpdateUserAsync( ctx, 1, userId, DBNull.Value ) );
+                        Assert.Throws<ArgumentException>( async () => await g.LoginUserAsync( ctx, DBNull.Value ) );
+                    }
+                    using( TestHelper.Monitor.OpenInfo( "Injecting disabled user in sAuthUserOnLogin." ) )
+                    using( auth.Database.TemporaryTransform( @"
+                            create transformer on CK.sAuthUserOnLogin
+                            as
+                            begin
+                                inject ""set @FailureCode = 6; -- GloballyDisabledUser"" into ""CheckLoginFailure"";
+                            end
+                        " ) )
+                    {
+                        UCLResult result = await g.CreateOrUpdateUserAsync( ctx, 1, userId, payloadForCreateOrUpdate( userId, userName ), UCLMode.CreateOnly | UCLMode.WithActualLogin );
+                        Assert.That( result.OperationResult, Is.EqualTo( UCResult.Created ) );
+                        Assert.That( result.LoginResult.UserId, Is.EqualTo( 0 ) );
+                        Assert.That( result.LoginResult.IsSuccessful, Is.False );
+                        Assert.That( result.LoginResult.FailureCode, Is.EqualTo( (int)KnownLoginFailureCode.GloballyDisabledUser ) );
+                        LoginResult login = await g.LoginUserAsync( ctx, payloadForLogin( userId, userName ) );
+                        Assert.That( login.IsSuccessful, Is.False );
+                        Assert.That( login.UserId, Is.EqualTo( 0 ) );
+                        Assert.That( login.FailureCode, Is.EqualTo( (int)KnownLoginFailureCode.GloballyDisabledUser ) );
+                        login = await g.LoginUserAsync( ctx, payloadForLogin( userId, userName ), actualLogin: false );
+                        Assert.That( login.IsSuccessful, Is.False );
+                        Assert.That( login.UserId, Is.EqualTo( 0 ) );
+                        Assert.That( login.FailureCode, Is.EqualTo( (int)KnownLoginFailureCode.GloballyDisabledUser ) );
+                    }
                 }
                 await user.DestroyUserAsync( ctx, 1, userId );
             }

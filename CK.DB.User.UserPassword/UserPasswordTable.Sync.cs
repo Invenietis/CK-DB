@@ -57,7 +57,7 @@ namespace CK.DB.User.UserPassword
         /// <returns>The login result.</returns>
         public LoginResult LoginUser( ISqlCallContext ctx, int userId, string password, bool actualLogin = true )
         {
-            using( var c = new SqlCommand( $"select PwdHash, @UserId from CK.tUserPassword where UserId=@UserId" ) )
+            using( var c = new SqlCommand( _commandReadByUserId ) )
             {
                 c.Parameters.AddWithValue( "@UserId", userId );
                 return DoVerify( ctx, c, password, userId, actualLogin );
@@ -84,7 +84,7 @@ namespace CK.DB.User.UserPassword
 
         LoginResult DoVerify( ISqlCallContext ctx, SqlCommand hashReader, string password, object objectKey, bool actualLogin )
         {
-            if( string.IsNullOrEmpty( password ) ) return new LoginResult( "InvalidPassword" );
+            if( string.IsNullOrEmpty( password ) ) return new LoginResult( KnownLoginFailureCode.InvalidCredentials );
             // 1 - Get the PwdHash and UserId.
             //     hash is null if the user is not a UserPassword: we'll try to migrate it.
             byte[] hash = null;
@@ -94,11 +94,13 @@ namespace CK.DB.User.UserPassword
             {
                 if( r.Read() )
                 {
-                    hash = r.GetSqlBytes( 0 ).Buffer;
+                    if( !r.IsDBNull( 0 ) ) hash = r.GetSqlBytes( 0 ).Buffer;
                     userId = r.GetInt32( 1 );
-                    if( userId == 0 ) return new LoginResult( "InvalidUserKey" );
+                    if( userId == 0 ) return new LoginResult( KnownLoginFailureCode.InvalidUserKey );
                 }
+                else return new LoginResult( KnownLoginFailureCode.InvalidUserKey );
             }
+            Debug.Assert( userId != 0 );
             // If hash is null here, it means that the user is not registered.
             PasswordVerificationResult result = PasswordVerificationResult.Failed;
             PasswordHasher p = null;
@@ -107,23 +109,10 @@ namespace CK.DB.User.UserPassword
             if( hash == null )
             {
                 migrator = _package.PasswordMigrator;
-                if( migrator != null )
+                if( migrator != null && migrator.VerifyPassword( ctx, userId, password ) )
                 {
-                    if( objectKey is int )
-                    {
-                        userId = (int)objectKey;
-                    }
-                    else
-                    {
-                        Debug.Assert( objectKey is string );
-                        userId = _userTable.FindByName( ctx, (string)objectKey );
-                        if( userId == 0 ) return new LoginResult( "InvalidUserName" );
-                    }
-                    if( migrator.VerifyPassword( ctx, userId, password ) )
-                    {
-                        result = PasswordVerificationResult.SuccessRehashNeeded;
-                        p = new PasswordHasher( HashIterationCount );
-                    }
+                    result = PasswordVerificationResult.SuccessRehashNeeded;
+                    p = new PasswordHasher( HashIterationCount );
                 }
             }
             else

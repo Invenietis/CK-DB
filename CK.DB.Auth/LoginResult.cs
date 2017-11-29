@@ -39,6 +39,24 @@ namespace CK.DB.Auth
         }
 
         /// <summary>
+        /// Initializes a new failed login with a known error code.
+        /// </summary>
+        /// <param name="failureCode">Known error code.</param>
+        public LoginResult( KnownLoginFailureCode failureCode )
+        {
+            if( failureCode == KnownLoginFailureCode.None )
+            {
+                _code = 0;
+                FailureReason = null;
+            }
+            else
+            {
+                _code = ~(int)failureCode;
+                FailureReason = failureCode.ToKnownString();
+            }
+        }
+
+        /// <summary>
         /// Initializes a new login result. This is the constructor used by the database calls.
         /// If <paramref name="failureReason"/> is not empty or <see cref="failureCode"/> is not null,
         /// the <see cref="IsSuccessful"/> property is false and the <see cref="UserId"/> is
