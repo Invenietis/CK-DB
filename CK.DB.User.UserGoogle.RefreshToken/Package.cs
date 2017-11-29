@@ -1,4 +1,4 @@
-﻿using CK.DB.User.UserGoogle;
+using CK.DB.User.UserGoogle;
 using CK.SqlServer.Setup;
 using System;
 using System.Collections.Generic;
@@ -18,7 +18,7 @@ namespace CK.DB.User.UserGoogle.RefreshToken
     /// </summary>
     [SqlPackage( ResourcePath = "Res" )]
     [Versions("1.0.0")]
-    [SqlObjectItem( "transform:CK.sUserGoogleCreateOrUpdate" )]
+    [SqlObjectItem( "transform:CK.sUserGoogleUCL" )]
     public abstract class Package : SqlPackage
     {
         void StObjConstruct( UserGoogle.UserGoogleTable table )

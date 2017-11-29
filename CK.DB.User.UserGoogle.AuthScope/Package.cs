@@ -1,4 +1,4 @@
-﻿using CK.DB.Auth.AuthScope;
+using CK.DB.Auth.AuthScope;
 using CK.Setup;
 using CK.SqlServer;
 using CK.SqlServer.Setup;
@@ -12,7 +12,7 @@ namespace CK.DB.User.UserGoogle.AuthScope
     /// </summary>
     [SqlPackage( Schema = "CK", ResourcePath = "Res" )]
     [Versions("1.0.0")]
-    [SqlObjectItem( "transform:sUserGoogleCreateOrUpdate, transform:sUserGoogleDestroy" )]
+    [SqlObjectItem( "transform:sUserGoogleUCL, transform:sUserGoogleDestroy" )]
     public class Package : SqlPackage
     {
         AuthScopeSetTable _scopeSetTable;

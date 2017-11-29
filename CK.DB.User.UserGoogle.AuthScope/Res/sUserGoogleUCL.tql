@@ -1,11 +1,11 @@
-﻿-- SetupConfig: { "AddRequires" : "CK.sAuthScopeSetCopy" }
+-- SetupConfig: { "AddRequires" : "CK.sAuthScopeSetCopy" }
 --
 -- The ScopeSetId is intrinsic.
 -- A new ScopeSetId is only set when a new UserGoogle is created,
 -- but it is not editable: it does not appear in the parameters and does not
 -- participate in updates.
 --
-create transformer on CK.sUserGoogleCreateOrUpdate
+create transformer on CK.sUserGoogleUCL
 as
 begin
 

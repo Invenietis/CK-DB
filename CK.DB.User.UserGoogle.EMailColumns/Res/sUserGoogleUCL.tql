@@ -1,4 +1,4 @@
-﻿create transformer on CK.sUserGoogleCreateOrUpdate
+create transformer on CK.sUserGoogleUCL
 as
 begin
 	add parameter @EMail nvarchar(255) = null, @EMailVerified bit = null;
@@ -9,7 +9,7 @@ begin
 					EMailVerified = case when @EMailVerified is not null then @EMailVerified else 0 end;
 	end
 
-	in single statement {update CK.tUserGoogle}
+	in first statement {update CK.tUserGoogle}
 	begin
 		add column	EMail = case when @EMail is not null then @EMail else EMail end, 
 					EMailVerified = case when @EMailVerified is not null then @EMailVerified else EMailVerified end;
