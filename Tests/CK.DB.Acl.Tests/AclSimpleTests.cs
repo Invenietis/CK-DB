@@ -1,6 +1,7 @@
-﻿using CK.Core;
+using CK.Core;
 using CK.DB.Actor;
 using CK.SqlServer;
+using FluentAssertions;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -24,19 +25,22 @@ namespace CK.DB.Acl.Tests
 
             using( var ctx = new SqlStandardCallContext() )
             {
+                var db = acl.Database;
                 int idGod = user.CreateUser( ctx, 1, Guid.NewGuid().ToString() );
                 group.AddUser( ctx, 1, 1, idGod );
                 int idAcl = acl.CreateAcl( ctx, idGod );
 
                 Assert.That( idAcl >= 8, "Acl 0 to 7 are system-defined acls." );
-                acl.Database.AssertScalarEquals( idAcl, "select AclId from CK.tAcl where AclId = @0", idAcl );
+                db.ExecuteScalar( "select AclId from CK.tAcl where AclId = @0", idAcl )
+                  .Should().Be( idAcl );
 
-                Assert.That( acl.GetGrantLevel( ctx, 1, idAcl ), Is.EqualTo( 127 ), "System user is administrator on any Acls." );
-                Assert.That( acl.GetGrantLevel( ctx, idGod, idAcl ), Is.EqualTo( 127 ), "Members of System Group are administrators on any Acls." );
-                Assert.That( acl.GetGrantLevel( ctx, 0, idAcl ), Is.EqualTo( 0 ), "Anonymous are Blind by default." );
+                acl.GetGrantLevel( ctx, 1, idAcl ).Should().Be( 127, "System user is administrator on any Acls." );
+                acl.GetGrantLevel( ctx, idGod, idAcl ).Should().Be( 127, "Members of System Group are administrators on any Acls." );
+                acl.GetGrantLevel( ctx, 0, idAcl ).Should().Be( 0, "Anonymous are Blind by default." );
 
                 acl.DestroyAcl( ctx, idGod, idAcl );
-                acl.Database.AssertEmptyReader( "select AclId from CK.tAcl where AclId = @0", idAcl );
+                db.ExecuteReader( "select AclId from CK.tAcl where AclId = @0", idAcl )
+                  .Rows.Should().BeEmpty();
                 user.DestroyUser( ctx, 1, idGod );
             }
         }
@@ -57,9 +61,10 @@ namespace CK.DB.Acl.Tests
             using( var ctx = new SqlStandardCallContext() )
             {
                 int idUser = user.CreateUser( ctx, 1, Guid.NewGuid().ToString() );
-                Assert.That( acl.GetGrantLevel( ctx, 0, idAcl ), Is.EqualTo( grantLevel ), "Reason: " + keyReasonForAnonymous );
-                Assert.That( acl.GetGrantLevel( ctx, idUser, idAcl ), Is.EqualTo( grantLevel ), "Reason: " + keyReasonForAnonymous );
-                acl.Database.AssertScalarEquals( keyReasonForAnonymous, "select KeyReason from CK.tAclConfigMemory where ActorId = 0 and AclId=@0", idAcl );
+                acl.GetGrantLevel( ctx, 0, idAcl ).Should().Be( grantLevel, "Reason: " + keyReasonForAnonymous );
+                acl.GetGrantLevel( ctx, idUser, idAcl ).Should().Be( grantLevel, "Reason: " + keyReasonForAnonymous );
+                acl.Database.ExecuteScalar( "select KeyReason from CK.tAclConfigMemory where ActorId = 0 and AclId=@0", idAcl )
+                    .Should().Be( keyReasonForAnonymous );
             }
         }
 
@@ -112,7 +117,8 @@ namespace CK.DB.Acl.Tests
                 Assert.That( acl.GetGrantLevel( ctx, idUser, idAcl ), Is.EqualTo( 112 ), "Right is SafeAdministrator, but not more." );
 
                 acl.DestroyAcl( ctx, 1, idAcl );
-                acl.Database.AssertEmptyReader( "select AclId from CK.tAcl where AclId = @0", idAcl );
+                acl.Database.ExecuteReader( "select AclId from CK.tAcl where AclId = @0", idAcl )
+                    .Rows.Should().BeEmpty();
             }
         }
 
@@ -127,6 +133,7 @@ namespace CK.DB.Acl.Tests
 
             using( var ctx = new SqlStandardCallContext() )
             {
+                var db = acl.Database;
                 int idAcl = acl.CreateAcl( ctx, 1 );
                 int idUser = user.CreateUser( ctx, 1, Guid.NewGuid().ToString() );
                 int idGroup = group.CreateGroup( ctx, 1 );
@@ -141,18 +148,24 @@ namespace CK.DB.Acl.Tests
                 acl.AclGrantSet( ctx, 1, idAcl, idGroup, null, 127 );
                 Assert.That( acl.GetGrantLevel( ctx, idUser, idAcl ), Is.EqualTo( 127 ) );
 
-                acl.Database.AssertScalarEquals( 1, "select count(*) from CK.tAclConfig where AclId = @0 and ActorId=@1", idAcl, idGroup );
+                db.ExecuteScalar( "select count(*) from CK.tAclConfig where AclId = @0 and ActorId=@1", idAcl, idGroup )
+                  .Should().Be( 1 );
                 group.DestroyGroup( ctx, 1, idGroup, true );
-                acl.Database.AssertEmptyReader( "select * from CK.tAclConfig where AclId = @0 and ActorId=@1", idAcl, idGroup );
+                db.ExecuteReader( "select * from CK.tAclConfig where AclId = @0 and ActorId=@1", idAcl, idGroup )
+                  .Rows.Should().BeEmpty();
 
                 Assert.That( acl.GetGrantLevel( ctx, idUser, idAcl ), Is.EqualTo( 92 ) );
 
-                acl.Database.AssertScalarEquals( 1, "select count(*) from CK.tAclConfig where AclId = @0 and ActorId=@1", idAcl, idUser );
+                db.ExecuteScalar( "select count(*) from CK.tAclConfig where AclId = @0 and ActorId=@1", idAcl, idUser )
+                  .Should().Be( 1 );
                 user.DestroyUser( ctx, 1, idUser );
-                acl.Database.AssertEmptyReader( "select * from CK.tAclConfig where AclId = @0 and ActorId=@1", idAcl, idUser );
+                db.ExecuteReader( "select * from CK.tAclConfig where AclId = @0 and ActorId=@1", idAcl, idUser )
+                  .Rows.Should().BeEmpty();
 
                 acl.DestroyAcl( ctx, 1, idAcl );
-                acl.Database.AssertEmptyReader( "select AclId from CK.tAcl where AclId = @0", idAcl );
+                db.ExecuteReader( "select AclId from CK.tAcl where AclId = @0", idAcl )
+                  .Rows.Should().BeEmpty();
+
             }
         }
 

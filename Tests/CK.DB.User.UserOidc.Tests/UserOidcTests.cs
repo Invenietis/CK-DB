@@ -8,6 +8,7 @@ using NUnit.Framework;
 using System.Linq;
 using CK.DB.Auth;
 using System.Collections.Generic;
+using FluentAssertions;
 
 namespace CK.DB.User.UserOidc.Tests
 {
@@ -31,22 +32,22 @@ namespace CK.DB.User.UserOidc.Tests
                 info.SchemeSuffix = schemeSuffix;
                 info.Sub = sub;
                 var created = u.CreateOrUpdateOidcUser( ctx, 1, userId, info );
-                Assert.That( created.OperationResult, Is.EqualTo( UCResult.Created ) );
+                created.OperationResult.Should().Be( UCResult.Created );
                 var info2 = u.FindKnownUserInfo( ctx, schemeSuffix, sub );
 
-                Assert.That( info2.UserId, Is.EqualTo( userId ) );
-                Assert.That( info2.Info.SchemeSuffix, Is.EqualTo( schemeSuffix ) );
-                Assert.That( info2.Info.Sub, Is.EqualTo( sub ) );
+                info2.UserId.Should().Be( userId );
+                info2.Info.SchemeSuffix.Should().Be( schemeSuffix );
+                info2.Info.Sub.Should().Be( sub );
 
-                Assert.That( u.FindKnownUserInfo( ctx, schemeSuffix, Guid.NewGuid().ToString() ), Is.Null );
+                u.FindKnownUserInfo( ctx, schemeSuffix, Guid.NewGuid().ToString() ).Should().BeNull();
                 user.DestroyUser( ctx, 1, userId );
-                Assert.That( u.FindKnownUserInfo( ctx, schemeSuffix, sub ), Is.Null );
+                u.FindKnownUserInfo( ctx, schemeSuffix, sub ).Should().BeNull();
             }
         }
 
         [TestCase( "" )]
         [TestCase( "IdSrv" )]
-        public async Task create_Oidc_user_and_check_read_info_object_method_async(string schemeSuffix)
+        public async Task create_Oidc_user_and_check_read_info_object_method_async( string schemeSuffix )
         {
             var u = TestHelper.StObjMap.Default.Obtain<UserOidcTable>();
             var user = TestHelper.StObjMap.Default.Obtain<UserTable>();
@@ -61,16 +62,16 @@ namespace CK.DB.User.UserOidc.Tests
                 info.SchemeSuffix = schemeSuffix;
                 info.Sub = sub;
                 var created = await u.CreateOrUpdateOidcUserAsync( ctx, 1, userId, info );
-                Assert.That( created.OperationResult, Is.EqualTo( UCResult.Created ) );
+                created.OperationResult.Should().Be( UCResult.Created );
                 var info2 = await u.FindKnownUserInfoAsync( ctx, schemeSuffix, sub );
 
-                Assert.That( info2.UserId, Is.EqualTo( userId ) );
-                Assert.That( info2.Info.SchemeSuffix, Is.EqualTo( schemeSuffix ) );
-                Assert.That( info2.Info.Sub, Is.EqualTo( sub ) );
+                info2.UserId.Should().Be( userId );
+                info2.Info.SchemeSuffix.Should().Be( schemeSuffix );
+                info2.Info.Sub.Should().Be( sub );
 
-                Assert.That( await u.FindKnownUserInfoAsync( ctx, schemeSuffix, Guid.NewGuid().ToString() ), Is.Null );
+                (await u.FindKnownUserInfoAsync( ctx, schemeSuffix, Guid.NewGuid().ToString() )).Should().BeNull();
                 await user.DestroyUserAsync( ctx, 1, userId );
-                Assert.That( await u.FindKnownUserInfoAsync( ctx, schemeSuffix, sub ), Is.Null );
+                (await u.FindKnownUserInfoAsync( ctx, schemeSuffix, sub )).Should().BeNull();
             }
         }
 
@@ -92,14 +93,17 @@ namespace CK.DB.User.UserOidc.Tests
                 string userName = "Oidc auth - " + Guid.NewGuid().ToString();
                 var sub = Guid.NewGuid().ToString( "N" );
                 var idU = user.CreateUser( ctx, 1, userName );
-                u.Database.AssertEmptyReader( $"select * from CK.vUserAuthProvider where UserId={idU} and Scheme='{scheme}'" );
+                u.Database.ExecuteReader( $"select * from CK.vUserAuthProvider where UserId={idU} and Scheme='{scheme}'" )
+                    .Rows.Should().BeEmpty();
                 var info = u.CreateUserInfo<IUserOidcInfo>();
                 info.SchemeSuffix = schemeSuffix;
                 info.Sub = sub;
                 u.CreateOrUpdateOidcUser( ctx, 1, idU, info );
-                u.Database.AssertScalarEquals( 1, $"select count(*) from CK.vUserAuthProvider where UserId={idU} and Scheme='{scheme}'" );
+                u.Database.ExecuteScalar( $"select count(*) from CK.vUserAuthProvider where UserId={idU} and Scheme='{scheme}'" )
+                    .Should().Be( 1 );
                 u.DestroyOidcUser( ctx, 1, idU, schemeSuffix );
-                u.Database.AssertEmptyReader( $"select * from CK.vUserAuthProvider where UserId={idU} and Scheme='{scheme}'" );
+                u.Database.ExecuteReader( $"select * from CK.vUserAuthProvider where UserId={idU} and Scheme='{scheme}'" )
+                      .Rows.Should().BeEmpty();
             }
         }
 

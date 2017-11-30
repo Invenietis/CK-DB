@@ -1,6 +1,7 @@
-﻿using CK.Core;
+using CK.Core;
 using CK.DB.Actor;
 using CK.SqlServer;
+using FluentAssertions;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -24,13 +25,16 @@ namespace CK.DB.Group.SimpleNaming.Tests
                 string uniquifierName = Guid.NewGuid().ToString();
                 int groupId = g.CreateGroup( ctx, 1 );
                 string name = gN.GroupRename( ctx, 1, groupId, uniquifierName + "Group" );
-                Assert.That( name, Is.EqualTo( uniquifierName + "Group" ) );
-                g.Database.AssertScalarEquals( name, "select GroupName from CK.tGroup where GroupId = @0", groupId );
+                name.Should().Be( uniquifierName + "Group" );
+                g.Database.ExecuteScalar( "select GroupName from CK.tGroup where GroupId = @0", groupId )
+                    .Should().Be( name );
                 name = gN.GroupRename( ctx, 1, groupId, uniquifierName + "Another Group" );
-                Assert.That( name, Is.EqualTo( uniquifierName + "Another Group" ) );
-                g.Database.AssertScalarEquals( name, "select GroupName from CK.tGroup where GroupId = @0", groupId );
+                name.Should().Be( uniquifierName + "Another Group" );
+                g.Database.ExecuteScalar( "select GroupName from CK.tGroup where GroupId = @0", groupId )
+                    .Should().Be( name );
                 g.DestroyGroup( ctx, 1, groupId );
-                g.Database.AssertEmptyReader( "select * from CK.tGroup where GroupId = @0", groupId );
+                g.Database.ExecuteReader( "select * from CK.tGroup where GroupId = @0", groupId )
+                    .Rows.Should().BeEmpty();
             }
         }
 
@@ -46,20 +50,20 @@ namespace CK.DB.Group.SimpleNaming.Tests
                 string name;
                 int g1 = g.CreateGroup( ctx, 1 );
                 name = gN.GroupRename( ctx, 1, g1, uniquifierName );
-                Assert.That( name, Is.EqualTo( uniquifierName ) );
+                name.Should().Be( uniquifierName );
                 int g2 = g.CreateGroup( ctx, 1 );
                 name = gN.GroupRename( ctx, 1, g2, uniquifierName );
-                Assert.That( name, Is.EqualTo( uniquifierName + " (1)" ) );
+                name.Should().Be( uniquifierName + " (1)" );
                 int g3 = g.CreateGroup( ctx, 1 );
                 name = gN.GroupRename( ctx, 1, g3, uniquifierName );
-                Assert.That( name, Is.EqualTo( uniquifierName + " (2)" ) );
+                name.Should().Be( uniquifierName + " (2)" );
 
                 name = gN.GroupRename( ctx, 1, g3, uniquifierName );
-                Assert.That( name, Is.EqualTo( uniquifierName + " (2)" ), "No change: found the (2) again." );
+                name.Should().Be( uniquifierName + " (2)", "No change: found the (2) again." );
 
                 g.DestroyGroup( ctx, 1, g2 );
                 name = gN.GroupRename( ctx, 1, g3, uniquifierName );
-                Assert.That( name, Is.EqualTo( uniquifierName + " (1)" ), "The (1) is found." );
+                name.Should().Be( uniquifierName + " (1)", "The (1) is found." );
 
                 g.DestroyGroup( ctx, 1, g1 );
                 g.DestroyGroup( ctx, 1, g3 );
@@ -81,25 +85,25 @@ namespace CK.DB.Group.SimpleNaming.Tests
                 {
                     groups[i] = g.CreateGroup( ctx, 1 );
                     newName = gN.GroupRename( ctx, 1, groups[i], names[i] );
-                    Assert.That( newName, Is.EqualTo( names[i] ) );
+                    newName.Should().Be( names[i] );
                 }
 
                 // Renaming all of them like the first one:
                 for( int i = 1; i < names.Length; ++i )
                 {
                     newName = gN.GroupRename( ctx, 1, groups[i], names[0] );
-                    Assert.That( newName, Is.EqualTo( names[0] + " (" + i + ")" ) );
+                    newName.Should().Be( names[0] + " (" + i + ")" );
                 }
 
                 // Renaming the first one with no change:
                 newName = gN.GroupRename( ctx, 1, groups[0], names[0] );
-                Assert.That( newName, Is.EqualTo( names[0] ) );
+                newName.Should().Be( names[0] );
 
                 // Renaming all of them in the opposite order: no clash.
                 for( int i = 0; i < names.Length; ++i )
                 {
                     newName = gN.GroupRename( ctx, 1, groups[i], names[names.Length - i - 1] );
-                    Assert.That( newName, Is.EqualTo( names[names.Length - i - 1] ) );
+                    newName.Should().Be( names[names.Length - i - 1] );
                 }
             }
         }
@@ -118,15 +122,15 @@ namespace CK.DB.Group.SimpleNaming.Tests
 
                 string newName;
                 newName = gN.CheckUniqueNameForNewGroup( ctx, theGroupName );
-                Assert.That( newName, Is.EqualTo( theGroupName + " (1)" ) );
+                newName.Should().Be( theGroupName + " (1)" );
 
                 newName = gN.CheckUniqueName( ctx, groupId, theGroupName );
-                Assert.That( newName, Is.EqualTo( theGroupName ) );
+                newName.Should().Be( theGroupName );
 
                 g.DestroyGroup( ctx, 1, groupId );
 
                 newName = gN.CheckUniqueNameForNewGroup( ctx, theGroupName );
-                Assert.That( newName, Is.EqualTo( theGroupName ) );
+                newName.Should().Be( theGroupName );
             }
         }
 
@@ -146,12 +150,12 @@ namespace CK.DB.Group.SimpleNaming.Tests
 
                 string newName;
                 newName = gN.CheckUniqueNameForNewGroup( ctx, theGroupName );
-                Assert.That( newName, Is.EqualTo( theConflictNameRoot + " (1)" ) );
+                newName.Should().Be( theConflictNameRoot + " (1)" );
 
                 g.DestroyGroup( ctx, 1, groupId );
 
                 newName = gN.CheckUniqueNameForNewGroup( ctx, theGroupName );
-                Assert.That( newName, Is.EqualTo( theGroupName ) );
+                newName.Should().Be( theGroupName );
             }
         }
 
@@ -165,17 +169,17 @@ namespace CK.DB.Group.SimpleNaming.Tests
             {
                 string theGroupName = Guid.NewGuid().ToString();
                 int idMain = g.CreateGroup( ctx, 1 );
-                Assert.That( gN.GroupRename( ctx, 1, idMain, theGroupName ), Is.EqualTo( theGroupName ) );
+                gN.GroupRename( ctx, 1, idMain, theGroupName ).Should().Be( theGroupName );
                 var others = new List<int>();
                 for( int i = 0; i < gN.MaxClashNumber; ++i )
                 {
                     int id = g.CreateGroup( ctx, 1 );
                     string corrected = gN.GroupRename( ctx, 1, id, theGroupName );
-                    Assert.That( corrected, Is.Not.EqualTo( theGroupName ) );
+                    corrected.Should().NotBe( theGroupName );
                     others.Add( id );
                 }
                 string clash = gN.CheckUniqueNameForNewGroup( ctx, theGroupName );
-                Assert.That( clash, Is.Null );
+                clash.Should().BeNull();
                 int idTooMuch = g.CreateGroup( ctx, 1 );
                 Assert.Throws<SqlDetailedException>( () => gN.GroupRename( ctx, 1, idTooMuch, theGroupName ) );
 

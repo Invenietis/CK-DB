@@ -1,6 +1,7 @@
-﻿using CK.Core;
+using CK.Core;
 using CK.DB.Actor.ActorEMail;
 using CK.SqlServer;
+using FluentAssertions;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -19,11 +20,16 @@ namespace CK.DB.Actor.ActorEMail.Tests
             var mails = TestHelper.StObjMap.Default.Obtain<ActorEMailTable>();
             using( var ctx = new SqlStandardCallContext() )
             {
-                mails.Database.AssertScalarEquals( DBNull.Value, "select PrimaryEMail from CK.vUser where UserId=1" );
+                mails.Database.ExecuteScalar( "select PrimaryEMail from CK.vUser where UserId=1" )
+                        .Should().Be( DBNull.Value );
+
                 mails.AddEMail( ctx, 1, 1, "god@heaven.com", false );
-                mails.Database.AssertScalarEquals( "god@heaven.com", "select PrimaryEMail from CK.vUser where UserId=1" );
+                mails.Database.ExecuteScalar( "select PrimaryEMail from CK.vUser where UserId=1" )
+                        .Should().Be( "god@heaven.com" );
+
                 mails.RemoveEMail( ctx, 1, 1, "god@heaven.com" );
-                mails.Database.AssertScalarEquals( DBNull.Value, "select PrimaryEMail from CK.vUser where UserId=1" );
+                mails.Database.ExecuteScalar( "select PrimaryEMail from CK.vUser where UserId=1" )
+                        .Should().Be( DBNull.Value );
             }
         }
 
@@ -36,13 +42,21 @@ namespace CK.DB.Actor.ActorEMail.Tests
             {
                 var gId = group.CreateGroup( ctx, 1 );
                 mails.AddEMail( ctx, 1, gId, "mail@address.com", false );
-                mails.Database.AssertScalarEquals( "mail@address.com", $"select PrimaryEMail from CK.vGroup where GroupId={gId}" );
+                mails.Database.ExecuteScalar( $"select PrimaryEMail from CK.vGroup where GroupId={gId}" )
+                    .Should().Be( "mail@address.com" );
+
                 mails.AddEMail( ctx, 1, gId, "Val-mail@address.com", false );
-                mails.Database.AssertScalarEquals( "mail@address.com", $"select PrimaryEMail from CK.vGroup where GroupId={gId}" );
+                mails.Database.ExecuteScalar( $"select PrimaryEMail from CK.vGroup where GroupId={gId}" )
+                    .Should().Be( "mail@address.com" );
+
                 mails.AddEMail( ctx, 1, gId, "bad-mail@address.com", false );
-                mails.Database.AssertScalarEquals( "mail@address.com", $"select PrimaryEMail from CK.vGroup where GroupId={gId}" );
+                mails.Database.ExecuteScalar( $"select PrimaryEMail from CK.vGroup where GroupId={gId}" )
+                    .Should().Be( "mail@address.com" );
+
+
                 mails.ValidateEMail( ctx, 1, gId, "Val-mail@address.com" );
-                mails.Database.AssertScalarEquals( "Val-mail@address.com", $"select PrimaryEMail from CK.vGroup where GroupId={gId}" );
+                mails.Database.ExecuteScalar( $"select PrimaryEMail from CK.vGroup where GroupId={gId}" )
+                    .Should().Be( "Val-mail@address.com" );
 
                 group.DestroyGroup( ctx, 1, gId );
             }
@@ -60,10 +74,12 @@ namespace CK.DB.Actor.ActorEMail.Tests
                 mails.AddEMail( ctx, 1, uId, "2@a.com", false );
                 mails.AddEMail( ctx, 1, uId, "3@a.com", true );
                 mails.AddEMail( ctx, 1, uId, "4@a.com", false );
-                mails.Database.AssertScalarEquals( "3@a.com", $"select PrimaryEMail from CK.vUser where UserId={uId}" );
+                mails.Database.ExecuteScalar( $"select PrimaryEMail from CK.vUser where UserId={uId}" )
+                    .Should().Be( "3@a.com" );
+
                 mails.RemoveEMail( ctx, 1, uId, "3@a.com" );
-                mails.Database.AssertScalar( Is.EqualTo( "1@a.com" ).Or.EqualTo( "2@a.com" ).Or.EqualTo( "4@a.com" ),
-                        $"select PrimaryEMail from CK.vUser where UserId={uId}" );
+                mails.Database.ExecuteScalar<string>( $"select PrimaryEMail from CK.vUser where UserId={uId}" )
+                    .Should().Match( m => m == "1@a.com" || m == "2@a.com" || m == "4@a.com" );
                 user.DestroyUser( ctx, 1, uId );
             }
         }
@@ -85,9 +101,9 @@ namespace CK.DB.Actor.ActorEMail.Tests
                 System.Threading.Thread.Sleep( 100 );
                 mails.AddEMail( ctx, 1, uId, "4@a.com", false, true );
                 mails.AddEMail( ctx, 1, uId, "5@a.com", false );
-                mails.Database.AssertScalarEquals( "3@a.com", $"select PrimaryEMail from CK.vUser where UserId={uId}" );
+                mails.Database.ExecuteScalar( $"select PrimaryEMail from CK.vUser where UserId={uId}" );
                 mails.RemoveEMail( ctx, 1, uId, "3@a.com" );
-                mails.Database.AssertScalarEquals( "4@a.com", $"select PrimaryEMail from CK.vUser where UserId={uId}" );
+                mails.Database.ExecuteScalar( $"select PrimaryEMail from CK.vUser where UserId={uId}" );
                 user.DestroyUser( ctx, 1, uId );
             }
         }

@@ -1,6 +1,7 @@
-﻿using CK.Core;
+using CK.Core;
 using CK.DB.Actor;
 using CK.SqlServer;
+using FluentAssertions;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -28,14 +29,16 @@ namespace CK.DB.User.UserGoogle.EMailColumns.Tests
                 info.GoogleAccountId = googleAccountId;
                 u.CreateOrUpdateGoogleUser( ctx, 1, idU, info );
                 string rawSelect = $"select EMail collate Latin1_General_BIN2+'|'+cast(EMailVerified as varchar) from CK.tUserGoogle where UserId={idU}";
-                u.Database.AssertScalarEquals( info.EMail+"|0", rawSelect );
+                u.Database.ExecuteScalar( rawSelect )
+                    .Should().Be( info.EMail + "|0" );
                 info.EMail = null;
                 info.EMailVerified = true;
                 u.CreateOrUpdateGoogleUser( ctx, 1, idU, info );
-                u.Database.AssertScalarEquals( "X@Y.Z|1", rawSelect );
+                u.Database.ExecuteScalar( rawSelect )
+                    .Should().Be( "X@Y.Z|1" );
                 info = (EMailColumns.IUserGoogleInfo)u.FindKnownUserInfo( ctx, googleAccountId ).Info;
-                Assert.That( info.EMailVerified, Is.True );
-                Assert.That( info.EMail, Is.EqualTo( "X@Y.Z" ) );
+                info.EMailVerified.Should().BeTrue();
+                info.EMail.Should().Be( "X@Y.Z" );
             }
         }
 

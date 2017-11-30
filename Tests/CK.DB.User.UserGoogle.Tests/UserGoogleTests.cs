@@ -8,6 +8,7 @@ using NUnit.Framework;
 using System.Linq;
 using CK.DB.Auth;
 using System.Collections.Generic;
+using FluentAssertions;
 
 namespace CK.DB.User.UserGoogle.Tests
 {
@@ -29,15 +30,15 @@ namespace CK.DB.User.UserGoogle.Tests
                 var info = infoFactory.Create();
                 info.GoogleAccountId = googleAccountId;
                 var created = u.CreateOrUpdateGoogleUser( ctx, 1, userId, info );
-                Assert.That( created.OperationResult, Is.EqualTo( UCResult.Created ) );
+                created.OperationResult.Should().Be( UCResult.Created );
                 var info2 = u.FindKnownUserInfo( ctx, googleAccountId );
 
-                Assert.That( info2.UserId, Is.EqualTo( userId ) );
-                Assert.That( info2.Info.GoogleAccountId, Is.EqualTo( googleAccountId ) );
+                info2.UserId.Should().Be( userId );
+                info2.Info.GoogleAccountId.Should().Be( googleAccountId );
 
-                Assert.That( u.FindKnownUserInfo( ctx, Guid.NewGuid().ToString() ), Is.Null );
+                u.FindKnownUserInfo( ctx, Guid.NewGuid().ToString() ).Should().BeNull();
                 user.DestroyUser( ctx, 1, userId );
-                Assert.That( u.FindKnownUserInfo( ctx, googleAccountId ), Is.Null );
+                u.FindKnownUserInfo( ctx, googleAccountId ).Should().BeNull();
             }
         }
 
@@ -56,15 +57,15 @@ namespace CK.DB.User.UserGoogle.Tests
                 var info = infoFactory.Create();
                 info.GoogleAccountId = googleAccountId;
                 var created = await u.CreateOrUpdateGoogleUserAsync( ctx, 1, userId, info );
-                Assert.That( created.OperationResult, Is.EqualTo( UCResult.Created ) );
+                created.OperationResult.Should().Be( UCResult.Created );
                 var info2 = await u.FindKnownUserInfoAsync( ctx, googleAccountId );
 
-                Assert.That( info2.UserId, Is.EqualTo( userId ) );
-                Assert.That( info2.Info.GoogleAccountId, Is.EqualTo( googleAccountId ) );
+                info2.UserId.Should().Be( userId );
+                info2.Info.GoogleAccountId.Should().Be( googleAccountId );
 
-                Assert.That( await u.FindKnownUserInfoAsync( ctx, Guid.NewGuid().ToString() ), Is.Null );
+                (await u.FindKnownUserInfoAsync( ctx, Guid.NewGuid().ToString() )).Should().BeNull();
                 await user.DestroyUserAsync( ctx, 1, userId );
-                Assert.That( await u.FindKnownUserInfoAsync( ctx, googleAccountId ), Is.Null );
+                (await u.FindKnownUserInfoAsync( ctx, googleAccountId )).Should().BeNull();
             }
         }
 
@@ -84,13 +85,16 @@ namespace CK.DB.User.UserGoogle.Tests
                 string userName = "Google auth - " + Guid.NewGuid().ToString();
                 var googleAccountId = Guid.NewGuid().ToString( "N" );
                 var idU = user.CreateUser( ctx, 1, userName );
-                u.Database.AssertEmptyReader( $"select * from CK.vUserAuthProvider where UserId={idU} and Scheme='Google'" );
+                u.Database.ExecuteReader( $"select * from CK.vUserAuthProvider where UserId={idU} and Scheme='Google'" )
+                    .Rows.Should().BeEmpty();
                 var info = u.CreateUserInfo<IUserGoogleInfo>();
                 info.GoogleAccountId = googleAccountId;
                 u.CreateOrUpdateGoogleUser( ctx, 1, idU, info );
-                u.Database.AssertScalarEquals( 1, $"select count(*) from CK.vUserAuthProvider where UserId={idU} and Scheme='Google'" );
+                u.Database.ExecuteScalar( $"select count(*) from CK.vUserAuthProvider where UserId={idU} and Scheme='Google'" )
+                    .Should().Be( 1 );
                 u.DestroyGoogleUser( ctx, 1, idU );
-                u.Database.AssertEmptyReader( $"select * from CK.vUserAuthProvider where UserId={idU} and Scheme='Google'" );
+                u.Database.ExecuteReader( $"select * from CK.vUserAuthProvider where UserId={idU} and Scheme='Google'" )
+                    .Rows.Should().BeEmpty();
             }
         }
 
@@ -103,23 +107,23 @@ namespace CK.DB.User.UserGoogle.Tests
             CK.DB.Auth.Tests.AuthTests.StandardTestForGenericAuthenticationProvider(
                 auth,
                 "Google",
-                payloadForCreateOrUpdate: (userId, userName) => f.Create(i => i.GoogleAccountId = "GoogleAccountIdFor:" + userName),
-                payloadForLogin: (userId, userName) => f.Create(i => i.GoogleAccountId = "GoogleAccountIdFor:" + userName),
-                payloadForLoginFail: (userId, userName) => f.Create(i => i.GoogleAccountId = "NO!" + userName)
+                payloadForCreateOrUpdate: ( userId, userName ) => f.Create( i => i.GoogleAccountId = "GoogleAccountIdFor:" + userName ),
+                payloadForLogin: ( userId, userName ) => f.Create( i => i.GoogleAccountId = "GoogleAccountIdFor:" + userName ),
+                payloadForLoginFail: ( userId, userName ) => f.Create( i => i.GoogleAccountId = "NO!" + userName )
                 );
             // With a KeyValuePair.
             CK.DB.Auth.Tests.AuthTests.StandardTestForGenericAuthenticationProvider(
                 auth,
                 "Google",
-                payloadForCreateOrUpdate: (userId, userName) => new[]
+                payloadForCreateOrUpdate: ( userId, userName ) => new[]
                 {
                     new KeyValuePair<string,object>( "GoogleAccountId", "IdFor:" + userName)
                 },
-                payloadForLogin: (userId, userName) => new[]
+                payloadForLogin: ( userId, userName ) => new[]
                 {
                     new KeyValuePair<string,object>( "GoogleAccountId", "IdFor:" + userName)
                 },
-                payloadForLoginFail: (userId, userName) => new[]
+                payloadForLoginFail: ( userId, userName ) => new[]
                 {
                     new KeyValuePair<string,object>( "GoogleAccountId", ("IdFor:" + userName).ToUpperInvariant())
                 }
@@ -134,9 +138,9 @@ namespace CK.DB.User.UserGoogle.Tests
             await Auth.Tests.AuthTests.StandardTestForGenericAuthenticationProviderAsync(
                 auth,
                 "Google",
-                payloadForCreateOrUpdate: (userId, userName) => f.Create(i => i.GoogleAccountId = "GoogleAccountIdFor:" + userName),
-                payloadForLogin: (userId, userName) => f.Create(i => i.GoogleAccountId = "GoogleAccountIdFor:" + userName),
-                payloadForLoginFail: (userId, userName) => f.Create(i => i.GoogleAccountId = "NO!" + userName)
+                payloadForCreateOrUpdate: ( userId, userName ) => f.Create( i => i.GoogleAccountId = "GoogleAccountIdFor:" + userName ),
+                payloadForLogin: ( userId, userName ) => f.Create( i => i.GoogleAccountId = "GoogleAccountIdFor:" + userName ),
+                payloadForLoginFail: ( userId, userName ) => f.Create( i => i.GoogleAccountId = "NO!" + userName )
                 );
         }
 

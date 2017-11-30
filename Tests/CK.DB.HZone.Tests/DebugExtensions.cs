@@ -1,7 +1,8 @@
-﻿using CK.Core;
+using CK.Core;
 using CK.SqlServer;
 using CK.SqlServer.Setup;
 using CK.Text;
+using FluentAssertions;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -32,11 +33,11 @@ namespace CK.DB.HZone.Tests
             }
         }
 
-        static public bool CheckTree( this ZoneTable @this, ISqlCallContext ctx, int zoneId, string tree )
+        static public void CheckTree( this ZoneTable @this, ISqlCallContext ctx, int zoneId, string tree )
         {
-            string dump = @this.DumpTree( ctx, zoneId );
-            tree = tree.NormalizeEOL().Replace( " ", string.Empty );
-            return dump == tree;
+            string dump = @this.DumpTree( ctx, zoneId ).TrimEnd();
+            tree = tree.Trim().NormalizeEOL().Replace( " ", string.Empty );
+            dump.Should().Be( tree );
         }
 
     }

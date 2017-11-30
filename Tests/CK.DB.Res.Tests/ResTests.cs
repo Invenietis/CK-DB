@@ -1,5 +1,6 @@
-﻿using CK.Core;
+using CK.Core;
 using CK.SqlServer;
+using FluentAssertions;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -19,9 +20,11 @@ namespace CK.DB.Res.Tests
             using( var ctx = new SqlStandardCallContext() )
             {
                 int id = await r.CreateAsync( ctx );
-                r.Database.AssertScalarEquals( 1, "select count(*) from CK.tRes where ResId = @0", id );
+                r.Database.ExecuteScalar( "select count(*) from CK.tRes where ResId = @0", id )
+                    .Should().Be( 1 );
                 await r.DestroyAsync( ctx, id );
-                r.Database.AssertScalarEquals( 0, "select count(*) from CK.tRes where ResId = @0", id );
+                r.Database.ExecuteScalar( "select count(*) from CK.tRes where ResId = @0", id )
+                    .Should().Be( 0 );
             }
         }
     }

@@ -1,5 +1,6 @@
-﻿using CK.Core;
+using CK.Core;
 using CK.SqlServer;
+using FluentAssertions;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -90,8 +91,10 @@ namespace CK.DB.Res.MCResText.Tests
 
         static void CheckString( Package p, int resId, int lcid, object expectedValue, object expectedLCID )
         {
-            p.Database.AssertScalarEquals( expectedValue, "select Value from CK.vMCResText where ResId=@0 and XLCID = @1", resId, lcid )
-                      .AssertScalarEquals( expectedLCID, "select LCID from CK.vMCResText where ResId=@0 and XLCID = @1", resId, lcid );
+            p.Database.ExecuteScalar( "select Value from CK.vMCResText where ResId=@0 and XLCID = @1", resId, lcid )
+                .Should().Be( expectedValue );
+            p.Database.ExecuteScalar( "select LCID from CK.vMCResText where ResId=@0 and XLCID = @1", resId, lcid )
+                .Should().Be( expectedLCID );
         }
 
         [Test]
@@ -103,11 +106,11 @@ namespace CK.DB.Res.MCResText.Tests
                 Culture.Tests.ExtendedCultureTests.RegisterSpanish( p.Culture, ctx );
                 Culture.Tests.ExtendedCultureTests.RegisterArabic( p.Culture, ctx );
                 int xlcid1 = p.Culture.AssumeXLCID( ctx, new[] { 1, 9, 10, 12 } );
-                Assert.That( xlcid1, Is.GreaterThan( 0xFFFF ) );
+                xlcid1.Should().BeGreaterThan( 0xFFFF );
                 int xlcid9 = p.Culture.AssumeXLCID( ctx, new[] { 9, 1, 12, 10 } );
-                Assert.That( xlcid9, Is.GreaterThan( 0xFFFF ) );
+                xlcid9.Should().BeGreaterThan( 0xFFFF );
                 int xlcid10 = p.Culture.AssumeXLCID( ctx, new[] { 10, 1, 9, 12 } );
-                Assert.That( xlcid10, Is.GreaterThan( 0xFFFF ) );
+                xlcid10.Should().BeGreaterThan( 0xFFFF );
                 int resId = p.ResTable.Create( ctx );
 
                 CheckString( p, resId, 1, DBNull.Value, DBNull.Value );
@@ -190,7 +193,8 @@ namespace CK.DB.Res.MCResText.Tests
                 p.ResTable.Destroy( ctx, enId );
                 p.ResTable.Destroy( ctx, frId );
                 p.ResTable.Destroy( ctx, bothId );
-                p.Database.AssertEmptyReader( "select Value from CK.vMCResText where ResId=@0", bothId );
+                p.Database.ExecuteReader( "select Value from CK.vMCResText where ResId=@0", bothId )
+                    .Rows.Should().BeEmpty();
 
                 Assert.DoesNotThrow( () => p.MCResTextTable.SetText( ctx, bothId, 9, null ) );
             }

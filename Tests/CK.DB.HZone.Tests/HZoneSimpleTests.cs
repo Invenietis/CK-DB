@@ -1,4 +1,4 @@
-﻿using CK.Core;
+using CK.Core;
 using CK.Text;
 using CK.DB.Actor;
 using CK.DB.HZone;
@@ -11,6 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CK.SqlServer.Setup;
+using FluentAssertions;
 
 namespace CK.DB.HZone.Tests
 {
@@ -20,7 +21,8 @@ namespace CK.DB.HZone.Tests
         [TearDown]
         public void CheckCKCoreInvariant()
         {
-            TestHelper.StObjMap.Default.Obtain<SqlDefaultDatabase>().AssertCKCoreInvariants();
+            TestHelper.StObjMap.Default.Obtain<SqlDefaultDatabase>().GetCKCoreInvariantsViolations()
+                .Rows.Should().BeEmpty();
         }
 
         [Test]
@@ -48,8 +50,10 @@ namespace CK.DB.HZone.Tests
                 Assert.Throws<SqlDetailedException>( () => group.AddUser( ctx, 1, idGroup, idUser2, autoAddUserInZone: false ) );
                 group.AddUser( ctx, 1, idGroup, idUser2, autoAddUserInZone: true );
 
-                user.Database.AssertScalarEquals( 4, "select count(*) from CK.tActorProfile where ActorId <> GroupId and ActorId = @0", idUser1 );
-                user.Database.AssertScalarEquals( 5, "select count(*) from CK.tActorProfile where ActorId <> GroupId and ActorId = @0", idUser2 );
+                user.Database.ExecuteScalar( "select count(*) from CK.tActorProfile where ActorId <> GroupId and ActorId = @0", idUser1 )
+                    .Should().Be( 4 );
+                user.Database.ExecuteScalar( "select count(*) from CK.tActorProfile where ActorId <> GroupId and ActorId = @0", idUser2 )
+                    .Should().Be( 5 );
 
                 zone.DestroyZone( ctx, 1, allZones[0], forceDestroy: true );
             }
@@ -77,18 +81,24 @@ namespace CK.DB.HZone.Tests
                 zone.AddUser( ctx, 1, allZones[3], idUser1, autoAddUserInParentZone: true );
                 group.AddUser( ctx, 1, idGroup, idUser2, autoAddUserInZone: true );
 
-                user.Database.AssertScalarEquals( 4, "select count(*) from CK.tActorProfile where ActorId <> GroupId and ActorId = @0", idUser1 );
-                user.Database.AssertScalarEquals( 5, "select count(*) from CK.tActorProfile where ActorId <> GroupId and ActorId = @0", idUser2 );
+                user.Database.ExecuteScalar( "select count(*) from CK.tActorProfile where ActorId <> GroupId and ActorId = @0", idUser1 )
+                    .Should().Be( 4 );
+                user.Database.ExecuteScalar( "select count(*) from CK.tActorProfile where ActorId <> GroupId and ActorId = @0", idUser2 )
+                    .Should().Be( 5 );
 
                 zone.RemoveUser( ctx, 1, allZones[2], idUser2 );
-                user.Database.AssertScalarEquals( 2, "select count(*) from CK.tActorProfile where ActorId <> GroupId and ActorId = @0", idUser2 );
+                user.Database.ExecuteScalar( "select count(*) from CK.tActorProfile where ActorId <> GroupId and ActorId = @0", idUser2 )
+                    .Should().Be( 2 );
                 group.RemoveUser( ctx, 1, allZones[1], idUser2 );
-                user.Database.AssertScalarEquals( 1, "select count(*) from CK.tActorProfile where ActorId <> GroupId and ActorId = @0", idUser2 );
+                user.Database.ExecuteScalar( "select count(*) from CK.tActorProfile where ActorId <> GroupId and ActorId = @0", idUser2 )
+                    .Should().Be( 1 );
                 group.RemoveUser( ctx, 1, allZones[0], idUser2 );
-                user.Database.AssertScalarEquals( 0, "select count(*) from CK.tActorProfile where ActorId <> GroupId and ActorId = @0", idUser2 );
+                user.Database.ExecuteScalar( "select count(*) from CK.tActorProfile where ActorId <> GroupId and ActorId = @0", idUser2 )
+                    .Should().Be( 0 );
 
                 zone.RemoveUser( ctx, 1, allZones[0], idUser1 );
-                user.Database.AssertScalarEquals( 0, "select count(*) from CK.tActorProfile where ActorId <> GroupId and ActorId = @0", idUser2 );
+                user.Database.ExecuteScalar( "select count(*) from CK.tActorProfile where ActorId <> GroupId and ActorId = @0", idUser2 )
+                    .Should().Be( 0 );
 
                 zone.DestroyZone( ctx, 1, allZones[0], forceDestroy: true );
             }
@@ -178,8 +188,8 @@ namespace CK.DB.HZone.Tests
                 group.MoveGroup( ctx, 1, z[3], z[0] );
                 zone.CheckTree( ctx, z[0], $@"
                                 {z[0]}
-                                +{z[4]}
                                 +{z[1]}
+                                +{z[4]}
                                 +{z[2]}
                                 +{z[3]}
                                 " );

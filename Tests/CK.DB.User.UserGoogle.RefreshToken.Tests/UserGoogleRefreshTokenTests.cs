@@ -1,6 +1,7 @@
-﻿using CK.Core;
+using CK.Core;
 using CK.DB.Actor;
 using CK.SqlServer;
+using FluentAssertions;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -29,24 +30,26 @@ namespace CK.DB.User.UserGoogle.RefreshToken.Tests
                 info.GoogleAccountId = googleAccountId;
                 google.CreateOrUpdateGoogleUser( ctx, 1, idU, info );
                 string rawSelect = $"select RefreshToken+'|'+cast(LastRefreshTokenTime as varchar) from CK.tUserGoogle where UserId={idU}";
-                google.Database.AssertScalarEquals( "|0001-01-01 00:00:00.00", rawSelect );
+                google.Database.ExecuteScalar( rawSelect )
+                    .Should().Be( "|0001-01-01 00:00:00.00" );
 
                 info.RefreshToken = "a refresh token";
                 google.CreateOrUpdateGoogleUser( ctx, 1, idU, info );
                 rawSelect = $"select RefreshToken from CK.tUserGoogle where UserId={idU}";
-                google.Database.AssertScalarEquals( info.RefreshToken, rawSelect );
+                google.Database.ExecuteScalar( rawSelect )
+                    .Should().Be( info.RefreshToken );
 
                 info = (IUserGoogleInfo)google.FindKnownUserInfo( ctx, googleAccountId ).Info;
-                Assert.That( info.LastRefreshTokenTime, Is.GreaterThan( DateTime.UtcNow.AddMonths(-1) ) );
-                Assert.That( info.RefreshToken, Is.EqualTo("a refresh token") );
+                info.LastRefreshTokenTime.Should().BeAfter( DateTime.UtcNow.AddMonths( -1 ) );
+                info.RefreshToken.Should().Be( "a refresh token" );
 
                 var lastUpdate = info.LastRefreshTokenTime;
-                Thread.Sleep(500);
+                Thread.Sleep( 500 );
                 info.RefreshToken = null;
-                google.CreateOrUpdateGoogleUser(ctx, 1, idU, info);
+                google.CreateOrUpdateGoogleUser( ctx, 1, idU, info );
                 info = (IUserGoogleInfo)google.FindKnownUserInfo( ctx, googleAccountId ).Info;
-                Assert.That(info.LastRefreshTokenTime, Is.EqualTo(lastUpdate));
-                Assert.That(info.RefreshToken, Is.EqualTo("a refresh token"));
+                info.LastRefreshTokenTime.Should().Be( lastUpdate );
+                info.RefreshToken.Should().Be( "a refresh token" );
             }
         }
 

@@ -1,5 +1,6 @@
-﻿using CK.Core;
+using CK.Core;
 using CK.SqlServer;
+using FluentAssertions;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -19,11 +20,14 @@ namespace CK.DB.Res.ResHtml.Tests
             using( var ctx = new SqlStandardCallContext() )
             {
                 int resId = t.ResTable.Create( ctx );
-                t.Database.AssertEmptyReader( "select * from CK.tResHtml where ResId = @0", resId );
+                t.Database.ExecuteReader( "select * from CK.tResHtml where ResId = @0", resId )
+                    .Rows.Should().BeEmpty();
                 t.SetHtml( ctx, resId, "Hello World!" );
-                t.Database.AssertScalar( Is.EqualTo( "Hello World!" ), "select Value from CK.tResHtml where ResId = @0", resId );
+                t.Database.ExecuteScalar( "select Value from CK.tResHtml where ResId = @0", resId )
+                    .Should().Be( "Hello World!" );
                 t.SetHtml( ctx, resId, null );
-                t.Database.AssertEmptyReader( "select * from CK.tResHtml where ResId = @0", resId );
+                t.Database.ExecuteReader( "select * from CK.tResHtml where ResId = @0", resId )
+                    .Rows.Should().BeEmpty();
                 t.SetHtml( ctx, resId, "Hello World!" );
                 t.ResTable.Destroy( ctx, resId );
             }

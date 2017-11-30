@@ -1,6 +1,7 @@
-﻿using CK.Core;
+using CK.Core;
 using CK.DB.Actor;
 using CK.SqlServer;
+using FluentAssertions;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -30,9 +31,9 @@ namespace CK.DB.Zone.SimpleNaming.Tests
                 int idGIn0 = g.CreateGroup( ctx, 1 );
                 int idGIn1 = g.CreateGroup( ctx, 1, idZone1 );
                 int idGIn2 = g.CreateGroup( ctx, 1, idZone2 );
-                Assert.That( gN.GroupRename( ctx, 1, idGIn0, name ), Is.EqualTo( name ) );
-                Assert.That( gN.GroupRename( ctx, 1, idGIn1, name ), Is.EqualTo( name ) );
-                Assert.That( gN.GroupRename( ctx, 1, idGIn2, name ), Is.EqualTo( name ) );
+                gN.GroupRename( ctx, 1, idGIn0, name ).Should().Be( name );
+                gN.GroupRename( ctx, 1, idGIn1, name ).Should().Be( name );
+                gN.GroupRename( ctx, 1, idGIn2, name ).Should().Be( name );
 
                 g.DestroyGroup( ctx, 1, idGIn0 );
                 z.DestroyZone( ctx, 1, idZone1, forceDestroy: true );
@@ -56,7 +57,8 @@ namespace CK.DB.Zone.SimpleNaming.Tests
                 int idGIn2 = g.CreateGroup( ctx, 1, idZone2 );
                 gN.GroupRename( ctx, 1, idGIn2, "Test" );
                 g.MoveGroup( ctx, 1, idGIn1, idZone2 );
-                g.Database.AssertScalarEquals( "Test (1)", "select GroupName from CK.vGroup where GroupId = @0", idGIn1 );
+                g.Database.ExecuteScalar( "select GroupName from CK.vGroup where GroupId = @0", idGIn1 )
+                    .Should().Be( "Test (1)" );
             }
         }
     }

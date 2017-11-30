@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
 using CK.Core;
@@ -8,6 +8,7 @@ using NUnit.Framework;
 using System.Linq;
 using CK.DB.Auth;
 using CK.DB.Auth.AuthScope;
+using FluentAssertions;
 
 namespace CK.DB.User.UserGoogle.AuthScope.Tests
 {
@@ -23,7 +24,7 @@ namespace CK.DB.User.UserGoogle.AuthScope.Tests
             using( var ctx = new SqlStandardCallContext() )
             {
                 var id = await user.CreateUserAsync( ctx, 1, Guid.NewGuid().ToString() );
-                Assert.That( await p.ReadScopeSetAsync( ctx, id ), Is.Null );
+                (await p.ReadScopeSetAsync( ctx, id )).Should().BeNull();
             }
         }
 
@@ -36,7 +37,9 @@ namespace CK.DB.User.UserGoogle.AuthScope.Tests
             using( var ctx = new SqlStandardCallContext() )
             {
                 AuthScopeSet original = await p.ReadDefaultScopeSetAsync( ctx );
-                Assert.That( !original.Contains( "nimp" ) && !original.Contains( "thing" ) && !original.Contains( "other" ) );
+                original.Contains( "nimp" ).Should().BeFalse();
+                original.Contains( "thing" ).Should().BeFalse();
+                original.Contains( "other" ).Should().BeFalse();
 
                 {
                     int id = await user.CreateUserAsync( ctx, 1, Guid.NewGuid().ToString() );
@@ -45,7 +48,7 @@ namespace CK.DB.User.UserGoogle.AuthScope.Tests
                     await p.UserGoogleTable.CreateOrUpdateGoogleUserAsync( ctx, 1, id, userInfo );
                     KnownUserGoogleInfo info = await p.UserGoogleTable.FindKnownUserInfoAsync( ctx, userInfo.GoogleAccountId );
                     AuthScopeSet userSet = await p.ReadScopeSetAsync( ctx, info.UserId );
-                    Assert.That( userSet.ToString(), Is.EqualTo( original.ToString() ) );
+                    userSet.ToString().Should().Be( original.ToString() );
                 }
                 AuthScopeSet replaced = original.Clone();
                 replaced.Add( new AuthScopeItem( "nimp" ) );
@@ -53,22 +56,22 @@ namespace CK.DB.User.UserGoogle.AuthScope.Tests
                 replaced.Add( new AuthScopeItem( "other", ScopeWARStatus.Accepted ) );
                 await p.AuthScopeSetTable.SetScopesAsync( ctx, 1, replaced );
                 var readback = await p.ReadDefaultScopeSetAsync( ctx );
-                Assert.That( readback.ToString(), Is.EqualTo( replaced.ToString() ) );
+                readback.ToString().Should().Be( replaced.ToString() );
                 // Default scopes have non W status!
                 // This must not impact new users: their satus must always be be W.
-                Assert.That( readback.ToString(), Does.Contain( "[R]thing" ) );
-                Assert.That( readback.ToString(), Does.Contain( "[A]other" ) );
+                readback.ToString().Should().Contain( "[R]thing" )
+                                            .And.Contain( "[A]other" );
 
                 {
                     int id = await user.CreateUserAsync( ctx, 1, Guid.NewGuid().ToString() );
                     IUserGoogleInfo userInfo = p.UserGoogleTable.CreateUserInfo<IUserGoogleInfo>();
                     userInfo.GoogleAccountId = Guid.NewGuid().ToString();
-                    await p.UserGoogleTable.CreateOrUpdateGoogleUserAsync( ctx, 1, id, userInfo, UCLMode.CreateOnly|UCLMode.UpdateOnly );
+                    await p.UserGoogleTable.CreateOrUpdateGoogleUserAsync( ctx, 1, id, userInfo, UCLMode.CreateOnly | UCLMode.UpdateOnly );
                     userInfo = (IUserGoogleInfo)(await p.UserGoogleTable.FindKnownUserInfoAsync( ctx, userInfo.GoogleAccountId )).Info;
                     AuthScopeSet userSet = await p.ReadScopeSetAsync( ctx, id );
-                    Assert.That( userSet.ToString(), Does.Contain( "[W]thing" ) );
-                    Assert.That( userSet.ToString(), Does.Contain( "[W]other" ) );
-                    Assert.That( userSet.ToString(), Does.Contain( "[W]nimp" ) );
+                    userSet.ToString().Should().Contain( "[W]thing" )
+                                               .And.Contain( "[W]other" )
+                                               .And.Contain( "[W]nimp" );
                 }
                 await p.AuthScopeSetTable.SetScopesAsync( ctx, 1, original );
             }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
@@ -9,6 +9,7 @@ using CK.Core;
 using CK.SqlServer;
 using NUnit.Framework;
 using System.Globalization;
+using FluentAssertions;
 
 namespace CK.DB.Culture.Tests
 {
@@ -22,20 +23,30 @@ namespace CK.DB.Culture.Tests
             using( var ctx = new SqlStandardCallContext() )
             {
 
-                p.Database.AssertScalarEquals( 2, "select count(*) from CK.tLCID where LCID in(9,12)" )
-                          .AssertRawExecute( 1, "update CK.tLCID set Name = @0, NativeName = @0, EnglishName = @0 where LCID = 9", "EN-ALTERED" )
-                          .AssertRawExecute( 1, "update CK.tLCID set Name = @0, NativeName = @0, EnglishName = @0 where LCID = 12", "FR-ALTERED" );
+                p.Database.ExecuteScalar( "select count(*) from CK.tLCID where LCID in(9,12)" )
+                    .Should().Be( 2 );
+                p.Database.ExecuteNonQuery( "update CK.tLCID set Name = @0, NativeName = @0, EnglishName = @0 where LCID = 9", "EN-ALTERED" )
+                    .Should().Be( 1 );
+                p.Database.ExecuteNonQuery( "update CK.tLCID set Name = @0, NativeName = @0, EnglishName = @0 where LCID = 12", "FR-ALTERED" )
+                    .Should().Be( 1 );
 
                 p.Register( ctx, 9, "en", "English", "English" );
-                p.Database.AssertScalarEquals( "en", "select Name from CK.tLCID where LCID = 9" )
-                          .AssertScalarEquals( "English", "select NativeName from CK.tLCID where LCID = 9" )
-                          .AssertScalarEquals( "English", "select EnglishName from CK.tLCID where LCID = 9" )
-                          .AssertScalarEquals( "FR-ALTERED", "select Name from CK.tLCID where LCID = 12" );
+                p.Database.ExecuteScalar( "select Name from CK.tLCID where LCID = 9" )
+                    .Should().Be( "en" );
+                p.Database.ExecuteScalar( "select NativeName from CK.tLCID where LCID = 9" )
+                    .Should().Be( "English" );
+                p.Database.ExecuteScalar( "select EnglishName from CK.tLCID where LCID = 9" )
+                    .Should().Be( "English" );
+                p.Database.ExecuteScalar( "select Name from CK.tLCID where LCID = 12" )
+                    .Should().Be( "FR-ALTERED" );
 
                 p.Register( ctx, 12, "fr", "French", "Français" );
-                p.Database.AssertScalarEquals( "fr", "select Name from CK.tLCID where LCID = 12" )
-                          .AssertScalarEquals( "Français", "select NativeName from CK.tLCID where LCID = 12" )
-                          .AssertScalarEquals( "French", "select EnglishName from CK.tLCID where LCID = 12" );
+                p.Database.ExecuteScalar( "select Name from CK.tLCID where LCID = 12" )
+                    .Should().Be( "fr" );
+                p.Database.ExecuteScalar( "select NativeName from CK.tLCID where LCID = 12" )
+                    .Should().Be( "Français" );
+                p.Database.ExecuteScalar( "select EnglishName from CK.tLCID where LCID = 12" )
+                    .Should().Be( "French" );
             }
         }
 
@@ -56,24 +67,30 @@ namespace CK.DB.Culture.Tests
                 p.Register( ctx, 29740, "az-Cyrl", "Azerbaijani(Cyrillic)", "Азәрбајҹан дили" );
                 p.Register( ctx, 2092, "az-Cyrl-AZ", "Azerbaijani(Cyrillic, Azerbaijan)", "Азәрбајҹан дили (Азәрбајҹан)" );
 
-                p.Database.AssertScalarEquals( "9,12,44,29740,2092", "select FallbacksLCID from CK.vXLCID where XLCID = 9" )
-                          .AssertScalarEquals( "12,9,44,29740,2092", "select FallbacksLCID from CK.vXLCID where XLCID = 12" );
+                p.Database.ExecuteScalar( "select FallbacksLCID from CK.vXLCID where XLCID = 9" )
+                    .Should().Be( "9,12,44,29740,2092" );
+                p.Database.ExecuteScalar( "select FallbacksLCID from CK.vXLCID where XLCID = 12" )
+                    .Should().Be( "12,9,44,29740,2092" );
 
                 p.DestroyCulture( ctx, 2092 );
-                p.Database.AssertScalarEquals( "9,12,44,29740", "select FallbacksLCID from CK.vXLCID where XLCID = 9" )
-                          .AssertScalarEquals( "12,9,44,29740", "select FallbacksLCID from CK.vXLCID where XLCID = 12" );
+                p.Database.ExecuteScalar( "select FallbacksLCID from CK.vXLCID where XLCID = 9" )
+                    .Should().Be( "9,12,44,29740" );
+                p.Database.ExecuteScalar( "select FallbacksLCID from CK.vXLCID where XLCID = 12" )
+                    .Should().Be( "12,9,44,29740" );
 
                 p.DestroyCulture( ctx, 29740 );
                 p.DestroyCulture( ctx, 44 );
 
-                p.Database.AssertScalarEquals( "9,12", "select FallbacksLCID from CK.vXLCID where XLCID = 9" )
-                          .AssertScalarEquals( "12,9", "select FallbacksLCID from CK.vXLCID where XLCID = 12" );
+                p.Database.ExecuteScalar( "select FallbacksLCID from CK.vXLCID where XLCID = 9" )
+                    .Should().Be( "9,12" );
+                p.Database.ExecuteScalar( "select FallbacksLCID from CK.vXLCID where XLCID = 12" )
+                    .Should().Be( "12,9" );
             }
         }
 
-        public static void RestoreDatabaseToEnglishAndFrenchOnly(Package p )
+        public static void RestoreDatabaseToEnglishAndFrenchOnly( Package p )
         {
-            p.Database.RawExecute( @"while 1 = 1
+            p.Database.ExecuteNonQuery( @"while 1 = 1
                                         begin
 	                                        declare @XLCID int = null;
 	                                        select top 1 @XLCID = XLCID from CK.tXLCID where XLCID not in (0,9,12);

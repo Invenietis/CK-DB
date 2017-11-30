@@ -1,6 +1,7 @@
-﻿using CK.Core;
+using CK.Core;
 using CK.DB.Actor;
 using CK.SqlServer;
+using FluentAssertions;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -21,11 +22,18 @@ namespace CK.DB.Acl.AclType.Tests
             var aclType = map.Default.Obtain<AclTypeTable>();
             using( var ctx = new SqlStandardCallContext() )
             {
+                var db = aclType.Database;
                 int id = await aclType.CreateAclTypeAsync( ctx, 1 );
-                aclType.Database.AssertScalarEquals( 2, "select count(*) from CK.tAclTypeGrantLevel where AclTypeId = @0", id );
-                aclType.Database.AssertEmptyReader( "select * from CK.tAclTypeGrantLevel where AclTypeId = @0 and GrantLevel not in (0, 127)", id );
+
+                db.ExecuteScalar( "select count(*) from CK.tAclTypeGrantLevel where AclTypeId = @0", id )
+                                    .Should().Be( 2 );
+                db.ExecuteReader( "select * from CK.tAclTypeGrantLevel where AclTypeId = @0 and GrantLevel not in (0, 127)", id )
+                                    .Rows.Should().BeEmpty();
+
                 await aclType.DestroyAclTypeAsync( ctx, 1, id );
-                aclType.Database.AssertEmptyReader( "select * from CK.tAclTypeGrantLevel where AclTypeId = @0", id );
+
+                db.ExecuteReader( "select * from CK.tAclTypeGrantLevel where AclTypeId = @0", id )
+                                    .Rows.Should().BeEmpty();
             }
         }
 
@@ -36,16 +44,22 @@ namespace CK.DB.Acl.AclType.Tests
             var aclType = map.Default.Obtain<AclTypeTable>();
             using( var ctx = new SqlStandardCallContext() )
             {
+                var db = aclType.Database;
                 int id = await aclType.CreateAclTypeAsync( ctx, 1 );
                 await aclType.SetGrantLevelAsync( ctx, 1, id, 87, true );
-                aclType.Database.AssertScalarEquals( 3, "select count(*) from CK.tAclTypeGrantLevel where AclTypeId = @0", id );
+                db.ExecuteScalar( "select count(*) from CK.tAclTypeGrantLevel where AclTypeId = @0", id )
+                  .Should().Be( 3 );
+
                 await aclType.SetGrantLevelAsync( ctx, 1, id, 88, true );
-                aclType.Database.AssertScalarEquals( 4, "select count(*) from CK.tAclTypeGrantLevel where AclTypeId = @0", id );
+                db.ExecuteScalar( "select count(*) from CK.tAclTypeGrantLevel where AclTypeId = @0", id )
+                  .Should().Be( 4 );
 
                 // Removing an unexisting level is always possible...
                 await aclType.SetGrantLevelAsync( ctx, 1, id, 126, false );
                 await aclType.SetGrantLevelAsync( ctx, 1, id, 1, false );
-                aclType.Database.AssertScalarEquals( 4, "select count(*) from CK.tAclTypeGrantLevel where AclTypeId = @0", id );
+                db.ExecuteScalar( "select count(*) from CK.tAclTypeGrantLevel where AclTypeId = @0", id )
+                  .Should().Be( 4 );
+
                 // ...except if it is 0 or 127.
                 Assert.Throws<SqlDetailedException>( async () => await aclType.SetGrantLevelAsync( ctx, 1, id, 0, false ) );
                 Assert.Throws<SqlDetailedException>( async () => await aclType.SetGrantLevelAsync( ctx, 1, id, 127, false ) );
@@ -56,9 +70,12 @@ namespace CK.DB.Acl.AclType.Tests
                 Assert.Throws<SqlDetailedException>( async () => await aclType.SetGrantLevelAsync( ctx, 1, id, 255, false ) );
 
                 await aclType.SetGrantLevelAsync( ctx, 1, id, 87, false );
-                aclType.Database.AssertScalarEquals( 3, "select count(*) from CK.tAclTypeGrantLevel where AclTypeId = @0", id );
+                db.ExecuteScalar( "select count(*) from CK.tAclTypeGrantLevel where AclTypeId = @0", id )
+                  .Should().Be( 3 );
+
                 await aclType.SetGrantLevelAsync( ctx, 1, id, 88, false );
-                aclType.Database.AssertScalarEquals( 2, "select count(*) from CK.tAclTypeGrantLevel where AclTypeId = @0", id );
+                db.ExecuteScalar( "select count(*) from CK.tAclTypeGrantLevel where AclTypeId = @0", id )
+                  .Should().Be( 2 );
 
                 await aclType.DestroyAclTypeAsync( ctx, 1, id );
             }
@@ -72,9 +89,11 @@ namespace CK.DB.Acl.AclType.Tests
             var aclType = map.Default.Obtain<AclTypeTable>();
             using( var ctx = new SqlStandardCallContext() )
             {
+                var db = aclType.Database;
                 int idType = await aclType.CreateAclTypeAsync( ctx, 1 );
                 int idAcl = await aclType.CreateAclAsync( ctx, 1, idType );
-                aclType.Database.AssertScalarEquals( idType, "select AclTypeId from CK.tAcl where AclId = @0", idAcl );
+                db.ExecuteScalar( "select AclTypeId from CK.tAcl where AclId = @0", idAcl )
+                  .Should().Be( idType );
                 Assert.Throws<SqlDetailedException>( async () => await aclType.DestroyAclTypeAsync( ctx, 1, idType ) );
                 acl.DestroyAcl( ctx, 1, idAcl );
                 await aclType.DestroyAclTypeAsync( ctx, 1, idType );

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,6 +7,7 @@ using NUnit.Framework;
 using CK.SqlServer;
 using CK.Core;
 using System.Data.SqlClient;
+using FluentAssertions;
 
 namespace CK.DB.Actor.Tests
 {
@@ -57,7 +58,8 @@ namespace CK.DB.Actor.Tests
 
                 u.DestroyUser( ctx, 1, id );
 
-                u.Database.AssertEmptyReader( "select * from CK.tUser where UserName = @0", testName );
+                u.Database.ExecuteReader( "select * from CK.tUser where UserName = @0", testName )
+                    .Rows.Should().BeEmpty();
             }
         }
 
@@ -74,19 +76,17 @@ namespace CK.DB.Actor.Tests
                 int idExist = u.CreateUser( ctx, 1, existingName );
                 int idUser = u.CreateUser( ctx, 1, userName );
 
-                Assert.That( u.UserNameSet( ctx, 1, idUser, existingName )
-                                && u.UserNameSet( ctx, 1, idExist, userName ), 
-                             Is.False,
-                             "No rename on clash." );
+                u.UserNameSet( ctx, 1, idUser, existingName ).Should().BeFalse( "No rename on clash." );
+                u.UserNameSet( ctx, 1, idExist, userName ).Should().BeFalse( "No rename on clash." );
 
-                Assert.That( u.UserNameSet( ctx, 1, idUser, userName ) 
-                                && u.UserNameSet( ctx, 1, idExist, existingName ), 
-                             "One can always rename to the current name." );
+                u.UserNameSet( ctx, 1, idUser, userName ).Should().BeTrue( "One can always rename to the current name." );
+                u.UserNameSet( ctx, 1, idExist, existingName ).Should().BeTrue( "One can always rename to the current name." );
 
                 u.DestroyUser( ctx, 1, idExist );
                 u.DestroyUser( ctx, 1, idUser );
 
-                u.Database.AssertEmptyReader( "select * from CK.tUser where UserName = @0 or UserName = @1", existingName, userName );
+                u.Database.ExecuteReader( "select * from CK.tUser where UserName = @0 or UserName = @1", existingName, userName )
+                    .Rows.Should().BeEmpty();
             }
         }
 

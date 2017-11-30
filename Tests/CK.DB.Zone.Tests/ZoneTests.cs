@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
@@ -9,6 +9,7 @@ using CK.DB.Actor;
 using CK.SqlServer;
 using NUnit.Framework;
 using CK.SqlServer.Setup;
+using FluentAssertions;
 
 namespace CK.DB.Zone.Tests
 {
@@ -18,7 +19,8 @@ namespace CK.DB.Zone.Tests
         [TearDown]
         public void CheckInvariants()
         {
-            TestHelper.StObjMap.Default.Obtain<SqlDefaultDatabase>().AssertCKCoreInvariants();
+            TestHelper.StObjMap.Default.Obtain<SqlDefaultDatabase>().GetCKCoreInvariantsViolations()
+                .Rows.Should().BeEmpty();
         }
 
         [Test]
@@ -40,9 +42,11 @@ namespace CK.DB.Zone.Tests
             {
                 int zoneId = t.CreateZone( ctx, 1 );
                 Assert.That( zoneId, Is.GreaterThan( 1 ) );
-                t.Database.AssertScalarEquals( true, "select IsZone from CK.vGroup where GroupId=@0", zoneId );
+                t.Database.ExecuteScalar( "select IsZone from CK.vGroup where GroupId=@0", zoneId )
+                    .Should().Be( true );
                 t.DestroyZone( ctx, 1, zoneId );
-                t.Database.AssertEmptyReader( "select * from CK.tZone where ZoneId=@0", zoneId );
+                t.Database.ExecuteReader( "select * from CK.tZone where ZoneId=@0", zoneId )
+                    .Rows.Should().BeEmpty();
             }
         }
 
@@ -67,8 +71,10 @@ namespace CK.DB.Zone.Tests
 
                 t.DestroyZone( ctx, 1, zoneId, true );
 
-                t.Database.AssertEmptyReader( "select * from CK.tGroup where ZoneId=@0", zoneId );
-                t.Database.AssertEmptyReader( "select * from CK.tZone where ZoneId=@0", zoneId );
+                t.Database.ExecuteReader( "select * from CK.tGroup where ZoneId=@0", zoneId )
+                    .Rows.Should().BeEmpty();
+                t.Database.ExecuteReader( "select * from CK.tZone where ZoneId=@0", zoneId )
+                    .Rows.Should().BeEmpty();
             }
         }
 
@@ -122,7 +128,8 @@ namespace CK.DB.Zone.Tests
                 p.GroupTable.DestroyGroup( ctx, 1, groupId );
                 p.ZoneTable.DestroyZone( ctx, 1, zoneId );
 
-                p.Database.AssertEmptyReader( "select * from CK.tZone where ZoneId=@0", zoneId );
+                p.Database.ExecuteReader( "select * from CK.tZone where ZoneId=@0", zoneId )
+                    .Rows.Should().BeEmpty();
             }
         }
 
@@ -141,11 +148,13 @@ namespace CK.DB.Zone.Tests
                 p.GroupTable.AddUser( ctx, 1, groupId1, userId );
                 p.GroupTable.AddUser( ctx, 1, groupId2, userId );
 
-                p.Database.AssertScalarEquals( 3, "select GroupCount = count(*)-1 from CK.tActorProfile where ActorId = @0", userId );
+                p.Database.ExecuteScalar( "select GroupCount = count(*)-1 from CK.tActorProfile where ActorId = @0", userId )
+                    .Should().Be( 3 );
 
                 p.ZoneTable.RemoveUser( ctx, 1, zoneId, userId );
 
-                p.Database.AssertScalarEquals( 0, "select GroupCount = count(*)-1 from CK.tActorProfile where ActorId = @0", userId );
+                p.Database.ExecuteScalar( "select GroupCount = count(*)-1 from CK.tActorProfile where ActorId = @0", userId )
+                    .Should().Be( 0 );
 
                 p.GroupTable.DestroyGroup( ctx, 1, groupId1 );
                 p.GroupTable.DestroyGroup( ctx, 1, groupId2 );
@@ -177,17 +186,20 @@ namespace CK.DB.Zone.Tests
                 int idZone1 = z.CreateZone( ctx, 1 );
                 int idZone2 = z.CreateZone( ctx, 1 );
 
-                g.Database.AssertScalarEquals( 0, "select ZoneId from CK.vGroup where GroupId=@0", idGroup );
+                g.Database.ExecuteScalar( "select ZoneId from CK.vGroup where GroupId=@0", idGroup )
+                    .Should().Be( 0 );
 
                 g.MoveGroup( ctx, 1, idGroup, idZone1 );
-                g.Database.AssertScalarEquals( idZone1, "select ZoneId from CK.vGroup where GroupId=@0", idGroup );
+                g.Database.ExecuteScalar( "select ZoneId from CK.vGroup where GroupId=@0", idGroup )
+                    .Should().Be( idZone1 );
 
                 g.MoveGroup( ctx, 1, idGroup, idZone2 );
-                g.Database.AssertScalarEquals( idZone2, "select ZoneId from CK.vGroup where GroupId=@0", idGroup );
+                g.Database.ExecuteScalar( "select ZoneId from CK.vGroup where GroupId=@0", idGroup )
+                    .Should().Be( idZone2 );
 
                 g.MoveGroup( ctx, 1, idGroup, 0 );
-                g.Database.AssertScalarEquals( 0, "select ZoneId from CK.vGroup where GroupId=@0", idGroup );
-
+                g.Database.ExecuteScalar( "select ZoneId from CK.vGroup where GroupId=@0", idGroup )
+                    .Should().Be( 0 );
                 g.DestroyGroup( ctx, 1, idGroup );
                 z.DestroyZone( ctx, 1, idZone1 );
                 z.DestroyZone( ctx, 1, idZone2 );
@@ -213,16 +225,20 @@ namespace CK.DB.Zone.Tests
                 // This works since the user is in the zoneOK.
                 g.MoveGroup( ctx, 1, idGroup, idZoneOK );
                 // User is in the Group and in the ZoneOK.
-                u.Database.AssertScalarEquals( idUser, $"select ActorId from CK.tActorProfile where GroupId = {idGroup} and ActorId = {idUser}" );
-                u.Database.AssertScalarEquals( idUser, $"select ActorId from CK.tActorProfile where GroupId = {idZoneOK} and ActorId = {idUser}" );
+                u.Database.ExecuteScalar( $"select ActorId from CK.tActorProfile where GroupId = {idGroup} and ActorId = {idUser}" )
+                     .Should().Be( idUser );
+                u.Database.ExecuteScalar( $"select ActorId from CK.tActorProfile where GroupId = {idZoneOK} and ActorId = {idUser}" )
+                    .Should().Be( idUser );
 
                 // This does not: ZoneEmpty does not contain the user.
                 // This uses the default option: GroupMoveOption.None.
                 Assert.Throws<SqlDetailedException>( () => g.MoveGroup( ctx, 1, idGroup, idZoneEmpty ) );
                 // User is still in the Group.
-                u.Database.AssertScalarEquals( idUser, $"select ActorId from CK.tActorProfile where GroupId = {idGroup} and ActorId = {idUser}" );
+                u.Database.ExecuteScalar( $"select ActorId from CK.tActorProfile where GroupId = {idGroup} and ActorId = {idUser}" )
+                    .Should().Be( idUser );
                 // ...and still not in the ZoneEmpty.
-                u.Database.AssertEmptyReader( $"select ActorId from CK.tActorProfile where GroupId = {idZoneEmpty} and ActorId = {idUser}" );
+                u.Database.ExecuteReader( $"select ActorId from CK.tActorProfile where GroupId = {idZoneEmpty} and ActorId = {idUser}" )
+                    .Rows.Should().BeEmpty();
             }
         }
 
@@ -245,16 +261,20 @@ namespace CK.DB.Zone.Tests
                 // This works since the user is in the zoneOK (Intersect does nothing).
                 g.MoveGroup( ctx, 1, idGroup, idZoneOK, GroupMoveOption.Intersect );
                 // User is in the Group and in the ZoneOK.
-                u.Database.AssertScalarEquals( idUser, $"select ActorId from CK.tActorProfile where GroupId = {idGroup} and ActorId = {idUser}" );
-                u.Database.AssertScalarEquals( idUser, $"select ActorId from CK.tActorProfile where GroupId = {idZoneOK} and ActorId = {idUser}" );
+                u.Database.ExecuteScalar( $"select ActorId from CK.tActorProfile where GroupId = {idGroup} and ActorId = {idUser}" )
+                    .Should().Be( idUser );
+                u.Database.ExecuteScalar( $"select ActorId from CK.tActorProfile where GroupId = {idZoneOK} and ActorId = {idUser}" )
+                    .Should().Be( idUser );
 
                 // This does work... But the user is removed from the group
                 // to preserve the 'Group.UserNotInZone' invariant.
                 g.MoveGroup( ctx, 1, idGroup, idZoneEmpty, GroupMoveOption.Intersect );
                 // User is no more in the Group: it has been removed.
-                u.Database.AssertEmptyReader( $"select ActorId from CK.tActorProfile where GroupId = {idGroup} and ActorId = {idUser}" );
+                u.Database.ExecuteReader( $"select ActorId from CK.tActorProfile where GroupId = {idGroup} and ActorId = {idUser}" )
+                    .Rows.Should().BeEmpty();
                 // ...and still not in the ZoneEmpty.
-                u.Database.AssertEmptyReader( $"select ActorId from CK.tActorProfile where GroupId = {idZoneEmpty} and ActorId = {idUser}" );
+                u.Database.ExecuteReader( $"select ActorId from CK.tActorProfile where GroupId = {idZoneEmpty} and ActorId = {idUser}" )
+                    .Rows.Should().BeEmpty();
             }
         }
 
@@ -277,16 +297,20 @@ namespace CK.DB.Zone.Tests
                 // This works since the user is in the zoneOK (Intersect does nothing).
                 g.MoveGroup( ctx, 1, idGroup, idZoneOK, GroupMoveOption.AutoUserRegistration );
                 // User is in the Group and in the ZoneOK.
-                u.Database.AssertScalarEquals( idUser, $"select ActorId from CK.tActorProfile where GroupId = {idGroup} and ActorId = {idUser}" );
-                u.Database.AssertScalarEquals( idUser, $"select ActorId from CK.tActorProfile where GroupId = {idZoneOK} and ActorId = {idUser}" );
+                u.Database.ExecuteScalar( $"select ActorId from CK.tActorProfile where GroupId = {idGroup} and ActorId = {idUser}" )
+                    .Should().Be( idUser );
+                u.Database.ExecuteScalar( $"select ActorId from CK.tActorProfile where GroupId = {idZoneOK} and ActorId = {idUser}" )
+                    .Should().Be( idUser );
 
                 // This does work: and the user is automatically added to the target Zone!
                 // (the 'Group.UserNotInZone' invariant is preserved).
                 g.MoveGroup( ctx, 1, idGroup, idZoneEmpty, GroupMoveOption.AutoUserRegistration );
                 // User is no more in the Group: it has been removed.
-                u.Database.AssertScalarEquals( idUser, $"select ActorId from CK.tActorProfile where GroupId = {idGroup} and ActorId = {idUser}" );
+                u.Database.ExecuteScalar( $"select ActorId from CK.tActorProfile where GroupId = {idGroup} and ActorId = {idUser}" )
+                    .Should().Be( idUser );
                 // ...and still not in the ZoneEmpty.
-                u.Database.AssertScalarEquals( idUser, $"select ActorId from CK.tActorProfile where GroupId = {idZoneEmpty} and ActorId = {idUser}" );
+                u.Database.ExecuteScalar( $"select ActorId from CK.tActorProfile where GroupId = {idZoneEmpty} and ActorId = {idUser}" )
+                    .Should().Be( idUser );
             }
         }
 

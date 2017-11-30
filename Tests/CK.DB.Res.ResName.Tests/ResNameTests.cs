@@ -1,5 +1,6 @@
-﻿using CK.Core;
+using CK.Core;
 using CK.SqlServer;
+using FluentAssertions;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -16,8 +17,10 @@ namespace CK.DB.Res.ResName.Tests
         public void resource_0_and_1_are_empty_and_System()
         {
             var r = TestHelper.StObjMap.Default.Obtain<ResNameTable>();
-            r.Database.AssertScalarEquals( "", "select ResName from CK.vRes where ResId = 0" );
-            r.Database.AssertScalarEquals( "System", "select ResName from CK.vRes where ResId = 1" );
+            r.Database.ExecuteScalar( "select ResName from CK.vRes where ResId = 0" )
+                .Should().Be( "" );
+            r.Database.ExecuteScalar( "select ResName from CK.vRes where ResId = 1" )
+                .Should().Be( "System" );
         }
 
 
@@ -58,22 +61,29 @@ namespace CK.DB.Res.ResName.Tests
             var p = TestHelper.StObjMap.Default.Obtain<Package>();
             using( var ctx = new SqlStandardCallContext() )
             {
-                p.ResNameTable.DestroyByResNamePrefix( ctx, "Test", resNameOnly:false );
+                p.ResNameTable.DestroyByResNamePrefix( ctx, "Test", resNameOnly: false );
 
                 int n1 = p.ResNameTable.CreateWithResName( ctx, "Test.Root" );
                 int n2 = p.ResNameTable.CreateWithResName( ctx, "Test.Root.1" );
                 int n3 = p.ResNameTable.CreateWithResName( ctx, "Test.Root.1.1" );
 
                 p.ResNameTable.Rename( ctx, n1, "Test.-Root-" );
-                p.Database.AssertEmptyReader( "select * from CK.tResName where ResName like 'Test.Root%'" )
-                          .AssertScalarEquals( n1, "select ResId from CK.tResName where ResName='Test.-Root-'" )
-                          .AssertScalarEquals( n2, "select ResId from CK.tResName where ResName='Test.-Root-.1'" )
-                          .AssertScalarEquals( n3, "select ResId from CK.tResName where ResName='Test.-Root-.1.1'" );
+                p.Database.ExecuteReader( "select * from CK.tResName where ResName like 'Test.Root%'" )
+                    .Rows.Should().BeEmpty();
+                p.Database.ExecuteScalar( "select ResId from CK.tResName where ResName='Test.-Root-'" )
+                    .Should().Be( n1 );
+                p.Database.ExecuteScalar( "select ResId from CK.tResName where ResName='Test.-Root-.1'" )
+                    .Should().Be( n2 );
+                p.Database.ExecuteScalar( "select ResId from CK.tResName where ResName='Test.-Root-.1.1'" )
+                .Should().Be( n3 );
 
                 p.ResNameTable.Rename( ctx, n1, "Test.MovedTheRootOnly", false );
-                p.Database.AssertScalarEquals( n1, "select ResId from CK.tResName where ResName='Test.MovedTheRootOnly'" )
-                          .AssertScalarEquals( n2, "select ResId from CK.tResName where ResName='Test.-Root-.1'" )
-                          .AssertScalarEquals( n3, "select ResId from CK.tResName where ResName='Test.-Root-.1.1'" );
+                p.Database.ExecuteScalar( "select ResId from CK.tResName where ResName='Test.MovedTheRootOnly'" )
+                     .Should().Be( n1 );
+                p.Database.ExecuteScalar( "select ResId from CK.tResName where ResName='Test.-Root-.1'" )
+                     .Should().Be( n2 );
+                p.Database.ExecuteScalar( "select ResId from CK.tResName where ResName='Test.-Root-.1.1'" )
+                    .Should().Be( n3 );
             }
         }
 
@@ -88,10 +98,12 @@ namespace CK.DB.Res.ResName.Tests
                 int n1 = p.ResNameTable.CreateWithResName( ctx, nameRoot + ".Test.Root" );
                 int n2 = p.ResNameTable.CreateWithResName( ctx, nameRoot + ".Test.Root.1" );
                 int n3 = p.ResNameTable.CreateWithResName( ctx, nameRoot + ".Test.Root.1.1" );
-                p.Database.AssertScalarEquals( 3, "select count(*) from CK.tResName where ResName like @0+'%'", nameRoot );
+                p.Database.ExecuteScalar( "select count(*) from CK.tResName where ResName like @0+'%'", nameRoot )
+                    .Should().Be( 3 );
 
                 p.ResNameTable.DestroyByResNamePrefix( ctx, nameRoot, resNameOnly: false );
-                p.Database.AssertEmptyReader( "select * from CK.tResName where ResName like @0 + '%'", nameRoot );
+                p.Database.ExecuteReader( "select * from CK.tResName where ResName like @0 + '%'", nameRoot )
+                    .Rows.Should().BeEmpty();
             }
         }
     }

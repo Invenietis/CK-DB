@@ -28,13 +28,15 @@ namespace CK.DB.Auth
         UnregisteredUser = 2,
 
         /// <summary>
-        /// Used when the user name or identifier is not valid.
+        /// Used when the user name or identifier is not valid or the user
+        /// does not exist at all, regardless of any provider.
         /// </summary>
         InvalidUserKey = 3,
 
         /// <summary>
         /// Used when credentials submitted are not valid.
-        /// This should start a lockout phasis.
+        /// This can be used for a null password as well as a failed password match.
+        /// On failed password match, this should start a lockout phasis.
         /// </summary>
         InvalidCredentials = 4,
 
