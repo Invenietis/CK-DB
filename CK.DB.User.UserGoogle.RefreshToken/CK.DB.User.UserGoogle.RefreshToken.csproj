@@ -6,7 +6,6 @@
     <Description>This package adds RefreshToken and LastRefreshTokenTime to tUserGoogle table.</Description>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CK.DB.Auth\CK.DB.Auth.csproj" />
     <ProjectReference Include="..\CK.DB.User.UserGoogle\CK.DB.User.UserGoogle.csproj" />
   </ItemGroup>
   <ItemGroup>

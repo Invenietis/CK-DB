@@ -11,10 +11,6 @@
   <ItemGroup>
     <EmbeddedResource Include="**\*.sql;**\*.tql;**\*.y4" Exclude="bin\**;obj\**;CodeCakeBuilder\**;packages\**;@(EmbeddedResource)" />
   </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net461' ">
-    <!--<PackageReference Include="System.Net.Http" Version="4.3.1" />-->
-  </ItemGroup>
   
   <ItemGroup>
     <Folder Include="Properties\" />
