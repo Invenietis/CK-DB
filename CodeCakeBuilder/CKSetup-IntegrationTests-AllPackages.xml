@@ -3,6 +3,9 @@
         <BinPaths>
             <BinPath>{binPath}</BinPath>
         </BinPaths>
+        <Dependencies>
+            <Dependency Name="CKSetup.Runner" MinVersion="5.0.0-d06-00-develop-0026" />
+        </Dependencies>
         <EngineAssemblyQualifiedName>CK.Setup.StObjEngine, CK.StObj.Engine</EngineAssemblyQualifiedName>
     </CKSetup>
     <StObjEngineConfiguration>

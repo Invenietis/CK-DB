@@ -83,7 +83,6 @@ namespace CodeCake
                                           .Value;
             Cake.Information( $"Using CK-Database version {vCKDatabase}." );
             string ckSetupNet461Path = System.IO.Path.GetFullPath( System.IO.Path.Combine( releasesDir, "CKSetup-Net461" ) );
-            string ckSetupNetCoreAppPath = System.IO.Path.GetFullPath( System.IO.Path.Combine( releasesDir, "CKSetup-NetCoreApp" ) );
 
             Task( "Check-Repository" )
                .Does( () =>
@@ -198,14 +197,7 @@ namespace CodeCake
                     Cake.Unzip( tempFile, ckSetupNet461Path );
                 } );
 
-            Task( "Download-CKSetup-NetCoreApp20-From-Store-and-Unzip-it" )
-                .Does( () =>
-                {
-                    var tempFile = Cake.DownloadFile( "http://cksetup.invenietis.net/dl-zip/CKSetup/NetCoreApp20" );
-                    Cake.Unzip( tempFile, ckSetupNetCoreAppPath );
-                } );
-
-            Task( "Run-CKSetup-On-IntegrationTests-AllPackages-Net461-With-CKSetup-NetCoreApp" )
+            Task( "Run-CKSetup-On-IntegrationTests-AllPackages-Net461-With-CKSetup-Net461" )
               .IsDependentOn( "Compile-IntegrationTests" )
               .IsDependentOn( "Download-CKSetup-Net461-From-Store-and-Unzip-it" )
               .Does( () =>
@@ -226,27 +218,6 @@ namespace CodeCake
                   }
               } );
 
-            Task( "Run-CKSetup-On-IntegrationTests-AllPackages-Tests-NetCoreApp-With-CKSetup-Net461" )
-              .IsDependentOn( "Compile-IntegrationTests" )
-              .IsDependentOn( "Download-CKSetup-Net461-From-Store-and-Unzip-it" )
-              .Does( () =>
-              {
-                  var binPath = integrationTestsDirectory + $"/bin/{configuration}/netcoreapp2.0/publish";
-                  string dbCon = GetConnectionStringForIntegrationTestsAllPackages();
-
-                  string configFile = System.IO.Path.Combine( releasesDir, "CKSetup-IntegrationTests-AllPackages-NetCoreApp.xml" );
-                  Cake.TransformTextFile( "CodeCakeBuilder/CKSetup-IntegrationTests-AllPackages.xml", "{", "}" )
-                        .WithToken( "binPath", binPath )
-                        .WithToken( "connectionString", dbCon )
-                        .Save( configFile );
-
-                  var cmdLine = $@"dotnet ""{ckSetupNetCoreAppPath}\CKSetup.exe"" run ""{configFile}"" -v Monitor ";
-                  {
-                      int result = Cake.RunCmd( cmdLine );
-                      if( result != 0 ) throw new Exception( "CKSetup.exe failed for Source Code generation." );
-                  }
-              } );
-
             Task( "Run-IntegrationTests" )
               .IsDependentOn( "Compile-IntegrationTests" )
               .WithCriteria( () => !Cake.IsInteractiveMode()
@@ -264,8 +235,7 @@ namespace CodeCake
 
             Task( "Push-NuGet-Packages" )
                     .IsDependentOn( "Create-NuGet-Packages" )
-                    .IsDependentOn( "Run-CKSetup-On-IntegrationTests-AllPackages-Net461-With-CKSetup-NetCoreApp" )
-                    .IsDependentOn( "Run-CKSetup-On-IntegrationTests-AllPackages-Tests-NetCoreApp-With-CKSetup-Net461" )
+                    .IsDependentOn( "Run-CKSetup-On-IntegrationTests-AllPackages-Net461-With-CKSetup-Net461" )
                     .IsDependentOn( "Run-IntegrationTests" )
                     .WithCriteria( () => gitInfo.IsValid )
                     .Does( () =>
