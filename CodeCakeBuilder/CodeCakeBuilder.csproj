@@ -76,6 +76,9 @@
     <None Include="packages.config" />
     <None Include="Run-CodeCake.ps1" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="CKSetup-IntegrationTests-AllPackages.xml" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

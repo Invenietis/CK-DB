@@ -57,8 +57,17 @@ namespace CK.DB.Auth
 
     }
 
+    /// <summary>
+    /// Provides standard default message to <see cref="KnownLoginFailureCode"/> used when
+    /// a reason is not provided.
+    /// </summary>
     public static class KnownLoginFailureCodeExtensions
     {
+        /// <summary>
+        /// Gets a standard reason string for known code.
+        /// </summary>
+        /// <param name="c">The login failure code.</param>
+        /// <returns>A default reason string.</returns>
         public static string ToKnownString( this KnownLoginFailureCode c )
         {
             switch( c )
@@ -73,6 +82,12 @@ namespace CK.DB.Auth
             }
         }
 
+        /// <summary>
+        /// Gets a standard reason string for known code.
+        /// Defaults to "Unspecified reason.".
+        /// </summary>
+        /// <param name="code">The login failure code.</param>
+        /// <returns>A default reason string.</returns>
         public static string ToKnownString( int code ) => ToKnownString( (KnownLoginFailureCode)code );
     }
 }

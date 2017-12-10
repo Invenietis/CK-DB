@@ -58,10 +58,10 @@ namespace CK.DB.Auth
 
         /// <summary>
         /// Initializes a new login result. This is the constructor used by the database calls.
-        /// If <paramref name="failureReason"/> is not empty or <see cref="failureCode"/> is not null,
+        /// If <paramref name="failureReason"/> is not empty or <paramref name="failureCode"/> is not null,
         /// the <see cref="IsSuccess"/> property is false and the <see cref="UserId"/> is
         /// automatically set to 0.
-        /// Special case is when failureCode is zero or userId is zero and both failure reason
+        /// Special case is when userId is zero and both failure reason
         /// and failure code are null: this result <see cref="IsEmpty"/>.
         /// </summary>
         /// <param name="userId">The user identifier. Must be greater or equal to 0.</param>
