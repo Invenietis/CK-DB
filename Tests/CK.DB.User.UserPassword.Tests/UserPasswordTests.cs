@@ -31,6 +31,29 @@ namespace CK.DB.User.UserPassword.Tests
         }
 
         [Test]
+        public void Generic_to_Basic_provider_with_userId_as_double_or_as_string()
+        {
+            var user = TestHelper.StObjMap.Default.Obtain<UserTable>();
+            var auth = TestHelper.StObjMap.Default.Obtain<Auth.Package>();
+            var basic = auth.FindProvider( "Basic" );
+            using( var ctx = new SqlStandardCallContext() )
+            {
+                var userName = Guid.NewGuid().ToString();
+                var userId = user.CreateUser( ctx, 1, userName );
+                basic.CreateOrUpdateUser( ctx, 1, userId, "pass" ).OperationResult.Should().Be( UCResult.Created );
+                var payload = new Dictionary<string, object>();
+                payload["password"] = "pass";
+
+                payload["userId"] = (double)userId;
+                basic.LoginUser( ctx, payload ).IsSuccess.Should().BeTrue();
+
+                payload["userId"] = userId.ToString();
+                basic.LoginUser( ctx, payload ).IsSuccess.Should().BeTrue();
+                user.DestroyUser( ctx, 1, userId );
+            }
+        }
+
+        [Test]
         public async Task standard_generic_tests_for_Basic_provider_Async()
         {
             var auth = TestHelper.StObjMap.Default.Obtain<Auth.Package>();

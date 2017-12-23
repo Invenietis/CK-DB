@@ -76,7 +76,18 @@ namespace CK.DB.Auth
                 string password = null;
                 foreach( var kv in kindOfDic )
                 {
-                    if( StringComparer.OrdinalIgnoreCase.Equals( kv.Key, "UserId" ) ) userId = kv.Value as int?;
+                    if( StringComparer.OrdinalIgnoreCase.Equals( kv.Key, "UserId" ) )
+                    {
+                        userId = kv.Value as int?;
+                        if( !userId.HasValue && kv.Value is double d )
+                        {
+                            userId = (int)d;
+                        }
+                        if( !userId.HasValue && kv.Value is string s )
+                        {
+                            if( Int32.TryParse( s, out int id ) ) userId = id;
+                        }
+                    }
                     if( StringComparer.OrdinalIgnoreCase.Equals( kv.Key, "UserName" ) ) userName = kv.Value as string;
                     if( StringComparer.OrdinalIgnoreCase.Equals( kv.Key, "Password" ) ) password = kv.Value as string;
                     if( password != null && (userId != null || userName != null) ) break;

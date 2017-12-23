@@ -4,7 +4,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>netcoreapp2.0;net461</TargetFrameworks>
-    <CKDBVersion Condition=" '$(CKDBVersion)' == '' ">0.0.0-0</CKDBVersion>
+    <CKDBVersion Condition=" '$(CKDBVersion)' == '' ">1.0.0-e03-00-develop-0003</CKDBVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">
