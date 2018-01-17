@@ -9,6 +9,7 @@
   
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">
     <OutputType>Exe</OutputType>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,6 +17,10 @@
     <ProjectReference Include="..\CK.DB.Group.SimpleNaming.Tests\CK.DB.Group.SimpleNaming.Tests.csproj" />
     <ProjectReference Include="..\CK.DB.Zone.Tests\CK.DB.Zone.Tests.csproj" />
   </ItemGroup>
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">
+    <PackageReference Include="NUnitLite" Version="3.9.0" />
+  </ItemGroup>
+
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>

@@ -9,12 +9,16 @@
   
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">
     <OutputType>Exe</OutputType>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\CK.DB.User.UserGoogle.AuthScope\CK.DB.User.UserGoogle.AuthScope.csproj" />
     <ProjectReference Include="..\CK.DB.User.UserGoogle.Tests\CK.DB.User.UserGoogle.Tests.csproj" />
     <ProjectReference Include="..\CK.DB.Auth.AuthScope.Tests\CK.DB.Auth.AuthScope.Tests.csproj" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">
+    <PackageReference Include="NUnitLite" Version="3.9.0" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />

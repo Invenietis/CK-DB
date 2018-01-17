@@ -10,14 +10,19 @@
   
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">
     <OutputType>Exe</OutputType>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
   
   <ItemGroup>
     <ProjectReference Include="..\..\CK.DB.Actor\CK.DB.Actor.csproj" />
     <PackageReference Include="CK.DB.Tests.NUnit" Version="$(CKDatabaseVersion)" />
   </ItemGroup>
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">
+    <PackageReference Include="NUnitLite" Version="3.9.0" />
+  </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Logs\Text\" />
     <Folder Include="Properties\" />
   </ItemGroup>
   

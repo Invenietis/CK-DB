@@ -10,6 +10,7 @@ using CK.SqlServer;
 using NUnit.Framework;
 using System.Globalization;
 using FluentAssertions;
+using static CK.Testing.DBSetupTestHelper;
 
 namespace CK.DB.Culture.Tests
 {

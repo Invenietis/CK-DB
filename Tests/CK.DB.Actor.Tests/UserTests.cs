@@ -8,6 +8,7 @@ using CK.SqlServer;
 using CK.Core;
 using System.Data.SqlClient;
 using FluentAssertions;
+using static CK.Testing.DBSetupTestHelper;
 
 namespace CK.DB.Actor.Tests
 {

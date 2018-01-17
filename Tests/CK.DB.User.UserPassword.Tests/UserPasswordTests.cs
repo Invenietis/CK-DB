@@ -10,6 +10,7 @@ using System.Threading;
 using CK.DB.Auth;
 using System.Collections.Generic;
 using FluentAssertions;
+using static CK.Testing.DBSetupTestHelper;
 
 namespace CK.DB.User.UserPassword.Tests
 {

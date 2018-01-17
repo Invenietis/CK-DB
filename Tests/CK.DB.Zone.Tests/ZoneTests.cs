@@ -10,6 +10,7 @@ using CK.SqlServer;
 using NUnit.Framework;
 using CK.SqlServer.Setup;
 using FluentAssertions;
+using static CK.Testing.DBSetupTestHelper;
 
 namespace CK.DB.Zone.Tests
 {

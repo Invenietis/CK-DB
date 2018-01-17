@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CK.SqlServer.Setup;
 using FluentAssertions;
+using static CK.Testing.DBSetupTestHelper;
 
 namespace CK.DB.HZone.Tests
 {

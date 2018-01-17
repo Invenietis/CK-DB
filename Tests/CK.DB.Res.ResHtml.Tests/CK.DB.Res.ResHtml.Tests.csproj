@@ -9,13 +9,15 @@
   
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">
     <OutputType>Exe</OutputType>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\CK.DB.Actor\CK.DB.Actor.csproj" />
-  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\CK.DB.Res.ResHtml\CK.DB.Res.ResHtml.csproj" />
     <ProjectReference Include="..\CK.DB.Res.Tests\CK.DB.Res.Tests.csproj" />
   </ItemGroup>
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">
+    <PackageReference Include="NUnitLite" Version="3.9.0" />
+  </ItemGroup>
+
 </Project>
