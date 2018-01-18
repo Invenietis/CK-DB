@@ -61,7 +61,7 @@ namespace CK.DB.Auth.Tests
                 result.FailureReason.Should().Be( "The failure" );
                 result.IsSuccess.Should().BeFalse();
                 result.UserId.Should().Be( 0 );
-
+                
                 result = auth.OnUserLogin( ctx, "test-fail-reason-only", Util.UtcMinValue, idUser, false, DateTime.UtcNow );
                 result.FailureCode.Should().Be( (int)KnownLoginFailureCode.Unspecified );
                 result.FailureReason.Should().Be( "The failure text" );

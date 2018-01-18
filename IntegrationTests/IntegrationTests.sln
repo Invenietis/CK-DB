@@ -1,11 +1,14 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.12
+VisualStudioVersion = 15.0.27130.2020
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{77261C09-FB79-4FA2-A393-D938450AA840}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\TestHelper.config = Tests\TestHelper.config
+	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AllPackages.Tests", "Tests\AllPackages.Tests\AllPackages.Tests.csproj", "{6300FABF-1307-4D0B-940D-CEB5CBD9216B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AllPackages.Tests", "Tests\AllPackages.Tests\AllPackages.Tests.csproj", "{6300FABF-1307-4D0B-940D-CEB5CBD9216B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CE857439-1CC5-481F-A38C-0D2969585AB7}"
 	ProjectSection(SolutionItems) = preProject
@@ -35,5 +38,8 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{6300FABF-1307-4D0B-940D-CEB5CBD9216B} = {77261C09-FB79-4FA2-A393-D938450AA840}
 		{B9A936BE-2EA5-4158-88F1-6B039990EE54} = {77261C09-FB79-4FA2-A393-D938450AA840}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DC3A2A0D-9685-4DAF-9151-B1D033636193}
 	EndGlobalSection
 EndGlobal

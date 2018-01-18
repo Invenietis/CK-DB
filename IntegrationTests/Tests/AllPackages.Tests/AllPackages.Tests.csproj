@@ -4,16 +4,19 @@
 
   <PropertyGroup>
     <TargetFrameworks>netcoreapp2.0;net461</TargetFrameworks>
-    <CKDBVersion Condition=" '$(CKDBVersion)' == '' ">1.0.0-e03-00-develop-0003</CKDBVersion>
+    <CKDBVersion Condition=" '$(CKDBVersion)' == '' ">0.0.0-0</CKDBVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">
     <OutputType>Exe</OutputType>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
 
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">
+    <PackageReference Include="NUnitLite" Version="3.9.0" />
+  </ItemGroup>
+  
   <ItemGroup>
-    <PackageReference Include="CK.Monitoring" Version="8.0.0" />
-    
     <PackageReference Include="CK.DB.Acl.AclType.Tests" Version="$(CKDBVersion)" />
     <PackageReference Include="CK.DB.Acl.Tests" Version="$(CKDBVersion)" />
     <PackageReference Include="CK.DB.Actor.ActorEMail.Tests" Version="$(CKDBVersion)" />
