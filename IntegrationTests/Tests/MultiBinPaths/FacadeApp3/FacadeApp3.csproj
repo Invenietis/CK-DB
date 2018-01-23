@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netcoreapp2.0;net461</TargetFrameworks>
+    <CKDBVersion Condition=" '$(CKDBVersion)' == '' ">0.0.0-0</CKDBVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">
+    <OutputType>Exe</OutputType>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">
+    <PackageReference Include="NUnitLite" Version="3.9.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CK.DB.User.UserGoogle.EMailColumns.Tests" Version="$(CKDBVersion)" />
+    <PackageReference Include="CK.DB.User.UserGoogle.RefreshToken.Tests" Version="$(CKDBVersion)" />
+
+    <PackageReference Include="CK.DB.Group.SimpleNaming.Tests" Version="$(CKDBVersion)" />
+    <PackageReference Include="CK.DB.Zone.SimpleNaming.Tests" Version="$(CKDBVersion)" />
+    <PackageReference Include="CK.DB.Zone.Tests" Version="$(CKDBVersion)" />
+    <PackageReference Include="CK.DB.HZone.Tests" Version="$(CKDBVersion)" />
+  </ItemGroup>
+
+</Project>

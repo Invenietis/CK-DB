@@ -1,0 +1,27 @@
+<Config>
+    <CKSetup>
+        <BinPaths>
+            <BinPath>FacadeApp1/bin/{BuildConfiguration}/{TargetFramework}</BinPath>
+            <BinPath>FacadeApp2/bin/{BuildConfiguration}/{TargetFramework}</BinPath>
+            <BinPath>FacadeApp3/bin/{BuildConfiguration}/{TargetFramework}</BinPath>
+        </BinPaths>
+        <EngineAssemblyQualifiedName>CK.Setup.StObjEngine, CK.StObj.Engine</EngineAssemblyQualifiedName>
+    </CKSetup>
+    <StObjEngineConfiguration>
+        <TraceDependencySorterInput>false</TraceDependencySorterInput>
+        <TraceDependencySorterOutput>false</TraceDependencySorterOutput>
+        <RevertOrderingNames>false</RevertOrderingNames>
+        <GenerateSourceFiles>true</GenerateSourceFiles>
+        <GeneratedAssemblyName>MultipleBinPath.Generated</GeneratedAssemblyName>
+        <Aspect Type="CK.Setup.SetupableAspectConfiguration, CK.Setupable.Model">
+            <TraceDependencySorterInput>false</TraceDependencySorterInput>
+            <TraceDependencySorterOutput>false</TraceDependencySorterOutput>
+            <RevertOrderingNames>false</RevertOrderingNames>
+        </Aspect>
+        <Aspect Type="CK.Setup.SqlSetupAspectConfiguration, CK.SqlServer.Setup.Model" >
+            <DefaultDatabaseConnectionString>{ConnectionString}</DefaultDatabaseConnectionString>
+            <GlobalResolution>false</GlobalResolution>
+            <IgnoreMissingDependencyIsError>true</IgnoreMissingDependencyIsError>
+        </Aspect>
+    </StObjEngineConfiguration>
+</Config>

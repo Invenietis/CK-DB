@@ -224,7 +224,9 @@ namespace CodeCake
                                    || Cake.ReadInteractiveOption( "Run integration tests?", 'Y', 'N' ) == 'Y' )
               .Does( () =>
               {
-                  var integrationTests = integrationProjects.Where( p => p.Name.EndsWith( ".Tests" ) );
+                  // Running AllPackages.Tests executes a CKSetup on MultiBinPaths with the
+                  // 3 applications (FacadeApp).
+                  var integrationTests = integrationProjects.Where( p => p.Name == "AllPackages.Tests" );
 
                   var testDlls = integrationTests
                                   .Select( p => System.IO.Path.Combine(
@@ -233,10 +235,26 @@ namespace CodeCake
                   Cake.NUnit( testDlls, new NUnitSettings() { Framework = "v4.5" } );
               } );
 
+            Task( "Run-Facade-App-Tests" )
+              .IsDependentOn( "Run-IntegrationTests" )
+              .WithCriteria( () => !Cake.IsInteractiveMode()
+                                   || Cake.ReadInteractiveOption( "Run Facade application tests?", 'Y', 'N' ) == 'Y' )
+              .Does( () =>
+              {
+                  var facadeTests = integrationProjects.Where( p => p.Name.StartsWith( "FacadeApp" ) );
+
+                  var testNet461Dlls = facadeTests
+                                  .Select( p => System.IO.Path.Combine(
+                                                      p.Path.GetDirectory().ToString(), "bin", configuration, "net461", p.Name + ".dll" ) );
+                  Cake.Information( $"Testing: {string.Join( ", ", testNet461Dlls )}" );
+                  Cake.NUnit( testNet461Dlls, new NUnitSettings() { Framework = "v4.5" } );
+              } );
+
             Task( "Push-NuGet-Packages" )
                     .IsDependentOn( "Create-NuGet-Packages" )
                     .IsDependentOn( "Run-CKSetup-On-IntegrationTests-AllPackages-Net461-With-CKSetup-Net461" )
                     .IsDependentOn( "Run-IntegrationTests" )
+                    .IsDependentOn( "Run-Facade-App-Tests" )
                     .WithCriteria( () => gitInfo.IsValid )
                     .Does( () =>
                     {
