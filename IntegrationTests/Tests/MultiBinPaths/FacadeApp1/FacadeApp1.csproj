@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="CK.DB.Acl.AclType.Tests" Version="$(CKDBVersion)" />
     <PackageReference Include="CK.DB.User.UserGoogle.Tests" Version="$(CKDBVersion)" />
     <PackageReference Include="CK.DB.User.UserPassword.Tests" Version="$(CKDBVersion)" />
     <PackageReference Include="CK.DB.User.UserGoogle.AuthScope.Tests" Version="$(CKDBVersion)" />

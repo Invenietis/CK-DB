@@ -18,16 +18,6 @@ namespace AllPackages.Tests.From
     }
 
     [TestFixture]
-    public class AclSimpleTests : CK.DB.Acl.Tests.AclSimpleTests
-    {
-    }
-
-    [TestFixture]
-    public class AclTypeTests : CK.DB.Acl.AclType.Tests.AclTypeTests
-    {
-    }
-
-    [TestFixture]
     public class ZoneTests : CK.DB.Zone.Tests.ZoneTests
     {
     }
