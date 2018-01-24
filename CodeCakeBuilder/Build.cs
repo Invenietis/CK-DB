@@ -202,7 +202,7 @@ namespace CodeCake
               .IsDependentOn( "Download-CKSetup-Net461-From-Store-and-Unzip-it" )
               .Does( () =>
               {
-                  var binPath = integrationTestsDirectory + $"/bin/{configuration}/net461";
+                  var binPath = System.IO.Path.GetFullPath( integrationTestsDirectory + $"/bin/{configuration}/net461" );
                   string dbCon = GetConnectionStringForIntegrationTestsAllPackages();
 
                   string configFile = System.IO.Path.Combine( releasesDir, "CKSetup-IntegrationTests-AllPackages-Net461.xml" );
@@ -225,7 +225,10 @@ namespace CodeCake
               .Does( () =>
               {
                   // Running AllPackages.Tests executes a CKSetup on MultiBinPaths with the
-                  // 3 applications (FacadeApp).
+                  // 3 applications (FacadeApp) on the CKDB_TEST_MultiBinPaths database.
+                  // The task "Run-Facade-App-Tests" below executes the 3 tests apps which
+                  // use the burned connection string of the generated StObjMap.
+                  //
                   var integrationTests = integrationProjects.Where( p => p.Name == "AllPackages.Tests" );
 
                   var testDlls = integrationTests
