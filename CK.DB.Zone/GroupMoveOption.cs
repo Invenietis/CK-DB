@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,7 +20,7 @@ namespace CK.DB.Zone
         None = 0,
         /// <summary>
         /// Only users that are already registered in the target Zone
-        /// will be kept. Others will be automatically removed from the Group.
+        /// will be kept. Others will be automatically removed from the moved Groups.
         /// </summary>
         Intersect = 1,
         /// <summary>
