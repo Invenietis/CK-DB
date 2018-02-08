@@ -1,4 +1,4 @@
-﻿using NUnit.Framework;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,6 +29,11 @@ namespace AllPackages.Tests.From
 
     [TestFixture]
     public class UserGoogleRefreshTokenTests : CK.DB.User.UserGoogle.RefreshToken.Tests.UserGoogleRefreshTokenTests
+    {
+    }
+
+    [TestFixture]
+    public class UserSimpleCodeTests : CK.DB.User.UserSimpleCode.Tests.UserSimpleCodeTests
     {
     }
 

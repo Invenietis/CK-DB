@@ -35,6 +35,8 @@
 
     <PackageReference Include="CK.DB.User.UserPassword" Version="$(CKDBVersion)" />
 
+    <PackageReference Include="CK.DB.User.UserSimpleCode" Version="$(CKDBVersion)" />
+
     <PackageReference Include="CK.DB.Zone.SimpleNaming" Version="$(CKDBVersion)" />
     <PackageReference Include="CK.DB.Zone" Version="$(CKDBVersion)" />
   </ItemGroup>

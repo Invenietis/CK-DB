@@ -43,6 +43,7 @@
     <PackageReference Include="CK.DB.User.UserOidc.Tests" Version="$(CKDBVersion)" />
 
     <PackageReference Include="CK.DB.User.UserPassword.Tests" Version="$(CKDBVersion)" />
+    <PackageReference Include="CK.DB.User.UserSimpleCode.Tests" Version="$(CKDBVersion)" />
 
     <PackageReference Include="CK.DB.Zone.SimpleNaming.Tests" Version="$(CKDBVersion)" />
     <PackageReference Include="CK.DB.Zone.Tests" Version="$(CKDBVersion)" />
