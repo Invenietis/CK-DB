@@ -36,7 +36,7 @@ namespace CK.DB.User.UserOidc
         /// <param name="ctx">The call context to use.</param>
         /// <param name="info">The payload to challenge.</param>
         /// <param name="actualLogin">Set it to false to avoid login side-effect (such as updating the LastLoginTime) on success.</param>
-        /// <returns>The positive identifier of the user on success or 0 if the Oidc user does not exist.</returns>
+        /// <returns>The login result.</returns>
         public LoginResult LoginUser( ISqlCallContext ctx, IUserOidcInfo info, bool actualLogin = true )
         {
             var mode = actualLogin
@@ -67,8 +67,8 @@ namespace CK.DB.User.UserOidc
         /// <param name="ctx">The call context to use.</param>
         /// <param name="schemeSuffix">The scheme suffix.</param>
         /// <param name="sub">The sub that identifies the user in the <paramref name="schemeSuffix"/>.</param>
-        /// <returns>A <see cref="KnownUserOidcInfo"/> or null if not found.</returns>
-        public KnownUserOidcInfo FindKnownUserInfo( ISqlCallContext ctx, string schemeSuffix, string sub )
+        /// <returns>A <see cref="IdentifiedUserInfo{T}"/> or null if not found.</returns>
+        public IdentifiedUserInfo<IUserOidcInfo> FindKnownUserInfo( ISqlCallContext ctx, string schemeSuffix, string sub )
         {
             using( var c = CreateReaderCommand( schemeSuffix, sub ) )
             {
@@ -87,7 +87,7 @@ namespace CK.DB.User.UserOidc
         /// <param name="userId">The user identifier for which a Oidc account must be created or updated.</param>
         /// <param name="info">User information to create or update.</param>
         /// <param name="mode">Configures Create, Update only or WithLogin behavior.</param>
-        /// <returns>The user identifier (when <paramref name="userId"/> is 0, this is a login) and the operation result.</returns>
+        /// <returns>The result.</returns>
         [SqlProcedure( "sUserOidcUCL" )]
         protected abstract UCLResult UserOidcUCL(
             ISqlCallContext ctx,

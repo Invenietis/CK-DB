@@ -1,0 +1,10 @@
+-- SetupConfig: { "AddRequires": "Model.CK.UserSimpleCodeTable" } 
+-- 
+create transformer on CK.vUserAuthProvider
+as
+begin
+	inject "
+	union all
+	select UserId, 'SimpleCode', LastLoginTime from CK.tUserSimpleCode where UserId > 0
+	" after first part {select};
+end

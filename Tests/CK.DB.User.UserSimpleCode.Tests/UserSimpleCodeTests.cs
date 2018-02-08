@@ -1,0 +1,151 @@
+using System;
+using System.Data.SqlClient;
+using System.Threading.Tasks;
+using CK.Core;
+using CK.DB.Actor;
+using CK.SqlServer;
+using NUnit.Framework;
+using System.Linq;
+using CK.DB.Auth;
+using System.Collections.Generic;
+using FluentAssertions;
+using static CK.Testing.DBSetupTestHelper;
+
+namespace CK.DB.User.UserSimpleCode.Tests
+{
+    [TestFixture]
+    public class UserSimpleCodeTests
+    {
+        [Test]
+        public void create_SimpleCode_user_and_check_read_info_object_method()
+        {
+            var u = TestHelper.StObjMap.Default.Obtain<UserSimpleCodeTable>();
+            var user = TestHelper.StObjMap.Default.Obtain<UserTable>();
+            var infoFactory = TestHelper.StObjMap.Default.Obtain<IPocoFactory<IUserSimpleCodeInfo>>();
+            using( var ctx = new SqlStandardCallContext() )
+            {
+                var userName = Guid.NewGuid().ToString();
+                int userId = user.CreateUser( ctx, 1, userName );
+                var googleAccountId = Guid.NewGuid().ToString( "N" );
+
+                var info = infoFactory.Create();
+                info.SimpleCode = googleAccountId;
+                var created = u.CreateOrUpdateSimpleCodeUser( ctx, 1, userId, info );
+                created.OperationResult.Should().Be( UCResult.Created );
+                var info2 = u.FindKnownUserInfo( ctx, googleAccountId );
+
+                info2.UserId.Should().Be( userId );
+                info2.Info.SimpleCode.Should().Be( googleAccountId );
+
+                u.FindKnownUserInfo( ctx, Guid.NewGuid().ToString() ).Should().BeNull();
+                user.DestroyUser( ctx, 1, userId );
+                u.FindKnownUserInfo( ctx, googleAccountId ).Should().BeNull();
+            }
+        }
+
+        [Test]
+        public async Task create_SimpleCode_user_and_check_read_info_object_method_async()
+        {
+            var u = TestHelper.StObjMap.Default.Obtain<UserSimpleCodeTable>();
+            var user = TestHelper.StObjMap.Default.Obtain<UserTable>();
+            var infoFactory = TestHelper.StObjMap.Default.Obtain<IPocoFactory<IUserSimpleCodeInfo>>();
+            using( var ctx = new SqlStandardCallContext() )
+            {
+                var userName = Guid.NewGuid().ToString();
+                int userId = await user.CreateUserAsync( ctx, 1, userName );
+                var googleAccountId = Guid.NewGuid().ToString( "N" );
+
+                var info = infoFactory.Create();
+                info.SimpleCode = googleAccountId;
+                var created = await u.CreateOrUpdateSimpleCodeUserAsync( ctx, 1, userId, info );
+                created.OperationResult.Should().Be( UCResult.Created );
+                var info2 = await u.FindKnownUserInfoAsync( ctx, googleAccountId );
+
+                info2.UserId.Should().Be( userId );
+                info2.Info.SimpleCode.Should().Be( googleAccountId );
+
+                (await u.FindKnownUserInfoAsync( ctx, Guid.NewGuid().ToString() )).Should().BeNull();
+                await user.DestroyUserAsync( ctx, 1, userId );
+                (await u.FindKnownUserInfoAsync( ctx, googleAccountId )).Should().BeNull();
+            }
+        }
+
+        [Test]
+        public void SimpleCode_AuthProvider_is_registered()
+        {
+            Auth.Tests.AuthTests.CheckProviderRegistration( "SimpleCode" );
+        }
+
+        [Test]
+        public void vUserAuthProvider_reflects_the_user_SimpleCode_authentication()
+        {
+            var u = TestHelper.StObjMap.Default.Obtain<UserSimpleCodeTable>();
+            var user = TestHelper.StObjMap.Default.Obtain<UserTable>();
+            using( var ctx = new SqlStandardCallContext() )
+            {
+                string userName = "SimpleCode auth - " + Guid.NewGuid().ToString();
+                var googleAccountId = Guid.NewGuid().ToString( "N" );
+                var idU = user.CreateUser( ctx, 1, userName );
+                u.Database.ExecuteReader( $"select * from CK.vUserAuthProvider where UserId={idU} and Scheme='SimpleCode'" )
+                    .Rows.Should().BeEmpty();
+                var info = u.CreateUserInfo<IUserSimpleCodeInfo>();
+                info.SimpleCode = googleAccountId;
+                u.CreateOrUpdateSimpleCodeUser( ctx, 1, idU, info );
+                u.Database.ExecuteScalar( $"select count(*) from CK.vUserAuthProvider where UserId={idU} and Scheme='SimpleCode'" )
+                    .Should().Be( 1 );
+                u.DestroySimpleCodeUser( ctx, 1, idU );
+                u.Database.ExecuteReader( $"select * from CK.vUserAuthProvider where UserId={idU} and Scheme='SimpleCode'" )
+                    .Rows.Should().BeEmpty();
+            }
+        }
+
+        [Test]
+        public void standard_generic_tests_for_SimpleCode_provider()
+        {
+            var auth = TestHelper.StObjMap.Default.Obtain<Auth.Package>();
+            // With IUserSimpleCodeInfo POCO.
+            var f = TestHelper.StObjMap.Default.Obtain<IPocoFactory<IUserSimpleCodeInfo>>();
+            CK.DB.Auth.Tests.AuthTests.StandardTestForGenericAuthenticationProvider(
+                auth,
+                "SimpleCode",
+                payloadForCreateOrUpdate: ( userId, userName ) => f.Create( i => i.SimpleCode = "SimpleCodeFor:" + userName ),
+                payloadForLogin: ( userId, userName ) => f.Create( i => i.SimpleCode = "SimpleCodeFor:" + userName ),
+                payloadForLoginFail: ( userId, userName ) => f.Create( i => i.SimpleCode = "NO!" + userName )
+                );
+            // With a KeyValuePair.
+            CK.DB.Auth.Tests.AuthTests.StandardTestForGenericAuthenticationProvider(
+                auth,
+                "SimpleCode",
+                payloadForCreateOrUpdate: ( userId, userName ) => new[]
+                {
+                    new KeyValuePair<string,object>( "SimpleCode", "IdFor:" + userName)
+                },
+                payloadForLogin: ( userId, userName ) => new[]
+                {
+                    new KeyValuePair<string,object>( "SimpleCode", "IdFor:" + userName)
+                },
+                payloadForLoginFail: ( userId, userName ) => new[]
+                {
+                    new KeyValuePair<string,object>( "SimpleCode", ("IdFor:" + userName).ToUpperInvariant())
+                }
+                );
+        }
+
+        [Test]
+        public async Task standard_generic_tests_for_SimpleCode_provider_Async()
+        {
+            var auth = TestHelper.StObjMap.Default.Obtain<Auth.Package>();
+            var f = TestHelper.StObjMap.Default.Obtain<IPocoFactory<IUserSimpleCodeInfo>>();
+            await Auth.Tests.AuthTests.StandardTestForGenericAuthenticationProviderAsync(
+                auth,
+                "SimpleCode",
+                payloadForCreateOrUpdate: ( userId, userName ) => f.Create( i => i.SimpleCode = "SimpleCodeFor:" + userName ),
+                payloadForLogin: ( userId, userName ) => f.Create( i => i.SimpleCode = "SimpleCodeFor:" + userName ),
+                payloadForLoginFail: ( userId, userName ) => f.Create( i => i.SimpleCode = "NO!" + userName )
+                );
+        }
+
+    }
+
+}
+

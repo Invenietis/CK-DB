@@ -8,9 +8,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CK.DB.User.UserGoogle
+namespace CK.DB.User.UserSimpleCode
 {
-    public abstract partial class UserGoogleTable
+    public abstract partial class UserSimpleCodeTable
     {
         /// <summary>
         /// Creates or updates a user entry for this provider. 
@@ -20,16 +20,16 @@ namespace CK.DB.User.UserGoogle
         /// <param name="ctx">The call context to use.</param>
         /// <param name="actorId">The acting actor identifier.</param>
         /// <param name="userId">The user identifier that must be registered.</param>
-        /// <param name="info">Provider specific data: the <see cref="IUserGoogleInfo"/> poco.</param>
+        /// <param name="info">Provider specific data: the <see cref="IUserSimpleCodeInfo"/> poco.</param>
         /// <param name="mode">Optionnaly configures Create, Update only or WithLogin behavior.</param>
-        /// <returns>The result.</returns>
-        public UCLResult CreateOrUpdateGoogleUser( ISqlCallContext ctx, int actorId, int userId, IUserGoogleInfo info, UCLMode mode = UCLMode.CreateOrUpdate )
+        /// <returns>The operation result.</returns>
+        public UCLResult CreateOrUpdateSimpleCodeUser( ISqlCallContext ctx, int actorId, int userId, IUserSimpleCodeInfo info, UCLMode mode = UCLMode.CreateOrUpdate )
         {
-            return UserGoogleUCL( ctx, actorId, userId, info, mode );
+            return UserSimpleCodeUCL( ctx, actorId, userId, info, mode );
         }
 
         /// <summary>
-        /// Challenges <see cref="IUserGoogleInfo"/> data to identify a user.
+        /// Challenges <see cref="IUserSimpleCodeInfo"/> data to identify a user.
         /// Note that a successful challenge may have side effects such as updating claims, access tokens or other data
         /// related to the user and this provider.
         /// </summary>
@@ -37,58 +37,58 @@ namespace CK.DB.User.UserGoogle
         /// <param name="info">The payload to challenge.</param>
         /// <param name="actualLogin">Set it to false to avoid login side-effect (such as updating the LastLoginTime) on success.</param>
         /// <returns>The login result.</returns>
-        public LoginResult LoginUser( ISqlCallContext ctx, IUserGoogleInfo info, bool actualLogin = true )
+        public LoginResult LoginUser( ISqlCallContext ctx, IUserSimpleCodeInfo info, bool actualLogin = true )
         {
             var mode = actualLogin
                         ? UCLMode.UpdateOnly | UCLMode.WithActualLogin
                         : UCLMode.UpdateOnly | UCLMode.WithCheckLogin;
-            var r = UserGoogleUCL( ctx, 1, 0, info, mode );
+            var r = UserSimpleCodeUCL( ctx, 1, 0, info, mode );
             return r.LoginResult;
         }
 
         /// <summary>
-        /// Destroys a GoogleUser for a user.
+        /// Destroys a SimpleCode entry for a user.
         /// </summary>
         /// <param name="ctx">The call context to use.</param>
         /// <param name="actorId">The acting actor identifier.</param>
-        /// <param name="userId">The user identifier for which Google account information must be destroyed.</param>
+        /// <param name="userId">The user identifier for which simple code information must be destroyed.</param>
         /// <returns>The awaitable.</returns>
-        [SqlProcedure( "sUserGoogleDestroy" )]
-        public abstract void DestroyGoogleUser( ISqlCallContext ctx, int actorId, int userId );
+        [SqlProcedure( "sUserSimpleCodeDestroy" )]
+        public abstract void DestroySimpleCodeUser( ISqlCallContext ctx, int actorId, int userId );
 
         /// <summary>
-        /// Finds a user by its Google account identifier.
+        /// Finds a user by its SimpleCode.
         /// Returns null if no such user exists.
         /// </summary>
         /// <param name="ctx">The call context to use.</param>
-        /// <param name="googleAccountId">The google account identifier.</param>
+        /// <param name="simpleCode">The simple code.</param>
         /// <returns>A <see cref="IdentifiedUserInfo{T}"/> or null if not found.</returns>
-        public IdentifiedUserInfo<IUserGoogleInfo> FindKnownUserInfo( ISqlCallContext ctx, string googleAccountId )
+        public IdentifiedUserInfo<IUserSimpleCodeInfo> FindKnownUserInfo( ISqlCallContext ctx, string simpleCode )
         {
-            using( var c = CreateReaderCommand( googleAccountId ) )
+            using( var c = CreateReaderCommand( simpleCode ) )
             {
                 return c.ExecuteRow( ctx[Database], r => r == null
                                                             ? null
-                                                            : DoCreateUserUnfo( googleAccountId, r ) );
+                                                            : DoCreateUserUnfo( simpleCode, r ) );
             }
         }
 
         /// <summary>
-        /// Raw call to manage GoogleUser. Since this should not be used directly, it is protected.
+        /// Raw call to manage SimpleCode user. Since this should not be used directly, it is protected.
         /// Actual implementation of the centralized update, create or login procedure.
         /// </summary>
         /// <param name="ctx">The call context to use.</param>
         /// <param name="actorId">The acting actor identifier.</param>
-        /// <param name="userId">The user identifier for which a Google account must be created or updated.</param>
+        /// <param name="userId">The user identifier for which a SimpleCode account must be created or updated.</param>
         /// <param name="info">User information to create or update.</param>
         /// <param name="mode">Configures Create, Update only or WithCheck/ActualLogin behavior.</param>
-        /// <returns>The result.</returns>
-        [SqlProcedure( "sUserGoogleUCL" )]
-        protected abstract UCLResult UserGoogleUCL(
+        /// <returns>The user identifier (when <paramref name="userId"/> is 0, this is a login) and the operation result.</returns>
+        [SqlProcedure( "sUserSimpleCodeUCL" )]
+        protected abstract UCLResult UserSimpleCodeUCL(
             ISqlCallContext ctx,
             int actorId,
             int userId,
-            [ParameterSource]IUserGoogleInfo info,
+            [ParameterSource]IUserSimpleCodeInfo info,
             UCLMode mode );
 
 

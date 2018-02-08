@@ -70,7 +70,7 @@ namespace CK.DB.User.UserGoogle
         /// <param name="info">The payload to challenge.</param>
         /// <param name="actualLogin">Set it to false to avoid login side-effect (such as updating the LastLoginTime) on success.</param>
         /// <param name="cancellationToken">Optional cancellation token.</param>
-        /// <returns>The positive identifier of the user on success or 0 if the Google user does not exist.</returns>
+        /// <returns>The <see cref="LoginResult"/>.</returns>
         public async Task<LoginResult> LoginUserAsync( ISqlCallContext ctx, IUserGoogleInfo info, bool actualLogin = true, CancellationToken cancellationToken = default( CancellationToken ) )
         {
             var mode = actualLogin
@@ -101,7 +101,7 @@ namespace CK.DB.User.UserGoogle
         /// <param name="info">User information to create or update.</param>
         /// <param name="mode">Configures Create, Update only or WithCheck/ActualLogin behavior.</param>
         /// <param name="cancellationToken">Optional cancellation token.</param>
-        /// <returns>The user identifier (when <paramref name="userId"/> is 0, this is a login) and the operation result.</returns>
+        /// <returns>The result.</returns>
         [SqlProcedure( "sUserGoogleUCL" )]
         protected abstract Task<UCLResult> GoogleUserUCLAsync(
             ISqlCallContext ctx,
@@ -118,15 +118,14 @@ namespace CK.DB.User.UserGoogle
         /// <param name="ctx">The call context to use.</param>
         /// <param name="googleAccountId">The google account identifier.</param>
         /// <param name="cancellationToken">Optional cancellation token.</param>
-        /// <returns>A <see cref="KnownUserGoogleInfo"/> object or null if not found.</returns>
-        public Task<KnownUserGoogleInfo> FindKnownUserInfoAsync( ISqlCallContext ctx, string googleAccountId, CancellationToken cancellationToken = default( CancellationToken ) )
+        /// <returns>A <see cref="IdentifiedUserInfo{T}"/> object or null if not found.</returns>
+        public Task<IdentifiedUserInfo<IUserGoogleInfo>> FindKnownUserInfoAsync( ISqlCallContext ctx, string googleAccountId, CancellationToken cancellationToken = default( CancellationToken ) )
         {
             using( var c = CreateReaderCommand( googleAccountId ) )
             {
                 return c.ExecuteRowAsync( ctx[Database], r => r == null ? null : DoCreateUserUnfo( googleAccountId, r ) );
             }
         }
-
 
         /// <summary>
         /// Creates a the reader command parametrized with the Google account identifier.
@@ -143,19 +142,13 @@ namespace CK.DB.User.UserGoogle
             return c;
         }
 
-        KnownUserGoogleInfo DoCreateUserUnfo( string googleAccountId, SqlDataReader r )
+        IdentifiedUserInfo<IUserGoogleInfo> DoCreateUserUnfo( string googleAccountId, SqlDataReader r )
         {
             var info = _infoFactory.Create();
             info.GoogleAccountId = googleAccountId;
             FillUserGoogleInfo( info, r, 1 );
-            KnownUserGoogleInfo result = new KnownUserGoogleInfo()
-            {
-                UserId = r.GetInt32( 0 ),
-                Info = info
-            };
-            return result;
+            return new IdentifiedUserInfo<IUserGoogleInfo>( r.GetInt32( 0 ), info );
         }
-
 
         /// <summary>
         /// Adds the columns name to read.

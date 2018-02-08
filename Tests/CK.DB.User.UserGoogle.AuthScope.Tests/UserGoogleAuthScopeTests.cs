@@ -47,7 +47,7 @@ namespace CK.DB.User.UserGoogle.AuthScope.Tests
                     IUserGoogleInfo userInfo = factory.Create();
                     userInfo.GoogleAccountId = Guid.NewGuid().ToString();
                     await p.UserGoogleTable.CreateOrUpdateGoogleUserAsync( ctx, 1, id, userInfo );
-                    KnownUserGoogleInfo info = await p.UserGoogleTable.FindKnownUserInfoAsync( ctx, userInfo.GoogleAccountId );
+                    var info = await p.UserGoogleTable.FindKnownUserInfoAsync( ctx, userInfo.GoogleAccountId );
                     AuthScopeSet userSet = await p.ReadScopeSetAsync( ctx, info.UserId );
                     userSet.ToString().Should().Be( original.ToString() );
                 }

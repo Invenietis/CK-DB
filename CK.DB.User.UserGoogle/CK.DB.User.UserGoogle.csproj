@@ -5,15 +5,13 @@
     <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
     <Description>This package defines tUserGoogle table.</Description>
   </PropertyGroup>
+  
   <ItemGroup>
     <ProjectReference Include="..\CK.DB.Auth\CK.DB.Auth.csproj" />
   </ItemGroup>
+  
   <ItemGroup>
     <EmbeddedResource Include="**\*.sql;**\*.tql;**\*.y4" Exclude="bin\**;obj\**;@(EmbeddedResource)" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net461' ">
-    <!--<PackageReference Include="System.Net.Http" Version="4.3.1" />-->
   </ItemGroup>
   
   <ItemGroup>
