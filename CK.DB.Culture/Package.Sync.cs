@@ -1,4 +1,4 @@
-﻿using CK.Setup;
+using CK.Setup;
 using CK.SqlServer;
 using CK.SqlServer.Setup;
 using System;
@@ -95,18 +95,14 @@ namespace CK.DB.Culture
         /// <returns>The culture data or null.</returns>
         public CultureData GetCulture( ISqlCallContext ctx, int lcid )
         {
-            using( var c = new SqlCommand( $"select Name, EnglishName, NativeName from CK.tLCID where LCID=@LCID" ) )
+            using( var cmd = new SqlCommand( $"select Name, EnglishName, NativeName from CK.tLCID where LCID=@LCID" ) )
             {
-                c.Parameters.AddWithValue( "@LCID", lcid );
-                using( (c.Connection = ctx[Database.ConnectionString]).EnsureOpen() )
-                using( var r = c.ExecuteReader() )
-                {
-                    if( !r.Read() ) return null;
-                    return new CultureData( lcid, r.GetString(0), r.GetString(1), r.GetString(2) );
-                }
+                cmd.Parameters.AddWithValue( "@LCID", lcid );
+                return ctx[Database].ExecuteSingleRow( cmd, r => r != null
+                                                            ? new CultureData( lcid, r.GetString( 0 ), r.GetString( 1 ), r.GetString( 2 ) )
+                                                            : null );
             }
         }
-
 
         /// <summary>
         /// Gets the <see cref="ExtendedCultureData"/> for a given extended culture identifier.
@@ -116,16 +112,13 @@ namespace CK.DB.Culture
         /// <returns>The extended culture data or null.</returns>
         public ExtendedCultureData GetExtendedCulture( ISqlCallContext ctx, int xlcid )
         {
-            using( var c = new SqlCommand( $"select Fallbacks from CK.vXLCID where XLCID=@XLCID" ) )
+            using( var cmd = new SqlCommand( $"select Fallbacks from CK.vXLCID where XLCID=@XLCID" ) )
             {
-                c.Parameters.AddWithValue( "@XLCID", xlcid );
-                string[] f;
-                using( (c.Connection = ctx[Database]).EnsureOpen() )
-                {
-                    string s = (string)c.ExecuteScalar();
-                    if( s == null ) return null;
-                    f = s.Split( CultureData._separators );
-                }
+                cmd.Parameters.AddWithValue( "@XLCID", xlcid );
+                string fallbacks = (string)ctx[Database].ExecuteScalar( cmd );
+                if( fallbacks == null ) return null;
+
+                string[] f = fallbacks.Split( CultureData._separators );
                 CultureData[] d = new CultureData[f.Length / 4];
                 int idx = 0;
                 for( int i = 0; i < d.Length; ++i )

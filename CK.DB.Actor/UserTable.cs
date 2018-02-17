@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -69,12 +69,12 @@ namespace CK.DB.Actor
         /// <param name="ctx">The call context.</param>
         /// <param name="userName">The user name to lookup.</param>
         /// <returns>The user identifier or 0 if not found.</returns>
-        public Task<int> FindByNameAsync( ISqlCallContext ctx, string userName )
+        public async Task<int> FindByNameAsync( ISqlCallContext ctx, string userName )
         {
             using( var cmd = new SqlCommand( "select UserId from CK.tUser where UserName=@Key" ) )
             {
                 cmd.Parameters.AddWithValue( "@Key", userName );
-                return cmd.ExecuteScalarAsync( ctx[Database], 0 );
+                return (await ctx[Database].ExecuteScalarAsync( cmd )) is int id ? id : 0;
             }
         }
     }

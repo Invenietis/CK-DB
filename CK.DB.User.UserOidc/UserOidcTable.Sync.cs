@@ -72,7 +72,7 @@ namespace CK.DB.User.UserOidc
         {
             using( var c = CreateReaderCommand( schemeSuffix, sub ) )
             {
-                return c.ExecuteRow( ctx[Database], r => r == null
+                return ctx[Database].ExecuteSingleRow( c, r => r == null
                                                             ? null
                                                             : DoCreateUserUnfo( schemeSuffix, sub, r ) );
             }

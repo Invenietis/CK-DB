@@ -67,7 +67,7 @@ namespace CK.DB.User.UserSimpleCode
         {
             using( var c = CreateReaderCommand( simpleCode ) )
             {
-                return c.ExecuteRow( ctx[Database], r => r == null
+                return ctx[Database].ExecuteSingleRow( c, r => r == null
                                                             ? null
                                                             : DoCreateUserUnfo( simpleCode, r ) );
             }

@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CK.DB.Auth
@@ -20,28 +21,28 @@ namespace CK.DB.Auth
     [SqlObjectItem( "vUserAuthProvider" )]
     public abstract partial class Package : SqlPackage, IAuthenticationDatabaseService
     {
-        IDictionary<string,IGenericAuthenticationProvider> _allProviders;
+        IDictionary<string, IGenericAuthenticationProvider> _allProviders;
         IReadOnlyCollection<IGenericAuthenticationProvider> _allProvidersValues;
 
         void StObjConstruct( Actor.Package actor )
         {
         }
 
-        void StObjInitialize(IActivityMonitor m, IContextualStObjMap map)
+        void StObjInitialize( IActivityMonitor m, IContextualStObjMap map )
         {
-            using (m.OpenInfo($"Initializing CK.DB.Auth.Package : IAuthenticationDatabaseService"))
+            using( m.OpenInfo( $"Initializing CK.DB.Auth.Package : IAuthenticationDatabaseService" ) )
             {
-                _allProviders = map.Implementations.OfType<IGenericAuthenticationProvider>().ToDictionary(p => p.ProviderName, StringComparer.OrdinalIgnoreCase);
-                if (BasicProvider != null) _allProviders.Add(BasicToGenericProviderAdapter.Name, new BasicToGenericProviderAdapter(BasicProvider));
-                _allProvidersValues = new CKReadOnlyCollectionOnICollection<IGenericAuthenticationProvider>(_allProviders.Values);
-                m.CloseGroup($"{_allProviders.Count} providers: " + _allProviders.Keys.Concatenate());
+                _allProviders = map.Implementations.OfType<IGenericAuthenticationProvider>().ToDictionary( p => p.ProviderName, StringComparer.OrdinalIgnoreCase );
+                if( BasicProvider != null ) _allProviders.Add( BasicToGenericProviderAdapter.Name, new BasicToGenericProviderAdapter( BasicProvider ) );
+                _allProvidersValues = new CKReadOnlyCollectionOnICollection<IGenericAuthenticationProvider>( _allProviders.Values );
+                m.CloseGroup( $"{_allProviders.Count} providers: " + _allProviders.Keys.Concatenate() );
             }
         }
 
         /// <summary>
         /// Gets the only <see cref="IBasicAuthenticationProvider"/> if it exists or null.
         /// </summary>
-        [InjectContract(IsOptional = true)]
+        [InjectContract( IsOptional = true )]
         public IBasicAuthenticationProvider BasicProvider { get; protected set; }
 
         /// <summary>
@@ -75,8 +76,8 @@ namespace CK.DB.Auth
         /// <param name="actorId">The acting actor identifier.</param>
         /// <param name="userId">The user identifier.</param>
         /// <returns>The configured command.</returns>
-        [SqlProcedureNoExecute("sAuthUserInfoRead")]
-        protected abstract SqlCommand CmdReadUserAuthInfo(int actorId, int userId);
+        [SqlProcedureNoExecute( "sAuthUserInfoRead" )]
+        protected abstract SqlCommand CmdReadUserAuthInfo( int actorId, int userId );
 
 
         /// <summary>
@@ -101,37 +102,35 @@ namespace CK.DB.Auth
         /// <param name="actorId">The acting actor identifier.</param>
         /// <param name="userId">The user identifier.</param>
         /// <returns>The user information or null if the user identifier does not exist.</returns>
-        public async Task<IUserAuthInfo> ReadUserAuthInfoAsync(ISqlCallContext ctx, int actorId, int userId)
+        public Task<IUserAuthInfo> ReadUserAuthInfoAsync( ISqlCallContext ctx, int actorId, int userId )
         {
-            using (var cmd = CmdReadUserAuthInfo(actorId, userId))
-                try
+            async Task<IUserAuthInfo> ReadAsync( SqlCommand c, CancellationToken t )
+            {
+                using( var r = await c.ExecuteReaderAsync( t ).ConfigureAwait( false ) )
                 {
-                    using (await (cmd.Connection = ctx[this]).EnsureOpenAsync().ConfigureAwait(false))
-                    using (var r = await cmd.ExecuteReaderAsync().ConfigureAwait(false))
-                     {
-                        if (!await r.ReadAsync().ConfigureAwait(false)) return null;
-                        var result = new AuthInfo();
-                        result.UserId = r.GetInt32(0);
-                        result.UserName = r.GetString(1);
-                        if (await r.NextResultAsync().ConfigureAwait(false) 
-                            && await r.ReadAsync().ConfigureAwait(false))
+                    if( !await r.ReadAsync( t ).ConfigureAwait( false ) ) return null;
+                    var result = new AuthInfo();
+                    result.UserId = r.GetInt32( 0 );
+                    result.UserName = r.GetString( 1 );
+                    if( await r.NextResultAsync( t ).ConfigureAwait( false )
+                        && await r.ReadAsync( t ).ConfigureAwait( false ) )
+                    {
+                        var schemes = new List<UserAuthSchemeInfo>();
+                        do
                         {
-                            var schemes = new List<UserAuthSchemeInfo>();
-                            do
-                            {
-                                schemes.Add(new UserAuthSchemeInfo(r.GetString(0), r.GetDateTime(1)));
-                            }
-                            while (await r.ReadAsync().ConfigureAwait(false));
-                            result.Schemes = schemes;
+                            schemes.Add( new UserAuthSchemeInfo( r.GetString( 0 ), r.GetDateTime( 1 ) ) );
                         }
-                        else result.Schemes = Util.Array.Empty<UserAuthSchemeInfo>();
-                        return result;
+                        while( await r.ReadAsync( t ).ConfigureAwait( false ) );
+                        result.Schemes = schemes;
                     }
+                    else result.Schemes = Util.Array.Empty<UserAuthSchemeInfo>();
+                    return result;
                 }
-                catch (SqlException ex)
-                {
-                    throw SqlDetailedException.Create(cmd, ex);
-                }
+            }
+            using( var cmd = CmdReadUserAuthInfo( actorId, userId ) )
+            {
+                return ctx[Database].ExecuteQueryAsync( cmd, ReadAsync );
+            }
         }
 
     }

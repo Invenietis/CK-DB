@@ -12,6 +12,7 @@ using System.Threading;
 using CK.DB.Auth;
 using CK.Text;
 using System.Reflection;
+using System.Data;
 
 namespace CK.DB.User.UserSimpleCode
 {
@@ -123,7 +124,9 @@ namespace CK.DB.User.UserSimpleCode
         {
             using( var c = CreateReaderCommand( simpleCode ) )
             {
-                return c.ExecuteRowAsync( ctx[Database], r => r == null ? null : DoCreateUserUnfo( simpleCode, r ) );
+                return ctx[Database].ExecuteSingleRowAsync( c, r => r == null
+                                                                ? null
+                                                                : DoCreateUserUnfo( simpleCode, r ) );
             }
         }
 
@@ -143,7 +146,7 @@ namespace CK.DB.User.UserSimpleCode
             return c;
         }
 
-        IdentifiedUserInfo<IUserSimpleCodeInfo> DoCreateUserUnfo( string simpleCode, SqlDataReader r )
+        IdentifiedUserInfo<IUserSimpleCodeInfo> DoCreateUserUnfo( string simpleCode, SqlDataRow r )
         {
             var info = _infoFactory.Create();
             info.SimpleCode = simpleCode;
@@ -166,10 +169,10 @@ namespace CK.DB.User.UserSimpleCode
         /// Fill UserInfo properties from reader.
         /// </summary>
         /// <param name="info">The info to fill.</param>
-        /// <param name="r">The data reader.</param>
+        /// <param name="r">The record.</param>
         /// <param name="idx">The index of the first column.</param>
         /// <returns>The updated index.</returns>
-        protected virtual int FillUserSimpleCodeInfo( IUserSimpleCodeInfo info, SqlDataReader r, int idx )
+        protected virtual int FillUserSimpleCodeInfo( IUserSimpleCodeInfo info, SqlDataRow r, int idx )
         {
             var props = _infoFactory.PocoClassType.GetProperties().Where( p => p.Name != nameof( IUserSimpleCodeInfo.SimpleCode ) );
             foreach( var p in props )

@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Logs\Text\" />
+    <Folder Include="Logs\" />
     <Folder Include="Properties\" />
   </ItemGroup>
   

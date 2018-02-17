@@ -1,4 +1,4 @@
-﻿using CK.Setup;
+using CK.Setup;
 using CK.SqlServer;
 using CK.SqlServer.Setup;
 using CK.Text;
@@ -8,6 +8,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CK.DB.Auth.AuthScope
@@ -43,26 +44,22 @@ namespace CK.DB.Auth.AuthScope
         /// <param name="ctx">The call context.</param>
         /// <param name="cmd">The reader command.</param>
         /// <returns>The set of scopes or null.</returns>
-        public async Task<AuthScopeSet> RawReadAuthScopeSetAsync(ISqlCallContext ctx, SqlCommand cmd)
+        public Task<AuthScopeSet> RawReadAuthScopeSetAsync(ISqlCallContext ctx, SqlCommand cmd)
         {
-            try
+            async Task<AuthScopeSet> ReadAsync( SqlCommand c, CancellationToken t )
             {
-                using (await (cmd.Connection = ctx[this]).EnsureOpenAsync().ConfigureAwait(false))
-                using (var r = await cmd.ExecuteReaderAsync().ConfigureAwait(false))
+                using( var r = await cmd.ExecuteReaderAsync().ConfigureAwait( false ) )
                 {
-                    if (!await r.ReadAsync().ConfigureAwait(false)) return null;
-                    var result = new AuthScopeSet() { ScopeSetId = r.GetInt32(0) };
-                    if (await r.NextResultAsync().ConfigureAwait(false))
+                    if( !await r.ReadAsync().ConfigureAwait( false ) ) return null;
+                    var result = new AuthScopeSet() { ScopeSetId = r.GetInt32( 0 ) };
+                    if( await r.NextResultAsync().ConfigureAwait( false ) )
                     {
-                        while (await r.ReadAsync().ConfigureAwait(false)) result.Add(CreateAuthScope(r));
+                        while( await r.ReadAsync().ConfigureAwait( false ) ) result.Add( CreateAuthScope( r ) );
                     }
                     return result;
                 }
             }
-            catch (SqlException ex)
-            {
-                throw SqlDetailedException.Create(cmd, ex);
-            }
+            return ctx[Database].ExecuteQueryAsync( cmd, ReadAsync );
         }
 
         /// <summary>

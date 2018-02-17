@@ -1,4 +1,4 @@
-﻿using CK.Setup;
+using CK.Setup;
 using CK.SqlServer;
 using CK.SqlServer.Setup;
 using CK.Text;
@@ -33,20 +33,20 @@ namespace CK.DB.Auth.AuthScope
         /// <returns>The set of scopes.</returns>
         public AuthScopeSet RawReadAuthScopeSet( ISqlCallContext ctx, SqlCommand cmd )
         {
-            using( (cmd.Connection = ctx[Database.ConnectionString]).EnsureOpen() )
-            using( var r = cmd.ExecuteReader() )
+            AuthScopeSet Read( SqlCommand c )
             {
-                var result = new AuthScopeSet();
-                if( r.Read() )
+                using( var r = cmd.ExecuteReader() )
                 {
-                    result.ScopeSetId = r.GetInt32( 0 );
+                    if( !r.Read() ) return null;
+                    var result = new AuthScopeSet() { ScopeSetId = r.GetInt32( 0 ) };
+                    if( r.NextResult() )
+                    {
+                        while( r.Read() ) result.Add( CreateAuthScope( r ) );
+                    }
+                    return result;
                 }
-                if( r.NextResult() )
-                {
-                    while( r.Read() ) result.Add( CreateAuthScope( r ) );
-                }
-                return result;
             }
+            return ctx[Database].ExecuteQuery( cmd, Read );
         }
 
         /// <summary>

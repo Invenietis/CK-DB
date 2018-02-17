@@ -12,6 +12,7 @@ using System.Threading;
 using CK.DB.Auth;
 using CK.Text;
 using System.Reflection;
+using System.Data;
 
 namespace CK.DB.User.UserGoogle
 {
@@ -123,7 +124,9 @@ namespace CK.DB.User.UserGoogle
         {
             using( var c = CreateReaderCommand( googleAccountId ) )
             {
-                return c.ExecuteRowAsync( ctx[Database], r => r == null ? null : DoCreateUserUnfo( googleAccountId, r ) );
+                return ctx[Database].ExecuteSingleRowAsync( c, r => r == null
+                                                                    ? null
+                                                                    : DoCreateUserUnfo( googleAccountId, r ) );
             }
         }
 
@@ -142,7 +145,7 @@ namespace CK.DB.User.UserGoogle
             return c;
         }
 
-        IdentifiedUserInfo<IUserGoogleInfo> DoCreateUserUnfo( string googleAccountId, SqlDataReader r )
+        IdentifiedUserInfo<IUserGoogleInfo> DoCreateUserUnfo( string googleAccountId, SqlDataRow r )
         {
             var info = _infoFactory.Create();
             info.GoogleAccountId = googleAccountId;
@@ -165,10 +168,10 @@ namespace CK.DB.User.UserGoogle
         /// Fill UserInfo properties from reader.
         /// </summary>
         /// <param name="info">The info to fill.</param>
-        /// <param name="r">The data reader.</param>
+        /// <param name="r">The record.</param>
         /// <param name="idx">The index of the first column.</param>
         /// <returns>The updated index.</returns>
-        protected virtual int FillUserGoogleInfo( IUserGoogleInfo info, SqlDataReader r, int idx )
+        protected virtual int FillUserGoogleInfo( IUserGoogleInfo info, SqlDataRow r, int idx )
         {
             var props = _infoFactory.PocoClassType.GetProperties().Where( p => p.Name != nameof( IUserGoogleInfo.GoogleAccountId ) );
             foreach( var p in props )

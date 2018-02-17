@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -62,7 +62,7 @@ namespace CK.DB.Actor
             using( var cmd = new SqlCommand( "select UserId from CK.tUser where UserName=@Key" ) )
             {
                 cmd.Parameters.AddWithValue( "@Key", userName );
-                return cmd.ExecuteScalar( ctx[Database], 0 );
+                return ctx[Database].ExecuteScalar( cmd ) is int id ? id : 0;
             }
         }
 

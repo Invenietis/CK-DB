@@ -12,6 +12,7 @@ using System.Threading;
 using CK.DB.Auth;
 using CK.Text;
 using System.Reflection;
+using System.Data;
 
 namespace CK.DB.User.UserOidc
 {
@@ -128,7 +129,7 @@ namespace CK.DB.User.UserOidc
         {
             using( var c = CreateReaderCommand( schemeSuffix, sub ) )
             {
-                return c.ExecuteRowAsync( ctx[Database], r => r == null ? null : DoCreateUserUnfo( schemeSuffix, sub, r ) );
+                return ctx[Database].ExecuteSingleRowAsync( c, r => r == null ? null : DoCreateUserUnfo( schemeSuffix, sub, r ) );
             }
         }
 
@@ -150,7 +151,7 @@ namespace CK.DB.User.UserOidc
             return c;
         }
 
-        IdentifiedUserInfo<IUserOidcInfo> DoCreateUserUnfo( string schemeSuffix, string sub, SqlDataReader r )
+        IdentifiedUserInfo<IUserOidcInfo> DoCreateUserUnfo( string schemeSuffix, string sub, SqlDataRow r )
         {
             var info = _infoFactory.Create();
             info.SchemeSuffix = schemeSuffix;
@@ -175,10 +176,10 @@ namespace CK.DB.User.UserOidc
         /// Fill UserInfo properties from reader.
         /// </summary>
         /// <param name="info">The info to fill.</param>
-        /// <param name="r">The data reader.</param>
+        /// <param name="r">The record.</param>
         /// <param name="idx">The index of the first column.</param>
         /// <returns>The updated index.</returns>
-        protected virtual int FillUserOidcInfo( IUserOidcInfo info, SqlDataReader r, int idx )
+        protected virtual int FillUserOidcInfo( IUserOidcInfo info, SqlDataRow r, int idx )
         {
             var props = _infoFactory.PocoClassType.GetProperties().Where( p => p.Name != nameof( IUserOidcInfo.SchemeSuffix ) && p.Name != nameof( IUserOidcInfo.Sub ) );
             foreach( var p in props )

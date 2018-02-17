@@ -87,29 +87,24 @@ namespace CK.DB.User.UserPassword
             if( string.IsNullOrEmpty( password ) ) return new LoginResult( KnownLoginFailureCode.InvalidCredentials );
             // 1 - Get the PwdHash and UserId.
             //     hash is null if the user is not a UserPassword: we'll try to migrate it.
-            byte[] hash = null;
-            int userId = 0;
-            using( (hashReader.Connection = ctx[Database] ).EnsureOpen() )
-            using( var r = hashReader.ExecuteReader( System.Data.CommandBehavior.SingleRow ) )
-            {
-                if( r.Read() )
-                {
-                    if( !r.IsDBNull( 0 ) ) hash = r.GetSqlBytes( 0 ).Buffer;
-                    userId = r.GetInt32( 1 );
-                    if( userId == 0 ) return new LoginResult( KnownLoginFailureCode.InvalidUserKey );
-                }
-                else return new LoginResult( KnownLoginFailureCode.InvalidUserKey );
-            }
-            Debug.Assert( userId != 0 );
+            var read = ctx[Database].ExecuteSingleRow( hashReader,
+                            row => row == null
+                                    ? ( 0, null )
+                                    : ( UserId : row.GetInt32( 1 ),
+                                        PwdHash : row.IsDBNull( 0 )
+                                                    ? null
+                                                    : row.GetBytes( 0 ) ) );
+            if( read.UserId == 0 ) return new LoginResult( KnownLoginFailureCode.InvalidUserKey );
+
             // If hash is null here, it means that the user is not registered.
             PasswordVerificationResult result = PasswordVerificationResult.Failed;
             PasswordHasher p = null;
             IUserPasswordMigrator migrator = null;
             // 2 - Handle external password migration or check the hash.
-            if( hash == null )
+            if( read.PwdHash == null )
             {
                 migrator = _package.PasswordMigrator;
-                if( migrator != null && migrator.VerifyPassword( ctx, userId, password ) )
+                if( migrator != null && migrator.VerifyPassword( ctx, read.UserId, password ) )
                 {
                     result = PasswordVerificationResult.SuccessRehashNeeded;
                     p = new PasswordHasher( HashIterationCount );
@@ -118,7 +113,7 @@ namespace CK.DB.User.UserPassword
             else
             {
                 p = new PasswordHasher( HashIterationCount );
-                result = p.VerifyHashedPassword( hash, password );
+                result = p.VerifyHashedPassword( read.PwdHash, password );
             }
             // 3 - Handle result.
             var mode = actualLogin ? UCLMode.WithActualLogin : UCLMode.WithCheckLogin;
@@ -127,17 +122,17 @@ namespace CK.DB.User.UserPassword
                 // 3.1 - If migration occurred, create the user with its password.
                 //       Else rehash the password and update the database.
                 mode |= UCLMode.CreateOrUpdate;
-                UCLResult r = PasswordUserUCL( ctx, 1, userId, p.HashPassword( password ), mode, null );
+                UCLResult r = PasswordUserUCL( ctx, 1, read.UserId, p.HashPassword( password ), mode, null );
                 if( r.OperationResult != UCResult.None && migrator != null )
                 {
-                    migrator.MigrationDone( ctx, userId );
+                    migrator.MigrationDone( ctx, read.UserId );
                 }
                 return r.LoginResult;
             }
             // 4 - Challenges the database login checks.
             int? failureCode = null;
             if( result == PasswordVerificationResult.Failed ) failureCode = (int)KnownLoginFailureCode.InvalidCredentials;
-            return PasswordUserUCL( ctx, 1, userId, null, mode, failureCode ).LoginResult;
+            return PasswordUserUCL( ctx, 1, read.UserId, null, mode, failureCode ).LoginResult;
         }
 
         /// <summary>

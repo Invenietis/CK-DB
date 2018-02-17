@@ -67,7 +67,7 @@ namespace CK.DB.User.UserGoogle
         {
             using( var c = CreateReaderCommand( googleAccountId ) )
             {
-                return c.ExecuteRow( ctx[Database], r => r == null
+                return ctx[Database].ExecuteSingleRow( c, r => r == null
                                                             ? null
                                                             : DoCreateUserUnfo( googleAccountId, r ) );
             }

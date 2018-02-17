@@ -41,34 +41,32 @@ namespace CK.DB.Auth
         /// <returns>The user information or null if the user identifier does not exist.</returns>
         public IUserAuthInfo ReadUserAuthInfo( ISqlCallContext ctx, int actorId, int userId )
         {
-            using( var cmd = CmdReadUserAuthInfo( actorId, userId ) )
-                try
+            AuthInfo Read( SqlCommand c )
+            {
+                using( var r = c.ExecuteReader() )
                 {
-                    using( (cmd.Connection = ctx.GetConnection( this )).EnsureOpen() )
-                    using( var reader = cmd.ExecuteReader() )
+                    if( !r.Read() ) return null;
+                    var info = new AuthInfo();
+                    info.UserId = r.GetInt32( 0 );
+                    info.UserName = r.GetString( 1 );
+                    if( r.NextResult() && r.Read() )
                     {
-                        if( !reader.Read() ) return null;
-                        var info = new AuthInfo();
-                        info.UserId = reader.GetInt32( 0 );
-                        info.UserName = reader.GetString( 1 );
-                        if( reader.NextResult() && reader.Read() )
+                        var providers = new List<UserAuthSchemeInfo>();
+                        do
                         {
-                            var providers = new List<UserAuthSchemeInfo>();
-                            do
-                            {
-                                providers.Add( new UserAuthSchemeInfo( reader.GetString( 0 ), reader.GetDateTime( 1 ) ) );
-                            }
-                            while( reader.Read() );
-                            info.Schemes = providers;
+                            providers.Add( new UserAuthSchemeInfo( r.GetString( 0 ), r.GetDateTime( 1 ) ) );
                         }
-                        else info.Schemes = Util.Array.Empty<UserAuthSchemeInfo>();
-                        return info;
+                        while( r.Read() );
+                        info.Schemes = providers;
                     }
+                    else info.Schemes = Util.Array.Empty<UserAuthSchemeInfo>();
+                    return info;
                 }
-                catch( SqlException ex )
-                {
-                    throw SqlDetailedException.Create( cmd, ex );
-                }
+            }
+            using( var cmd = CmdReadUserAuthInfo( actorId, userId ) )
+            {
+                return ctx[Database].ExecuteQuery( cmd, Read );
+            }
         }
 
     }
