@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!--This file represents the results of running a test suite-->
+<test-results name="C:\Dev\CK-Database-Projects\CK-DB\Tests\CK.DB.Acl.Tests\bin\Debug\net461\CK.DB.Acl.Tests.dll" total="22" errors="0" failures="0" not-run="0" inconclusive="0" ignored="0" skipped="0" invalid="0" date="2018-02-28" time="14:33:47">
+  <environment nunit-version="2.6.4.14350" clr-version="4.0.30319.42000" os-version="Microsoft Windows NT 6.2.9200.0" platform="Win32NT" cwd="C:\Dev\CK-Database-Projects\CK-DB" machine-name="DESKTOP-5BQ4M95" user="olivi" user-domain="DESKTOP-5BQ4M95" />
+  <culture-info current-culture="fr-FR" current-uiculture="fr-FR" />
+  <test-suite type="Assembly" name="C:\Dev\CK-Database-Projects\CK-DB\Tests\CK.DB.Acl.Tests\bin\Debug\net461\CK.DB.Acl.Tests.dll" executed="True" result="Success" success="True" time="21.894" asserts="0">
+    <results>
+      <test-suite type="Namespace" name="CK" executed="True" result="Success" success="True" time="21.871" asserts="0">
+        <results>
+          <test-suite type="Namespace" name="DB" executed="True" result="Success" success="True" time="21.871" asserts="0">
+            <results>
+              <test-suite type="Namespace" name="Acl" executed="True" result="Success" success="True" time="21.870" asserts="0">
+                <results>
+                  <test-suite type="Namespace" name="Tests" executed="True" result="Success" success="True" time="21.870" asserts="0">
+                    <results>
+                      <test-suite type="TestFixture" name="AclSimpleTests" executed="True" result="Success" success="True" time="21.740" asserts="0">
+                        <results>
+                          <test-suite type="ParameterizedTest" name="challenging_system_default_acls" executed="True" result="Success" success="True" time="21.568" asserts="0">
+                            <results>
+                              <test-case name="CK.DB.Acl.Tests.AclSimpleTests.challenging_system_default_acls(0,127,&quot;CK.StdAcl.Public&quot;)" executed="True" result="Success" success="True" time="21.539" asserts="0" />
+                              <test-case name="CK.DB.Acl.Tests.AclSimpleTests.challenging_system_default_acls(1,0,null)" executed="True" result="Success" success="True" time="0.002" asserts="0" />
+                              <test-case name="CK.DB.Acl.Tests.AclSimpleTests.challenging_system_default_acls(2,8,&quot;CK.StdAcl.User&quot;)" executed="True" result="Success" success="True" time="0.002" asserts="0" />
+                              <test-case name="CK.DB.Acl.Tests.AclSimpleTests.challenging_system_default_acls(3,16,&quot;CK.StdAcl.Viewer&quot;)" executed="True" result="Success" success="True" time="0.001" asserts="0" />
+                              <test-case name="CK.DB.Acl.Tests.AclSimpleTests.challenging_system_default_acls(4,32,&quot;CK.StdAcl.Contributor&quot;)" executed="True" result="Success" success="True" time="0.002" asserts="0" />
+                              <test-case name="CK.DB.Acl.Tests.AclSimpleTests.challenging_system_default_acls(5,64,&quot;CK.StdAcl.Editor&quot;)" executed="True" result="Success" success="True" time="0.003" asserts="0" />
+                              <test-case name="CK.DB.Acl.Tests.AclSimpleTests.challenging_system_default_acls(6,80,&quot;CK.StdAcl.SuperEditor&quot;)" executed="True" result="Success" success="True" time="0.002" asserts="0" />
+                              <test-case name="CK.DB.Acl.Tests.AclSimpleTests.challenging_system_default_acls(7,112,&quot;CK.StdAcl.SafeAdministrator&quot;)" executed="True" result="Success" success="True" time="0.002" asserts="0" />
+                            </results>
+                          </test-suite>
+                          <test-case name="CK.DB.Acl.Tests.AclSimpleTests.destroying_actors_suppress_any_related_configurations" executed="True" result="Success" success="True" time="0.125" asserts="4" />
+                          <test-case name="CK.DB.Acl.Tests.AclSimpleTests.god_user_can_create_and_destroy_acls" executed="True" result="Success" success="True" time="0.009" asserts="1" />
+                          <test-case name="CK.DB.Acl.Tests.AclSimpleTests.playing_with_a_user_in_two_groups" executed="True" result="Success" success="True" time="0.020" asserts="13" />
+                        </results>
+                      </test-suite>
+                      <test-suite type="TestFixture" name="DBSetup" executed="True" result="Inconclusive" success="False" time="0.001" asserts="0" />
+                      <test-suite type="Namespace" name="FromActor" executed="True" result="Success" success="True" time="0.127" asserts="0">
+                        <results>
+                          <test-suite type="TestFixture" name="FromActorGroupTests" executed="True" result="Success" success="True" time="0.092" asserts="0">
+                            <results>
+                              <test-case name="CK.DB.Acl.Tests.FromActor.FromActorGroupTests.GroupTests.Anonymous_can_not_create_a_group" executed="True" result="Success" success="True" time="0.016" asserts="1" />
+                              <test-case name="CK.DB.Acl.Tests.FromActor.FromActorGroupTests.GroupTests.Anonymous_can_not_destroy_a_group" executed="True" result="Success" success="True" time="0.007" asserts="1" />
+                              <test-case name="CK.DB.Acl.Tests.FromActor.FromActorGroupTests.GroupTests.by_default_groups_can_not_be_destroyed_when_users_exist" executed="True" result="Success" success="True" time="0.013" asserts="1" />
+                              <test-case name="CK.DB.Acl.Tests.FromActor.FromActorGroupTests.GroupTests.destroying_a_user_removes_it_from_all_the_groups_it_belongs_to" executed="True" result="Success" success="True" time="0.008" asserts="0" />
+                              <test-case name="CK.DB.Acl.Tests.FromActor.FromActorGroupTests.GroupTests.groups_are_destroyed_even_when_users_exist_when_ForceDestroy_is_true" executed="True" result="Success" success="True" time="0.009" asserts="1" />
+                              <test-case name="CK.DB.Acl.Tests.FromActor.FromActorGroupTests.GroupTests.groups_can_be_created_and_destroyed_when_empty" executed="True" result="Success" success="True" time="0.009" asserts="1" />
+                              <test-case name="CK.DB.Acl.Tests.FromActor.FromActorGroupTests.GroupTests.only_system_users_can_add_or_remove_users_from_group_System" executed="True" result="Success" success="True" time="0.026" asserts="4" />
+                            </results>
+                          </test-suite>
+                          <test-suite type="TestFixture" name="FromActorUserTests" executed="True" result="Success" success="True" time="0.034" asserts="0">
+                            <results>
+                              <test-case name="CK.DB.Acl.Tests.FromActor.FromActorUserTests.UserTests.Anonymous_can_not_create_a_user" executed="True" result="Success" success="True" time="0.005" asserts="1" />
+                              <test-case name="CK.DB.Acl.Tests.FromActor.FromActorUserTests.UserTests.user_can_not_be_created_with_an_already_existing_UserName" executed="True" result="Success" success="True" time="0.005" asserts="2" />
+                              <test-case name="CK.DB.Acl.Tests.FromActor.FromActorUserTests.UserTests.user_FindByName_returns_0_when_not_found" executed="True" result="Success" success="True" time="0.005" asserts="3" />
+                              <test-case name="CK.DB.Acl.Tests.FromActor.FromActorUserTests.UserTests.UserName_is_not_set_if_another_user_exists_with_the_same_UserName" executed="True" result="Success" success="True" time="0.017" asserts="0" />
+                            </results>
+                          </test-suite>
+                        </results>
+                      </test-suite>
+                    </results>
+                  </test-suite>
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+    </results>
+  </test-suite>
+</test-results>
