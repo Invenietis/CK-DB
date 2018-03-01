@@ -45,10 +45,10 @@ namespace CK.DB.HZone.Tests
                 allZones.Add( zone.CreateZone( ctx, 1, allZones[2] ) );
                 int idGroup = group.CreateGroup( ctx, 1, allZones[3] );
 
-                Assert.Throws<SqlDetailedException>( () => zone.AddUser( ctx, 1, allZones[3], idUser1, autoAddUserInParentZone: false ) );
+                zone.Invoking( sut => sut.AddUser( ctx, 1, allZones[3], idUser1, autoAddUserInParentZone: false ) ).ShouldThrow<SqlDetailedException>();
                 zone.AddUser( ctx, 1, allZones[3], idUser1, autoAddUserInParentZone: true );
 
-                Assert.Throws<SqlDetailedException>( () => group.AddUser( ctx, 1, idGroup, idUser2, autoAddUserInZone: false ) );
+                group.Invoking( sut => sut.AddUser( ctx, 1, idGroup, idUser2, autoAddUserInZone: false ) ).ShouldThrow<SqlDetailedException>();
                 group.AddUser( ctx, 1, idGroup, idUser2, autoAddUserInZone: true );
 
                 user.Database.ExecuteScalar( "select count(*) from CK.tActorProfile where ActorId <> GroupId and ActorId = @0", idUser1 )
@@ -132,7 +132,7 @@ namespace CK.DB.HZone.Tests
                 {
                     allGroups.Add( group.CreateGroup( ctx, 1, idZone ) );
                 }
-                Assert.Throws<SqlDetailedException>( () => zone.DestroyZone( ctx, 1, allZones[0], forceDestroy: false ) );
+                zone.Invoking( sut => sut.DestroyZone( ctx, 1, allZones[0], forceDestroy: false ) ).ShouldThrow<SqlDetailedException>();
                 zone.DestroyZone( ctx, 1, allZones[0], forceDestroy: true );
             }
         }
@@ -216,7 +216,7 @@ namespace CK.DB.HZone.Tests
                 int idZone1 = zone.CreateZone( ctx, 1 );
                 int idZone2 = zone.CreateZone( ctx, 1, idZone1 );
 
-                Assert.Throws<SqlDetailedException>( () => zone.MoveZone( ctx, 1, idZone1, idZone2 ) );
+                zone.Invoking( sut => sut.MoveZone( ctx, 1, idZone1, idZone2 ) ).ShouldThrow<SqlDetailedException>();
             }
         }
     }

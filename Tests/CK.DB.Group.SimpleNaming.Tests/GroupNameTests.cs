@@ -182,7 +182,7 @@ namespace CK.DB.Group.SimpleNaming.Tests
                 string clash = gN.CheckUniqueNameForNewGroup( ctx, theGroupName );
                 clash.Should().BeNull();
                 int idTooMuch = g.CreateGroup( ctx, 1 );
-                Assert.Throws<SqlDetailedException>( () => gN.GroupRename( ctx, 1, idTooMuch, theGroupName ) );
+                gN.Invoking( sut => sut.GroupRename( ctx, 1, idTooMuch, theGroupName ) ).ShouldThrow<SqlDetailedException>();
 
             }
         }

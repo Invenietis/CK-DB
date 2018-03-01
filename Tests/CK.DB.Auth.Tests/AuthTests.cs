@@ -177,8 +177,8 @@ namespace CK.DB.Auth.Tests
                     }
                     using( TestHelper.Monitor.OpenInfo( "Invalid payload MUST throw an ArgumentException." ) )
                     {
-                        Assert.Throws<ArgumentException>( () => g.CreateOrUpdateUser( ctx, 1, userId, DBNull.Value ) );
-                        Assert.Throws<ArgumentException>( () => g.LoginUser( ctx, DBNull.Value ) );
+                        g.Invoking( sut => sut.CreateOrUpdateUser( ctx, 1, userId, DBNull.Value ) ).ShouldThrow<ArgumentException>();
+                        g.Invoking( sut => sut.LoginUser( ctx, DBNull.Value ) ).ShouldThrow<ArgumentException>();
                     }
                 }
                 user.DestroyUser( ctx, 1, userId );
@@ -269,8 +269,8 @@ namespace CK.DB.Auth.Tests
                     }
                     using( TestHelper.Monitor.OpenInfo( "Invalid payload MUST throw an ArgumentException." ) )
                     {
-                        Assert.Throws<ArgumentException>( async () => await g.CreateOrUpdateUserAsync( ctx, 1, userId, DBNull.Value ) );
-                        Assert.Throws<ArgumentException>( async () => await g.LoginUserAsync( ctx, DBNull.Value ) );
+                        g.Awaiting( sut => sut.CreateOrUpdateUserAsync( ctx, 1, userId, DBNull.Value ) ).ShouldThrow<ArgumentException>();
+                        g.Awaiting( sut => sut.LoginUserAsync( ctx, DBNull.Value ) ).ShouldThrow<ArgumentException>();
                     }
                     using( TestHelper.Monitor.OpenInfo( "Injecting disabled user in sAuthUserOnLogin." ) )
                     using( auth.Database.TemporaryTransform( @"

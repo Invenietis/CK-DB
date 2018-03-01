@@ -30,8 +30,8 @@ namespace CK.DB.Zone.Tests
             var t = TestHelper.StObjMap.Default.Obtain<ZoneTable>();
             using( var ctx = new SqlStandardCallContext() )
             {
-                Assert.Throws<SqlDetailedException>( () => t.DestroyZone( ctx, 1, 0 ) );
-                Assert.Throws<SqlDetailedException>( () => t.DestroyZone( ctx, 1, 1 ) );
+                t.Invoking( sut => sut.DestroyZone( ctx, 1, 0 ) ).ShouldThrow<SqlDetailedException>();
+                t.Invoking( sut => sut.DestroyZone( ctx, 1, 1 ) ).ShouldThrow<SqlDetailedException>();
             }
         }
 
@@ -85,10 +85,10 @@ namespace CK.DB.Zone.Tests
             var p = TestHelper.StObjMap.Default.Obtain<Zone.Package>();
             using( var ctx = new SqlStandardCallContext() )
             {
-                Assert.Throws<SqlDetailedException>( () => p.ZoneTable.CreateZone( ctx, 0 ) );
+                p.Invoking( sut => sut.ZoneTable.CreateZone( ctx, 0 ) ).ShouldThrow<SqlDetailedException>();
 
                 int zoneId = p.ZoneTable.CreateZone( ctx, 1 );
-                Assert.Throws<SqlDetailedException>( () => p.ZoneTable.DestroyZone( ctx, 0, zoneId ) );
+                p.Invoking( sut => sut.ZoneTable.DestroyZone( ctx, 0, zoneId ) ).ShouldThrow<SqlDetailedException>();
                 p.ZoneTable.DestroyZone( ctx, 1, zoneId );
             }
         }
@@ -103,13 +103,13 @@ namespace CK.DB.Zone.Tests
                 int userId = p.UserTable.CreateUser( ctx, 1, Guid.NewGuid().ToString() );
                 int groupId = p.GroupTable.CreateGroup( ctx, 1, zoneId );
 
-                Assert.Throws<SqlDetailedException>( () => p.GroupTable.AddUser( ctx, 1, groupId, userId ) );
+                p.Invoking( sut => sut.GroupTable.AddUser( ctx, 1, groupId, userId ) ).ShouldThrow<SqlDetailedException>();
 
-                Assert.DoesNotThrow( () => p.ZoneTable.AddUser( ctx, 1, zoneId, userId ), "Adding the user to the zone." );
-                Assert.DoesNotThrow( () => p.GroupTable.AddUser( ctx, 1, groupId, userId ), "Adding the user to group: now it works." );
+                p.Invoking( sut => sut.ZoneTable.AddUser( ctx, 1, zoneId, userId ) ).ShouldNotThrow( "Adding the user to the zone." );
+                p.Invoking( sut => sut.GroupTable.AddUser( ctx, 1, groupId, userId ) ).ShouldNotThrow( "Adding the user to group: now it works." );
 
-                Assert.DoesNotThrow( () => p.GroupTable.AddUser( ctx, 1, groupId, userId ), "If the user already exists in the zone, it is okay." );
-                Assert.DoesNotThrow( () => p.ZoneTable.AddUser( ctx, 1, zoneId, userId ), "Just like Groups: adding an already existing user to a Zone is okay." );
+                p.Invoking( sut => sut.GroupTable.AddUser( ctx, 1, groupId, userId ) ).ShouldNotThrow( "If the user already exists in the zone, it is okay." );
+                p.Invoking( sut => sut.ZoneTable.AddUser( ctx, 1, zoneId, userId ) ).ShouldNotThrow( "Just like Groups: adding an already existing user to a Zone is okay." );
 
                 p.ZoneTable.DestroyZone( ctx, 1, zoneId, true );
             }
@@ -124,7 +124,7 @@ namespace CK.DB.Zone.Tests
                 int zoneId = p.ZoneTable.CreateZone( ctx, 1 );
                 int groupId = p.GroupTable.CreateGroup( ctx, 1, zoneId );
 
-                Assert.Throws<SqlDetailedException>( () => p.ZoneTable.DestroyZone( ctx, 1, zoneId ) );
+                p.Invoking( sut => sut.ZoneTable.DestroyZone( ctx, 1, zoneId ) ).ShouldThrow<SqlDetailedException>();
 
                 p.GroupTable.DestroyGroup( ctx, 1, groupId );
                 p.ZoneTable.DestroyZone( ctx, 1, zoneId );
@@ -171,7 +171,7 @@ namespace CK.DB.Zone.Tests
             var g = map.Default.Obtain<GroupTable>();
             using( var ctx = new SqlStandardCallContext() )
             {
-                Assert.Throws<SqlDetailedException>( () => g.CreateGroup( ctx, 1, 1 ) );
+                g.Invoking( sut => sut.CreateGroup( ctx, 1, 1 ) ).ShouldThrow<SqlDetailedException>();
             }
         }
 
@@ -233,7 +233,7 @@ namespace CK.DB.Zone.Tests
 
                 // This does not: ZoneEmpty does not contain the user.
                 // This uses the default option: GroupMoveOption.None.
-                Assert.Throws<SqlDetailedException>( () => g.MoveGroup( ctx, 1, idGroup, idZoneEmpty ) );
+                g.Invoking( sut => sut.MoveGroup( ctx, 1, idGroup, idZoneEmpty ) ).ShouldThrow<SqlDetailedException>();
                 // User is still in the Group.
                 u.Database.ExecuteScalar( $"select ActorId from CK.tActorProfile where GroupId = {idGroup} and ActorId = {idUser}" )
                     .Should().Be( idUser );

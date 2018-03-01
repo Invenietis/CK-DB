@@ -31,8 +31,8 @@ namespace CK.DB.Res.ResName.Tests
             var p = TestHelper.StObjMap.Default.Obtain<Package>();
             using( var ctx = new SqlStandardCallContext() )
             {
-                Assert.Throws<SqlDetailedException>( () => p.ResTable.Destroy( ctx, 0 ) );
-                Assert.Throws<SqlDetailedException>( () => p.ResTable.Destroy( ctx, 1 ) );
+                p.Invoking( sut => sut.ResTable.Destroy( ctx, 0 ) ).ShouldThrow<SqlDetailedException>();
+                p.Invoking( sut => sut.ResTable.Destroy( ctx, 1 ) ).ShouldThrow<SqlDetailedException>();
             }
         }
 
@@ -47,10 +47,10 @@ namespace CK.DB.Res.ResName.Tests
                 string resName2 = Guid.NewGuid().ToString();
                 p.ResNameTable.CreateResName( ctx, resId, resName );
                 // Creates where a name already exists.
-                Assert.Throws<SqlDetailedException>( () => p.ResNameTable.CreateResName( ctx, resId, resName2 ) );
+                p.Invoking( sut => sut.ResNameTable.CreateResName( ctx, resId, resName2 ) ).ShouldThrow<SqlDetailedException>();
                 // Creates with an already existing name.
                 int resId2 = p.ResTable.Create( ctx );
-                Assert.Throws<SqlDetailedException>( () => p.ResNameTable.CreateResName( ctx, resId2, resName ) );
+                p.Invoking( sut => sut.ResNameTable.CreateResName( ctx, resId2, resName ) ).ShouldThrow<SqlDetailedException>();
                 p.ResTable.Destroy( ctx, resId );
                 p.ResTable.Destroy( ctx, resId2 );
             }

@@ -2,7 +2,7 @@
   "profiles": {
     "NUnit GUI": {
       "commandName": "Executable",
-      "executablePath": "..\\..\\packages\\NUnit.Runners.Net4.2.6.4\\tools\\nunit.exe",
+      "executablePath": "%USERPROFILE%\\.nuget\\packages\\nunit.runners.net4\\2.6.4\\tools\\nunit.exe",
       "commandLineArgs": "bin\\Debug\\net461\\CK.DB.Acl.AclType.Tests.dll"
     },
     "NetCore": {

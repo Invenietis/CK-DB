@@ -22,7 +22,7 @@ namespace CK.DB.Actor.Tests
             var u = TestHelper.StObjMap.Default.Obtain<UserTable>();
             using( var ctx = new SqlStandardCallContext() )
             {
-                Assert.Throws<SqlDetailedException>( () => u.CreateUser( ctx, 0, Guid.NewGuid().ToString() ) );
+                u.Invoking( sut => sut.CreateUser( ctx, 0, Guid.NewGuid().ToString() ) ).ShouldThrow<SqlDetailedException>();
             }
         }
 
