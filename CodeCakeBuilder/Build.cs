@@ -54,7 +54,6 @@ namespace CodeCake
             const string integrationTestsCSProj = integrationTestsDirectory+ "/AllPackages.Tests.csproj";
 
             var releasesDir = Cake.Directory( "CodeCakeBuilder/Releases" );
-            var coreBuildFile = Cake.File( "CodeCakeBuilder/CoreBuild.proj" );
 
             var projects = Cake.ParseSolution( solutionFileName )
                                        .Projects
