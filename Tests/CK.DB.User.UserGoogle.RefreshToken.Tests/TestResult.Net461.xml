@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!--This file represents the results of running a test suite-->
+<test-results name="C:\Dev\CK-Database-Projects\CK-DB\Tests\CK.DB.User.UserGoogle.RefreshToken.Tests\bin\Debug\net461\CK.DB.User.UserGoogle.RefreshToken.Tests.dll" total="7" errors="0" failures="0" not-run="0" inconclusive="0" ignored="0" skipped="0" invalid="0" date="2018-03-30" time="20:15:25">
+  <environment nunit-version="2.6.4.14350" clr-version="4.0.30319.42000" os-version="Microsoft Windows NT 6.2.9200.0" platform="Win32NT" cwd="C:\Dev\CK-Database-Projects\CK-DB" machine-name="DESKTOP-5BQ4M95" user="olivi" user-domain="DESKTOP-5BQ4M95" />
+  <culture-info current-culture="fr-FR" current-uiculture="fr-FR" />
+  <test-suite type="Assembly" name="C:\Dev\CK-Database-Projects\CK-DB\Tests\CK.DB.User.UserGoogle.RefreshToken.Tests\bin\Debug\net461\CK.DB.User.UserGoogle.RefreshToken.Tests.dll" executed="True" result="Success" success="True" time="17.554" asserts="0">
+    <results>
+      <test-suite type="Namespace" name="CK" executed="True" result="Success" success="True" time="17.541" asserts="0">
+        <results>
+          <test-suite type="Namespace" name="DB" executed="True" result="Success" success="True" time="17.541" asserts="0">
+            <results>
+              <test-suite type="Namespace" name="User" executed="True" result="Success" success="True" time="17.541" asserts="0">
+                <results>
+                  <test-suite type="Namespace" name="UserGoogle" executed="True" result="Success" success="True" time="17.541" asserts="0">
+                    <results>
+                      <test-suite type="Namespace" name="RefreshToken" executed="True" result="Success" success="True" time="17.540" asserts="0">
+                        <results>
+                          <test-suite type="Namespace" name="Tests" executed="True" result="Success" success="True" time="17.540" asserts="0">
+                            <results>
+                              <test-suite type="TestFixture" name="DBSetup" executed="True" result="Inconclusive" success="False" time="0.011" asserts="0" />
+                              <test-suite type="Namespace" name="From" executed="True" result="Success" success="True" time="16.988" asserts="0">
+                                <results>
+                                  <test-suite type="TestFixture" name="FromUserGoogleTests" executed="True" result="Success" success="True" time="16.988" asserts="0">
+                                    <results>
+                                      <test-case name="CK.DB.User.UserGoogle.RefreshToken.Tests.From.FromUserGoogleTests.UserGoogleTests.create_Google_user_and_check_read_info_object_method" executed="True" result="Success" success="True" time="15.955" asserts="0" />
+                                      <test-case name="CK.DB.User.UserGoogle.RefreshToken.Tests.From.FromUserGoogleTests.UserGoogleTests.create_Google_user_and_check_read_info_object_method_async" executed="True" result="Success" success="True" time="0.103" asserts="0" />
+                                      <test-case name="CK.DB.User.UserGoogle.RefreshToken.Tests.From.FromUserGoogleTests.UserGoogleTests.Google_AuthProvider_is_registered" executed="True" result="Success" success="True" time="0.039" asserts="0" />
+                                      <test-case name="CK.DB.User.UserGoogle.RefreshToken.Tests.From.FromUserGoogleTests.UserGoogleTests.standard_generic_tests_for_Google_provider" executed="True" result="Success" success="True" time="0.107" asserts="0" />
+                                      <test-case name="CK.DB.User.UserGoogle.RefreshToken.Tests.From.FromUserGoogleTests.UserGoogleTests.standard_generic_tests_for_Google_provider_Async" executed="True" result="Success" success="True" time="0.759" asserts="0" />
+                                      <test-case name="CK.DB.User.UserGoogle.RefreshToken.Tests.From.FromUserGoogleTests.UserGoogleTests.vUserAuthProvider_reflects_the_user_Google_authentication" executed="True" result="Success" success="True" time="0.015" asserts="0" />
+                                    </results>
+                                  </test-suite>
+                                </results>
+                              </test-suite>
+                              <test-suite type="TestFixture" name="UserGoogleRefreshTokenTests" executed="True" result="Success" success="True" time="0.532" asserts="0">
+                                <results>
+                                  <test-case name="CK.DB.User.UserGoogle.RefreshToken.Tests.UserGoogleRefreshTokenTests.RefreshToken_and_LastRefreshTokenTime_are_managed" executed="True" result="Success" success="True" time="0.531" asserts="0" />
+                                </results>
+                              </test-suite>
+                            </results>
+                          </test-suite>
+                        </results>
+                      </test-suite>
+                    </results>
+                  </test-suite>
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+    </results>
+  </test-suite>
+</test-results>

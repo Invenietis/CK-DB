@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!--This file represents the results of running a test suite-->
+<test-results name="C:\Dev\CK-Database-Projects\CK-DB\Tests\CK.DB.User.UserSimpleCode.Tests\bin\Debug\net461\CK.DB.User.UserSimpleCode.Tests.dll" total="22" errors="0" failures="0" not-run="0" inconclusive="3" ignored="0" skipped="0" invalid="0" date="2018-03-30" time="20:16:53">
+  <environment nunit-version="2.6.4.14350" clr-version="4.0.30319.42000" os-version="Microsoft Windows NT 6.2.9200.0" platform="Win32NT" cwd="C:\Dev\CK-Database-Projects\CK-DB" machine-name="DESKTOP-5BQ4M95" user="olivi" user-domain="DESKTOP-5BQ4M95" />
+  <culture-info current-culture="fr-FR" current-uiculture="fr-FR" />
+  <test-suite type="Assembly" name="C:\Dev\CK-Database-Projects\CK-DB\Tests\CK.DB.User.UserSimpleCode.Tests\bin\Debug\net461\CK.DB.User.UserSimpleCode.Tests.dll" executed="True" result="Success" success="True" time="18.011" asserts="0">
+    <results>
+      <test-suite type="Namespace" name="CK" executed="True" result="Success" success="True" time="17.998" asserts="0">
+        <results>
+          <test-suite type="Namespace" name="DB" executed="True" result="Success" success="True" time="17.998" asserts="0">
+            <results>
+              <test-suite type="Namespace" name="User" executed="True" result="Success" success="True" time="17.998" asserts="0">
+                <results>
+                  <test-suite type="Namespace" name="UserSimpleCode" executed="True" result="Success" success="True" time="17.998" asserts="0">
+                    <results>
+                      <test-suite type="Namespace" name="Tests" executed="True" result="Success" success="True" time="17.998" asserts="0">
+                        <results>
+                          <test-suite type="TestFixture" name="DBSetup" executed="True" result="Inconclusive" success="False" time="0.009" asserts="0" />
+                          <test-suite type="Namespace" name="From" executed="True" result="Success" success="True" time="17.706" asserts="0">
+                            <results>
+                              <test-suite type="TestFixture" name="FromActorGroupTests" executed="True" result="Success" success="True" time="17.041" asserts="0">
+                                <results>
+                                  <test-case name="CK.DB.User.UserSimpleCode.Tests.From.FromActorGroupTests.GroupTests.Anonymous_can_not_create_a_group" executed="True" result="Success" success="True" time="16.890" asserts="0" />
+                                  <test-case name="CK.DB.User.UserSimpleCode.Tests.From.FromActorGroupTests.GroupTests.Anonymous_can_not_destroy_a_group" executed="True" result="Success" success="True" time="0.022" asserts="0" />
+                                  <test-case name="CK.DB.User.UserSimpleCode.Tests.From.FromActorGroupTests.GroupTests.by_default_groups_can_not_be_destroyed_when_users_exist" executed="True" result="Success" success="True" time="0.062" asserts="0" />
+                                  <test-case name="CK.DB.User.UserSimpleCode.Tests.From.FromActorGroupTests.GroupTests.destroying_a_user_removes_it_from_all_the_groups_it_belongs_to" executed="True" result="Success" success="True" time="0.009" asserts="0" />
+                                  <test-case name="CK.DB.User.UserSimpleCode.Tests.From.FromActorGroupTests.GroupTests.groups_are_destroyed_even_when_users_exist_when_ForceDestroy_is_true" executed="True" result="Success" success="True" time="0.012" asserts="1" />
+                                  <test-case name="CK.DB.User.UserSimpleCode.Tests.From.FromActorGroupTests.GroupTests.groups_can_be_created_and_destroyed_when_empty" executed="True" result="Success" success="True" time="0.012" asserts="1" />
+                                  <test-case name="CK.DB.User.UserSimpleCode.Tests.From.FromActorGroupTests.GroupTests.only_system_users_can_add_or_remove_users_from_group_System" executed="True" result="Success" success="True" time="0.025" asserts="1" />
+                                </results>
+                              </test-suite>
+                              <test-suite type="TestFixture" name="FromActorUserTests" executed="True" result="Success" success="True" time="0.043" asserts="0">
+                                <results>
+                                  <test-case name="CK.DB.User.UserSimpleCode.Tests.From.FromActorUserTests.UserTests.Anonymous_can_not_create_a_user" executed="True" result="Success" success="True" time="0.004" asserts="0" />
+                                  <test-case name="CK.DB.User.UserSimpleCode.Tests.From.FromActorUserTests.UserTests.user_can_not_be_created_with_an_already_existing_UserName" executed="True" result="Success" success="True" time="0.015" asserts="2" />
+                                  <test-case name="CK.DB.User.UserSimpleCode.Tests.From.FromActorUserTests.UserTests.user_FindByName_returns_0_when_not_found" executed="True" result="Success" success="True" time="0.007" asserts="3" />
+                                  <test-case name="CK.DB.User.UserSimpleCode.Tests.From.FromActorUserTests.UserTests.UserName_is_not_set_if_another_user_exists_with_the_same_UserName" executed="True" result="Success" success="True" time="0.016" asserts="0" />
+                                </results>
+                              </test-suite>
+                              <test-suite type="TestFixture" name="FromAuthTests" executed="True" result="Success" success="True" time="0.619" asserts="0">
+                                <results>
+                                  <test-case name="CK.DB.User.UserSimpleCode.Tests.From.FromAuthTests.AuthTests.calling_OnUserLogin_directlty_works_but_is_reserved_for_very_rare_scenarii" executed="True" result="Success" success="True" time="0.589" asserts="0" />
+                                  <test-case name="CK.DB.User.UserSimpleCode.Tests.From.FromAuthTests.AuthTests.reading_IUserAuthInfo_for_an_unexisting_user_or_Anonymous_returns_null" executed="True" result="Success" success="True" time="0.007" asserts="0" />
+                                  <test-case name="CK.DB.User.UserSimpleCode.Tests.From.FromAuthTests.AuthTests.when_a_basic_provider_exists_its_IGenericAuthenticationProvider_adpater_accepts_UserId_or_UserName_based_login_payloads" executed="True" result="Inconclusive" success="False" time="0.013" asserts="0">
+                                    <reason>
+                                      <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                                    </reason>
+                                  </test-case>
+                                  <test-case name="CK.DB.User.UserSimpleCode.Tests.From.FromAuthTests.AuthTests.when_a_basic_provider_exists_its_IGenericAuthenticationProvider_adpater_accepts_UserId_or_UserName_based_login_payloads_Async" executed="True" result="Inconclusive" success="False" time="0.007" asserts="0">
+                                    <reason>
+                                      <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                                    </reason>
+                                  </test-case>
+                                  <test-case name="CK.DB.User.UserSimpleCode.Tests.From.FromAuthTests.AuthTests.when_basic_provider_exists_it_is_registered_in_tAuthProvider_and_available_as_IGenericAuthenticationProvider" executed="True" result="Inconclusive" success="False" time="0.002" asserts="0">
+                                    <reason>
+                                      <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                                    </reason>
+                                  </test-case>
+                                </results>
+                              </test-suite>
+                            </results>
+                          </test-suite>
+                          <test-suite type="TestFixture" name="UserSimpleCodeTests" executed="True" result="Success" success="True" time="0.276" asserts="0">
+                            <results>
+                              <test-case name="CK.DB.User.UserSimpleCode.Tests.UserSimpleCodeTests.create_SimpleCode_user_and_check_read_info_object_method" executed="True" result="Success" success="True" time="0.024" asserts="0" />
+                              <test-case name="CK.DB.User.UserSimpleCode.Tests.UserSimpleCodeTests.create_SimpleCode_user_and_check_read_info_object_method_async" executed="True" result="Success" success="True" time="0.098" asserts="0" />
+                              <test-case name="CK.DB.User.UserSimpleCode.Tests.UserSimpleCodeTests.SimpleCode_AuthProvider_is_registered" executed="True" result="Success" success="True" time="0.003" asserts="0" />
+                              <test-case name="CK.DB.User.UserSimpleCode.Tests.UserSimpleCodeTests.standard_generic_tests_for_SimpleCode_provider" executed="True" result="Success" success="True" time="0.062" asserts="0" />
+                              <test-case name="CK.DB.User.UserSimpleCode.Tests.UserSimpleCodeTests.standard_generic_tests_for_SimpleCode_provider_Async" executed="True" result="Success" success="True" time="0.077" asserts="0" />
+                              <test-case name="CK.DB.User.UserSimpleCode.Tests.UserSimpleCodeTests.vUserAuthProvider_reflects_the_user_SimpleCode_authentication" executed="True" result="Success" success="True" time="0.009" asserts="0" />
+                            </results>
+                          </test-suite>
+                        </results>
+                      </test-suite>
+                    </results>
+                  </test-suite>
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+    </results>
+  </test-suite>
+</test-results>

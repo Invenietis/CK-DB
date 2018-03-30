@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!--This file represents the results of running a test suite-->
+<test-results name="C:\Dev\CK-Database-Projects\CK-DB\Tests\CK.DB.HZone.Tests\bin\Debug\net461\CK.DB.HZone.Tests.dll" total="32" errors="0" failures="0" not-run="0" inconclusive="0" ignored="0" skipped="0" invalid="0" date="2018-03-30" time="20:08:17">
+  <environment nunit-version="2.6.4.14350" clr-version="4.0.30319.42000" os-version="Microsoft Windows NT 6.2.9200.0" platform="Win32NT" cwd="C:\Dev\CK-Database-Projects\CK-DB" machine-name="DESKTOP-5BQ4M95" user="olivi" user-domain="DESKTOP-5BQ4M95" />
+  <culture-info current-culture="fr-FR" current-uiculture="fr-FR" />
+  <test-suite type="Assembly" name="C:\Dev\CK-Database-Projects\CK-DB\Tests\CK.DB.HZone.Tests\bin\Debug\net461\CK.DB.HZone.Tests.dll" executed="True" result="Success" success="True" time="23.259" asserts="0">
+    <results>
+      <test-suite type="Namespace" name="CK" executed="True" result="Success" success="True" time="23.245" asserts="0">
+        <results>
+          <test-suite type="Namespace" name="DB" executed="True" result="Success" success="True" time="23.245" asserts="0">
+            <results>
+              <test-suite type="Namespace" name="HZone" executed="True" result="Success" success="True" time="23.245" asserts="0">
+                <results>
+                  <test-suite type="Namespace" name="Tests" executed="True" result="Success" success="True" time="23.245" asserts="0">
+                    <results>
+                      <test-suite type="TestFixture" name="DBSetup" executed="True" result="Inconclusive" success="False" time="0.008" asserts="0" />
+                      <test-suite type="Namespace" name="FromActor" executed="True" result="Success" success="True" time="22.444" asserts="0">
+                        <results>
+                          <test-suite type="TestFixture" name="FromActorGroupTests" executed="True" result="Success" success="True" time="22.370" asserts="0">
+                            <results>
+                              <test-case name="CK.DB.HZone.Tests.FromActor.FromActorGroupTests.GroupTests.Anonymous_can_not_create_a_group" executed="True" result="Success" success="True" time="21.805" asserts="0" />
+                              <test-case name="CK.DB.HZone.Tests.FromActor.FromActorGroupTests.GroupTests.Anonymous_can_not_destroy_a_group" executed="True" result="Success" success="True" time="0.066" asserts="0" />
+                              <test-case name="CK.DB.HZone.Tests.FromActor.FromActorGroupTests.GroupTests.by_default_groups_can_not_be_destroyed_when_users_exist" executed="True" result="Success" success="True" time="0.138" asserts="0" />
+                              <test-case name="CK.DB.HZone.Tests.FromActor.FromActorGroupTests.GroupTests.destroying_a_user_removes_it_from_all_the_groups_it_belongs_to" executed="True" result="Success" success="True" time="0.014" asserts="0" />
+                              <test-case name="CK.DB.HZone.Tests.FromActor.FromActorGroupTests.GroupTests.groups_are_destroyed_even_when_users_exist_when_ForceDestroy_is_true" executed="True" result="Success" success="True" time="0.023" asserts="1" />
+                              <test-case name="CK.DB.HZone.Tests.FromActor.FromActorGroupTests.GroupTests.groups_can_be_created_and_destroyed_when_empty" executed="True" result="Success" success="True" time="0.022" asserts="1" />
+                              <test-case name="CK.DB.HZone.Tests.FromActor.FromActorGroupTests.GroupTests.only_system_users_can_add_or_remove_users_from_group_System" executed="True" result="Success" success="True" time="0.288" asserts="1" />
+                            </results>
+                          </test-suite>
+                          <test-suite type="TestFixture" name="FromActorUserTests" executed="True" result="Success" success="True" time="0.073" asserts="0">
+                            <results>
+                              <test-case name="CK.DB.HZone.Tests.FromActor.FromActorUserTests.UserTests.Anonymous_can_not_create_a_user" executed="True" result="Success" success="True" time="0.008" asserts="0" />
+                              <test-case name="CK.DB.HZone.Tests.FromActor.FromActorUserTests.UserTests.user_can_not_be_created_with_an_already_existing_UserName" executed="True" result="Success" success="True" time="0.025" asserts="2" />
+                              <test-case name="CK.DB.HZone.Tests.FromActor.FromActorUserTests.UserTests.user_FindByName_returns_0_when_not_found" executed="True" result="Success" success="True" time="0.008" asserts="3" />
+                              <test-case name="CK.DB.HZone.Tests.FromActor.FromActorUserTests.UserTests.UserName_is_not_set_if_another_user_exists_with_the_same_UserName" executed="True" result="Success" success="True" time="0.028" asserts="0" />
+                            </results>
+                          </test-suite>
+                        </results>
+                      </test-suite>
+                      <test-suite type="Namespace" name="FromZone" executed="True" result="Success" success="True" time="0.425" asserts="0">
+                        <results>
+                          <test-suite type="TestFixture" name="FromZoneTests" executed="True" result="Success" success="True" time="0.425" asserts="0">
+                            <results>
+                              <test-case name="CK.DB.HZone.Tests.FromZone.FromZoneTests.ZoneTests.adding_a_user_to_a_group_when_he_is_not_registered_in_the_zone_is_an_error" executed="True" result="Success" success="True" time="0.138" asserts="0" />
+                              <test-case name="CK.DB.HZone.Tests.FromZone.FromZoneTests.ZoneTests.Anonymous_cant_not_create_or_destroy_a_zone" executed="True" result="Success" success="True" time="0.016" asserts="0" />
+                              <test-case name="CK.DB.HZone.Tests.FromZone.FromZoneTests.ZoneTests.by_default_destroying_a_zone_that_has_a_group_is_an_error_ie_when_ForceDestroy_is_false" executed="True" result="Success" success="True" time="0.036" asserts="0" />
+                              <test-case name="CK.DB.HZone.Tests.FromZone.FromZoneTests.ZoneTests.by_default_when_a_group_is_moved_all_of_its_users_must_be_already_registered_in_the_target_zone" executed="True" result="Success" success="True" time="0.041" asserts="0" />
+                              <test-case name="CK.DB.HZone.Tests.FromZone.FromZoneTests.ZoneTests.can_not_create_a_group_in_System_group" executed="True" result="Success" success="True" time="0.012" asserts="0" />
+                              <test-case name="CK.DB.HZone.Tests.FromZone.FromZoneTests.ZoneTests.groups_can_be_moved_from_its_zone_to_another_one" executed="True" result="Success" success="True" time="0.026" asserts="0" />
+                              <test-case name="CK.DB.HZone.Tests.FromZone.FromZoneTests.ZoneTests.removing_a_user_from_a_Zone_removes_him_from_all_groups" executed="True" result="Success" success="True" time="0.033" asserts="0" />
+                              <test-case name="CK.DB.HZone.Tests.FromZone.FromZoneTests.ZoneTests.with_option_AutoUserRegistration_when_a_group_is_moved_its_users_not_already_registered_in_the_target_zone_are_automatically_registered" executed="True" result="Success" success="True" time="0.030" asserts="0" />
+                              <test-case name="CK.DB.HZone.Tests.FromZone.FromZoneTests.ZoneTests.with_option_Intersect_when_a_group_is_moved_its_users_not_already_registered_in_the_target_zone_are_removed" executed="True" result="Success" success="True" time="0.028" asserts="0" />
+                              <test-case name="CK.DB.HZone.Tests.FromZone.FromZoneTests.ZoneTests.zone_0_and_1_can_not_be_destroyed" executed="True" result="Success" success="True" time="0.016" asserts="0" />
+                              <test-case name="CK.DB.HZone.Tests.FromZone.FromZoneTests.ZoneTests.zone_can_be_created_and_destroyed_by_System" executed="True" result="Success" success="True" time="0.018" asserts="1" />
+                              <test-case name="CK.DB.HZone.Tests.FromZone.FromZoneTests.ZoneTests.zone_with_existing_groups_can_be_destroyed_when_ForceDestroy_is_true" executed="True" result="Success" success="True" time="0.022" asserts="1" />
+                            </results>
+                          </test-suite>
+                        </results>
+                      </test-suite>
+                      <test-suite type="TestFixture" name="HZoneSimpleTests" executed="True" result="Success" success="True" time="0.294" asserts="0">
+                        <results>
+                          <test-case name="CK.DB.HZone.Tests.HZoneSimpleTests.adding_a_user_in_a_child_zone_support_AutoAddUserInParentZone" executed="True" result="Success" success="True" time="0.064" asserts="0" />
+                          <test-case name="CK.DB.HZone.Tests.HZoneSimpleTests.creating_and_destroying_zone_with_sub_zones_and_groups_when_ForceDestroy_is_true" executed="True" result="Success" success="True" time="0.047" asserts="0" />
+                          <test-case name="CK.DB.HZone.Tests.HZoneSimpleTests.GroupMove_can_safely_be_called_instead_of_ZoneMove" executed="True" result="Success" success="True" time="0.080" asserts="0" />
+                          <test-case name="CK.DB.HZone.Tests.HZoneSimpleTests.moving_a_zone_in_a_child_zone_is_an_error" executed="True" result="Success" success="True" time="0.011" asserts="0" />
+                          <test-case name="CK.DB.HZone.Tests.HZoneSimpleTests.moving_a_zone_in_the_tree_can_specify_the_next_sibling_id" executed="True" result="Success" success="True" time="0.037" asserts="0" />
+                          <test-case name="CK.DB.HZone.Tests.HZoneSimpleTests.removing_a_user_from_a_zone_removes_it_from_all_child_zones" executed="True" result="Success" success="True" time="0.053" asserts="0" />
+                        </results>
+                      </test-suite>
+                      <test-suite type="TestFixture" name="ZoneSameBehaviorTests" executed="True" result="Success" success="True" time="0.059" asserts="0">
+                        <results>
+                          <test-case name="CK.DB.HZone.Tests.ZoneSameBehaviorTests.by_default_when_a_group_is_moved_all_of_its_users_must_be_already_registered_in_the_target_zone" executed="True" result="Success" success="True" time="0.021" asserts="0" />
+                          <test-case name="CK.DB.HZone.Tests.ZoneSameBehaviorTests.with_option_AutoUserRegistration_when_a_group_is_moved_its_users_not_already_registered_in_the_target_zone_are_automatically_registered" executed="True" result="Success" success="True" time="0.017" asserts="0" />
+                          <test-case name="CK.DB.HZone.Tests.ZoneSameBehaviorTests.with_option_Intersect_when_a_group_is_moved_its_users_not_already_registered_in_the_target_zone_are_removed" executed="True" result="Success" success="True" time="0.019" asserts="0" />
+                        </results>
+                      </test-suite>
+                    </results>
+                  </test-suite>
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+    </results>
+  </test-suite>
+</test-results>

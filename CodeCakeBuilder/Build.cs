@@ -106,7 +106,7 @@ namespace CodeCake
             Task( "Unit-Testing" )
                 .IsDependentOn( "Build" )
                 .WithCriteria( () => Cake.InteractiveMode() == InteractiveMode.NoInteraction
-                                     || Cake.ReadInteractiveOption( "Run unit tests?", 'Y', 'N' ) == 'Y' )
+                                     || Cake.ReadInteractiveOption( "Run unit tests?", 'N', 'Y' ) == 'Y' )
                .Does( () =>
                {
                    StandardUnitTests( configuration, projects.Where( p => p.Name.EndsWith( ".Tests" ) ) );
@@ -145,7 +145,6 @@ namespace CodeCake
               } );
 
             Task( "Download-CKSetup-Net461-From-Store-and-Unzip-it" )
-                .IsDependeeOf( "Check-Repository" )
                 .Does( () =>
                 {
                     var tempFile = Cake.DownloadFile( "http://cksetup.invenietis.net/dl-zip/CKSetup/Net461" );

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!--This file represents the results of running a test suite-->
+<test-results name="C:\Dev\CK-Database-Projects\CK-DB\Tests\CK.DB.Res.ResText.Tests\bin\Debug\net461\CK.DB.Res.ResText.Tests.dll" total="3" errors="0" failures="0" not-run="0" inconclusive="0" ignored="0" skipped="0" invalid="0" date="2018-03-30" time="20:11:22">
+  <environment nunit-version="2.6.4.14350" clr-version="4.0.30319.42000" os-version="Microsoft Windows NT 6.2.9200.0" platform="Win32NT" cwd="C:\Dev\CK-Database-Projects\CK-DB" machine-name="DESKTOP-5BQ4M95" user="olivi" user-domain="DESKTOP-5BQ4M95" />
+  <culture-info current-culture="fr-FR" current-uiculture="fr-FR" />
+  <test-suite type="Assembly" name="C:\Dev\CK-Database-Projects\CK-DB\Tests\CK.DB.Res.ResText.Tests\bin\Debug\net461\CK.DB.Res.ResText.Tests.dll" executed="True" result="Success" success="True" time="14.427" asserts="0">
+    <results>
+      <test-suite type="Namespace" name="CK" executed="True" result="Success" success="True" time="14.413" asserts="0">
+        <results>
+          <test-suite type="Namespace" name="DB" executed="True" result="Success" success="True" time="14.413" asserts="0">
+            <results>
+              <test-suite type="Namespace" name="Res" executed="True" result="Success" success="True" time="14.355" asserts="0">
+                <results>
+                  <test-suite type="Namespace" name="ResText" executed="True" result="Success" success="True" time="14.355" asserts="0">
+                    <results>
+                      <test-suite type="Namespace" name="Tests" executed="True" result="Success" success="True" time="14.355" asserts="0">
+                        <results>
+                          <test-suite type="TestFixture" name="ResTextTests" executed="True" result="Success" success="True" time="14.354" asserts="0">
+                            <results>
+                              <test-case name="CK.DB.Res.ResText.Tests.ResTextTests.negative_resource_0_and_1_can_not_be_changed" executed="True" result="Success" success="True" time="14.255" asserts="0" />
+                              <test-case name="CK.DB.Res.ResText.Tests.ResTextTests.setting_and_clearing_resource_string" executed="True" result="Success" success="True" time="0.083" asserts="0" />
+                            </results>
+                          </test-suite>
+                        </results>
+                      </test-suite>
+                    </results>
+                  </test-suite>
+                </results>
+              </test-suite>
+              <test-suite type="Namespace" name="ResText" executed="True" result="Success" success="True" time="0.054" asserts="0">
+                <results>
+                  <test-suite type="Namespace" name="Tests" executed="True" result="Success" success="True" time="0.054" asserts="0">
+                    <results>
+                      <test-suite type="Namespace" name="From" executed="True" result="Success" success="True" time="0.054" asserts="0">
+                        <results>
+                          <test-suite type="TestFixture" name="DBSetup" executed="True" result="Inconclusive" success="False" time="0.000" asserts="0" />
+                          <test-suite type="TestFixture" name="ResTests" executed="True" result="Success" success="True" time="0.053" asserts="0">
+                            <results>
+                              <test-case name="CK.DB.ResText.Tests.From.ResTests.ResTests.creating_and_destroying_raw_resource" executed="True" result="Success" success="True" time="0.052" asserts="0" />
+                            </results>
+                          </test-suite>
+                        </results>
+                      </test-suite>
+                    </results>
+                  </test-suite>
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+    </results>
+  </test-suite>
+</test-results>
