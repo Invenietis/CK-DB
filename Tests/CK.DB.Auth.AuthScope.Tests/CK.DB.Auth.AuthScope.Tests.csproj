@@ -3,26 +3,21 @@
     <TargetFrameworks>netcoreapp2.0;net461</TargetFrameworks>
     <Description>Tests for CK.DB.Auth.AuthScope (uses CK.DB.Tests.NUnit).</Description>
   </PropertyGroup>
-
   <Import Project="..\..\Common\Shared.props" />
-  
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">
     <OutputType>Exe</OutputType>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\..\CK.DB.Auth.AuthScope\CK.DB.Auth.AuthScope.csproj" />
     <PackageReference Include="CK.DB.Tests.NUnit" Version="$(CKDatabaseVersion)" />
   </ItemGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">
-    <PackageReference Include="NUnitLite" Version="3.9.0" />
+    <PackageReference Include="NUnitLite" Version="3.10.1" />
   </ItemGroup>
-  
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
-  
   <ItemGroup>
     <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
   </ItemGroup>

@@ -41,8 +41,6 @@ namespace CodeCake
     [AddPath( "%UserProfile%/.nuget/packages/**/tools*" )]
     public partial class Build : CodeCakeHost
     {
-        XNamespace msBuild = "http://schemas.microsoft.com/developer/msbuild/2003";
-
         public Build()
         {
             Cake.Log.Verbosity = Verbosity.Diagnostic;
@@ -75,8 +73,8 @@ namespace CodeCake
 
             var vCKDatabase = XDocument.Load( "Common/DependencyVersions.props" )
                                           .Root
-                                          .Elements( msBuild + "PropertyGroup" )
-                                          .Elements( msBuild + "CKDatabaseVersion" )
+                                          .Elements( "PropertyGroup" )
+                                          .Elements( "CKDatabaseVersion" )
                                           .Single()
                                           .Value;
             Cake.Information( $"Using CK-Database version {vCKDatabase}." );
@@ -107,8 +105,8 @@ namespace CodeCake
 
             Task( "Unit-Testing" )
                 .IsDependentOn( "Build" )
-                .WithCriteria( () => !Cake.IsInteractiveMode()
-                                        || Cake.ReadInteractiveOption( "Run unit tests?", 'Y', 'N' ) == 'Y' )
+                .WithCriteria( () => Cake.InteractiveMode() == InteractiveMode.NoInteraction
+                                     || Cake.ReadInteractiveOption( "Run unit tests?", 'Y', 'N' ) == 'Y' )
                .Does( () =>
                {
                    StandardUnitTests( configuration, projects.Where( p => p.Name.EndsWith( ".Tests" ) ) );
@@ -147,6 +145,7 @@ namespace CodeCake
               } );
 
             Task( "Download-CKSetup-Net461-From-Store-and-Unzip-it" )
+                .IsDependeeOf( "Check-Repository" )
                 .Does( () =>
                 {
                     var tempFile = Cake.DownloadFile( "http://cksetup.invenietis.net/dl-zip/CKSetup/Net461" );
@@ -176,7 +175,7 @@ namespace CodeCake
 
             Task( "Run-IntegrationTests" )
               .IsDependentOn( "Compile-IntegrationTests" )
-              .WithCriteria( () => !Cake.IsInteractiveMode()
+              .WithCriteria( () => Cake.InteractiveMode() == InteractiveMode.NoInteraction
                                    || Cake.ReadInteractiveOption( "Run integration tests?", 'Y', 'N' ) == 'Y' )
               .Does( () =>
               {
@@ -196,7 +195,7 @@ namespace CodeCake
 
             Task( "Run-Facade-App-Tests" )
               .IsDependentOn( "Run-IntegrationTests" )
-              .WithCriteria( () => !Cake.IsInteractiveMode()
+              .WithCriteria( () => Cake.InteractiveMode() == InteractiveMode.NoInteraction
                                    || Cake.ReadInteractiveOption( "Run Facade application tests?", 'Y', 'N' ) == 'Y' )
               .Does( () =>
               {
@@ -226,8 +225,7 @@ namespace CodeCake
 
         private static string GetConnectionStringForIntegrationTestsAllPackages()
         {
-            string c = Environment.GetEnvironmentVariable( "CK_DB_TEST_MASTER_CONNECTION_STRING" );
-            if( c == null ) c = System.Configuration.ConfigurationManager.AppSettings["CK_DB_TEST_MASTER_CONNECTION_STRING"];
+            string c = Environment.GetEnvironmentVariable( "SqlServer/MasterConnectionString" );
             if( c == null ) c = "Server=.;Database=master;Integrated Security=SSPI";
             var csB = new SqlConnectionStringBuilder( c );
             csB.InitialCatalog = "TEST_CK_DB_AllPackages";

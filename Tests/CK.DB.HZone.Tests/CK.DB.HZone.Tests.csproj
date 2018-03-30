@@ -3,26 +3,21 @@
     <TargetFrameworks>net461;netcoreapp2.0</TargetFrameworks>
     <Description>This package contains tests for CK.DB.HZone (uses CK.DB.Tests.NUnit).</Description>
   </PropertyGroup>
-
   <Import Project="..\..\Common\Shared.props" />
-  
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">
     <OutputType>Exe</OutputType>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\..\CK.DB.HZone\CK.DB.HZone.csproj" />
     <ProjectReference Include="..\CK.DB.Zone.Tests\CK.DB.Zone.Tests.csproj" />
   </ItemGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">
-    <PackageReference Include="NUnitLite" Version="3.9.0" />
+    <PackageReference Include="NUnitLite" Version="3.10.1" />
   </ItemGroup>
-
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
-
   <ItemGroup>
     <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
   </ItemGroup>

@@ -1,17 +1,16 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>netcoreapp2.0;net461</TargetFrameworks>
     <CKDBVersion Condition=" '$(CKDBVersion)' == '' ">0.0.0-0</CKDBVersion>
+    <IsTestProject>True</IsTestProject>
   </PropertyGroup>
-
+  
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">
     <OutputType>Exe</OutputType>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
-
   <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">
-    <PackageReference Include="NUnitLite" Version="3.9.0" />
+    <PackageReference Include="NUnitLite" Version="3.10.1" />
   </ItemGroup>
   
   <ItemGroup>
@@ -21,30 +20,24 @@
     <PackageReference Include="CK.DB.Actor.Tests" Version="$(CKDBVersion)" />
     <PackageReference Include="CK.DB.Auth.AuthScope.Tests" Version="$(CKDBVersion)" />
     <PackageReference Include="CK.DB.Auth.Tests" Version="$(CKDBVersion)" />
-
     <PackageReference Include="CK.DB.Culture.Tests" Version="$(CKDBVersion)" />
     <PackageReference Include="CK.DB.Group.SimpleNaming.Tests" Version="$(CKDBVersion)" />
     <PackageReference Include="CK.DB.HZone.Tests" Version="$(CKDBVersion)" />
     <PackageReference Include="CK.DB.Res.MCResHtml.Tests" Version="$(CKDBVersion)" />
     <PackageReference Include="CK.DB.Res.MCResString.Tests" Version="$(CKDBVersion)" />
     <PackageReference Include="CK.DB.Res.MCResText.Tests" Version="$(CKDBVersion)" />
-
     <PackageReference Include="CK.DB.Res.ResHtml.Tests" Version="$(CKDBVersion)" />
     <PackageReference Include="CK.DB.Res.ResName.Tests" Version="$(CKDBVersion)" />
     <PackageReference Include="CK.DB.Res.ResString.Tests" Version="$(CKDBVersion)" />
     <PackageReference Include="CK.DB.Res.ResText.Tests" Version="$(CKDBVersion)" />
     <PackageReference Include="CK.DB.Res.Tests" Version="$(CKDBVersion)" />
-    
     <PackageReference Include="CK.DB.User.UserGoogle.AuthScope.Tests" Version="$(CKDBVersion)" />
     <PackageReference Include="CK.DB.User.UserGoogle.EMailColumns.Tests" Version="$(CKDBVersion)" />
     <PackageReference Include="CK.DB.User.UserGoogle.RefreshToken.Tests" Version="$(CKDBVersion)" />
     <PackageReference Include="CK.DB.User.UserGoogle.Tests" Version="$(CKDBVersion)" />
-    
     <PackageReference Include="CK.DB.User.UserOidc.Tests" Version="$(CKDBVersion)" />
-
     <PackageReference Include="CK.DB.User.UserPassword.Tests" Version="$(CKDBVersion)" />
     <PackageReference Include="CK.DB.User.UserSimpleCode.Tests" Version="$(CKDBVersion)" />
-
     <PackageReference Include="CK.DB.Zone.SimpleNaming.Tests" Version="$(CKDBVersion)" />
     <PackageReference Include="CK.DB.Zone.Tests" Version="$(CKDBVersion)" />
   </ItemGroup>
