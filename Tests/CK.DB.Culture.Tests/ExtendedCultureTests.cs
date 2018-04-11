@@ -148,16 +148,16 @@ namespace CK.DB.Culture.Tests
                 RegisterSpanish( p, ctx );
                 RegisterArabic( p, ctx );
                 p.GetExtendedCulture( ctx, 10 ).Fallbacks.Select( c => c.LCID )
-                    .ShouldBeEquivalentTo( new[] { 10, 9, 12, 1 }, o => o.WithStrictOrdering() );
+                    .Should().BeEquivalentTo( new[] { 10, 9, 12, 1 }, o => o.WithStrictOrdering() );
                 p.SetLCIDFallbaks( ctx, 10, new[] { 10, 12 } );
                 p.GetExtendedCulture( ctx, 10 ).Fallbacks.Select( c => c.LCID )
-                    .ShouldBeEquivalentTo( new[] { 10, 12, 9, 1 }, o => o.WithStrictOrdering() );
+                    .Should().BeEquivalentTo( new[] { 10, 12, 9, 1 }, o => o.WithStrictOrdering() );
                 p.SetLCIDFallbaks( ctx, 10, new[] { 10, 1 } );
                 p.GetExtendedCulture( ctx, 10 ).Fallbacks.Select( c => c.LCID )
-                    .ShouldBeEquivalentTo( new[] { 10, 1, 12, 9 }, o => o.WithStrictOrdering() );
+                    .Should().BeEquivalentTo( new[] { 10, 1, 12, 9 }, o => o.WithStrictOrdering() );
                 p.SetLCIDFallbaks( ctx, 10, new[] { 10, 9, 1, 12 } );
                 p.GetExtendedCulture( ctx, 10 ).Fallbacks.Select( c => c.LCID )
-                    .ShouldBeEquivalentTo( new[] { 10, 9, 1, 12 }, o => o.WithStrictOrdering() );
+                    .Should().BeEquivalentTo( new[] { 10, 9, 1, 12 }, o => o.WithStrictOrdering() );
             }
         }
 
@@ -171,7 +171,7 @@ namespace CK.DB.Culture.Tests
                 RegisterSpanish( p, ctx );
                 RegisterArabic( p, ctx );
                 p.GetExtendedCulture( ctx, 10 ).Fallbacks.Select( c => c.LCID )
-                    .ShouldBeEquivalentTo( new[] { 10, 9, 12, 1 }, o => o.WithStrictOrdering() );
+                    .Should().BeEquivalentTo( new[] { 10, 9, 12, 1 }, o => o.WithStrictOrdering() );
 
                 int xlcidSame = p.AssumeXLCID( ctx, new[] { 10, 9, 12, 1 }, allowLCIDMapping: true );
                 xlcidSame.Should().Be( 10, "The primary LCID is okay" );
@@ -183,9 +183,9 @@ namespace CK.DB.Culture.Tests
                 int xlcid2 = p.AssumeXLCID( ctx, new[] { 10, 12, 1, 9 } );
                 xlcid1.Should().NotBe( xlcid2 );
                 p.GetExtendedCulture( ctx, xlcid1 ).Fallbacks.Select( c => c.LCID )
-                    .ShouldBeEquivalentTo( new[] { 10, 1, 9, 12 }, o => o.WithStrictOrdering() );
+                    .Should().BeEquivalentTo( new[] { 10, 1, 9, 12 }, o => o.WithStrictOrdering() );
                 p.GetExtendedCulture( ctx, xlcid2 ).Fallbacks.Select( c => c.LCID )
-                    .ShouldBeEquivalentTo( new[] { 10, 12, 1, 9 }, o => o.WithStrictOrdering() );
+                    .Should().BeEquivalentTo( new[] { 10, 12, 1, 9 }, o => o.WithStrictOrdering() );
             }
         }
 
@@ -199,17 +199,17 @@ namespace CK.DB.Culture.Tests
                 RegisterSpanish( p, ctx );
                 RegisterArabic( p, ctx );
                 p.GetExtendedCulture( ctx, 12 ).Fallbacks.Select( c => c.LCID )
-                    .ShouldBeEquivalentTo( new[] { 12, 9, 10, 1 }, o => o.WithStrictOrdering() );
+                    .Should().BeEquivalentTo( new[] { 12, 9, 10, 1 }, o => o.WithStrictOrdering() );
 
                 int xlcid12 = p.AssumeXLCID( ctx, new[] { 12, 1, 9, 10 } );
                 p.GetExtendedCulture( ctx, xlcid12 ).Fallbacks.Select( c => c.LCID )
-                    .ShouldBeEquivalentTo( new[] { 12, 1, 9, 10 }, o => o.WithStrictOrdering() );
+                    .Should().BeEquivalentTo( new[] { 12, 1, 9, 10 }, o => o.WithStrictOrdering() );
 
                 p.DestroyCulture( ctx, 1 );
                 p.GetExtendedCulture( ctx, xlcid12 ).Fallbacks.Select( c => c.LCID )
-                    .ShouldBeEquivalentTo( new[] { 12, 9, 10 }, o => o.WithStrictOrdering() );
+                    .Should().BeEquivalentTo( new[] { 12, 9, 10 }, o => o.WithStrictOrdering() );
                 p.GetExtendedCulture( ctx, 12 ).Fallbacks.Select( c => c.LCID )
-                    .ShouldBeEquivalentTo( new[] { 12, 9, 10 }, o => o.WithStrictOrdering() );
+                    .Should().BeEquivalentTo( new[] { 12, 9, 10 }, o => o.WithStrictOrdering() );
             }
         }
 

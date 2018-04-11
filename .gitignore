@@ -237,3 +237,4 @@ IntegrationTests/Tests/Logs/
 IntegrationTests/DBBackup/
 IntegrationTests/DBHistory/**/*.bak
 IntegrationTests/DBHistory/*.sql
+TestResult.*.xml

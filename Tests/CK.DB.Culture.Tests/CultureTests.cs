@@ -106,8 +106,8 @@ namespace CK.DB.Culture.Tests
             var p = TestHelper.StObjMap.Default.Obtain<Package>();
             using( var ctx = new SqlStandardCallContext() )
             {
-                p.Invoking( sut => sut.Register( ctx, 0, "xx", "XXX", "XXX" ) ).ShouldThrow<SqlDetailedException>();
-                p.Invoking( sut => sut.Register( ctx, 0xFFFFF, "xx", "XXX", "XXX" ) ).ShouldThrow<SqlDetailedException>();
+                p.Invoking( sut => sut.Register( ctx, 0, "xx", "XXX", "XXX" ) ).Should().Throw<SqlDetailedException>();
+                p.Invoking( sut => sut.Register( ctx, 0xFFFFF, "xx", "XXX", "XXX" ) ).Should().Throw<SqlDetailedException>();
             }
         }
 

@@ -52,7 +52,7 @@ namespace CK.DB.HZone.Tests
 
                 // This does not: ZoneEmpty does not contain the user.
                 // This uses the default option: GroupMoveOption.None.
-                z.Invoking( sut => sut.MoveZone( ctx, 1, idSubZone, idZoneEmpty ) ).ShouldThrow<SqlDetailedException>();
+                z.Invoking( sut => sut.MoveZone( ctx, 1, idSubZone, idZoneEmpty ) ).Should().Throw<SqlDetailedException>();
                 // User is still in the Group.
                 u.Database.ExecuteScalar( $"select ActorId from CK.tActorProfile where GroupId = {idSubZone} and ActorId = {idUser}" )
                     .Should().Be( idUser );

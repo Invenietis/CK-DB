@@ -97,10 +97,10 @@ namespace CK.DB.User.UserPassword.Tests
             var u = TestHelper.StObjMap.Default.Obtain<UserPasswordTable>();
             using( var ctx = new SqlStandardCallContext() )
             {
-                u.Invoking( sut => sut.CreateOrUpdatePasswordUser( ctx, 1, 0, "x" ) ).ShouldThrow<SqlDetailedException>();
-                u.Invoking( sut => sut.CreateOrUpdatePasswordUser( ctx, 0, 1, "toto" ) ).ShouldThrow<SqlDetailedException>();
-                u.Invoking( sut => sut.CreateOrUpdatePasswordUser( ctx, 1, 0, "x", UCLMode.UpdateOnly ) ).ShouldThrow<SqlDetailedException>();
-                u.Invoking( sut => sut.CreateOrUpdatePasswordUser( ctx, 0, 1, "toto", UCLMode.UpdateOnly ) ).ShouldThrow<SqlDetailedException>();
+                u.Invoking( sut => sut.CreateOrUpdatePasswordUser( ctx, 1, 0, "x" ) ).Should().Throw<SqlDetailedException>();
+                u.Invoking( sut => sut.CreateOrUpdatePasswordUser( ctx, 0, 1, "toto" ) ).Should().Throw<SqlDetailedException>();
+                u.Invoking( sut => sut.CreateOrUpdatePasswordUser( ctx, 1, 0, "x", UCLMode.UpdateOnly ) ).Should().Throw<SqlDetailedException>();
+                u.Invoking( sut => sut.CreateOrUpdatePasswordUser( ctx, 0, 1, "toto", UCLMode.UpdateOnly ) ).Should().Throw<SqlDetailedException>();
             }
         }
 
