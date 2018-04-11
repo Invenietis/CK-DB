@@ -40,9 +40,9 @@ namespace CK.DB.Res.ResString.Tests
             var t = TestHelper.StObjMap.Default.Obtain<ResStringTable>();
             using( var ctx = new SqlStandardCallContext() )
             {
-                t.Invoking( sut => sut.SetString( ctx, -1, "No way" ) ).ShouldThrow<SqlDetailedException>();
-                t.Invoking( sut => sut.SetString( ctx, 0, "No way" ) ).ShouldThrow<SqlDetailedException>();
-                t.Invoking( sut => sut.SetString( ctx, 1, "Le Système" ) ).ShouldNotThrow();
+                t.Invoking( sut => sut.SetString( ctx, -1, "No way" ) ).Should().Throw<SqlDetailedException>();
+                t.Invoking( sut => sut.SetString( ctx, 0, "No way" ) ).Should().Throw<SqlDetailedException>();
+                t.Invoking( sut => sut.SetString( ctx, 1, "Le Système" ) ).Should().NotThrow();
                 t.SetString( ctx, 1, "System" );
             }
         }

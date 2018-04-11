@@ -41,7 +41,7 @@ namespace CK.DB.Actor.Tests
             var g = map.Default.Obtain<GroupTable>();
             using( var ctx = new SqlStandardCallContext() )
             {
-                g.Invoking( sut => sut.CreateGroup( ctx, 0 ) ).ShouldThrow<SqlDetailedException>();
+                g.Invoking( sut => sut.CreateGroup( ctx, 0 ) ).Should().Throw<SqlDetailedException>();
             }
         }
 
@@ -53,7 +53,7 @@ namespace CK.DB.Actor.Tests
             using( var ctx = new SqlStandardCallContext() )
             {
                 int groupId = g.CreateGroup( ctx, 1 );
-                g.Invoking( sut => sut.DestroyGroup( ctx, 0, groupId ) ).ShouldThrow<SqlDetailedException>();
+                g.Invoking( sut => sut.DestroyGroup( ctx, 0, groupId ) ).Should().Throw<SqlDetailedException>();
                 g.DestroyGroup( ctx, 1, groupId );
             }
         }
@@ -72,7 +72,7 @@ namespace CK.DB.Actor.Tests
 
                 g.AddUser( ctx, 1, groupId, userId );
 
-                g.Invoking( sut => sut.DestroyGroup( ctx, 1, groupId ) ).ShouldThrow<SqlDetailedException>();
+                g.Invoking( sut => sut.DestroyGroup( ctx, 1, groupId ) ).Should().Throw<SqlDetailedException>();
 
                 u.DestroyUser( ctx, 1, userId );
                 g.DestroyGroup( ctx, 1, groupId );
@@ -172,15 +172,15 @@ namespace CK.DB.Actor.Tests
             // Using ActorId = userId2.
             using( var ctx = new SqlStandardCallContext() )
             {
-                g.Invoking( sut => sut.RemoveUser( ctx, userId2, 1, userId ) ).ShouldThrow<SqlDetailedException>();
+                g.Invoking( sut => sut.RemoveUser( ctx, userId2, 1, userId ) ).Should().Throw<SqlDetailedException>();
                 g.Database.ExecuteScalar( "select count(*) from CK.tActorProfile where ActorId = @0 and GroupId <> @0", userId )
                     .Should().Be( 1 );
 
-                g.Invoking( sut => sut.AddUser( ctx, userId2, 1, anotherUserId ) ).ShouldThrow<SqlDetailedException>();
+                g.Invoking( sut => sut.AddUser( ctx, userId2, 1, anotherUserId ) ).Should().Throw<SqlDetailedException>();
                 g.Database.ExecuteScalar( "select count(*) from CK.tActorProfile where ActorId = @0 and GroupId <> @0", anotherUserId )
                     .Should().Be( 0 );
 
-                g.Invoking( sut => sut.RemoveAllUsers( ctx, userId2, 1 ) ).ShouldThrow<SqlDetailedException>();
+                g.Invoking( sut => sut.RemoveAllUsers( ctx, userId2, 1 ) ).Should().Throw<SqlDetailedException>();
             }
 
             using( var ctx = new SqlStandardCallContext() )
