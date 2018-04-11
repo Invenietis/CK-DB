@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Configuration>
+  <AppContextAssemblyGeneratedDirectoryTarget>C:\Dev\CK-Database-Projects\CK-DB\Tests\CK.DB.Actor.Tests\bin\Debug\net461</AppContextAssemblyGeneratedDirectoryTarget>
+  <GenerateSourceFiles>true</GenerateSourceFiles>
+  <Assemblies />
+  <Types />
+  <Aspect Type="CK.Setup.SetupableAspectConfiguration, CK.Setupable.Model" Version="1" />
+  <Aspect Type="CK.Setup.SqlSetupAspectConfiguration, CK.SqlServer.Setup.Model">
+    <Databases />
+    <DefaultDatabaseConnectionString>Data Source=.;Initial Catalog=CKTEST_CK_DB_Actor;Integrated Security=True</DefaultDatabaseConnectionString>
+    <GlobalResolution>true</GlobalResolution>
+  </Aspect>
+  <CKSetup>
+    <BasePath>C:\Dev\CK-Database-Projects\CK-DB\Tests\CK.DB.Actor.Tests\bin\Debug\net461</BasePath>
+    <EngineAssemblyQualifiedName>CK.Setup.StObjEngine, CK.StObj.Engine</EngineAssemblyQualifiedName>
+    <RunSignature>05a490b745ab9c62fd9929ddf70da60662839a9d</RunSignature>
+    <BinPaths>
+      <BinPath BinPath="C:\Dev\CK-Database-Projects\CK-DB\CK.DB.Actor\bin\Debug\netstandard2.0\">
+        <Model>CK.Setupable.Model</Model>
+        <Model>CK.SqlServer.Setup.Model</Model>
+        <Model>CK.StObj.Model</Model>
+        <ModelDependent>CK.DB.Actor</ModelDependent>
+      </BinPath>
+    </BinPaths>
+  </CKSetup>
+</Configuration>
