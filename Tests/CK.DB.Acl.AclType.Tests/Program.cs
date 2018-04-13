@@ -1,8 +1,4 @@
 #if !NET461
-using NUnit.Common;
-using NUnitLite;
-using System;
-using System.Reflection;
 
 namespace CK.DB.Acl.AclType.Tests
 {
@@ -12,4 +8,5 @@ namespace CK.DB.Acl.AclType.Tests
 
     }
 }
+
 #endif

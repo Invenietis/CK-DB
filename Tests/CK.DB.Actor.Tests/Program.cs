@@ -18,4 +18,5 @@ namespace CK.DB.Actor.Tests
         }
     }
 }
+
 #endif
