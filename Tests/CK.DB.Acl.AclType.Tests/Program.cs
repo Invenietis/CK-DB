@@ -8,11 +8,7 @@ namespace CK.DB.Acl.AclType.Tests
 {
     public class Program
     {
-        public static int Main( string[] args )
-        {
-            return new AutoRun( typeof( Program ).GetTypeInfo().Assembly )
-                .Execute( args, new ExtendedTextWrapper( Console.Out ), Console.In );
-        }
+        public static int Main( string[] args ) => CK.DB.Actor.Tests.Program.Main( args );
 
     }
 }

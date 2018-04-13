@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
     <Description>This package defines CK.tLCID XLCID and XLCIDMap tables.</Description>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="CK.SqlServer.Setup.Model" Version="$(CKDatabaseVersion)" />

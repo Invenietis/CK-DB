@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
     <Description>This package adds a ScopeSetId column to CK.tUserGoogle table.</Description>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\CK.DB.Auth.AuthScope\CK.DB.Auth.AuthScope.csproj" />

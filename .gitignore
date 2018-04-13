@@ -238,4 +238,4 @@ IntegrationTests/DBBackup/
 IntegrationTests/DBHistory/**/*.bak
 IntegrationTests/DBHistory/*.sql
 TestResult.*.xml
-CKSetupWorkingDirectory/
+CKSetup-WorkingDir/

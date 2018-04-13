@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
     <Description>This package defines tAuthScopeSet, tAuthScope and tAuthScopeSetContent tables.</Description>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="CK.SqlServer.Setup.Model" Version="$(CKDatabaseVersion)" />

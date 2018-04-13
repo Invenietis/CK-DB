@@ -27,7 +27,13 @@
   <PropertyGroup Condition=" '$(IsTestProject)' != 'true' And ('$(CakeBuild)' == 'true' Or '$(Configuration)' == 'Release') ">
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
-  
+
+  <!-- Exclude CKSetup-WorkingDir folder. -->
+    <ItemGroup>
+        <Compile Remove="CKSetup-WorkingDir\**" />
+        <EmbeddedResource Remove="CKSetup-WorkingDir\**" />
+        <None Remove="CKSetup-WorkingDir\**" />
+    </ItemGroup>
   <!-- 
     When building from the CI (ie. from Cake, hence directly with the msbuild tool, SolutionDir is not defined),
     we unify the behavior here.

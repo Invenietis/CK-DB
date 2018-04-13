@@ -1,0 +1,180 @@
+0~~~~                            ~~ Monitor: 2ddef1d7-0d56-4c1f-bf4b-7711e6ec1f77
+   2018-04-13 05h24.06.1222757 i Topic: CK.Monitoring.DispatcherSink
+                   +00.0470358   > Initializing TextFile handler (MaxCountPerFile = 20000).
+                   +00.0587128   < 
+1~~~~                            ~~ Monitor: 546e3223-0a58-4e6c-9f37-c04fe10c05a2
+                   +00.1872498 i Folder 'C:\Dev\CK-Database-Projects\CK-DB\Tests\CK.DB.Actor.Tests\TestStores' has been cleaned up.
+                   +00.3114405 i > Accessing null StObj map: invoking StObjMapLoading event.
+                   +00.3198379 i | > Loading StObj map from CK.StObj.AutoAssembly.
+                   +00.3391479 i | | > Loading dynamic 'CK.StObj.AutoAssembly, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'.
+                   +00.3607816 i | | < 
+                   +00.3610167 i | < 
+                   +00.3611242 i < 
+2~~~~                            ~~ Monitor: 03c58dd4-2786-4f69-af64-d5b80bbe7203
+                   +02.9564441 E exec CK.sGroupCreate <= @ActorId=0, @GroupIdResult=null output
+                                    ┌──────────────────────────■ Exception: SqlDetailedException ■──────────────────────────
+                                    | Message:    exec CK.sGroupCreate <= @ActorId=0, @GroupIdResult=null output
+                                    |  ┌──────────────────────────■ [Inner Exception] ■──────────────────────────
+                                    |  |  ┌──────────────────────────■ Exception: SqlException ■──────────────────────────
+                                    |  |  | Message:    Security.AnonymousNotAllowed
+                                    |  |  | Stack:         at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+                                    |  |  |                at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+                                    |  |  |                at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+                                    |  |  |                at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+                                    |  |  |                at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+                                    |  |  |                at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, SqlDataReader ds)
+                                    |  |  |                at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite, String method)
+                                    |  |  |                at System.Data.SqlClient.SqlCommand.InternalExecuteNonQuery(TaskCompletionSource`1 completion, Boolean sendToPipe, Int32 timeout, Boolean asyncWrite, String methodName)
+                                    |  |  |                at System.Data.SqlClient.SqlCommand.ExecuteNonQuery()
+                                    |  |  |                at CK.SqlServer.SqlConnectionControllerExtension.<>c.<ExecuteNonQuery>b__2_0(SqlCommand c)
+                                    |  |  |                at CK.SqlServer.SqlStandardCallContext.CK.SqlServer.ISqlCommandExecutor.ExecuteQuery[T](IActivityMonitor monitor, SqlConnection connection, SqlCommand cmd, Func`2 innerExecutor)
+                                    |  |  └─────────────────────────────────────────────────────────────────────────
+                                    |  └─────────────────────────────────────────────────────────────────────────
+                                    └─────────────────────────────────────────────────────────────────────────
+                   +03.1154799 i Done.
+3~~~~                            ~~ Monitor: c0508b05-3820-4588-b2c4-be4dbbc23e98
+                   +03.1679367 E exec CK.sGroupDestroy <= @ActorId=0, @GroupId=1386, @ForceDestroy=0
+                                    ┌──────────────────────────■ Exception: SqlDetailedException ■──────────────────────────
+                                    | Message:    exec CK.sGroupDestroy <= @ActorId=0, @GroupId=1386, @ForceDestroy=0
+                                    |  ┌──────────────────────────■ [Inner Exception] ■──────────────────────────
+                                    |  |  ┌──────────────────────────■ Exception: SqlException ■──────────────────────────
+                                    |  |  | Message:    Security.AnonymousNotAllowed
+                                    |  |  | Stack:         at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+                                    |  |  |                at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+                                    |  |  |                at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+                                    |  |  |                at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+                                    |  |  |                at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+                                    |  |  |                at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, SqlDataReader ds)
+                                    |  |  |                at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite, String method)
+                                    |  |  |                at System.Data.SqlClient.SqlCommand.InternalExecuteNonQuery(TaskCompletionSource`1 completion, Boolean sendToPipe, Int32 timeout, Boolean asyncWrite, String methodName)
+                                    |  |  |                at System.Data.SqlClient.SqlCommand.ExecuteNonQuery()
+                                    |  |  |                at CK.SqlServer.SqlConnectionControllerExtension.<>c.<ExecuteNonQuery>b__2_0(SqlCommand c)
+                                    |  |  |                at CK.SqlServer.SqlStandardCallContext.CK.SqlServer.ISqlCommandExecutor.ExecuteQuery[T](IActivityMonitor monitor, SqlConnection connection, SqlCommand cmd, Func`2 innerExecutor)
+                                    |  |  └─────────────────────────────────────────────────────────────────────────
+                                    |  └─────────────────────────────────────────────────────────────────────────
+                                    └─────────────────────────────────────────────────────────────────────────
+                   +03.2178713 i Done.
+4~~~~                            ~~ Monitor: 6cc16096-eceb-483c-833a-db1af6491220
+                   +03.2907952 E exec CK.sGroupDestroy <= @ActorId=1, @GroupId=1387, @ForceDestroy=0
+                                    ┌──────────────────────────■ Exception: SqlDetailedException ■──────────────────────────
+                                    | Message:    exec CK.sGroupDestroy <= @ActorId=1, @GroupId=1387, @ForceDestroy=0
+                                    |  ┌──────────────────────────■ [Inner Exception] ■──────────────────────────
+                                    |  |  ┌──────────────────────────■ Exception: SqlException ■──────────────────────────
+                                    |  |  | Message:    ck:sGroupDestroy-{26}-[Group.NotEmptyGroup]
+                                    |  |  | Stack:         at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+                                    |  |  |                at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+                                    |  |  |                at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+                                    |  |  |                at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+                                    |  |  |                at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+                                    |  |  |                at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, SqlDataReader ds)
+                                    |  |  |                at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite, String method)
+                                    |  |  |                at System.Data.SqlClient.SqlCommand.InternalExecuteNonQuery(TaskCompletionSource`1 completion, Boolean sendToPipe, Int32 timeout, Boolean asyncWrite, String methodName)
+                                    |  |  |                at System.Data.SqlClient.SqlCommand.ExecuteNonQuery()
+                                    |  |  |                at CK.SqlServer.SqlConnectionControllerExtension.<>c.<ExecuteNonQuery>b__2_0(SqlCommand c)
+                                    |  |  |                at CK.SqlServer.SqlStandardCallContext.CK.SqlServer.ISqlCommandExecutor.ExecuteQuery[T](IActivityMonitor monitor, SqlConnection connection, SqlCommand cmd, Func`2 innerExecutor)
+                                    |  |  └─────────────────────────────────────────────────────────────────────────
+                                    |  └─────────────────────────────────────────────────────────────────────────
+                                    └─────────────────────────────────────────────────────────────────────────
+                   +03.4430249 i Done.
+5~~~~                            ~~ Monitor: 86a4731e-7d33-469a-8d91-e9b09caa00e1
+                   +03.6006274 i Done.
+6~~~~                            ~~ Monitor: 0413a991-af97-4ea1-b6af-5b391c309c7e
+                   +03.7096786 i Done.
+7~~~~                            ~~ Monitor: d1be1cfb-5d9f-426e-ab10-534398cb7d8c
+                   +03.7963609 i Done.
+8~~~~                            ~~ Monitor: 3c6e96ab-e9da-4b7e-b63f-29ff22d47dad
+                   +03.9028114 i Done.
+9~~~~                            ~~ Monitor: c6d2deac-02a1-4c19-8f77-c1ec6087f954
+                   +03.9905708 i Done.
+A~~~~                            ~~ Monitor: 152235f9-9de7-4f07-aaed-9a7dfe91feca
+                   +04.0129920 E exec CK.sGroupUserRemove <= @ActorId=1396, @GroupId=1, @UserId=1395
+                                    ┌──────────────────────────■ Exception: SqlDetailedException ■──────────────────────────
+                                    | Message:    exec CK.sGroupUserRemove <= @ActorId=1396, @GroupId=1, @UserId=1395
+                                    |  ┌──────────────────────────■ [Inner Exception] ■──────────────────────────
+                                    |  |  ┌──────────────────────────■ Exception: SqlException ■──────────────────────────
+                                    |  |  | Message:    ck:sGroupUserRemove-{25}-[Security.ActorMustBeSytem]
+                                    |  |  | Stack:         at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+                                    |  |  |                at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+                                    |  |  |                at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+                                    |  |  |                at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+                                    |  |  |                at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+                                    |  |  |                at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, SqlDataReader ds)
+                                    |  |  |                at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite, String method)
+                                    |  |  |                at System.Data.SqlClient.SqlCommand.InternalExecuteNonQuery(TaskCompletionSource`1 completion, Boolean sendToPipe, Int32 timeout, Boolean asyncWrite, String methodName)
+                                    |  |  |                at System.Data.SqlClient.SqlCommand.ExecuteNonQuery()
+                                    |  |  |                at CK.SqlServer.SqlConnectionControllerExtension.<>c.<ExecuteNonQuery>b__2_0(SqlCommand c)
+                                    |  |  |                at CK.SqlServer.SqlStandardCallContext.CK.SqlServer.ISqlCommandExecutor.ExecuteQuery[T](IActivityMonitor monitor, SqlConnection connection, SqlCommand cmd, Func`2 innerExecutor)
+                                    |  |  └─────────────────────────────────────────────────────────────────────────
+                                    |  └─────────────────────────────────────────────────────────────────────────
+                                    └─────────────────────────────────────────────────────────────────────────
+                   +04.0775899 E exec CK.sGroupUserAdd <= @ActorId=1396, @GroupId=1, @UserId=1397
+                                    ┌──────────────────────────■ Exception: SqlDetailedException ■──────────────────────────
+                                    | Message:    exec CK.sGroupUserAdd <= @ActorId=1396, @GroupId=1, @UserId=1397
+                                    |  ┌──────────────────────────■ [Inner Exception] ■──────────────────────────
+                                    |  |  ┌──────────────────────────■ Exception: SqlException ■──────────────────────────
+                                    |  |  | Message:    ck:sGroupUserAdd-{28}-[Security.ActorMustBeSytem]
+                                    |  |  | Stack:         at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+                                    |  |  |                at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+                                    |  |  |                at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+                                    |  |  |                at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+                                    |  |  |                at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+                                    |  |  |                at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, SqlDataReader ds)
+                                    |  |  |                at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite, String method)
+                                    |  |  |                at System.Data.SqlClient.SqlCommand.InternalExecuteNonQuery(TaskCompletionSource`1 completion, Boolean sendToPipe, Int32 timeout, Boolean asyncWrite, String methodName)
+                                    |  |  |                at System.Data.SqlClient.SqlCommand.ExecuteNonQuery()
+                                    |  |  |                at CK.SqlServer.SqlConnectionControllerExtension.<>c.<ExecuteNonQuery>b__2_0(SqlCommand c)
+                                    |  |  |                at CK.SqlServer.SqlStandardCallContext.CK.SqlServer.ISqlCommandExecutor.ExecuteQuery[T](IActivityMonitor monitor, SqlConnection connection, SqlCommand cmd, Func`2 innerExecutor)
+                                    |  |  └─────────────────────────────────────────────────────────────────────────
+                                    |  └─────────────────────────────────────────────────────────────────────────
+                                    └─────────────────────────────────────────────────────────────────────────
+                   +04.1375271 E exec CK.sGroupRemoveAllUsers <= @ActorId=1396, @GroupId=1
+                                    ┌──────────────────────────■ Exception: SqlDetailedException ■──────────────────────────
+                                    | Message:    exec CK.sGroupRemoveAllUsers <= @ActorId=1396, @GroupId=1
+                                    |  ┌──────────────────────────■ [Inner Exception] ■──────────────────────────
+                                    |  |  ┌──────────────────────────■ Exception: SqlException ■──────────────────────────
+                                    |  |  | Message:    ck:sGroupUserRemove-{25}-[Security.ActorMustBeSytem]<-CK.sGroupRemoveAllUsers
+                                    |  |  | Stack:         at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+                                    |  |  |                at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+                                    |  |  |                at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+                                    |  |  |                at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+                                    |  |  |                at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+                                    |  |  |                at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, SqlDataReader ds)
+                                    |  |  |                at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite, String method)
+                                    |  |  |                at System.Data.SqlClient.SqlCommand.InternalExecuteNonQuery(TaskCompletionSource`1 completion, Boolean sendToPipe, Int32 timeout, Boolean asyncWrite, String methodName)
+                                    |  |  |                at System.Data.SqlClient.SqlCommand.ExecuteNonQuery()
+                                    |  |  |                at CK.SqlServer.SqlConnectionControllerExtension.<>c.<ExecuteNonQuery>b__2_0(SqlCommand c)
+                                    |  |  |                at CK.SqlServer.SqlStandardCallContext.CK.SqlServer.ISqlCommandExecutor.ExecuteQuery[T](IActivityMonitor monitor, SqlConnection connection, SqlCommand cmd, Func`2 innerExecutor)
+                                    |  |  └─────────────────────────────────────────────────────────────────────────
+                                    |  └─────────────────────────────────────────────────────────────────────────
+                                    └─────────────────────────────────────────────────────────────────────────
+                   +04.1660919 i Done.
+B~~~~                            ~~ Monitor: a6b1b230-74b4-4b6a-89a3-ba7b06e62558
+                   +04.2108139 i Done.
+C~~~~                            ~~ Monitor: be3ab3e6-8a72-4cc1-81cc-3e817be77120
+                   +04.2314801 E exec CK.sUserCreate <= @ActorId=0, @UserName=N'72b51654-eb82-49e2-bc46-f6491ec60362', @UserIdResult=null output
+                                    ┌──────────────────────────■ Exception: SqlDetailedException ■──────────────────────────
+                                    | Message:    exec CK.sUserCreate <= @ActorId=0, @UserName=N'72b51654-eb82-49e2-bc46-f6491ec60362', @UserIdResult=null output
+                                    |  ┌──────────────────────────■ [Inner Exception] ■──────────────────────────
+                                    |  |  ┌──────────────────────────■ Exception: SqlException ■──────────────────────────
+                                    |  |  | Message:    Security.AnonymousNotAllowed
+                                    |  |  | Stack:         at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+                                    |  |  |                at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+                                    |  |  |                at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+                                    |  |  |                at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+                                    |  |  |                at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+                                    |  |  |                at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, SqlDataReader ds)
+                                    |  |  |                at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite, String method)
+                                    |  |  |                at System.Data.SqlClient.SqlCommand.InternalExecuteNonQuery(TaskCompletionSource`1 completion, Boolean sendToPipe, Int32 timeout, Boolean asyncWrite, String methodName)
+                                    |  |  |                at System.Data.SqlClient.SqlCommand.ExecuteNonQuery()
+                                    |  |  |                at CK.SqlServer.SqlConnectionControllerExtension.<>c.<ExecuteNonQuery>b__2_0(SqlCommand c)
+                                    |  |  |                at CK.SqlServer.SqlStandardCallContext.CK.SqlServer.ISqlCommandExecutor.ExecuteQuery[T](IActivityMonitor monitor, SqlConnection connection, SqlCommand cmd, Func`2 innerExecutor)
+                                    |  |  └─────────────────────────────────────────────────────────────────────────
+                                    |  └─────────────────────────────────────────────────────────────────────────
+                                    └─────────────────────────────────────────────────────────────────────────
+                   +04.2607280 i Done.
+D~~~~                            ~~ Monitor: 9c58be0b-1093-4021-b36d-3ac85a174ec5
+                   +04.3383434 i Done.
+E~~~~                            ~~ Monitor: 9cb3cd23-8c0e-45b3-b3bf-b0acd95831fd
+                   +04.3868058 i Done.
+F~~~~                            ~~ Monitor: d49f995c-6ca5-40bf-9f82-4362eddc4d53
+                   +04.5283844 i Done.

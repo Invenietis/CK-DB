@@ -1,27 +1,23 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <Import Project="..\Common\Shared.props" />
+  <Import Project="..\Common\Shared.props" />
 
-    <PropertyGroup>
-        <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
-        <Description>This package defines tUserSimpleCode table.</Description>
-    </PropertyGroup>
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
+    <Description>This package defines tUserSimpleCode table.</Description>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
 
-    <ItemGroup>
-        <ProjectReference Include="..\CK.DB.Auth\CK.DB.Auth.csproj" />
-    </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CK.DB.Auth\CK.DB.Auth.csproj" />
+  </ItemGroup>
 
-    <ItemGroup>
-        <EmbeddedResource Include="Res\CK.DB.User.UserSimpleCode.Package.Settle.1.0.0.sql" />
-        <EmbeddedResource Include="Res\Model.CK.UserSimpleCodeTable.Install.1.0.0.sql" />
-        <EmbeddedResource Include="Res\sUserSimpleCodeDestroy.sql" />
-        <EmbeddedResource Include="Res\sUserSimpleCodeUCL.sql" />
-        <EmbeddedResource Include="Res\sUserDestroy.tql" />
-        <EmbeddedResource Include="Res\vUserAuthProvider.tql" />
-    </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="**\*.sql;**\*.tql;**\*.y4" Exclude="bin\**;obj\**;@(EmbeddedResource)" />
+  </ItemGroup>
 
-    <ItemGroup>
-        <Folder Include="Properties\" />
-    </ItemGroup>
-    
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+
 </Project>

@@ -1,12 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="..\..\Common\Shared.props" />
   <PropertyGroup>
     <TargetFrameworks>net461;netcoreapp2.0</TargetFrameworks>
     <Description>This package contains tests for CK.DB.User.UserSimpleCode (uses CK.DB.Tests.NUnit).</Description>
   </PropertyGroup>
-  <Import Project="..\..\Common\Shared.props" />
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">
     <OutputType>Exe</OutputType>
-    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\CK.DB.User.UserSimpleCode\CK.DB.User.UserSimpleCode.csproj" />
