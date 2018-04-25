@@ -1,4 +1,5 @@
 #if !NET461
+using CK.Monitoring;
 using NUnit.Common;
 using NUnitLite;
 using System;
@@ -10,10 +11,12 @@ namespace CK.DB.Res.Tests
     {
         public static int Main( string[] args )
         {
-            return new AutoRun( Assembly.GetEntryAssembly() )
+            int result = new AutoRun( Assembly.GetEntryAssembly() )
                 .Execute( args, new ExtendedTextWrapper( Console.Out ), Console.In );
+            GrandOutput.Default?.Dispose();
+            return result;
         }
-
     }
 }
+
 #endif

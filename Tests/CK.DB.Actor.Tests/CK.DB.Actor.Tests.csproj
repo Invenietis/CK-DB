@@ -4,10 +4,11 @@
     <TargetFrameworks>netcoreapp2.0;net461</TargetFrameworks>
     <Description>This package contains tests for CK.DB.Actor (uses CK.DB.Tests.NUnit).</Description>
   </PropertyGroup>
+
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">
     <OutputType>Exe</OutputType>
-    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
+  
   <ItemGroup>
     <ProjectReference Include="..\..\CK.DB.Actor\CK.DB.Actor.csproj" />
     <PackageReference Include="CK.DB.Tests.NUnit" Version="$(CKDatabaseVersion)" />
@@ -16,7 +17,6 @@
     <PackageReference Include="NUnitLite" Version="3.10.1" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Logs\" />
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>

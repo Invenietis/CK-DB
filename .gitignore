@@ -238,3 +238,6 @@ IntegrationTests/DBBackup/
 IntegrationTests/DBHistory/**/*.bak
 IntegrationTests/DBHistory/*.sql
 TestResult.*.xml
+CKSetup-WorkingDir/
+/Tests/CK.DB.User.UserSimpleCode.Tests/Logs/
+Logs/
