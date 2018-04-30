@@ -1,3 +1,4 @@
+using Cake.Common;
 using Cake.Common.Build;
 using Cake.Common.Diagnostics;
 using Cake.Common.Solution;
@@ -224,7 +225,7 @@ namespace CodeCake
                 // gitInfo is valid: it is either ci or a release build. 
                 // Blank releases must not be pushed on any remote and are compied to LocalFeed/Blank
                 // local feed it it exists.
-                bool isBlankCIRelease = gitInfo.Info.FinalSemVersion.Prerelease.Contains( "ci-blank." );
+                bool isBlankCIRelease = gitInfo.Info.FinalSemVersion.Prerelease.EndsWith( ".blank" );
                 var localFeed = Cake.FindDirectoryAbove( "LocalFeed" );
                 if( localFeed != null && isBlankCIRelease )
                 {
@@ -309,6 +310,10 @@ namespace CodeCake
             if( nbPackagesToPublish == 0 )
             {
                 Cake.Information( $"No packages out of {projectsToPublish.Count()} projects to publish." );
+                if( Cake.Argument( "IgnoreNoPackagesToProduce", 'N' ) == 'Y' )
+                {
+                    result.IgnoreNoPackagesToProduce = true;
+                }
             }
             else
             {
