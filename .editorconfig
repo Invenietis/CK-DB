@@ -11,6 +11,9 @@ indent_size = 2
 insert_final_newline = true
 trim_trailing_whitespace = true
 
+[*.sql]
+indent_size = 4
+
 [*.cs]
 end_of_line = crlf
 indent_size = 4
