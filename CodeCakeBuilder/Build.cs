@@ -47,21 +47,13 @@ namespace CodeCake
 
             const string solutionName = "CK-DB";
             const string solutionFileName = solutionName + ".sln";
-            const string integrationSolution = "IntegrationTests/IntegrationTests.sln";
-            const string integrationTestsDirectory = "IntegrationTests/Tests/AllPackages.Tests";
-            const string integrationTestsCSProj = integrationTestsDirectory+ "/AllPackages.Tests.csproj";
 
             var releasesDir = Cake.Directory( "CodeCakeBuilder/Releases" );
 
             var projects = Cake.ParseSolution( solutionFileName )
                                        .Projects
                                        .Where( p => !(p is SolutionFolder)
-                                                     && !p.Path.Segments.Contains( "IntegrationTests" )
                                                      && p.Name != "CodeCakeBuilder" );
-
-            var integrationProjects = Cake.ParseSolution( integrationSolution )
-                            .Projects
-                            .Where( p => !(p is SolutionFolder) );
 
             // We publish .Tests projects for this solution.
             var projectsToPublish = projects;
@@ -71,15 +63,6 @@ namespace CodeCake
             // This default global info will be replaced by Check-Repository task.
             // It is allocated here to ease debugging and/or manual work on complex build script.
             CheckRepositoryInfo globalInfo = new CheckRepositoryInfo { Version = gitInfo.SafeNuGetVersion };
-
-            var vCKDatabase = XDocument.Load( "Common/DependencyVersions.props" )
-                                          .Root
-                                          .Elements( "PropertyGroup" )
-                                          .Elements( "CKDatabaseVersion" )
-                                          .Single()
-                                          .Value;
-            Cake.Information( $"Using CK-Database version {vCKDatabase}." );
-            string ckSetupNet461Path = System.IO.Path.GetFullPath( System.IO.Path.Combine( releasesDir, "CKSetup-Net461" ) );
 
             Task( "Check-Repository" )
                .Does( () =>
@@ -124,104 +107,9 @@ namespace CodeCake
                     StandardCreateNuGetPackages( releasesDir, projectsToPublish, gitInfo, globalInfo.BuildConfiguration );
                 } );
 
-            Task( "Compile-IntegrationTests" )
-              .IsDependentOn( "Create-NuGet-Packages" )
-              .Does( () =>
-              {
-                  //if( !gitInfo.IsValid )
-                  //{
-                  //    string nugetV3Cache = Environment.ExpandEnvironmentVariables( @"%USERPROFILE%/.nuget/packages" );
-                  //    Cake.CleanDirectories( nugetV3Cache + @"/**/" + CSemVer.SVersion.ZeroVersion );
-                  //}
-
-                  //string version = gitInfo.IsValid
-                  //                  ? gitInfo.SafeNuGetVersion
-                  //                  : CSemVer.SVersion.ZeroVersion.ToString();
-
-                  //Cake.DotNetCoreBuild( integrationSolution, new DotNetCoreBuildSettings()
-                  //{
-                  //    ArgumentCustomization = c => c.Append( $@"/p:CKDBVersion=""{version}""" )
-                  //} );
-                  //Cake.DotNetCorePublish( integrationTestsCSProj, new DotNetCorePublishSettings()
-                  //{
-                  //    ArgumentCustomization = c => c.Append( $@"/p:CKDBVersion=""{version}""" ).Append( " /p:IsPackable=true" ),
-                  //    Framework = "netcoreapp2.0"
-                  //} );
-              } );
-
-            Task( "Download-CKSetup-Net461-From-Store-and-Unzip-it" )
-                .Does( () =>
-                {
-                    //var tempFile = Cake.DownloadFile( "http://cksetup.invenietis.net/dl-zip/CKSetup/Net461" );
-                    //Cake.Unzip( tempFile, ckSetupNet461Path );
-                } );
-
-            Task( "Run-CKSetup-On-IntegrationTests-AllPackages-Net461-With-CKSetup-Net461" )
-              .IsDependentOn( "Compile-IntegrationTests" )
-              .IsDependentOn( "Download-CKSetup-Net461-From-Store-and-Unzip-it" )
-              .Does( () =>
-              {
-                  //var binPath = System.IO.Path.GetFullPath( integrationTestsDirectory + $"/bin/{globalInfo.BuildConfiguration}/net461" );
-                  //string dbCon = GetConnectionStringForIntegrationTestsAllPackages();
-
-                  //string configFile = System.IO.Path.Combine( releasesDir, "CKSetup-IntegrationTests-AllPackages-Net461.xml" );
-                  //Cake.TransformTextFile( "CodeCakeBuilder/CKSetup-IntegrationTests-AllPackages.xml", "{", "}" )
-                  //      .WithToken( "binPath", binPath )
-                  //      .WithToken( "connectionString", dbCon )
-                  //      .Save( configFile );
-
-                  //var cmdLine = $@"{ckSetupNet461Path}\CKSetup.exe run ""{configFile}"" -v Monitor ";
-                  //if( globalInfo.LocalFeedPath != null && globalInfo.LocalFeedPath.EndsWith( "LocalFeed\\Blank" ) )
-                  //{
-                  //    cmdLine += $"--store \"{System.IO.Path.Combine( globalInfo.LocalFeedPath, "CKSetupStore" )}\"";
-                  //}
-                  //int result = Cake.RunCmd( cmdLine );
-                  //if( result != 0 ) throw new Exception( "CKSetup.exe failed." );
-              } );
-
-            Task( "Run-IntegrationTests" )
-              .IsDependentOn( "Compile-IntegrationTests" )
-              .WithCriteria( () => Cake.InteractiveMode() == InteractiveMode.NoInteraction
-                                   || Cake.ReadInteractiveOption( "Run integration tests?", 'Y', 'N' ) == 'Y' )
-              .Does( () =>
-              {
-                  // There should be a bad database test name here.
-                  // Skip it for now...
-                  //
-                  // Running AllPackages.Tests executes a CKSetup on MultiBinPaths with the
-                  // 3 applications (FacadeApp) on the CKDB_TEST_MultiBinPaths database.
-                  // The task "Run-Facade-App-Tests" below executes the 3 tests apps which
-                  // use the burned connection string of the generated StObjMap.
-                  //
-                  //var integrationTests = integrationProjects.Where( p => p.Name == "AllPackages.Tests" );
-
-                  //var testDlls = integrationTests
-                  //                .Select( p => System.IO.Path.Combine(
-                  //                                    p.Path.GetDirectory().ToString(), "bin", globalInfo.BuildConfiguration, "net461", p.Name + ".dll" ) );
-                  //Cake.Information( $"Testing: {string.Join( ", ", testDlls )}" );
-                  //Cake.NUnit( testDlls, new NUnitSettings() { Framework = "v4.5" } );
-              } );
-
-            Task( "Run-Facade-App-Tests" )
-              .IsDependentOn( "Run-IntegrationTests" )
-              .WithCriteria( () => Cake.InteractiveMode() == InteractiveMode.NoInteraction
-                                   || Cake.ReadInteractiveOption( "Run Facade application tests?", 'Y', 'N' ) == 'Y' )
-              .Does( () =>
-              {
-                  //var facadeTests = integrationProjects.Where( p => p.Name.StartsWith( "FacadeApp" ) );
-
-                  //var testNet461Dlls = facadeTests
-                  //                .Select( p => System.IO.Path.Combine(
-                  //                                    p.Path.GetDirectory().ToString(), "bin", globalInfo.BuildConfiguration, "net461", p.Name + ".dll" ) );
-                  //Cake.Information( $"Testing: {string.Join( ", ", testNet461Dlls )}" );
-                  //Cake.NUnit( testNet461Dlls, new NUnitSettings() { Framework = "v4.5" } );
-              } );
 
             Task( "Push-NuGet-Packages" )
                     .IsDependentOn( "Create-NuGet-Packages" )
-                    .IsDependentOn( "Run-CKSetup-On-IntegrationTests-AllPackages-Net461-With-CKSetup-Net461" )
-                    .IsDependentOn( "Run-IntegrationTests" )
-                    .IsDependentOn( "Run-Facade-App-Tests" )
                     .WithCriteria( () => gitInfo.IsValid )
                     .Does( () =>
                     {
@@ -229,16 +117,6 @@ namespace CodeCake
                     } );
 
             Task( "Default" ).IsDependentOn( "Push-NuGet-Packages" );
-        }
-
-        private static string GetConnectionStringForIntegrationTestsAllPackages()
-        {
-            string c = Environment.GetEnvironmentVariable( "SqlServer/MasterConnectionString" );
-            if( c == null ) c = "Server=.;Database=master;Integrated Security=SSPI";
-            var csB = new SqlConnectionStringBuilder( c );
-            csB.InitialCatalog = "TEST_CK_DB_AllPackages";
-            var dbCon = csB.ToString();
-            return dbCon;
         }
     }
 }
