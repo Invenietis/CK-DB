@@ -35,6 +35,7 @@ begin
 	--[beginsp]
 
     --<PreCheckLoginFailure revert />
+    --<CheckLoginFailure />
 
     --<NormalizeLoginFailure />
     if @FailureReason is not null or @FailureCode is not null
