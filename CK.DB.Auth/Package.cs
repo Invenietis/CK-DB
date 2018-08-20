@@ -28,7 +28,7 @@ namespace CK.DB.Auth
         {
         }
 
-        void StObjInitialize( IActivityMonitor m, IContextualStObjMap map )
+        void StObjInitialize( IActivityMonitor m, IStObjObjectMap map )
         {
             using( m.OpenInfo( $"Initializing CK.DB.Auth.Package : IAuthenticationDatabaseService" ) )
             {

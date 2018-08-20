@@ -22,7 +22,7 @@ namespace CK.DB.HZone.Tests
         [TearDown]
         public void CheckCKCoreInvariant()
         {
-            TestHelper.StObjMap.Default.Obtain<SqlDefaultDatabase>().GetCKCoreInvariantsViolations()
+            TestHelper.StObjMap.StObjs.Obtain<SqlDefaultDatabase>().GetCKCoreInvariantsViolations()
                 .Rows.Should().BeEmpty();
         }
 
@@ -30,9 +30,9 @@ namespace CK.DB.HZone.Tests
         public void by_default_when_a_group_is_moved_all_of_its_users_must_be_already_registered_in_the_target_zone()
         {
             var map = TestHelper.StObjMap;
-            var g = map.Default.Obtain<GroupTable>();
-            var z = map.Default.Obtain<ZoneTable>();
-            var u = map.Default.Obtain<UserTable>();
+            var g = map.StObjs.Obtain<GroupTable>();
+            var z = map.StObjs.Obtain<ZoneTable>();
+            var u = map.StObjs.Obtain<UserTable>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 int idUser = u.CreateUser( ctx, 1, Guid.NewGuid().ToString() );
@@ -66,8 +66,8 @@ namespace CK.DB.HZone.Tests
         public void with_option_Intersect_when_a_group_is_moved_its_users_not_already_registered_in_the_target_zone_are_removed()
         {
             var map = TestHelper.StObjMap;
-            var z = map.Default.Obtain<ZoneTable>();
-            var u = map.Default.Obtain<UserTable>();
+            var z = map.StObjs.Obtain<ZoneTable>();
+            var u = map.StObjs.Obtain<UserTable>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 int idUser = u.CreateUser( ctx, 1, Guid.NewGuid().ToString() );
@@ -101,8 +101,8 @@ namespace CK.DB.HZone.Tests
         public void with_option_AutoUserRegistration_when_a_group_is_moved_its_users_not_already_registered_in_the_target_zone_are_automatically_registered()
         {
             var map = TestHelper.StObjMap;
-            var z = map.Default.Obtain<ZoneTable>();
-            var u = map.Default.Obtain<UserTable>();
+            var z = map.StObjs.Obtain<ZoneTable>();
+            var u = map.StObjs.Obtain<UserTable>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 int idUser = u.CreateUser( ctx, 1, Guid.NewGuid().ToString() );

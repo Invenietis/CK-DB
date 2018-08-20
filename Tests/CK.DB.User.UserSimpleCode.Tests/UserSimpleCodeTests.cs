@@ -19,9 +19,9 @@ namespace CK.DB.User.UserSimpleCode.Tests
         [Test]
         public void create_SimpleCode_user_and_check_read_info_object_method()
         {
-            var u = TestHelper.StObjMap.Default.Obtain<UserSimpleCodeTable>();
-            var user = TestHelper.StObjMap.Default.Obtain<UserTable>();
-            var infoFactory = TestHelper.StObjMap.Default.Obtain<IPocoFactory<IUserSimpleCodeInfo>>();
+            var u = TestHelper.StObjMap.StObjs.Obtain<UserSimpleCodeTable>();
+            var user = TestHelper.StObjMap.StObjs.Obtain<UserTable>();
+            var infoFactory = TestHelper.StObjMap.StObjs.Obtain<IPocoFactory<IUserSimpleCodeInfo>>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 var userName = Guid.NewGuid().ToString();
@@ -46,9 +46,9 @@ namespace CK.DB.User.UserSimpleCode.Tests
         [Test]
         public async Task create_SimpleCode_user_and_check_read_info_object_method_async()
         {
-            var u = TestHelper.StObjMap.Default.Obtain<UserSimpleCodeTable>();
-            var user = TestHelper.StObjMap.Default.Obtain<UserTable>();
-            var infoFactory = TestHelper.StObjMap.Default.Obtain<IPocoFactory<IUserSimpleCodeInfo>>();
+            var u = TestHelper.StObjMap.StObjs.Obtain<UserSimpleCodeTable>();
+            var user = TestHelper.StObjMap.StObjs.Obtain<UserTable>();
+            var infoFactory = TestHelper.StObjMap.StObjs.Obtain<IPocoFactory<IUserSimpleCodeInfo>>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 var userName = Guid.NewGuid().ToString();
@@ -79,8 +79,8 @@ namespace CK.DB.User.UserSimpleCode.Tests
         [Test]
         public void vUserAuthProvider_reflects_the_user_SimpleCode_authentication()
         {
-            var u = TestHelper.StObjMap.Default.Obtain<UserSimpleCodeTable>();
-            var user = TestHelper.StObjMap.Default.Obtain<UserTable>();
+            var u = TestHelper.StObjMap.StObjs.Obtain<UserSimpleCodeTable>();
+            var user = TestHelper.StObjMap.StObjs.Obtain<UserTable>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 string userName = "SimpleCode auth - " + Guid.NewGuid().ToString();
@@ -102,9 +102,9 @@ namespace CK.DB.User.UserSimpleCode.Tests
         [Test]
         public void standard_generic_tests_for_SimpleCode_provider()
         {
-            var auth = TestHelper.StObjMap.Default.Obtain<Auth.Package>();
+            var auth = TestHelper.StObjMap.StObjs.Obtain<Auth.Package>();
             // With IUserSimpleCodeInfo POCO.
-            var f = TestHelper.StObjMap.Default.Obtain<IPocoFactory<IUserSimpleCodeInfo>>();
+            var f = TestHelper.StObjMap.StObjs.Obtain<IPocoFactory<IUserSimpleCodeInfo>>();
             CK.DB.Auth.Tests.AuthTests.StandardTestForGenericAuthenticationProvider(
                 auth,
                 "SimpleCode",
@@ -134,8 +134,8 @@ namespace CK.DB.User.UserSimpleCode.Tests
         [Test]
         public async Task standard_generic_tests_for_SimpleCode_provider_Async()
         {
-            var auth = TestHelper.StObjMap.Default.Obtain<Auth.Package>();
-            var f = TestHelper.StObjMap.Default.Obtain<IPocoFactory<IUserSimpleCodeInfo>>();
+            var auth = TestHelper.StObjMap.StObjs.Obtain<Auth.Package>();
+            var f = TestHelper.StObjMap.StObjs.Obtain<IPocoFactory<IUserSimpleCodeInfo>>();
             await Auth.Tests.AuthTests.StandardTestForGenericAuthenticationProviderAsync(
                 auth,
                 "SimpleCode",
