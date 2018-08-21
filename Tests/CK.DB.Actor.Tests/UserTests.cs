@@ -19,7 +19,7 @@ namespace CK.DB.Actor.Tests
         [Test]
         public void Anonymous_can_not_create_a_user()
         {
-            var u = TestHelper.StObjMap.Default.Obtain<UserTable>();
+            var u = TestHelper.StObjMap.StObjs.Obtain<UserTable>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 u.Invoking( sut => sut.CreateUser( ctx, 0, Guid.NewGuid().ToString() ) ).Should().Throw<SqlDetailedException>();
@@ -29,7 +29,7 @@ namespace CK.DB.Actor.Tests
         [Test]
         public void user_FindByName_returns_0_when_not_found()
         {
-            var u = TestHelper.StObjMap.Default.Obtain<UserTable>();
+            var u = TestHelper.StObjMap.StObjs.Obtain<UserTable>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 var exist = Guid.NewGuid().ToString();
@@ -45,7 +45,7 @@ namespace CK.DB.Actor.Tests
         [Test]
         public void user_can_not_be_created_with_an_already_existing_UserName()
         {
-            var u = TestHelper.StObjMap.Default.Obtain<UserTable>();
+            var u = TestHelper.StObjMap.StObjs.Obtain<UserTable>();
 
             string testName = "user_can_not_be_created_with_an_already_existing_UserName" + Guid.NewGuid().ToString();
 
@@ -67,7 +67,7 @@ namespace CK.DB.Actor.Tests
         [Test]
         public void UserName_is_not_set_if_another_user_exists_with_the_same_UserName()
         {
-            var u = TestHelper.StObjMap.Default.Obtain<UserTable>();
+            var u = TestHelper.StObjMap.StObjs.Obtain<UserTable>();
 
             string existingName = Guid.NewGuid().ToString();
             string userName = Guid.NewGuid().ToString();

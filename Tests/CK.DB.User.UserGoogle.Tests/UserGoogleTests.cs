@@ -19,9 +19,9 @@ namespace CK.DB.User.UserGoogle.Tests
         [Test]
         public void create_Google_user_and_check_read_info_object_method()
         {
-            var u = TestHelper.StObjMap.Default.Obtain<UserGoogleTable>();
-            var user = TestHelper.StObjMap.Default.Obtain<UserTable>();
-            var infoFactory = TestHelper.StObjMap.Default.Obtain<IPocoFactory<IUserGoogleInfo>>();
+            var u = TestHelper.StObjMap.StObjs.Obtain<UserGoogleTable>();
+            var user = TestHelper.StObjMap.StObjs.Obtain<UserTable>();
+            var infoFactory = TestHelper.StObjMap.StObjs.Obtain<IPocoFactory<IUserGoogleInfo>>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 var userName = Guid.NewGuid().ToString();
@@ -46,9 +46,9 @@ namespace CK.DB.User.UserGoogle.Tests
         [Test]
         public async Task create_Google_user_and_check_read_info_object_method_async()
         {
-            var u = TestHelper.StObjMap.Default.Obtain<UserGoogleTable>();
-            var user = TestHelper.StObjMap.Default.Obtain<UserTable>();
-            var infoFactory = TestHelper.StObjMap.Default.Obtain<IPocoFactory<IUserGoogleInfo>>();
+            var u = TestHelper.StObjMap.StObjs.Obtain<UserGoogleTable>();
+            var user = TestHelper.StObjMap.StObjs.Obtain<UserTable>();
+            var infoFactory = TestHelper.StObjMap.StObjs.Obtain<IPocoFactory<IUserGoogleInfo>>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 var userName = Guid.NewGuid().ToString();
@@ -79,8 +79,8 @@ namespace CK.DB.User.UserGoogle.Tests
         [Test]
         public void vUserAuthProvider_reflects_the_user_Google_authentication()
         {
-            var u = TestHelper.StObjMap.Default.Obtain<UserGoogleTable>();
-            var user = TestHelper.StObjMap.Default.Obtain<UserTable>();
+            var u = TestHelper.StObjMap.StObjs.Obtain<UserGoogleTable>();
+            var user = TestHelper.StObjMap.StObjs.Obtain<UserTable>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 string userName = "Google auth - " + Guid.NewGuid().ToString();
@@ -102,9 +102,9 @@ namespace CK.DB.User.UserGoogle.Tests
         [Test]
         public void standard_generic_tests_for_Google_provider()
         {
-            var auth = TestHelper.StObjMap.Default.Obtain<Auth.Package>();
+            var auth = TestHelper.StObjMap.StObjs.Obtain<Auth.Package>();
             // With IUserGoogleInfo POCO.
-            var f = TestHelper.StObjMap.Default.Obtain<IPocoFactory<IUserGoogleInfo>>();
+            var f = TestHelper.StObjMap.StObjs.Obtain<IPocoFactory<IUserGoogleInfo>>();
             CK.DB.Auth.Tests.AuthTests.StandardTestForGenericAuthenticationProvider(
                 auth,
                 "Google",
@@ -134,8 +134,8 @@ namespace CK.DB.User.UserGoogle.Tests
         [Test]
         public async Task standard_generic_tests_for_Google_provider_Async()
         {
-            var auth = TestHelper.StObjMap.Default.Obtain<Auth.Package>();
-            var f = TestHelper.StObjMap.Default.Obtain<IPocoFactory<IUserGoogleInfo>>();
+            var auth = TestHelper.StObjMap.StObjs.Obtain<Auth.Package>();
+            var f = TestHelper.StObjMap.StObjs.Obtain<IPocoFactory<IUserGoogleInfo>>();
             await Auth.Tests.AuthTests.StandardTestForGenericAuthenticationProviderAsync(
                 auth,
                 "Google",

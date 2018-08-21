@@ -28,11 +28,11 @@ namespace CK.DB.Auth
         {
         }
 
-        void StObjInitialize( IActivityMonitor m, IContextualStObjMap map )
+        void StObjInitialize( IActivityMonitor m, IStObjMap map )
         {
             using( m.OpenInfo( $"Initializing CK.DB.Auth.Package : IAuthenticationDatabaseService" ) )
             {
-                _allProviders = map.Implementations.OfType<IGenericAuthenticationProvider>().ToDictionary( p => p.ProviderName, StringComparer.OrdinalIgnoreCase );
+                _allProviders = map.StObjs.Implementations.OfType<IGenericAuthenticationProvider>().ToDictionary( p => p.ProviderName, StringComparer.OrdinalIgnoreCase );
                 if( BasicProvider != null ) _allProviders.Add( BasicToGenericProviderAdapter.Name, new BasicToGenericProviderAdapter( BasicProvider ) );
                 _allProvidersValues = new CKReadOnlyCollectionOnICollection<IGenericAuthenticationProvider>( _allProviders.Values );
                 m.CloseGroup( $"{_allProviders.Count} providers: " + _allProviders.Keys.Concatenate() );

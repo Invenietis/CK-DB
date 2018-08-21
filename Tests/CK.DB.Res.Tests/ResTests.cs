@@ -17,7 +17,7 @@ namespace CK.DB.Res.Tests
         [Test]
         public async Task creating_and_destroying_raw_resource()
         {
-            var r = TestHelper.StObjMap.Default.Obtain<ResTable>();
+            var r = TestHelper.StObjMap.StObjs.Obtain<ResTable>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 int id = await r.CreateAsync( ctx );

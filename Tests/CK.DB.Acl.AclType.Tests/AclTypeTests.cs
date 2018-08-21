@@ -20,7 +20,7 @@ namespace CK.DB.Acl.AclType.Tests
         public async Task creating_and_destroying_type()
         {
             var map = TestHelper.StObjMap;
-            var aclType = map.Default.Obtain<AclTypeTable>();
+            var aclType = map.StObjs.Obtain<AclTypeTable>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 var db = aclType.Database;
@@ -42,7 +42,7 @@ namespace CK.DB.Acl.AclType.Tests
         public async Task constrained_levels_must_not_be_deny_and_0_and_127_can_not_be_removed()
         {
             var map = TestHelper.StObjMap;
-            var aclType = map.Default.Obtain<AclTypeTable>();
+            var aclType = map.StObjs.Obtain<AclTypeTable>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 var db = aclType.Database;
@@ -86,8 +86,8 @@ namespace CK.DB.Acl.AclType.Tests
         public async Task type_can_not_be_destroyed_when_typed_acl_exist()
         {
             var map = TestHelper.StObjMap;
-            var acl = map.Default.Obtain<AclTable>();
-            var aclType = map.Default.Obtain<AclTypeTable>();
+            var acl = map.StObjs.Obtain<AclTable>();
+            var aclType = map.StObjs.Obtain<AclTypeTable>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 var db = aclType.Database;
@@ -105,9 +105,9 @@ namespace CK.DB.Acl.AclType.Tests
         public void typed_acl_with_constrained_levels_control_their_grant_levels()
         {
             var map = TestHelper.StObjMap;
-            var user = map.Default.Obtain<UserTable>();
-            var acl = map.Default.Obtain<AclTable>();
-            var aclType = map.Default.Obtain<AclTypeTable>();
+            var user = map.StObjs.Obtain<UserTable>();
+            var acl = map.StObjs.Obtain<AclTable>();
+            var aclType = map.StObjs.Obtain<AclTypeTable>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 int idType = aclType.CreateAclType( ctx, 1 );
@@ -151,9 +151,9 @@ namespace CK.DB.Acl.AclType.Tests
         public void existing_level_prevents_set_constrained()
         {
             var map = TestHelper.StObjMap;
-            var aclType = map.Default.Obtain<AclTypeTable>();
-            var acl = map.Default.Obtain<AclTable>();
-            var user = map.Default.Obtain<UserTable>();
+            var aclType = map.StObjs.Obtain<AclTypeTable>();
+            var acl = map.StObjs.Obtain<AclTable>();
+            var user = map.StObjs.Obtain<UserTable>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 int idType = aclType.CreateAclType( ctx, 1 );

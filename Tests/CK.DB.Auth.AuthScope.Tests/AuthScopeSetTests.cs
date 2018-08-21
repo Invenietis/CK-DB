@@ -17,7 +17,7 @@ namespace CK.DB.Auth.AuthScope.Tests
         [Test]
         public async Task creating_simple_scope_set()
         {
-            var scopes = TestHelper.StObjMap.Default.Obtain<AuthScopeSetTable>();
+            var scopes = TestHelper.StObjMap.StObjs.Obtain<AuthScopeSetTable>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 var id = await scopes.CreateScopeSetAsync( ctx, 1, "openid profile" );
@@ -33,7 +33,7 @@ namespace CK.DB.Auth.AuthScope.Tests
         [Test]
         public async Task setting_scopes_on_zero_ScopeSetId_is_an_error()
         {
-            var scopes = TestHelper.StObjMap.Default.Obtain<AuthScopeSetTable>();
+            var scopes = TestHelper.StObjMap.StObjs.Obtain<AuthScopeSetTable>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 try
@@ -50,7 +50,7 @@ namespace CK.DB.Auth.AuthScope.Tests
         [Test]
         public async Task adding_and_removing_scopes_via_raw_strings()
         {
-            var scopes = TestHelper.StObjMap.Default.Obtain<AuthScopeSetTable>();
+            var scopes = TestHelper.StObjMap.StObjs.Obtain<AuthScopeSetTable>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 var id = await scopes.CreateScopeSetAsync( ctx, 1, "   profile   openid  " );
@@ -88,7 +88,7 @@ namespace CK.DB.Auth.AuthScope.Tests
         [Test]
         public async Task AuthScopeSet_manipulation()
         {
-            var scopes = TestHelper.StObjMap.Default.Obtain<AuthScopeSetTable>();
+            var scopes = TestHelper.StObjMap.StObjs.Obtain<AuthScopeSetTable>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 var set = new AuthScopeSet( new[] {

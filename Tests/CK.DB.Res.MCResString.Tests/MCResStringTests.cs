@@ -17,7 +17,7 @@ namespace CK.DB.Res.MCResString.Tests
         [Test]
         public void fallbaks_between_french_and_english_cultures()
         {
-            var p = TestHelper.StObjMap.Default.Obtain<Package>();
+            var p = TestHelper.StObjMap.StObjs.Obtain<Package>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 int noValuesId, enId, frId, bothId;
@@ -40,7 +40,7 @@ namespace CK.DB.Res.MCResString.Tests
         [Test]
         public void fallbaks_between_french_and_english_and_german_cultures()
         {
-            var p = TestHelper.StObjMap.Default.Obtain<Package>();
+            var p = TestHelper.StObjMap.StObjs.Obtain<Package>();
             using( var ctx = new SqlStandardCallContext() )
             {
 
@@ -101,7 +101,7 @@ namespace CK.DB.Res.MCResString.Tests
         [Test]
         public void setting_and_clearing_string_values_can_use_XLCID()
         {
-            var p = TestHelper.StObjMap.Default.Obtain<Package>();
+            var p = TestHelper.StObjMap.StObjs.Obtain<Package>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 Culture.Tests.ExtendedCultureTests.RegisterSpanish( p.Culture, ctx );
@@ -184,7 +184,7 @@ namespace CK.DB.Res.MCResString.Tests
         [Test]
         public void destroying_the_resource_destroys_the_string_values()
         {
-            var p = TestHelper.StObjMap.Default.Obtain<Package>();
+            var p = TestHelper.StObjMap.StObjs.Obtain<Package>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 int noValuesId, enId, frId, bothId;

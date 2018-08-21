@@ -20,8 +20,8 @@ namespace CK.DB.User.UserGoogle.AuthScope.Tests
         [Test]
         public async Task non_user_google_ScopeSet_is_null()
         {
-            var user = TestHelper.StObjMap.Default.Obtain<UserTable>();
-            var p = TestHelper.StObjMap.Default.Obtain<Package>();
+            var user = TestHelper.StObjMap.StObjs.Obtain<UserTable>();
+            var p = TestHelper.StObjMap.StObjs.Obtain<Package>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 var id = await user.CreateUserAsync( ctx, 1, Guid.NewGuid().ToString() );
@@ -32,9 +32,9 @@ namespace CK.DB.User.UserGoogle.AuthScope.Tests
         [Test]
         public async Task setting_default_scopes_impact_new_users()
         {
-            var user = TestHelper.StObjMap.Default.Obtain<UserTable>();
-            var p = TestHelper.StObjMap.Default.Obtain<Package>();
-            var factory = TestHelper.StObjMap.Default.Obtain<IPocoFactory<IUserGoogleInfo>>();
+            var user = TestHelper.StObjMap.StObjs.Obtain<UserTable>();
+            var p = TestHelper.StObjMap.StObjs.Obtain<Package>();
+            var factory = TestHelper.StObjMap.StObjs.Obtain<IPocoFactory<IUserGoogleInfo>>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 AuthScopeSet original = await p.ReadDefaultScopeSetAsync( ctx );

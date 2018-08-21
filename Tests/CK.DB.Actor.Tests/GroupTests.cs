@@ -18,8 +18,7 @@ namespace CK.DB.Actor.Tests
         [Test]
         public void groups_can_be_created_and_destroyed_when_empty()
         {
-            var map = TestHelper.StObjMap;
-            var g = map.Default.Obtain<GroupTable>();
+            var g = TestHelper.StObjMap.StObjs.Obtain<GroupTable>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 int groupId = g.CreateGroup( ctx, 1 );
@@ -37,8 +36,7 @@ namespace CK.DB.Actor.Tests
         [Test]
         public void Anonymous_can_not_create_a_group()
         {
-            var map = TestHelper.StObjMap;
-            var g = map.Default.Obtain<GroupTable>();
+            var g = TestHelper.StObjMap.StObjs.Obtain<GroupTable>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 g.Invoking( sut => sut.CreateGroup( ctx, 0 ) ).Should().Throw<SqlDetailedException>();
@@ -48,8 +46,7 @@ namespace CK.DB.Actor.Tests
         [Test]
         public void Anonymous_can_not_destroy_a_group()
         {
-            var map = TestHelper.StObjMap;
-            var g = map.Default.Obtain<GroupTable>();
+            var g = TestHelper.StObjMap.StObjs.Obtain<GroupTable>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 int groupId = g.CreateGroup( ctx, 1 );
@@ -62,8 +59,8 @@ namespace CK.DB.Actor.Tests
         public void by_default_groups_can_not_be_destroyed_when_users_exist()
         {
             var map = TestHelper.StObjMap;
-            var g = map.Default.Obtain<GroupTable>();
-            var u = map.Default.Obtain<UserTable>();
+            var g = map.StObjs.Obtain<GroupTable>();
+            var u = map.StObjs.Obtain<UserTable>();
 
             using( var ctx = new SqlStandardCallContext() )
             {
@@ -89,8 +86,8 @@ namespace CK.DB.Actor.Tests
         public void groups_are_destroyed_even_when_users_exist_when_ForceDestroy_is_true()
         {
             var map = TestHelper.StObjMap;
-            var g = map.Default.Obtain<GroupTable>();
-            var u = map.Default.Obtain<UserTable>();
+            var g = map.StObjs.Obtain<GroupTable>();
+            var u = map.StObjs.Obtain<UserTable>();
 
             using( var ctx = new SqlStandardCallContext() )
             {
@@ -113,8 +110,8 @@ namespace CK.DB.Actor.Tests
         public void destroying_a_user_removes_it_from_all_the_groups_it_belongs_to()
         {
             var map = TestHelper.StObjMap;
-            var g = map.Default.Obtain<GroupTable>();
-            var u = map.Default.Obtain<UserTable>();
+            var g = map.StObjs.Obtain<GroupTable>();
+            var u = map.StObjs.Obtain<UserTable>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 int groupId1 = g.CreateGroup( ctx, 1 );
@@ -140,8 +137,8 @@ namespace CK.DB.Actor.Tests
         public void only_system_users_can_add_or_remove_users_from_group_System()
         {
             var map = TestHelper.StObjMap;
-            var g = map.Default.Obtain<GroupTable>();
-            var u = map.Default.Obtain<UserTable>();
+            var g = map.StObjs.Obtain<GroupTable>();
+            var u = map.StObjs.Obtain<UserTable>();
             int userId;
             using( var ctx = new SqlStandardCallContext() )
             {

@@ -20,7 +20,7 @@ namespace CK.DB.Culture.Tests
         [Test]
         public void checking_Idx_updates_when_destroying_a_Culture()
         {
-            var p = TestHelper.StObjMap.Default.Obtain<Package>();
+            var p = TestHelper.StObjMap.StObjs.Obtain<Package>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 RegisterSampleCultures( p, ctx );
@@ -34,7 +34,7 @@ namespace CK.DB.Culture.Tests
         [Test]
         public void reading_CultureData()
         {
-            var p = TestHelper.StObjMap.Default.Obtain<Package>();
+            var p = TestHelper.StObjMap.StObjs.Obtain<Package>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 RegisterSampleCultures( p, ctx );
@@ -58,7 +58,7 @@ namespace CK.DB.Culture.Tests
         [Test]
         public void reading_ExtendedCultureData()
         {
-            var p = TestHelper.StObjMap.Default.Obtain<Package>();
+            var p = TestHelper.StObjMap.StObjs.Obtain<Package>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 CultureTests.RestoreDatabaseToEnglishAndFrenchOnly( p );
@@ -130,7 +130,7 @@ namespace CK.DB.Culture.Tests
         [Test]
         public void reading_CultureDate_or_ExtendedCultureData_with_unexisting_identifier_returns_null()
         {
-            var p = TestHelper.StObjMap.Default.Obtain<Package>();
+            var p = TestHelper.StObjMap.StObjs.Obtain<Package>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 p.GetCulture( ctx, 3712 ).Should().BeNull();
@@ -141,7 +141,7 @@ namespace CK.DB.Culture.Tests
         [Test]
         public void setting_culture_fallbacks()
         {
-            var p = TestHelper.StObjMap.Default.Obtain<Package>();
+            var p = TestHelper.StObjMap.StObjs.Obtain<Package>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 CultureTests.RestoreDatabaseToEnglishAndFrenchOnly( p );
@@ -164,7 +164,7 @@ namespace CK.DB.Culture.Tests
         [Test]
         public void assuming_extended_cultures()
         {
-            var p = TestHelper.StObjMap.Default.Obtain<Package>();
+            var p = TestHelper.StObjMap.StObjs.Obtain<Package>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 CultureTests.RestoreDatabaseToEnglishAndFrenchOnly( p );
@@ -192,7 +192,7 @@ namespace CK.DB.Culture.Tests
         [Test]
         public void destroying_culture_updates_all_cultures_fallbacks()
         {
-            var p = TestHelper.StObjMap.Default.Obtain<Package>();
+            var p = TestHelper.StObjMap.StObjs.Obtain<Package>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 CultureTests.RestoreDatabaseToEnglishAndFrenchOnly( p );
@@ -216,7 +216,7 @@ namespace CK.DB.Culture.Tests
         [Test]
         public void destroying_LCID_destroys_XLCID_with_the_primary_LCID()
         {
-            var p = TestHelper.StObjMap.Default.Obtain<Package>();
+            var p = TestHelper.StObjMap.StObjs.Obtain<Package>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 CultureTests.RestoreDatabaseToEnglishAndFrenchOnly( p );
@@ -236,7 +236,7 @@ namespace CK.DB.Culture.Tests
         [Test]
         public void XLCID_are_never_reused()
         {
-            var p = TestHelper.StObjMap.Default.Obtain<Package>();
+            var p = TestHelper.StObjMap.StObjs.Obtain<Package>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 RegisterSpanish( p, ctx );
