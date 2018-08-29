@@ -22,7 +22,7 @@ namespace CK.DB.HZone.Tests
         [TearDown]
         public void CheckCKCoreInvariant()
         {
-            TestHelper.StObjMap.Default.Obtain<SqlDefaultDatabase>().GetCKCoreInvariantsViolations()
+            TestHelper.StObjMap.StObjs.Obtain<SqlDefaultDatabase>().GetCKCoreInvariantsViolations()
                 .Rows.Should().BeEmpty();
         }
 
@@ -30,9 +30,9 @@ namespace CK.DB.HZone.Tests
         public void adding_a_user_in_a_child_zone_support_AutoAddUserInParentZone()
         {
             var map = TestHelper.StObjMap;
-            var zone = map.Default.Obtain<ZoneTable>();
-            var group = map.Default.Obtain<Zone.GroupTable>();
-            var user = map.Default.Obtain<UserTable>();
+            var zone = map.StObjs.Obtain<ZoneTable>();
+            var group = map.StObjs.Obtain<Zone.GroupTable>();
+            var user = map.StObjs.Obtain<UserTable>();
 
             using( var ctx = new SqlStandardCallContext() )
             {
@@ -64,9 +64,9 @@ namespace CK.DB.HZone.Tests
         public void removing_a_user_from_a_zone_removes_it_from_all_child_zones()
         {
             var map = TestHelper.StObjMap;
-            var zone = map.Default.Obtain<ZoneTable>();
-            var group = map.Default.Obtain<Zone.GroupTable>();
-            var user = map.Default.Obtain<UserTable>();
+            var zone = map.StObjs.Obtain<ZoneTable>();
+            var group = map.StObjs.Obtain<Zone.GroupTable>();
+            var user = map.StObjs.Obtain<UserTable>();
 
             using( var ctx = new SqlStandardCallContext() )
             {
@@ -109,9 +109,9 @@ namespace CK.DB.HZone.Tests
         public void creating_and_destroying_zone_with_sub_zones_and_groups_when_ForceDestroy_is_true()
         {
             var map = TestHelper.StObjMap;
-            var zone = map.Default.Obtain<ZoneTable>();
-            var group = map.Default.Obtain<Zone.GroupTable>();
-            var user = map.Default.Obtain<UserTable>();
+            var zone = map.StObjs.Obtain<ZoneTable>();
+            var group = map.StObjs.Obtain<Zone.GroupTable>();
+            var user = map.StObjs.Obtain<UserTable>();
 
             using( var ctx = new SqlStandardCallContext() )
             {
@@ -141,7 +141,7 @@ namespace CK.DB.HZone.Tests
         public void moving_a_zone_in_the_tree_can_specify_the_next_sibling_id()
         {
             var map = TestHelper.StObjMap;
-            var zone = map.Default.Obtain<ZoneTable>();
+            var zone = map.StObjs.Obtain<ZoneTable>();
 
             using( var ctx = new SqlStandardCallContext() )
             {
@@ -176,8 +176,8 @@ namespace CK.DB.HZone.Tests
         public void GroupMove_can_safely_be_called_instead_of_ZoneMove()
         {
             var map = TestHelper.StObjMap;
-            var zone = map.Default.Obtain<ZoneTable>();
-            var group = map.Default.Obtain<Zone.GroupTable>();
+            var zone = map.StObjs.Obtain<ZoneTable>();
+            var group = map.StObjs.Obtain<Zone.GroupTable>();
 
             using( var ctx = new SqlStandardCallContext() )
             {
@@ -210,7 +210,7 @@ namespace CK.DB.HZone.Tests
         public void moving_a_zone_in_a_child_zone_is_an_error()
         {
             var map = TestHelper.StObjMap;
-            var zone = map.Default.Obtain<ZoneTable>();
+            var zone = map.StObjs.Obtain<ZoneTable>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 int idZone1 = zone.CreateZone( ctx, 1 );

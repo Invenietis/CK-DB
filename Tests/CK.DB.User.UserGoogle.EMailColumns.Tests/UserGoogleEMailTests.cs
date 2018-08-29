@@ -18,8 +18,8 @@ namespace CK.DB.User.UserGoogle.EMailColumns.Tests
         [Test]
         public void email_and_email_verified_are_managed()
         {
-            var u = TestHelper.StObjMap.Default.Obtain<UserGoogleTable>();
-            var user = TestHelper.StObjMap.Default.Obtain<UserTable>();
+            var u = TestHelper.StObjMap.StObjs.Obtain<UserGoogleTable>();
+            var user = TestHelper.StObjMap.StObjs.Obtain<UserTable>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 string userName = "Google auth email - " + Guid.NewGuid().ToString();

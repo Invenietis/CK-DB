@@ -20,7 +20,7 @@ namespace CK.DB.Culture.Tests
         [Test]
         public void by_default_French_and_English_are_defined_but_may_be_updated()
         {
-            var p = TestHelper.StObjMap.Default.Obtain<Package>();
+            var p = TestHelper.StObjMap.StObjs.Obtain<Package>();
             using( var ctx = new SqlStandardCallContext() )
             {
 
@@ -54,7 +54,7 @@ namespace CK.DB.Culture.Tests
         [Test]
         public void registering_a_culture_updates_all_fallbacks()
         {
-            var p = TestHelper.StObjMap.Default.Obtain<Culture.Package>();
+            var p = TestHelper.StObjMap.StObjs.Obtain<Culture.Package>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 // Removes all cultures except 9 and 12.
@@ -103,7 +103,7 @@ namespace CK.DB.Culture.Tests
         [Test]
         public void LCID_must_be_greater_than_0_and_less_than_0xFFFF()
         {
-            var p = TestHelper.StObjMap.Default.Obtain<Package>();
+            var p = TestHelper.StObjMap.StObjs.Obtain<Package>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 p.Invoking( sut => sut.Register( ctx, 0, "xx", "XXX", "XXX" ) ).Should().Throw<SqlDetailedException>();

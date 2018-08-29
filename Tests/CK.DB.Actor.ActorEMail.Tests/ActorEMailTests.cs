@@ -18,7 +18,7 @@ namespace CK.DB.Actor.ActorEMail.Tests
         [Test]
         public void adding_and_removing_one_mail_to_System()
         {
-            var mails = TestHelper.StObjMap.Default.Obtain<ActorEMailTable>();
+            var mails = TestHelper.StObjMap.StObjs.Obtain<ActorEMailTable>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 mails.Database.ExecuteScalar( "select PrimaryEMail from CK.vUser where UserId=1" )
@@ -37,8 +37,8 @@ namespace CK.DB.Actor.ActorEMail.Tests
         [Test]
         public void first_email_is_automatically_primary_but_the_first_valid_one_is_elected()
         {
-            var group = TestHelper.StObjMap.Default.Obtain<GroupTable>();
-            var mails = TestHelper.StObjMap.Default.Obtain<ActorEMailTable>();
+            var group = TestHelper.StObjMap.StObjs.Obtain<GroupTable>();
+            var mails = TestHelper.StObjMap.StObjs.Obtain<ActorEMailTable>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 var gId = group.CreateGroup( ctx, 1 );
@@ -66,8 +66,8 @@ namespace CK.DB.Actor.ActorEMail.Tests
         [Test]
         public void when_removing_the_primary_email_another_one_is_elected_even_if_they_are_all_not_validated()
         {
-            var user = TestHelper.StObjMap.Default.Obtain<UserTable>();
-            var mails = TestHelper.StObjMap.Default.Obtain<ActorEMailTable>();
+            var user = TestHelper.StObjMap.StObjs.Obtain<UserTable>();
+            var mails = TestHelper.StObjMap.StObjs.Obtain<ActorEMailTable>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 var uId = user.CreateUser( ctx, 1, Guid.NewGuid().ToString() );
@@ -88,8 +88,8 @@ namespace CK.DB.Actor.ActorEMail.Tests
         [Test]
         public void when_removing_the_primary_email_the_most_recently_validated_is_elected()
         {
-            var user = TestHelper.StObjMap.Default.Obtain<UserTable>();
-            var mails = TestHelper.StObjMap.Default.Obtain<ActorEMailTable>();
+            var user = TestHelper.StObjMap.StObjs.Obtain<UserTable>();
+            var mails = TestHelper.StObjMap.StObjs.Obtain<ActorEMailTable>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 var uId = user.CreateUser( ctx, 1, Guid.NewGuid().ToString() );

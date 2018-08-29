@@ -17,7 +17,7 @@ namespace CK.DB.Res.ResName.Tests
         [Test]
         public void resource_0_and_1_are_empty_and_System()
         {
-            var r = TestHelper.StObjMap.Default.Obtain<ResNameTable>();
+            var r = TestHelper.StObjMap.StObjs.Obtain<ResNameTable>();
             r.Database.ExecuteScalar( "select ResName from CK.vRes where ResId = 0" )
                 .Should().Be( "" );
             r.Database.ExecuteScalar( "select ResName from CK.vRes where ResId = 1" )
@@ -28,7 +28,7 @@ namespace CK.DB.Res.ResName.Tests
         [Test]
         public void resource_0_and_1_can_not_be_destroyed()
         {
-            var p = TestHelper.StObjMap.Default.Obtain<Package>();
+            var p = TestHelper.StObjMap.StObjs.Obtain<Package>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 p.Invoking( sut => sut.ResTable.Destroy( ctx, 0 ) ).Should().Throw<SqlDetailedException>();
@@ -39,7 +39,7 @@ namespace CK.DB.Res.ResName.Tests
         [Test]
         public void CreateResName_raises_an_exception_if_the_resource_is_already_associated_to_a_name_or_the_name_already_exists()
         {
-            var p = TestHelper.StObjMap.Default.Obtain<Package>();
+            var p = TestHelper.StObjMap.StObjs.Obtain<Package>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 int resId = p.ResTable.Create( ctx );
@@ -59,7 +59,7 @@ namespace CK.DB.Res.ResName.Tests
         [Test]
         public void renaming_a_resource_can_be_done_WithChildren_or_only_for_the_resource_itself()
         {
-            var p = TestHelper.StObjMap.Default.Obtain<Package>();
+            var p = TestHelper.StObjMap.StObjs.Obtain<Package>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 p.ResNameTable.DestroyByResNamePrefix( ctx, "Test", resNameOnly: false );
@@ -91,7 +91,7 @@ namespace CK.DB.Res.ResName.Tests
         [Test]
         public void using_DestroyByPrefix_enables_destruction_without_an_existing_parent()
         {
-            var p = TestHelper.StObjMap.Default.Obtain<Package>();
+            var p = TestHelper.StObjMap.StObjs.Obtain<Package>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 var nameRoot = Guid.NewGuid().ToString();

@@ -1,10 +1,12 @@
 -- SetupConfig: { }
 --
 -- Both @FailureCode and @FailureReason can be set.
--- 
--- @LastLoginTime:  Last login time ('0001-01-01' for first login).</param>
+--
+-- @Scheme:         Provider name. Can not be null.
+-- @LastLoginTime:  Last login time ('0001-01-01' for first login). Can not be null.
+-- @UserId:         User identifier. Can not be null.
 -- @LoginTimeNow:   Current login time. This is the exact time that will become, on success, the LastLoginTime
---                  in the provider table.
+--                  in the provider table. Can not be null.
 -- @ActualLogin:    True for an actual login. False otherwise: only checks must be done.
 -- @FailureCode:    To reject login, set this to a non null value (should be greater to 0).
 -- @FailureReason:  Optional (may be deduced from @FailureCode). If set to a non null string and @FailureCode
@@ -24,10 +26,18 @@ create procedure CK.sAuthUserOnLogin
 )
 as 
 begin
+    if @Scheme is null throw 50000, 'Argument.Scheme.MustNotBeNull', 1;
+    if @LastLoginTime is null throw 50000, 'Argument.LastLoginTime.MustNotBeNull', 1;
+    if @UserId is null or @UserId <= 0 throw 50000, 'Argument.InvalidUserId', 1;
+    if @LoginTimeNow is null throw 50000, 'Argument.LoginTimeNow.MustNotBeNull', 1;
+    if @ActualLogin is null throw 50000, 'Argument.ActualLogin.MustNotBeNull', 1;
+
 	--[beginsp]
 
+    --<PreCheckLoginFailure revert />
     --<CheckLoginFailure />
 
+    --<NormalizeLoginFailure />
     if @FailureReason is not null or @FailureCode is not null
     begin
         -- Normalize @FailureCode: always positive.
@@ -38,7 +48,7 @@ begin
         if len(@FailureReason) = 0 set @FailureReason = null;
     end
 
-    --<PostCheck />
+    --<PostCheckLoginFailure />
 
     if @ActualLogin = 1
     begin

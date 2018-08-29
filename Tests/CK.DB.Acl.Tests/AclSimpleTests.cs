@@ -20,9 +20,9 @@ namespace CK.DB.Acl.Tests
         public void god_user_can_create_and_destroy_acls()
         {
             var map = TestHelper.StObjMap;
-            var acl = map.Default.Obtain<AclTable>();
-            var user = map.Default.Obtain<UserTable>();
-            var group = map.Default.Obtain<GroupTable>();
+            var acl = map.StObjs.Obtain<AclTable>();
+            var user = map.StObjs.Obtain<UserTable>();
+            var group = map.StObjs.Obtain<GroupTable>();
 
             using( var ctx = new SqlStandardCallContext() )
             {
@@ -57,8 +57,8 @@ namespace CK.DB.Acl.Tests
         public void challenging_system_default_acls( int idAcl, byte grantLevel, string keyReasonForAnonymous )
         {
             var map = TestHelper.StObjMap;
-            var acl = map.Default.Obtain<AclTable>();
-            var user = map.Default.Obtain<UserTable>();
+            var acl = map.StObjs.Obtain<AclTable>();
+            var user = map.StObjs.Obtain<UserTable>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 int idUser = user.CreateUser( ctx, 1, Guid.NewGuid().ToString() );
@@ -73,9 +73,9 @@ namespace CK.DB.Acl.Tests
         public void playing_with_a_user_in_two_groups()
         {
             var map = TestHelper.StObjMap;
-            var acl = map.Default.Obtain<AclTable>();
-            var user = map.Default.Obtain<UserTable>();
-            var group = map.Default.Obtain<GroupTable>();
+            var acl = map.StObjs.Obtain<AclTable>();
+            var user = map.StObjs.Obtain<UserTable>();
+            var group = map.StObjs.Obtain<GroupTable>();
 
             using( var ctx = new SqlStandardCallContext() )
             {
@@ -128,9 +128,9 @@ namespace CK.DB.Acl.Tests
         public void destroying_actors_suppress_any_related_configurations()
         {
             var map = TestHelper.StObjMap;
-            var acl = map.Default.Obtain<AclTable>();
-            var user = map.Default.Obtain<UserTable>();
-            var group = map.Default.Obtain<GroupTable>();
+            var acl = map.StObjs.Obtain<AclTable>();
+            var user = map.StObjs.Obtain<UserTable>();
+            var group = map.StObjs.Obtain<GroupTable>();
 
             using( var ctx = new SqlStandardCallContext() )
             {

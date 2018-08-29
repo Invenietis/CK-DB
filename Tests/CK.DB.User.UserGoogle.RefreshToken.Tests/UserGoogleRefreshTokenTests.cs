@@ -19,8 +19,8 @@ namespace CK.DB.User.UserGoogle.RefreshToken.Tests
         [Test]
         public void RefreshToken_and_LastRefreshTokenTime_are_managed()
         {
-            var google = TestHelper.StObjMap.Default.Obtain<UserGoogleTable>();
-            var user = TestHelper.StObjMap.Default.Obtain<UserTable>();
+            var google = TestHelper.StObjMap.StObjs.Obtain<UserGoogleTable>();
+            var user = TestHelper.StObjMap.StObjs.Obtain<UserTable>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 string userName = "Google RefreshToken - " + Guid.NewGuid().ToString();

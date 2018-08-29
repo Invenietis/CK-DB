@@ -20,8 +20,8 @@ namespace CK.DB.Auth.Tests
         [Test]
         public void calling_OnUserLogin_directlty_works_but_is_reserved_for_very_rare_scenarii()
         {
-            var auth = TestHelper.StObjMap.Default.Obtain<Package>();
-            var user = TestHelper.StObjMap.Default.Obtain<Actor.UserTable>();
+            var auth = TestHelper.StObjMap.StObjs.Obtain<Package>();
+            var user = TestHelper.StObjMap.StObjs.Obtain<Actor.UserTable>();
             using( var ctx = new SqlStandardCallContext() )
             using( auth.Database.TemporaryTransform( @"
                     create transformer on CK.sAuthUserOnLogin
@@ -85,7 +85,7 @@ namespace CK.DB.Auth.Tests
         [Test]
         public void when_basic_provider_exists_it_is_registered_in_tAuthProvider_and_available_as_IGenericAuthenticationProvider()
         {
-            var auth = TestHelper.StObjMap.Default.Obtain<Package>();
+            var auth = TestHelper.StObjMap.StObjs.Obtain<Package>();
             Assume.That( auth.BasicProvider != null );
 
             auth.AllProviders.Single( provider => provider.ProviderName == "Basic" ).Should().NotBeNull();
@@ -101,7 +101,7 @@ namespace CK.DB.Auth.Tests
             Func<int, string, object> payloadForLoginFail
             )
         {
-            var user = TestHelper.StObjMap.Default.Obtain<Actor.UserTable>();
+            var user = TestHelper.StObjMap.StObjs.Obtain<Actor.UserTable>();
             IGenericAuthenticationProvider g = auth.FindProvider( schemeOrProviderName );
             using( var ctx = new SqlStandardCallContext() )
             {
@@ -193,7 +193,7 @@ namespace CK.DB.Auth.Tests
             Func<int, string, object> payloadForLoginFail
             )
         {
-            var user = TestHelper.StObjMap.Default.Obtain<Actor.UserTable>();
+            var user = TestHelper.StObjMap.StObjs.Obtain<Actor.UserTable>();
             IGenericAuthenticationProvider g = auth.FindProvider( schemeOrProviderName );
             using( var ctx = new SqlStandardCallContext() )
             {
@@ -303,7 +303,7 @@ namespace CK.DB.Auth.Tests
         [Test]
         public void when_a_basic_provider_exists_its_IGenericAuthenticationProvider_adpater_accepts_UserId_or_UserName_based_login_payloads()
         {
-            var auth = TestHelper.StObjMap.Default.Obtain<Package>();
+            var auth = TestHelper.StObjMap.StObjs.Obtain<Package>();
             Assume.That( auth.BasicProvider != null );
 
             // With Tuple (UserId, Password) payload.  
@@ -358,7 +358,7 @@ namespace CK.DB.Auth.Tests
         [Test]
         public async Task when_a_basic_provider_exists_its_IGenericAuthenticationProvider_adpater_accepts_UserId_or_UserName_based_login_payloads_Async()
         {
-            var auth = TestHelper.StObjMap.Default.Obtain<Package>();
+            var auth = TestHelper.StObjMap.StObjs.Obtain<Package>();
             Assume.That( auth.BasicProvider != null );
 
             // With (UserId, Password) payload.  
@@ -384,7 +384,7 @@ namespace CK.DB.Auth.Tests
         /// <param name="providerName">provider name that must be registered.</param>
         public static void CheckProviderRegistration( string providerName )
         {
-            var provider = TestHelper.StObjMap.Default.Obtain<AuthProviderTable>();
+            var provider = TestHelper.StObjMap.StObjs.Obtain<AuthProviderTable>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 provider.Database.ExecuteScalar( "select count(*) from CK.tAuthProvider where ProviderName = @0", providerName )
@@ -395,7 +395,7 @@ namespace CK.DB.Auth.Tests
         [Test]
         public void reading_IUserAuthInfo_for_an_unexisting_user_or_Anonymous_returns_null()
         {
-            var p = TestHelper.StObjMap.Default.Obtain<Package>();
+            var p = TestHelper.StObjMap.StObjs.Obtain<Package>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 IUserAuthInfo info = p.ReadUserAuthInfo( ctx, 1, int.MaxValue );

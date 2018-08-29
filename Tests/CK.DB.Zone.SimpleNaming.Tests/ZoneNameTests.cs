@@ -19,9 +19,9 @@ namespace CK.DB.Zone.SimpleNaming.Tests
         public void groups_with_the_same_name_can_exist_in_different_zones()
         {
             var map = TestHelper.StObjMap;
-            var z = map.Default.Obtain<ZoneTable>();
-            var g = map.Default.Obtain<GroupTable>();
-            var gN = map.Default.Obtain<SimpleNaming.Package>();
+            var z = map.StObjs.Obtain<ZoneTable>();
+            var g = map.StObjs.Obtain<GroupTable>();
+            var gN = map.StObjs.Obtain<SimpleNaming.Package>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 // We test the 0 zone, we need a unique name
@@ -46,9 +46,9 @@ namespace CK.DB.Zone.SimpleNaming.Tests
         public void when_groups_are_moved_name_clash_are_automatically_handled()
         {
             var map = TestHelper.StObjMap;
-            var z = map.Default.Obtain<ZoneTable>();
-            var g = map.Default.Obtain<GroupTable>();
-            var gN = map.Default.Obtain<SimpleNaming.Package>();
+            var z = map.StObjs.Obtain<ZoneTable>();
+            var g = map.StObjs.Obtain<GroupTable>();
+            var gN = map.StObjs.Obtain<SimpleNaming.Package>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 int idZone1 = z.CreateZone( ctx, 1 );
