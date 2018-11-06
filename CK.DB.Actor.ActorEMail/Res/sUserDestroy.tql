@@ -1,7 +1,0 @@
--- SetupConfig: {}
-create transformer on CK.sUserDestroy
-as
-begin
-	inject "
-		delete from CK.tActorEMail where ActorId = @UserId;" into "PreDestroy";
-end
