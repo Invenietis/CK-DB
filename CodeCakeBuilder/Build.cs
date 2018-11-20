@@ -97,7 +97,7 @@ namespace CodeCake
                .Does( () =>
                {
                    var testProjects = projects.Where( p => p.Name.EndsWith( ".Tests" ) );
-                   StandardUnitTests( globalInfo.BuildConfiguration, testProjects );
+                   StandardUnitTests( globalInfo, testProjects );
                } );
 
             Task( "Create-NuGet-Packages" )
