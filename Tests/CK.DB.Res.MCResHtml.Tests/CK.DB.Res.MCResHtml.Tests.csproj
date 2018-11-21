@@ -1,10 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\..\Common\Shared.props" />
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp2.0;net461</TargetFrameworks>
+    <TargetFrameworks>netcoreapp2.1;net461</TargetFrameworks>
     <Description>This package contains tests for CK.DB.Res.MCResHtml (uses CK.DB.Tests.NUnit).</Description>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">
+  <PropertyGroup Condition=" '$(TargetFramework)' != 'net461' ">
     <OutputType>Exe</OutputType>
   </PropertyGroup>
   <ItemGroup>
@@ -12,7 +12,7 @@
     <ProjectReference Include="..\CK.DB.Culture.Tests\CK.DB.Culture.Tests.csproj" />
     <ProjectReference Include="..\CK.DB.Res.Tests\CK.DB.Res.Tests.csproj" />
   </ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">
+  <ItemGroup Condition=" '$(TargetFramework)' != 'net461' ">
     <PackageReference Include="NUnitLite" Version="3.10.1" />
   </ItemGroup>
   <ItemGroup>
