@@ -1,9 +1,0 @@
--- SetupConfig: {}
-create transformer on CK.vGroup
-as 
-begin
-	add column PrimaryEMail = emails.EMail, PrimaryEMailValTime = emails.ValTime;
-	inject "
-		left outer join CK.tActorEMail emails on emails.ActorId = g.GroupId and emails.IsPrimary = 1
-	" after single {from CK.tGroup g}
-end
