@@ -15,10 +15,10 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="System.Net.Http" Version="4.3.3" />
-    <PackageReference Include="CK.Text" Version="8.0.3--0010-develop" />
-    <PackageReference Include="Code.Cake" Version="1.0.2--0003-develop" />
+    <PackageReference Include="CK.Text" Version="0.0.0--027nykk-local" />
+    <PackageReference Include="Code.Cake" Version="0.0.0--027nyjy-local" />
     <PackageReference Include="NUnit.ConsoleRunner" Version="3.9.0" />
     <PackageReference Include="NUnit.Runners.Net4" Version="2.6.4" />
-    <PackageReference Include="SimpleGitVersion.Cake" Version="0.37.4--0008-develop" />
+    <PackageReference Include="SimpleGitVersion.Cake" Version="0.0.0--027nykl-local" />
   </ItemGroup>
 </Project>
