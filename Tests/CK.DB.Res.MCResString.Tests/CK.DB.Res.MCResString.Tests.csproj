@@ -13,7 +13,7 @@
     <ProjectReference Include="..\CK.DB.Res.Tests\CK.DB.Res.Tests.csproj" />
   </ItemGroup>
   <ItemGroup Condition=" '$(TargetFramework)' != 'net461' ">
-    <PackageReference Include="NUnitLite" Version="3.10.1" />
+    <PackageReference Include="NUnitLite" Version="3.11.0" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
