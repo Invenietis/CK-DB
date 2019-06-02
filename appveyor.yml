@@ -1,7 +1,7 @@
 
 version: build{build}
 image: Visual Studio 2017
-clone_folder: C:\CK-World\CK-Database-Projects\CK-DB
+clone_folder: C:\CKli-World\CK-Database-Projects\CK-DB
 services: mssql2016
 branches:
   only:
