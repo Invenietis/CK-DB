@@ -50,7 +50,7 @@
   <!--<ReproducibleBuilds>: See http://blog.paranoidcoding.com/2016/04/05/deterministic-builds-in-roslyn.html.-->
   <PropertyGroup Condition=" '$(CakeBuild)' == 'true' ">
     <Deterministic>true</Deterministic>
-    <PathMap>$(SolutionDir)=C:\CKli-World\CK-Database-Projects\CK-DB</PathMap>
+    <PathMap>'$(SolutionDir)'=C:\CKli-World\CK-Database-Projects\CK-DB</PathMap>
   </PropertyGroup>
   <!--</ReproducibleBuilds>-->
 
