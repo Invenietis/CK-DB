@@ -1,5 +1,3 @@
-#if !NET461
-
 namespace CK.DB.Zone.Tests
 {
     public class Program
@@ -8,5 +6,3 @@ namespace CK.DB.Zone.Tests
 
     }
 }
-
-#endif

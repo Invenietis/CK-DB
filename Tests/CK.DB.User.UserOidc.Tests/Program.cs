@@ -1,5 +1,3 @@
-#if !NET461
-
 namespace CK.DB.User.UserOidc.Tests
 {
     public class Program
@@ -8,6 +6,4 @@ namespace CK.DB.User.UserOidc.Tests
 
     }
 }
-
-#endif
 

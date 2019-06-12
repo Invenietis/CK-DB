@@ -1,5 +1,3 @@
-#if !NET461
-
 namespace CK.DB.Res.ResText.Tests
 {
     public class Program
@@ -8,5 +6,3 @@ namespace CK.DB.Res.ResText.Tests
 
     }
 }
-
-#endif

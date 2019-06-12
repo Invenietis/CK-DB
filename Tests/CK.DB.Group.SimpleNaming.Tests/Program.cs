@@ -1,5 +1,3 @@
-#if !NET461
-
 namespace CK.DB.Group.SimpleNaming.Tests
 {
     public class Program
@@ -8,4 +6,3 @@ namespace CK.DB.Group.SimpleNaming.Tests
 
     }
 }
-#endif

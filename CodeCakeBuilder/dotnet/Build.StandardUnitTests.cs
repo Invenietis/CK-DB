@@ -73,7 +73,10 @@ namespace CodeCake
                         {
                             Cake.Information( $"Testing via NUnitLite ({framework}): {testBinariesPath}" );
                             if( CheckTestDone( testBinariesPath ) ) return;
-                            Cake.DotNetCoreExecute( testBinariesPath );
+                            Cake.NUnit3( new[] { testBinariesPath }, new NUnit3Settings
+                            {
+                                Results = new[] { new NUnit3Result() { FileName = FilePath.FromString( projectPath.AppendPart( "TestResult.Net461.xml" ) ) } }
+                            } );
                         }
                         else
                         {
