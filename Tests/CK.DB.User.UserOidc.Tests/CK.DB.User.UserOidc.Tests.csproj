@@ -4,6 +4,7 @@
     <TargetFrameworks>net461;netcoreapp2.1</TargetFrameworks>
     <Description>This package contains tests for CK.DB.User.UserOidc (uses CK.DB.Tests.NUnit).</Description>
     <OutputType>Exe</OutputType>
+    <IsPackable>True</IsPackable>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\CK.DB.User.UserOidc\CK.DB.User.UserOidc.csproj" />

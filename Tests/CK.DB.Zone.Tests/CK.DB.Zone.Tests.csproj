@@ -4,6 +4,7 @@
     <TargetFrameworks>netcoreapp2.1;net461</TargetFrameworks>
     <Description>This package contains tests for CK.DB.Zone (uses CK.DB.Tests.NUnit).</Description>
     <OutputType>Exe</OutputType>
+    <IsPackable>True</IsPackable>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\CK.DB.Zone\CK.DB.Zone.csproj" />

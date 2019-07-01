@@ -4,6 +4,7 @@
     <TargetFrameworks>net461;netcoreapp2.1</TargetFrameworks>
     <Description>This package contains tests for CK.DB.HZone (uses CK.DB.Tests.NUnit).</Description>
     <OutputType>Exe</OutputType>
+    <IsPackable>True</IsPackable>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\CK.DB.HZone\CK.DB.HZone.csproj" />
