@@ -1,35 +1,11 @@
-using Cake.Common;
 using Cake.Common.Solution;
 using Cake.Common.IO;
-using Cake.Common.Tools.MSBuild;
-using Cake.Common.Tools.NuGet;
 using Cake.Core;
-using Cake.Common.Diagnostics;
-using Code.Cake;
-using Cake.Common.Tools.NuGet.Pack;
 using System.Linq;
 using Cake.Core.Diagnostics;
-using Cake.Common.Tools.NuGet.Restore;
-using System;
-using Cake.Common.Tools.NuGet.Push;
 using SimpleGitVersion;
-using Cake.Common.Tools.NUnit;
-using System.Collections.Generic;
-using Cake.Common.Text;
 using Cake.Core.IO;
-using System.Diagnostics;
-using System.Xml.Linq;
-using System.Reflection;
-using Cake.Common.Tools.DotNetCore;
-using Cake.Common.Tools.DotNetCore.Restore;
-using Cake.Common.Tools.DotNetCore.Build;
-using Cake.Common.Tools.DotNetCore.Pack;
-using Cake.Common.Build;
-using System.Data.SqlClient;
-using Cake.Common.Tools.NuGet.Install;
-using System.Net.Http;
-using Cake.Common.Net;
-using Cake.Common.Tools.DotNetCore.Publish;
+using System;
 
 namespace CodeCake
 {
@@ -45,7 +21,13 @@ namespace CodeCake
         {
             Cake.Log.Verbosity = Verbosity.Diagnostic;
 
-            var solutionFileName = Cake.Environment.WorkingDirectory.GetDirectoryName() + ".sln";
+            string solutionFileName = System.IO.Path.GetFileName(
+                Cake.GetFiles( "*.sln",
+                    new GlobberSettings
+                    {
+                        Predicate = p => !System.IO.Path.GetFileName( p.Path.FullPath ).EndsWith( ".local.sln", StringComparison.OrdinalIgnoreCase )
+                    } ).Single().FullPath
+            );
 
             var projects = Cake.ParseSolution( solutionFileName )
                                        .Projects
