@@ -1,6 +1,6 @@
 <Project>
   <!-- Centralized version dependencies. -->
   <PropertyGroup>
-    <CKDatabaseVersion>10.1.1--0005-develop</CKDatabaseVersion>
+    <CKDatabaseVersion>10.1.2--0007-develop</CKDatabaseVersion>
   </PropertyGroup>
 </Project>

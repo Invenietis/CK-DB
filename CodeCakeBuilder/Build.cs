@@ -1,35 +1,11 @@
-using Cake.Common;
 using Cake.Common.Solution;
 using Cake.Common.IO;
-using Cake.Common.Tools.MSBuild;
-using Cake.Common.Tools.NuGet;
 using Cake.Core;
-using Cake.Common.Diagnostics;
-using Code.Cake;
-using Cake.Common.Tools.NuGet.Pack;
 using System.Linq;
 using Cake.Core.Diagnostics;
-using Cake.Common.Tools.NuGet.Restore;
-using System;
-using Cake.Common.Tools.NuGet.Push;
 using SimpleGitVersion;
-using Cake.Common.Tools.NUnit;
-using System.Collections.Generic;
-using Cake.Common.Text;
 using Cake.Core.IO;
-using System.Diagnostics;
-using System.Xml.Linq;
-using System.Reflection;
-using Cake.Common.Tools.DotNetCore;
-using Cake.Common.Tools.DotNetCore.Restore;
-using Cake.Common.Tools.DotNetCore.Build;
-using Cake.Common.Tools.DotNetCore.Pack;
-using Cake.Common.Build;
-using System.Data.SqlClient;
-using Cake.Common.Tools.NuGet.Install;
-using System.Net.Http;
-using Cake.Common.Net;
-using Cake.Common.Tools.DotNetCore.Publish;
+using System;
 
 namespace CodeCake
 {
@@ -45,18 +21,9 @@ namespace CodeCake
         {
             Cake.Log.Verbosity = Verbosity.Diagnostic;
 
-            var solutionFileName = Cake.Environment.WorkingDirectory.GetDirectoryName() + ".sln";
-
-            var projects = Cake.ParseSolution( solutionFileName )
-                                       .Projects
-                                       .Where( p => !(p is SolutionFolder) && p.Name != "CodeCakeBuilder" );
-
-            // We publish .Tests projects for this solution.
-            var projectsToPublish = projects;
-
             SimpleRepositoryInfo gitInfo = Cake.GetSimpleRepositoryInfo();
             StandardGlobalInfo globalInfo = CreateStandardGlobalInfo( gitInfo )
-                                                .AddNuGet( projectsToPublish )
+                                                .AddDotnet()
                                                 .SetCIBuildTag();
 
             Task( "Check-Repository" )
@@ -69,10 +36,9 @@ namespace CodeCake
                 .IsDependentOn( "Check-Repository" )
                 .Does( () =>
                  {
-                     Cake.CleanDirectories( projects.Select( p => p.Path.GetDirectory().Combine( "bin" ) ) );
-                     Cake.CleanDirectories( projects.Select( p => p.Path.GetDirectory().Combine( "obj" ) ) );
+                     globalInfo.GetDotnetSolution().Clean();
                      Cake.CleanDirectories( globalInfo.ReleasesFolder );
-                     Cake.DeleteFiles( "Tests/**/TestResult*.xml" );
+                    
                  } );
 
             Task( "Build" )
@@ -80,7 +46,7 @@ namespace CodeCake
                 .IsDependentOn( "Clean" )
                 .Does( () =>
                 {
-                    StandardSolutionBuild( globalInfo, solutionFileName );
+                    globalInfo.GetDotnetSolution().Build();
                 } );
 
             Task( "Unit-Testing" )
@@ -89,8 +55,8 @@ namespace CodeCake
                                      || Cake.ReadInteractiveOption( "RunUnitTests", "Run Unit Tests?", 'Y', 'N' ) == 'Y' )
                .Does( () =>
                {
-                    var testProjects = projects.Where( p => p.Name.EndsWith( ".Tests" ) );
-                    StandardUnitTests( globalInfo, testProjects );
+                    
+                  globalInfo.GetDotnetSolution().Test();
                } );
 
             Task( "Create-NuGet-Packages" )
@@ -98,7 +64,7 @@ namespace CodeCake
                 .IsDependentOn( "Unit-Testing" )
                 .Does( () =>
                 {
-                    StandardCreateNuGetPackages( globalInfo );
+                    globalInfo.GetDotnetSolution().Pack();
                 } );
 
             Task( "Push-Artifacts" )
