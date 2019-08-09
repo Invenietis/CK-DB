@@ -3,19 +3,13 @@
   <PropertyGroup>
     <TargetFrameworks>net461;netcoreapp2.1</TargetFrameworks>
     <Description>This package contains tests for CK.DB.User.UserSimpleCode (uses CK.DB.Tests.NUnit).</Description>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(TargetFramework)' != 'net461' ">
     <OutputType>Exe</OutputType>
+    <IsPackable>True</IsPackable>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\CK.DB.User.UserSimpleCode\CK.DB.User.UserSimpleCode.csproj" />
     <ProjectReference Include="..\CK.DB.Auth.Tests\CK.DB.Auth.Tests.csproj" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' != 'net461' ">
-    <PackageReference Include="NUnitLite" Version="3.11.0" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Properties\" />
+    <PackageReference Include="NUnitLite" Version="3.12.0" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />

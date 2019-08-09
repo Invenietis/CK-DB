@@ -3,19 +3,13 @@
   <PropertyGroup>
     <TargetFrameworks>netcoreapp2.1;net461</TargetFrameworks>
     <Description>Tests for CK.DB.Auth.AuthScope (uses CK.DB.Tests.NUnit).</Description>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(TargetFramework)' != 'net461' ">
     <OutputType>Exe</OutputType>
+    <IsPackable>True</IsPackable>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\CK.DB.Auth.AuthScope\CK.DB.Auth.AuthScope.csproj" />
     <PackageReference Include="CK.DB.Tests.NUnit" Version="$(CKDatabaseVersion)" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' != 'net461' ">
-    <PackageReference Include="NUnitLite" Version="3.11.0" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Properties\" />
+    <PackageReference Include="NUnitLite" Version="3.12.0" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
