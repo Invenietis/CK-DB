@@ -1,10 +1,5 @@
-﻿using CK.Setup;
+using CK.Core;
 using CK.SqlServer;
-using CK.SqlServer.Setup;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace CK.DB.Res.MCResText
@@ -21,13 +16,13 @@ namespace CK.DB.Res.MCResText
         /// <summary>
         /// Gets the resource table.
         /// </summary>
-        [InjectContract]
+        [InjectObject]
         public ResTable ResTable { get; protected set; }
 
         /// <summary>
         /// Gets the Culture Package.
         /// </summary>
-        [InjectContract]
+        [InjectObject]
         public Culture.Package Culture { get; protected set; }
 
         /// <summary>

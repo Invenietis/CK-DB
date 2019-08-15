@@ -1,14 +1,8 @@
 using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CK.Core;
 using CK.DB.Actor;
 using CK.SqlServer;
 using NUnit.Framework;
-using CK.SqlServer.Setup;
 using FluentAssertions;
 using static CK.Testing.DBSetupTestHelper;
 

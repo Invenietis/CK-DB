@@ -1,9 +1,4 @@
-using Cake.Common.Solution;
-using Cake.Common.Tools.DotNetCore;
-using Cake.Common.Tools.DotNetCore.Build;
-using SimpleGitVersion;
 using System;
-using System.Collections.Generic;
 
 namespace CodeCake
 {

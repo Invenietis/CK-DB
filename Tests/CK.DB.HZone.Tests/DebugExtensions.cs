@@ -1,14 +1,8 @@
-using CK.Core;
 using CK.SqlServer;
-using CK.SqlServer.Setup;
 using CK.Text;
 using FluentAssertions;
-using System;
-using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace CK.DB.HZone.Tests
 {

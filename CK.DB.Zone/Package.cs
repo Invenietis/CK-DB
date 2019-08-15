@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using CK.SqlServer.Setup;
-using CK.Setup;
-using CK.SqlServer;
+using CK.Core;
 
 namespace CK.DB.Zone
 {
@@ -23,7 +17,7 @@ namespace CK.DB.Zone
         /// <summary>
         /// Gets the GroupTable that this package defines.
         /// </summary>
-        [InjectContract]
+        [InjectObject]
         public ZoneTable ZoneTable { get; protected set; }
 
     }

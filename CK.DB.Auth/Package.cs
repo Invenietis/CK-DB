@@ -1,13 +1,10 @@
 using CK.Core;
-using CK.Setup;
 using CK.SqlServer;
-using CK.SqlServer.Setup;
 using CK.Text;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -42,7 +39,7 @@ namespace CK.DB.Auth
         /// <summary>
         /// Gets the only <see cref="IBasicAuthenticationProvider"/> if it exists or null.
         /// </summary>
-        [InjectContract( IsOptional = true )]
+        [InjectObject( IsOptional = true )]
         public IBasicAuthenticationProvider BasicProvider { get; protected set; }
 
         /// <summary>

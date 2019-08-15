@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using CK.Core;
-using CK.Setup;
-using CK.SqlServer;
-using CK.SqlServer.Setup;
 
 namespace CK.DB.Acl
 {
@@ -24,19 +17,19 @@ namespace CK.DB.Acl
         /// <summary>
         /// Gets the AclTable.
         /// </summary>
-        [InjectContract]
+        [InjectObject]
         public AclTable AclTable { get; protected set; }
 
         /// <summary>
         /// Gets the AclConfigTable.
         /// </summary>
-        [InjectContract] 
+        [InjectObject] 
         public AclConfigTable AclConfigTable { get; protected set; }
 
         /// <summary>
         /// Gets the AclConfigMemoryTable.
         /// </summary>
-        [InjectContract]
+        [InjectObject]
         public AclConfigMemoryTable AclConfigMemoryTable { get; protected set; }
 
     }

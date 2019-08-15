@@ -1,13 +1,4 @@
-﻿using CK.Core;
-using CK.SqlServer;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace CK.DB.Auth
+﻿namespace CK.DB.Auth
 {
 
     /// <summary>

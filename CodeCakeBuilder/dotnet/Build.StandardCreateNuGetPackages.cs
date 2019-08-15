@@ -1,10 +1,4 @@
-using Cake.Common.Diagnostics;
-using Cake.Common.Tools.DotNetCore;
-using Cake.Common.Tools.DotNetCore.Pack;
-using Cake.Core;
-using SimpleGitVersion;
 using System;
-using System.Linq;
 
 namespace CodeCake
 {

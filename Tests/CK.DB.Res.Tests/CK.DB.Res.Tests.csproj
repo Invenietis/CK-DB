@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\..\Common\Shared.props" />
   <PropertyGroup>
     <TargetFrameworks>netcoreapp2.1;net461</TargetFrameworks>
@@ -8,7 +8,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\CK.DB.Res\CK.DB.Res.csproj" />
-    <PackageReference Include="CK.DB.Tests.NUnit" Version="$(CKDatabaseVersion)" />
+    <PackageReference Include="CK.DB.Tests.NUnit" Version="10.2.1--0009-develop" />
     <PackageReference Include="NUnitLite" Version="3.12.0" />
   </ItemGroup>
   <ItemGroup>

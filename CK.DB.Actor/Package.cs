@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using CK.SqlServer.Setup;
-using CK.Setup;
+using CK.Core;
 
 namespace CK.DB.Actor
 {
@@ -17,13 +12,13 @@ namespace CK.DB.Actor
         /// <summary>
         /// Gets the GroupTable.
         /// </summary>
-        [InjectContract]
+        [InjectObject]
         public GroupTable GroupTable { get; protected set; }
 
         /// <summary>
         /// Gets the UserTable.
         /// </summary>
-        [InjectContract]
+        [InjectObject]
         public UserTable UserTable { get; protected set; }
 
     }

@@ -1,13 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using CK.SqlServer.Setup;
-using CK.Setup;
-using System.Data.SqlClient;
-using System.Threading.Tasks;
+using CK.Core;
 using CK.SqlServer;
-using System.ComponentModel;
 
 namespace CK.DB.Zone
 {

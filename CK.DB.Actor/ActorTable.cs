@@ -1,5 +1,4 @@
-﻿using CK.Setup;
-using CK.SqlServer.Setup;
+using CK.Core;
 
 namespace CK.DB.Actor
 {

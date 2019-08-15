@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using CK.SqlServer;
-using CK.SqlServer.Setup;
 using System.Data.SqlClient;
 using CK.Core;
 

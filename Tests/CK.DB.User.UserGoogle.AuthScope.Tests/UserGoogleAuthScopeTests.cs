@@ -1,11 +1,9 @@
 using System;
-using System.Data.SqlClient;
 using System.Threading.Tasks;
 using CK.Core;
 using CK.DB.Actor;
 using CK.SqlServer;
 using NUnit.Framework;
-using System.Linq;
 using CK.DB.Auth;
 using CK.DB.Auth.AuthScope;
 using FluentAssertions;

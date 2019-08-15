@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CK.Setup;
-using CK.SqlServer.Setup;
-using CK.SqlServer;
+﻿using CK.SqlServer;
 using CK.Core;
 
 namespace CK.DB.Acl

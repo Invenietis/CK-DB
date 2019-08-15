@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using CK.SqlServer;
 using CK.Core;
@@ -11,7 +11,7 @@ namespace CK.DB.Auth
     /// installed in this application context and exposes a way to read <see cref="IUserAuthInfo"/>
     /// information.
     /// </summary>
-    public interface IAuthenticationDatabaseService : IAmbientContract
+    public interface IAuthenticationDatabaseService : IAmbientService
     {
         /// <summary>
         /// Gets the only <see cref="IBasicAuthenticationProvider"/> if it exists or null.

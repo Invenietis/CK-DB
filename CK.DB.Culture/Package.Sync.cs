@@ -1,12 +1,7 @@
-using CK.Setup;
+using CK.Core;
 using CK.SqlServer;
-using CK.SqlServer.Setup;
-using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CK.DB.Culture
 {
@@ -51,9 +46,9 @@ namespace CK.DB.Culture
         /// <summary>
         /// Protected.
         /// </summary>
-        /// <param name="ctx"></param>
-        /// <param name="lcid"></param>
-        /// <param name="fallbacksLCID"></param>
+        /// <param name="ctx">The call context.</param>
+        /// <param name="lcid">The culture identifier.</param>
+        /// <param name="fallbacks">The fallbacks that must start with the lcid.</param>
         [SqlProcedure( "sCultureFallbackSet" )]
         internal protected abstract void SetLCIDFallbaks( ISqlCallContext ctx, int lcid, string fallbacksLCID );
 
