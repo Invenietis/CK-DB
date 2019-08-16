@@ -8,7 +8,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\CK.DB.Auth.AuthScope\CK.DB.Auth.AuthScope.csproj" />
-    <PackageReference Include="CK.DB.Tests.NUnit" Version="10.2.1--0011-develop" />
+    <PackageReference Include="CK.DB.Tests.NUnit" Version="10.2.1--0015-develop" />
     <PackageReference Include="NUnitLite" Version="3.12.0" />
   </ItemGroup>
   <ItemGroup>
