@@ -10,7 +10,7 @@
     <ProjectReference Include="..\..\CK.DB.Culture\CK.DB.Culture.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="CK.DB.Tests.NUnit" Version="10.2.1--0017-develop" />
+    <PackageReference Include="CK.DB.Tests.NUnit" Version="10.2.1--0020-develop" />
     <PackageReference Include="NUnitLite" Version="3.12.0" />
   </ItemGroup>
   <ItemGroup>
