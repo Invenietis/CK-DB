@@ -1,6 +1,6 @@
 using NUnit.Framework;
 
-namespace CK.DB.User.UserSimpleCode.Tests
+namespace DBSetup
 {
     [TestFixture]
     public class DBSetup : CK.DB.Tests.DBSetup

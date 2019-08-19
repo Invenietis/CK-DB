@@ -110,6 +110,7 @@ namespace CK.DB.Culture.Tests
         [Explicit]
         public void display_all_available_Framework_cultures()
         {
+            Assume.That( TestHelper.IsExplicitAllowed, "Press Ctrl key to allow this test to run." );
             var lcids = CultureInfo.GetCultures( CultureTypes.AllCultures );
             Console.WriteLine( "MinLCID= {0}, MaxLCID={1}, Name.Max={2}, DisplayName.Max={3}, EnglishName.Max={4}, NativeName.Max={5}, HasCommaInNames={6}",
                                 lcids.Select( c => c.LCID ).Min(),

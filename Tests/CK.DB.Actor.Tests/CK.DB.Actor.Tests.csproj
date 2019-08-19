@@ -3,13 +3,14 @@
   <PropertyGroup>
     <TargetFrameworks>netcoreapp2.1;net461</TargetFrameworks>
     <Description>This package contains tests for CK.DB.Actor (uses CK.DB.Tests.NUnit).</Description>
-    <OutputType>Exe</OutputType>
     <IsPackable>True</IsPackable>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\CK.DB.Actor\CK.DB.Actor.csproj" />
     <PackageReference Include="CK.DB.Tests.NUnit" Version="10.2.1--0025-develop" />
-    <PackageReference Include="NUnitLite" Version="3.12.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
+    <PackageReference Include="NUnit" Version="3.12.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.13.0" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
