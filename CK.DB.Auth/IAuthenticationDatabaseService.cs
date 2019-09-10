@@ -11,7 +11,7 @@ namespace CK.DB.Auth
     /// installed in this application context and exposes a way to read <see cref="IUserAuthInfo"/>
     /// information.
     /// </summary>
-    public interface IAuthenticationDatabaseService : IAmbientService
+    public interface IAuthenticationDatabaseService : IAutoService
     {
         /// <summary>
         /// Gets the only <see cref="IBasicAuthenticationProvider"/> if it exists or null.
