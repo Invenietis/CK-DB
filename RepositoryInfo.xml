@@ -5,5 +5,5 @@
 
   </Branches>
 
-  <Debug IgnoreDirtyWorkingFolder="true" />
+  <Debug IgnoreDirtyWorkingFolder="false" />
 </RepositoryInfo>
