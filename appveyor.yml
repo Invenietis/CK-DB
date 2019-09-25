@@ -2,13 +2,13 @@
 version: build{build}
 image: Visual Studio 2019
 clone_folder: C:\CKli-World\CK-Database-Projects\CK-DB
-services: mssql2016
+services: mssql2017
 branches:
   only:
     - master
     - develop
 environment:
-  SqlServer/MasterConnectionString: Server=(local)\SQL2016;Database=master;User ID=sa;Password=Password12!
+  SqlServer/MasterConnectionString: Server=(local)\SQL2017;Database=master;User ID=sa;Password=Password12!
   CODECAKEBUILDER_SECRET_KEY:
     secure: 8VAzdXgUQaJyFoU3WLf2iPFV/8zPDm9qV4TfOpx8/rg=
 build_script:
