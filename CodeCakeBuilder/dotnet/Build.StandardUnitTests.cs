@@ -1,17 +1,6 @@
-using Cake.Common.Diagnostics;
-using Cake.Common.IO;
 using Cake.Common.Solution;
-using Cake.Common.Tools.DotNetCore;
-using Cake.Common.Tools.DotNetCore.Test;
-using Cake.Common.Tools.NUnit;
-using Cake.Core.IO;
-using CK.Text;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Xml.Linq;
 
 namespace CodeCake
 {

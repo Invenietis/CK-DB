@@ -1,7 +1,4 @@
-﻿using CK.Core;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace CK.DB.Auth
 {

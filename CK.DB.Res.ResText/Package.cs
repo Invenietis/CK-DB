@@ -1,10 +1,4 @@
-﻿using CK.Setup;
-using CK.SqlServer.Setup;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using CK.Core;
 
 namespace CK.DB.Res.ResText
 {
@@ -21,13 +15,13 @@ namespace CK.DB.Res.ResText
         /// <summary>
         /// Gets the resource table.
         /// </summary>
-        [InjectContract]
+        [InjectObject]
         public ResTable ResTable { get; protected set; }
 
         /// <summary>
         /// Gets the text holder table.
         /// </summary>
-        [InjectContract]
+        [InjectObject]
         public ResTextTable ResTextTable { get; protected set; }
     }
 }

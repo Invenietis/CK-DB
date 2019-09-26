@@ -1,10 +1,4 @@
-﻿using CK.Setup;
-using CK.SqlServer.Setup;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using CK.Core;
 
 namespace CK.DB.Res.MCResHtml
 {
@@ -36,7 +30,7 @@ namespace CK.DB.Res.MCResHtml
         /// <summary>
         /// Gets the tMCResHtml table from this package.
         /// </summary>
-        [InjectContract]
+        [InjectObject]
         public MCResHtmlTable MCResHtmlTable { get; protected set; }
     }
 }

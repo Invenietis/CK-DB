@@ -3,8 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using CK.Text;
-using System.Text;
-using System.Threading.Tasks;
 using CK.Core;
 
 namespace CK.DB.Auth.AuthScope

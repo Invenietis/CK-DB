@@ -1,11 +1,7 @@
-using Cake.Common.Solution;
 using Cake.Common.IO;
 using Cake.Core;
-using System.Linq;
 using Cake.Core.Diagnostics;
 using SimpleGitVersion;
-using Cake.Core.IO;
-using System;
 
 namespace CodeCake
 {

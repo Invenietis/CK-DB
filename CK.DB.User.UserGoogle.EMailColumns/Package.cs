@@ -1,15 +1,4 @@
-using CK.DB.User.UserGoogle;
-using CK.SqlServer.Setup;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Data.SqlClient;
-using CK.DB.Auth;
-using CK.SqlServer;
-using System.Threading;
-using CK.Setup;
+using CK.Core;
 
 namespace CK.DB.User.UserGoogle.EMailColumns
 {

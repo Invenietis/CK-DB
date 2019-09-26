@@ -1,16 +1,4 @@
-﻿using CK.Core;
-using CK.DB.Auth;
-using CK.Setup;
-using CK.SqlServer;
-using CK.SqlServer.Setup;
-using CK.Text;
-using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
+using CK.Core;
 
 namespace CK.DB.User.UserOidc
 {
@@ -29,7 +17,7 @@ namespace CK.DB.User.UserOidc
         /// <summary>
         /// Gets the user Oidc table.
         /// </summary>
-        [InjectContract]
+        [InjectObject]
         public UserOidcTable UserOidcTable { get; protected set; }
 
     }

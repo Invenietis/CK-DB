@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CK.DB.Auth.AuthScope
+﻿namespace CK.DB.Auth.AuthScope
 {
     /// <summary>
     /// Defines the status of each <see cref="AuthScopeItem"/> in a scope set.

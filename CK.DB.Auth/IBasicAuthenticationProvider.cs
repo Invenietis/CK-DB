@@ -1,19 +1,15 @@
 using CK.Core;
 using CK.SqlServer;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace CK.DB.Auth
 {
     /// <summary>
-    /// Defines the ambient contract of the basic authentication provider named "Basic" (there 
+    /// Defines the ambient object of the basic authentication provider named "Basic" (there 
     /// can be at most one such provider) that handles "PasswordUsers".
     /// </summary>
-    public interface IBasicAuthenticationProvider : IAmbientContract
+    public interface IBasicAuthenticationProvider : IRealObject
     {
         /// <summary>
         /// Associates a PasswordUser to an existing user.

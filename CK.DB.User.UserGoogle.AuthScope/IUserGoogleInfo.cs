@@ -1,7 +1,4 @@
-﻿using CK.Core;
-using System;
-
-namespace CK.DB.User.UserGoogle.AuthScope
+﻿namespace CK.DB.User.UserGoogle.AuthScope
 {
     /// <summary>
     /// Extends <see cref="UserGoogle.IUserGoogleInfo"/> with ScopeSet identifier.
