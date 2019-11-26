@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Reflection;
 
@@ -10,10 +10,11 @@ namespace CK.DB.Auth
     static public class GenericAuthenticationProviderExtensions
     {
         /// <summary>
-        /// Gets whether this provider has a standard payload: <see cref="CreatePayload"/> can be called.
+        /// Gets whether this provider is able to create an instance of its payload, it must
+        /// be a <see cref="IGenericAuthenticationProvider{T}"/>: <see cref="CreatePayload"/> can be called.
         /// </summary>
         /// <param name="this">This provider.</param>
-        /// <returns>True if this provider has a payload.</returns>
+        /// <returns>True if this provider can create its payload.</returns>
         public static bool HasPayload( this IGenericAuthenticationProvider @this )
         {
             var t = @this.GetType().GetTypeInfo();

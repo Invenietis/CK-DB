@@ -14,11 +14,12 @@ namespace CK.DB.Auth
         /// Finds a <see cref="IGenericAuthenticationProvider"/> by its name (using <see cref="StringComparer.OrdinalIgnoreCase"/>).
         /// This methods accepts a scheme: it is the provider name followed by a, optional dotted suffix and in such case only the
         /// provider name part is used.
+        /// An <see cref="ArgumentException"/> is thrown if the provider cannot be found.
         /// </summary>
         /// <param name="this">This database service implementation.</param>
         /// <param name="scheme">The scheme to find.</param>
         /// <param name="mustHavePayload">
-        /// True if the provider must handle payload. An <see cref="ArgumentException"/> is thrown if this is not the case.
+        /// True if the provider must be able to create an instance of its payload (it must be a <see cref="IGenericAuthenticationProvider{T}"/>).
         /// </param>
         /// <returns>The provider.</returns>
         public static IGenericAuthenticationProvider FindRequiredProvider( this IAuthenticationDatabaseService @this, string scheme, bool mustHavePayload = true )
