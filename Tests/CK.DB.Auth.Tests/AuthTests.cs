@@ -88,6 +88,7 @@ namespace CK.DB.Auth.Tests
             auth.AllProviders.Single( provider => provider.ProviderName == "Basic" ).Should().NotBeNull();
             auth.FindProvider( "Basic" ).Should().NotBeNull();
             auth.FindProvider( "bASIC" ).Should().NotBeNull();
+            auth.FindRequiredProvider( "Basic", mustHavePayload: true ).Should().NotBeNull();
         }
 
         static public void StandardTestForGenericAuthenticationProvider(
