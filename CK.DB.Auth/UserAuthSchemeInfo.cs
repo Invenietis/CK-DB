@@ -6,7 +6,7 @@ namespace CK.DB.Auth
     /// Scheme name and last used time for <see cref="IUserAuthInfo"/>.
     /// This struct is immutable.
     /// </summary>
-    public struct UserAuthSchemeInfo
+    public readonly struct UserAuthSchemeInfo
     {
         /// <summary>
         /// Initializes a new <see cref="UserAuthSchemeInfo"/>.
