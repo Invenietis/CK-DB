@@ -47,6 +47,38 @@ namespace CK.DB.Culture.Tests
         }
 
         [Test]
+        public void find_culture_do_its_best()
+        {
+            var p = TestHelper.StObjMap.StObjs.Obtain<Culture.Package>();
+            using( var ctx = new SqlStandardCallContext() )
+            {
+                // Removes all cultures except 9 and 12.
+                RestoreDatabaseToEnglishAndFrenchOnly( p );
+
+                // We must find the "fr" and then "en".
+                var cultures = p.FindCultures( ctx, new[] { "nope", "FR", null, "az-not-yet", "EN-NIMP-X","never" } );
+                cultures.Select( c => c.LCID ).Should().BeEquivalentTo( new[] { 12, 9 }, o => o.WithStrictOrdering() );
+
+                p.Register( ctx, 44, "az", "Azerbaijani", "Azərbaycan­ılı" );
+                p.Register( ctx, 29740, "az-Cyrl", "Azerbaijani(Cyrillic)", "Азәрбајҹан дили" );
+                p.Register( ctx, 2092, "az-Cyrl-AZ", "Azerbaijani(Cyrillic; Azerbaijan)", "Азәрбајҹан дили (Азәрбајҹан)" );
+
+                // We must find the "fr", "az and then "en".
+                cultures = p.FindCultures( ctx, new[] { "nope", "FR", null, "az-not-yet", "EN-NIMP-X", "never" } );
+                cultures.Select( c => c.LCID ).Should().BeEquivalentTo( new[] { 12, 44, 9 }, o => o.WithStrictOrdering() );
+
+                cultures = p.FindCultures( ctx, new[] { "nope", "FR", null, "az-Cyrl-AZ", "EN-NIMP-X", "never" } );
+                cultures.Select( c => c.LCID ).Should().BeEquivalentTo( new[] { 12, 2092, 9 }, o => o.WithStrictOrdering() );
+
+                cultures = p.FindCultures( ctx, new[] { "AZ-Cyrl", "nope", "FR", null, "EN-NIMP-X", "never" } );
+                cultures.Select( c => c.LCID ).Should().BeEquivalentTo( new[] { 29740, 12, 9 }, o => o.WithStrictOrdering() );
+
+                cultures = p.FindCultures( ctx, new[] { "az-Cyrl", "az", "az-Cyrl-AZ", "EN-NIMP-X", "FR" } );
+                cultures.Select( c => c.LCID ).Should().BeEquivalentTo( new[] { 29740, 44, 2092, 9, 12 }, o => o.WithStrictOrdering() );
+            }
+        }
+
+        [Test]
         public void registering_a_culture_updates_all_fallbacks()
         {
             var p = TestHelper.StObjMap.StObjs.Obtain<Culture.Package>();
@@ -57,11 +89,11 @@ namespace CK.DB.Culture.Tests
 
                 //  44    az            Azerbaijani                          Azərbaycan­ılı
                 //  29740 az-Cyrl       Azerbaijani (Cyrillic)               Азәрбајҹан дили
-                //  2092  az-Cyrl-AZ    Azerbaijani (Cyrillic, Azerbaijan)   Азәрбајҹан дили (Азәрбајҹан)
+                //  2092  az-Cyrl-AZ    Azerbaijani (Cyrillic; Azerbaijan)   Азәрбајҹан дили (Азәрбајҹан)
 
                 p.Register( ctx, 44, "az", "Azerbaijani", "Azərbaycan­ılı" );
                 p.Register( ctx, 29740, "az-Cyrl", "Azerbaijani(Cyrillic)", "Азәрбајҹан дили" );
-                p.Register( ctx, 2092, "az-Cyrl-AZ", "Azerbaijani(Cyrillic, Azerbaijan)", "Азәрбајҹан дили (Азәрбајҹан)" );
+                p.Register( ctx, 2092, "az-Cyrl-AZ", "Azerbaijani(Cyrillic; Azerbaijan)", "Азәрбајҹан дили (Азәрбајҹан)" );
 
                 p.Database.ExecuteScalar( "select FallbacksLCID from CK.vXLCID where XLCID = 9" )
                     .Should().Be( "9,12,44,29740,2092" );
@@ -101,8 +133,8 @@ namespace CK.DB.Culture.Tests
             var p = TestHelper.StObjMap.StObjs.Obtain<Package>();
             using( var ctx = new SqlStandardCallContext() )
             {
-                p.Invoking( sut => sut.Register( ctx, 0, "xx", "XXX", "XXX" ) ).Should().Throw<SqlDetailedException>();
-                p.Invoking( sut => sut.Register( ctx, 0xFFFFF, "xx", "XXX", "XXX" ) ).Should().Throw<SqlDetailedException>();
+                p.Invoking( sut => sut.Register( ctx, 0, "xx", "XXX", "XXX" ) ).Should().Throw<ArgumentException>();
+                p.Invoking( sut => sut.Register( ctx, 0xFFFFF, "xx", "XXX", "XXX" ) ).Should().Throw<ArgumentException>();
             }
         }
 

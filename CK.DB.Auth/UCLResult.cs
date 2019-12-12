@@ -4,7 +4,7 @@ namespace CK.DB.Auth
     /// Captures the result of <see cref="IGenericAuthenticationProvider.CreateOrUpdateUser"/>
     /// or <see cref="IGenericAuthenticationProvider.CreateOrUpdateUserAsync"/>.
     /// </summary>
-    public struct UCLResult
+    public readonly struct UCLResult
     {
         /// <summary>
         /// The <see cref="LoginResult"/>.

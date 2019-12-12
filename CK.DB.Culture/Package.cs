@@ -7,11 +7,12 @@ namespace CK.DB.Culture
 {
     /// <summary>
     /// Culture package.
+    /// Currently, no data is cached by this implementation: eventually <see cref="CultureData"/> and <see cref="ExtendedCultureData"/>
+    /// should be cached.
     /// </summary>
     [SqlPackage( Schema = "CK", ResourcePath = "Res" )]
     public abstract partial class Package : SqlPackage
     {
-
         /// <summary>
         /// Updates or creates an actual culture.
         /// When creating a new culture, its fallbacks are by default the english ones
@@ -23,8 +24,14 @@ namespace CK.DB.Culture
         /// <param name="englishName">Name of the culture in english: "Azerbaijani (Cyrillic)".</param>
         /// <param name="nativeName">Name of the culture in the culture iself: "Азәрбајҹан дили".</param>
         /// <returns>The awaitable.</returns>
+        public Task RegisterAsync( ISqlCallContext ctx, int lcid, string name, string englishName, string nativeName )
+        {
+            CultureData.ValidateParameters( lcid, name, englishName, nativeName );
+            return DoRegisterAsync( ctx, lcid, name, englishName, nativeName );
+        }
+
         [SqlProcedure( "sCultureRegister" )]
-        public abstract Task RegisterAsync( ISqlCallContext ctx, int lcid, string name, string englishName, string nativeName );
+        protected abstract Task DoRegisterAsync( ISqlCallContext ctx, int lcid, string name, string englishName, string nativeName );
 
         /// <summary>
         /// Destroys a Culture, be it an actual culture (LCID) or a pure XLCID. 

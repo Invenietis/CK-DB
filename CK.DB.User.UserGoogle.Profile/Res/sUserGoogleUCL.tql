@@ -1,0 +1,25 @@
+create transformer on CK.sUserGoogleUCL
+as
+begin
+	add parameter @FirstName nvarchar(255) = null,
+                  @LastName nvarchar(255) = null,
+                  @UserName nvarchar(255) = null,
+                  @PictureUrl varchar( 255 ) = null;
+
+	in single statement {insert into CK.tUserGoogle}
+	begin
+		add column	FirstName = case when @FirstName is not null then @FirstName else N'' end, 
+					LastName = case when @LastName is not null then @LastName else N'' end, 
+					UserName = case when @UserName is not null then @UserName else N'' end, 
+					PictureUrl = case when @PictureUrl is not null then @PictureUrl else '' end;
+	end
+
+	in first statement {update CK.tUserGoogle}
+	begin
+		add column FirstName = case when @FirstName is not null then @FirstName else FirstName end, 
+                   LastName = case when @LastName is not null then @LastName else LastName end, 
+                   UserName = case when @UserName is not null then @UserName else UserName end, 
+                   PictureUrl = case when @PictureUrl is not null then @PictureUrl else PictureUrl end;
+	end
+
+end

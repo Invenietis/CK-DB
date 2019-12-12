@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace CK.DB.Culture
 {
@@ -16,14 +16,26 @@ namespace CK.DB.Culture
         /// <param name="nativeName">The native name ("Français"). See <see cref="CheckNameArgument"/>.</param>
         public CultureData( int lcid, string name, string englishName, string nativeName )
         {
-            if( lcid <= 0 || lcid >= 0xFFFF ) throw new ArgumentException( "Must be between 0 and 0xFFFF.", nameof( lcid ) );
-            CheckNameArgument( name, nameof( name ) );
-            CheckNameArgument( englishName, nameof( englishName ) );
-            CheckNameArgument( nativeName, nameof( nativeName ) );
+            ValidateParameters( lcid, name, englishName, nativeName );
             LCID = lcid;
             Name = name;
             EnglishName = englishName;
             NativeName = nativeName;
+        }
+
+        /// <summary>
+        /// Validates a Culture data.
+        /// </summary>
+        /// <param name="lcid">The culture identifier. Must be between 0 and 0xFFFF.</param>
+        /// <param name="name">The name ("fr-FR"). See <see cref="CheckNameArgument"/>.</param>
+        /// <param name="englishName">The english name ("French"). See <see cref="CheckNameArgument"/>.</param>
+        /// <param name="nativeName">The native name ("Français"). See <see cref="CheckNameArgument"/>.</param>
+        public static void ValidateParameters( int lcid, string name, string englishName, string nativeName )
+        {
+            if( lcid <= 0 || lcid >= 0xFFFF ) throw new ArgumentException( "Must be between 0 and 0xFFFF.", nameof( lcid ) );
+            CheckNameArgument( name, nameof( name ) );
+            CheckNameArgument( englishName, nameof( englishName ) );
+            CheckNameArgument( nativeName, nameof( nativeName ) );
         }
 
         internal static readonly char[] _separators = new[] { ',', '|' };
@@ -37,7 +49,7 @@ namespace CK.DB.Culture
         {
             if( string.IsNullOrWhiteSpace( name ) || name.IndexOfAny( _separators ) >= 0 )
             {
-                throw new ArgumentException( "Must not be null or empty nor contain , or |.", parameterName );
+                throw new ArgumentException( $"Must not be null or empty nor contain , or |. Name: {name}.", parameterName );
             }
         }
 

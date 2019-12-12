@@ -71,7 +71,7 @@ begin
 	begin
 		if (@Mode&1) <> 0 -- CreateOnly or CreateOrUpdate
 		begin
-            set @LastLoginTime = '0001-01-01';
+            set @LastLoginTime = '00010101';
 			--<PreCreate revert /> 
 
 			-- Unique constraint on SimpleCode will detect any existing UserId/SimpleCode clashes.

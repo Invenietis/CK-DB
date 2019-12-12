@@ -2,11 +2,11 @@
   <Import Project="..\Common\Shared.props" />
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
-    <Description>This package defines CK.tLCID XLCID and XLCIDMap tables.</Description>
+    <Description>This package adds EMail and EMailVerified to CK.tUserGoogle table.</Description>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="CK.SqlServer.Setup.Model" Version="12.0.0" />
+    <ProjectReference Include="..\CK.DB.User.UserGoogle\CK.DB.User.UserGoogle.csproj" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="**\*.sql;**\*.tql;**\*.y4" Exclude="bin\**;obj\**;CodeCakeBuilder\**;packages\**;@(EmbeddedResource)" />
