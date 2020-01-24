@@ -5,8 +5,8 @@ clone_folder: C:\CKli-World\CK-Database-Projects\CK-DB
 services: mssql2017
 branches:
   only:
-    - master
-    - develop
+    - master-NetCore2
+    - develop-NetCore2
 environment:
   SqlServer/MasterConnectionString: Server=(local)\SQL2017;Database=master;User ID=sa;Password=Password12!
   CODECAKEBUILDER_SECRET_KEY:
