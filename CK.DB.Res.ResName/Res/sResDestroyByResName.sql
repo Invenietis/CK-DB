@@ -24,8 +24,11 @@ as begin
 	    select @RootResId = r.ResId 
 		    from CK.tResName r
 		    where r.ResName = @RootResName;
-		if @ResNameOnly = 1 exec CK.sResNameDestroy @RootResId;
-		else exec CK.sResDestroy @RootResId;
+		if @@RowCount <> 0
+		begin
+			if @ResNameOnly = 1 exec CK.sResNameDestroy @RootResId;
+			else exec CK.sResDestroy @RootResId;
+		end
     end
     if @WithChildren = 1
 	begin
