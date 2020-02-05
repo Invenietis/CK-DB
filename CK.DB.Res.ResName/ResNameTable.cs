@@ -27,8 +27,23 @@ namespace CK.DB.Res.ResName
         /// names are left as-is as "orphans".
         /// </param>
         /// <returns>The awaitable.</returns>
-        [SqlProcedure("sResNameRename")]
+        [SqlProcedure( "sResNameRename" )]
         public abstract Task RenameAsync( ISqlCallContext ctx, int resId, string newName, bool withChildren = true );
+
+        /// <summary>
+        /// Renames a resource, by default renaming also its children.
+        /// Nothing is done if the resource does not exist or has no associated ResName.
+        /// </summary>
+        /// <param name="ctx">The call context.</param>
+        /// <param name="oldName">The resource name to rename.</param>
+        /// <param name="newName">The new resource name.</param>
+        /// <param name="withChildren">
+        /// False to rename only this resource and not its children: children
+        /// names are left as-is as "orphans".
+        /// </param>
+        /// <returns>The awaitable.</returns>
+        [SqlProcedure( "sResNameRenameResName" )]
+        public abstract Task RenameAsync( ISqlCallContext ctx, string oldName, string newName, bool withChildren = true );
 
         /// <summary>
         /// Creates a new resource name for an existing resource identifier.
@@ -51,7 +66,8 @@ namespace CK.DB.Res.ResName
         public abstract Task<int> CreateWithResNameAsync( ISqlCallContext ctx, string resName );
 
         /// <summary>
-        /// Destroys the resource name associated to a resource if any.
+        /// Destroys the resource name associated to a resource identifier if any.
+        /// This doesn't destroy the resource itself, only the name.
         /// </summary>
         /// <param name="ctx">The call context.</param>
         /// <param name="resId">The resoource identifier.</param>
@@ -60,37 +76,23 @@ namespace CK.DB.Res.ResName
         public abstract Task DestroyResNameAsync( ISqlCallContext ctx, int resId );
 
         /// <summary>
-        /// Destroys all ressources which ResName start with <paramref name="resNamePrefix"/> + '.'.
-        /// Since this method works on resource name, <paramref name="resNameOnly"/> defaults to true
-        /// but this can be applied to the whole resources.
-        /// </summary>
+        /// Destroys a root resource and/or its children thanks to its name.
+        /// Note that if <paramref name="withRoot"/> and <paramref name="withChildren"/> are both false, nothing is done.
+        /// If the root name doesn't exist, its children can nevertheless be destroyed.
+        /// Setting <paramref name="resNameOnly"/> to false will call CK.sResDestroy, destroying the ResId 
+        /// and all its resources. By default, only the resource name is destroyed (this is the safest way).
+        /// /// </summary>
         /// <param name="ctx">The call context.</param>
-        /// <param name="resNamePrefix">Prefix of the resources to destroy.</param>
-        /// <param name="resNameOnly">False to call sResDestroy (destroying the whole resources) instead of sResNameDestroy.</param>
+        /// <param name="rootResName">The root resource name to destroy.</param>
+        /// <param name="withRoot">Whether the root itself must be destroyed.</param>
+        /// <param name="withChildren">Whether the root's children must be destroyed.</param>
+        /// <param name="resNameOnly">
+        /// Set it it false to call sResDestroy (destroying the whole resources) instead of sResNameDestroy.
+        /// This has be set explicitely.
+        /// </param>
         /// <returns>The awaitable.</returns>
-        [SqlProcedure( "sResDestroyByResNamePrefix" )]
-        public abstract Task DestroyByResNamePrefixAsync( ISqlCallContext ctx, string resNamePrefix, bool resNameOnly = true );
-
-        /// <summary>
-        /// Destroys all children resources (or, optionally, only their ResName part).
-        /// </summary>
-        /// <param name="ctx">The call context.</param>
-        /// <param name="resId">The parent resource identifier.</param>
-        /// <param name="resNameOnly">True to only call sResNameDestroy instead of sResDestroy.</param>
-        /// <returns>The awaitable.</returns>
-        [SqlProcedure( "sResDestroyResNameChildren" )]
-        public abstract Task DestroyResNameChildrenAsync( ISqlCallContext ctx, int resId, bool resNameOnly = false );
-
-        /// <summary>
-        /// Destroys a resource and all its children (or, optionally, only their ResName part).
-        /// </summary>
-        /// <param name="ctx">The call context.</param>
-        /// <param name="resId">The resource identifier to destroy, including its children.</param>
-        /// <param name="resNameOnly">True to only call sResNameDestroy instead of sResDestroy.</param>
-        /// <returns>The awaitable.</returns>
-        [SqlProcedure( "sResDestroyWithResNameChildren" )]
-        public abstract Task DestroyWithResNameChildrenAsync( ISqlCallContext ctx, int resId, bool resNameOnly = false );
-
+        [SqlProcedure( "sResDestroyByResName" )]
+        public abstract Task DestroyByResNameAsync( ISqlCallContext ctx, string rootResName, bool withRoot = true, bool withChildren = true, bool resNameOnly = true );
 
     }
 }
