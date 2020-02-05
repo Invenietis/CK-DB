@@ -130,22 +130,8 @@ namespace CK.DB.Res.ResName.Tests
                 p.Database.ExecuteScalar( "select count(*) from CK.tResName where ResName like @0+'%'", nameRoot ).Should().Be( 3 );
 
                 p.ResNameTable.DestroyByResName( ctx, nameRoot, withRoot: true, withChildren: true, resNameOnly: false );
-                p.Database.ExecuteReader( "select * from CK.tResName where ResName like @0 + '%'", nameRoot )
-                    .Rows.Should().BeEmpty();
-                p.Database.ExecuteReader( "select * from CK.tRes where ResId in(@0, @1, @2)", n1, n2, n3 ).Rows.Should().BeEmpty();
-
-
-                // Destroys children but keep the root.
-                n1 = p.ResNameTable.CreateWithResName( ctx, nameRoot + ".Test.Root" );
-                n2 = p.ResNameTable.CreateWithResName( ctx, nameRoot + ".Test.Root.1" );
-                n3 = p.ResNameTable.CreateWithResName( ctx, nameRoot + ".Test.Root.1.1" );
-                p.Database.ExecuteScalar( "select count(*) from CK.tResName where ResName like @0+'%'", nameRoot ).Should().Be( 3 );
-
-                p.ResNameTable.DestroyByResName( ctx, nameRoot, withRoot: false, withChildren: true, resNameOnly: false );
-                p.Database.ExecuteReader( "select coun(*) from CK.tResName where ResName like @0 + '%'", nameRoot ).Rows.Should().HaveCount( 1 );
-
-                p.ResNameTable.DestroyByResName( ctx, nameRoot, withRoot: true, withChildren: false, resNameOnly: false );
-                p.Database.ExecuteReader( "select coun(*) from CK.tResName where ResName like @0 + '%'", nameRoot ).Rows.Should().HaveCount( 0 );
+                p.Database.ExecuteScalar( "select count(*) from CK.tResName where ResName like @0 + '%'", nameRoot ).Should().Be( 0 );
+                p.Database.ExecuteScalar( "select count(*) from CK.tRes where ResId in (@0, @1, @2)", n1, n2, n3 ).Should().Be( 0 );
 
                 // Destroys root, keep children.
                 n1 = p.ResNameTable.CreateWithResName( ctx, nameRoot + ".Test.Root" );
@@ -153,11 +139,23 @@ namespace CK.DB.Res.ResName.Tests
                 n3 = p.ResNameTable.CreateWithResName( ctx, nameRoot + ".Test.Root.1.1" );
                 p.Database.ExecuteScalar( "select count(*) from CK.tResName where ResName like @0+'%'", nameRoot ).Should().Be( 3 );
 
-                p.ResNameTable.DestroyByResName( ctx, nameRoot, withRoot: true, withChildren: false, resNameOnly: false );
+                p.ResNameTable.DestroyByResName( ctx, nameRoot + ".Test.Root", withRoot: true, withChildren: false, resNameOnly: false );
                 p.Database.ExecuteScalar( "select count(*) from CK.tResName where ResName like @0+'%'", nameRoot ).Should().Be( 2 );
 
-                p.ResNameTable.DestroyByResName( ctx, nameRoot, withRoot: true, withChildren: true, resNameOnly: false );
+                p.ResNameTable.DestroyByResName( ctx, nameRoot + ".Test.Root", withRoot: true, withChildren: true, resNameOnly: false );
                 p.Database.ExecuteScalar( "select count(*) from CK.tResName where ResName like @0+'%'", nameRoot ).Should().Be( 0 );
+
+                // Destroys children but keep the root.
+                n1 = p.ResNameTable.CreateWithResName( ctx, nameRoot + ".Test.Root" );
+                n2 = p.ResNameTable.CreateWithResName( ctx, nameRoot + ".Test.Root.1" );
+                n3 = p.ResNameTable.CreateWithResName( ctx, nameRoot + ".Test.Root.1.1" );
+                p.Database.ExecuteScalar( "select count(*) from CK.tResName where ResName like @0+'%'", nameRoot ).Should().Be( 3 );
+
+                p.ResNameTable.DestroyByResName( ctx, nameRoot + ".Test.Root", withRoot: false, withChildren: true, resNameOnly: false );
+                p.Database.ExecuteScalar( "select count(*) from CK.tResName where ResName like @0 + '%'", nameRoot ).Should().Be( 1 );
+
+                p.ResNameTable.DestroyByResName( ctx, nameRoot + ".Test.Root", withRoot: true, withChildren: false, resNameOnly: false );
+                p.Database.ExecuteScalar( "select count(*) from CK.tResName where ResName like @0 + '%'", nameRoot ).Should().Be( 0 );
 
             }
         }
