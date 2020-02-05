@@ -1,7 +1,6 @@
 ﻿-- SetupConfig: {}
--- Version = 1.0.0
 --
--- Renames a resource.
+-- Renames a resource by its resource identifier.
 --
 create procedure CK.sResNameRename
 (
@@ -9,37 +8,15 @@ create procedure CK.sResNameRename
     @NewName varchar(128),
 	@WithChildren bit = 1
 )
-as begin
-
+as 
+begin
 	if @ResId <= 1 throw 50000, 'Res.NoRename', 1;
-	set @NewName = RTrim( LTrim(@NewName) );
 	
-	--[beginsp]
-
 	declare @OldName varchar(128);
-	declare @LenPrefix int;
-	select @OldName = ResName, 
-		   @LenPrefix = len(ResName)+1
-		from CK.tResName 
-		where ResId = @ResId;
+	select @OldName = ResName from CK.tResName where ResId = @ResId;
 
 	if @OldName is not null 
 	begin
-
-		--<PreRename revert />
-
-		if @WithChildren = 1
-		begin
-			-- Updates child names first.
-			update CK.tResName set ResName = @NewName + substring( ResName, @LenPrefix, 128 )
-				where ResName like @OldName + '.%';
-		end
-		-- Updates the resource itself.
-		update CK.tResName set ResName = @NewName where ResId = @ResId;
-
-		--<PostRename />
-	
+		exec CK.sResNameRenameResName @OldName, @NewName, @WithChildren;
 	end
-
-	--[endsp]
 end
