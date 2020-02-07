@@ -5,13 +5,17 @@
     <Description>This package defines CK.tResName table with its procedures, functions and views.</Description>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\CK.DB.Res\CK.DB.Res.csproj" />
-  </ItemGroup>
+  
   <ItemGroup>
     <EmbeddedResource Include="**\*.sql;**\*.tql;**\*.y4" Exclude="bin\**;obj\**;CodeCakeBuilder\**;packages\**;@(EmbeddedResource)" />
   </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\CK.DB.Res\CK.DB.Res.csproj" />
+  </ItemGroup>
+
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
+  
 </Project>
