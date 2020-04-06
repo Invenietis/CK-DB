@@ -29,7 +29,10 @@ namespace CK.DB.Auth
         {
             using( m.OpenInfo( $"Initializing CK.DB.Auth.Package : IAuthenticationDatabaseService" ) )
             {
-                _allProviders = map.Implementations.OfType<IGenericAuthenticationProvider>().ToDictionary( p => p.ProviderName, StringComparer.OrdinalIgnoreCase );
+                _allProviders = map.FinalImplementations
+                                    .Select( f => f.FinalImplementation )
+                                    .OfType<IGenericAuthenticationProvider>()
+                                    .ToDictionary( p => p.ProviderName, StringComparer.OrdinalIgnoreCase );
                 if( BasicProvider != null ) _allProviders.Add( BasicToGenericProviderAdapter.Name, new BasicToGenericProviderAdapter( BasicProvider ) );
                 _allProvidersValues = new CKReadOnlyCollectionOnICollection<IGenericAuthenticationProvider>( _allProviders.Values );
                 m.CloseGroup( $"{_allProviders.Count} providers: " + _allProviders.Keys.Concatenate() );
