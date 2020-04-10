@@ -1,6 +1,4 @@
 <Project>
-  <!-- Centralized version dependencies. -->
-  <Import Project="DependencyVersions.props" />
 
   <!-- Exclude CKSetup-WorkingDir folder. -->
   <ItemGroup>

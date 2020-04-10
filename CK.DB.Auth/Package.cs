@@ -30,7 +30,7 @@ namespace CK.DB.Auth
             using( m.OpenInfo( $"Initializing CK.DB.Auth.Package : IAuthenticationDatabaseService" ) )
             {
                 _allProviders = map.FinalImplementations
-                                    .Select( f => f.FinalImplementation )
+                                    .Select( f => f.Implementation )
                                     .OfType<IGenericAuthenticationProvider>()
                                     .ToDictionary( p => p.ProviderName, StringComparer.OrdinalIgnoreCase );
                 if( BasicProvider != null ) _allProviders.Add( BasicToGenericProviderAdapter.Name, new BasicToGenericProviderAdapter( BasicProvider ) );
