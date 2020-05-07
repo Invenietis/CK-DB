@@ -8,7 +8,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\CK.DB.Acl\CK.DB.Acl.csproj" />
     <ProjectReference Include="..\CK.DB.Actor.Tests\CK.DB.Actor.Tests.csproj" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.6.1" />
     <PackageReference Include="NUnit" Version="3.12.0" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.16.1" />
   </ItemGroup>
