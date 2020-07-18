@@ -134,6 +134,7 @@ namespace CK.DB.User.UserGoogle.Tests
         {
             var auth = TestHelper.StObjMap.StObjs.Obtain<Auth.Package>();
             var f = TestHelper.StObjMap.StObjs.Obtain<IPocoFactory<IUserGoogleInfo>>();
+            f.Should().NotBeNull( "IPocoFactory<IUserGoogleInfo> cannot be obtained." );
             await Auth.Tests.AuthTests.StandardTestForGenericAuthenticationProviderAsync(
                 auth,
                 "Google",

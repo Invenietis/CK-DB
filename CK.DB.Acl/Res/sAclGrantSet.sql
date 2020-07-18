@@ -1,4 +1,4 @@
-﻿-- SetupConfig: {}
+-- SetupConfig: {}
 ALTER Procedure CK.sAclGrantSet
 (
     @ActorId int,
@@ -30,7 +30,7 @@ as begin
 				source.KeyReason = target.KeyReason
 		when matched and @GrantLevel = 0 then delete -- When @GrantLevel = 0, we remove the entry.
 		when matched and target.GrantLevel <> @GrantLevel then update set GrantLevel = @GrantLevel
-		when not matched by target then insert( AclId, ActorId, KeyReason, GrantLevel ) values( @AclId, @ActorIdToGrant, @KeyReason, @GrantLevel );
+		when not matched by target and @GrantLevel > 0 then insert( AclId, ActorId, KeyReason, GrantLevel ) values( @AclId, @ActorIdToGrant, @KeyReason, @GrantLevel ); -- When @GrantLevel <> 0, we insert.
 	
 	if @@ROWCOUNT > 0
 	begin

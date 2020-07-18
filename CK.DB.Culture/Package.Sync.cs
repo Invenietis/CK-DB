@@ -1,15 +1,16 @@
 using CK.Core;
 using CK.SqlServer;
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Linq;
 
 namespace CK.DB.Culture
 {
     public abstract partial class Package : SqlPackage
     {
         /// <summary>
-        /// Updates or creates an actual culture.
-        /// When creating a new culture, its fallbacks are by default the english ones
+        /// Updates or creates an actual culture. When creating a new culture, its fallbacks are by default the english ones
         /// and this newcomer is added as the last fallback to any existing XLCID.
         /// </summary>
         /// <param name="ctx">The call context.</param>
@@ -17,8 +18,14 @@ namespace CK.DB.Culture
         /// <param name="name">Standard name of the culture: "az-Cyrl".</param>
         /// <param name="englishName">Name of the culture in english: "Azerbaijani (Cyrillic)".</param>
         /// <param name="nativeName">Name of the culture in the culture iself: "Азәрбајҹан дили".</param>
+        public void Register( ISqlCallContext ctx, int lcid, string name, string englishName, string nativeName )
+        {
+            CultureData.ValidateParameters( lcid, name, englishName, nativeName );
+            DoRegister( ctx, lcid, name, englishName, nativeName );
+        }
+
         [SqlProcedure( "sCultureRegister" )]
-        public abstract void Register( ISqlCallContext ctx, int lcid, string name, string englishName, string nativeName );
+        protected abstract void DoRegister( ISqlCallContext ctx, int lcid, string name, string englishName, string nativeName );
 
         /// <summary>
         /// Destroys a Culture, be it an actual culture (LCID) or a pure XLCID. 
@@ -97,6 +104,58 @@ namespace CK.DB.Culture
                                                             ? new CultureData( lcid, r.GetString( 0 ), r.GetString( 1 ), r.GetString( 2 ) )
                                                             : null );
             }
+        }
+        /// <summary>
+        /// Gets all the defined <see cref="CultureData"/>.
+        /// </summary>
+        /// <param name="ctx">The call context to use.</param>
+        /// <returns>The culture data list.</returns>
+        public IReadOnlyList<CultureData> GetAllCultures( ISqlCallContext ctx )
+        {
+            using( var cmd = new SqlCommand( $"select LCID, Name, EnglishName, NativeName from CK.tLCID where LCID > 0" ) )
+            {
+                return ctx[Database].ExecuteReader( cmd, r => new CultureData( r.GetInt32( 0 ), r.GetString( 1 ), r.GetString( 2 ), r.GetString( 3 ) ) );
+            }
+        }
+
+        /// <summary>
+        /// Attempts to find a <see cref="CultureData"/> for a given culture name.
+        /// </summary>
+        /// <param name="ctx">The call context to use.</param>
+        /// <param name="name">The culture name is typically a ISO 639-X name.</param>
+        /// <returns>The culture data or null.</returns>
+        public CultureData FindCulture( ISqlCallContext ctx, string name )
+        {
+            if( String.IsNullOrWhiteSpace( name ) ) throw new ArgumentNullException( nameof( name ) );
+            return Find( GetAllCultures( ctx ), name );
+        }
+
+        /// <summary>
+        /// Attempts to match a set of <see cref="CultureData"/> from multiples names (preserving order).
+        /// </summary>
+        /// <param name="ctx">The call context to use.</param>
+        /// <param name="names">The culture names (typically a ISO 639-X name).</param>
+        /// <returns>The cultures mapped.</returns>
+        public IEnumerable<CultureData> FindCultures( ISqlCallContext ctx, IEnumerable<string> names )
+        {
+            var list = GetAllCultures( ctx );
+            return names.Where( n => !String.IsNullOrWhiteSpace( n ) )
+                        .Select( n => Find( list, n ) )
+                        .Where( c => c != null );
+        }
+
+        CultureData Find( IReadOnlyList<CultureData> list, string name )
+        {
+            int i = list.IndexOf( c => c.Name.Equals( name, StringComparison.OrdinalIgnoreCase ) );
+            if( i >= 0 ) return list[i];
+            int dashIdx;
+            while( (dashIdx = name.LastIndexOf( '-' )) >= 0 )
+            {
+                name = name.Substring( 0, dashIdx );
+                i = list.IndexOf( c => c.Name.Equals( name, StringComparison.OrdinalIgnoreCase ) );
+                if( i >= 0 ) return list[i];
+            }
+            return null;
         }
 
         /// <summary>

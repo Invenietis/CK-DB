@@ -9,7 +9,7 @@ namespace CK.DB.Auth
     /// Defines the ambient object of the basic authentication provider named "Basic" (there 
     /// can be at most one such provider) that handles "PasswordUsers".
     /// </summary>
-    public interface IBasicAuthenticationProvider : IAmbientObject
+    public interface IBasicAuthenticationProvider : IRealObject
     {
         /// <summary>
         /// Associates a PasswordUser to an existing user.

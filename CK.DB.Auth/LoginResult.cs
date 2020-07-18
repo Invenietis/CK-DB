@@ -8,7 +8,7 @@ namespace CK.DB.Auth
     /// The stored procedure extension point CK.sAuthUserOnLogin can be used to centralize
     /// all the checks related to login acceptance or rejection.
     /// </summary>
-    public struct LoginResult
+    public readonly struct LoginResult
     {
         readonly int _code;
 
