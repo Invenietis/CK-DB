@@ -42,6 +42,22 @@ namespace CK.DB.Acl.Tests
             }
         }
 
+        [Test]
+        public void system_default_acls_from_0_to_8_cannot_be_destroyed()
+        {
+            var acl = TestHelper.StObjMap.StObjs.Obtain<AclTable>();
+            using( var ctx = new SqlStandardCallContext() )
+            {
+                for( int idAcl = 0; idAcl <= 8; ++idAcl )
+                {
+                    acl.Invoking( _ => _.DestroyAcl( ctx, 1, idAcl ) )
+                        .Should().Throw<Exception>()
+                        .WithInnerException<Exception>()
+                        .WithMessage( "Security.ReservedAclId" );
+                }
+            }
+        }
+
         [TestCase( 0, 127, "CK.StdAcl.Public" )]
         [TestCase( 1, 0, null )]
         [TestCase( 2, 8, "CK.StdAcl.User" )]
@@ -50,7 +66,8 @@ namespace CK.DB.Acl.Tests
         [TestCase( 5, 64, "CK.StdAcl.Editor" )]
         [TestCase( 6, 80, "CK.StdAcl.SuperEditor" )]
         [TestCase( 7, 112, "CK.StdAcl.SafeAdministrator" )]
-        public void challenging_system_default_acls( int idAcl, byte grantLevel, string keyReasonForAnonymous )
+        [TestCase( 8, 0, null )]
+        public void challenging_system_default_acls_except_the_1_by_a_random_user( int idAcl, byte grantLevel, string keyReasonForAnonymous )
         {
             var map = TestHelper.StObjMap;
             var acl = map.StObjs.Obtain<AclTable>();
@@ -62,6 +79,39 @@ namespace CK.DB.Acl.Tests
                 acl.GetGrantLevel( ctx, idUser, idAcl ).Should().Be( grantLevel, "Reason: " + keyReasonForAnonymous );
                 acl.Database.ExecuteScalar( "select KeyReason from CK.tAclConfigMemory where ActorId = 0 and AclId=@0", idAcl )
                     .Should().Be( keyReasonForAnonymous );
+            }
+        }
+
+        [Test]
+        public void the_System_Acl_1_is_the_only_one_that_can_be_configured()
+        {
+            var map = TestHelper.StObjMap;
+            var acl = map.StObjs.Obtain<AclTable>();
+            var user = map.StObjs.Obtain<UserTable>();
+            using( var ctx = new SqlStandardCallContext() )
+            {
+                int idUser = user.CreateUser( ctx, 1, Guid.NewGuid().ToString() );
+                acl.AclGrantSet( ctx, 1, aclId: 1, actorIdToGrant: 0, "For Test", 42 ); ;
+                acl.AclGrantSet( ctx, 1, aclId: 1, actorIdToGrant: idUser, "For Test", 2*42 );
+
+                // Just challenge the registration here: the actual configuration may differ on a specialized deployment (if Anonymous is configured).
+                acl.Database.ExecuteScalar( "select KeyReason from CK.tAclConfigMemory where ActorId = 0 and AclId=1" )
+                    .Should().Be( "For Test" );
+                acl.Database.ExecuteScalar( "select KeyReason from CK.tAclConfigMemory where ActorId = @0 and AclId=1", idUser )
+                    .Should().Be( "For Test" );
+
+                // Cleanup.
+                acl.AclGrantSet( ctx, 1, aclId: 1, actorIdToGrant: 0, "For Test", 0 );
+                acl.AclGrantSet( ctx, 1, aclId: 1, actorIdToGrant: idUser, "For Test", 0 );
+
+                acl.Invoking( _ => _.AclGrantSet( ctx, 1, aclId: 0, idUser, "For Test", 42 ) ).Should().Throw<Exception>().WithInnerException<Exception>().WithMessage( "Security.ImmutableAclId" );
+                acl.Invoking( _ => _.AclGrantSet( ctx, 1, aclId: 2, idUser, "For Test", 42 ) ).Should().Throw<Exception>().WithInnerException<Exception>().WithMessage( "Security.ImmutableAclId" );
+                acl.Invoking( _ => _.AclGrantSet( ctx, 1, aclId: 3, idUser, "For Test", 42 ) ).Should().Throw<Exception>().WithInnerException<Exception>().WithMessage( "Security.ImmutableAclId" );
+                acl.Invoking( _ => _.AclGrantSet( ctx, 1, aclId: 4, idUser, "For Test", 42 ) ).Should().Throw<Exception>().WithInnerException<Exception>().WithMessage( "Security.ImmutableAclId" );
+                acl.Invoking( _ => _.AclGrantSet( ctx, 1, aclId: 5, idUser, "For Test", 42 ) ).Should().Throw<Exception>().WithInnerException<Exception>().WithMessage( "Security.ImmutableAclId" );
+                acl.Invoking( _ => _.AclGrantSet( ctx, 1, aclId: 6, idUser, "For Test", 42 ) ).Should().Throw<Exception>().WithInnerException<Exception>().WithMessage( "Security.ImmutableAclId" );
+                acl.Invoking( _ => _.AclGrantSet( ctx, 1, aclId: 7, idUser, "For Test", 42 ) ).Should().Throw<Exception>().WithInnerException<Exception>().WithMessage( "Security.ImmutableAclId" );
+                acl.Invoking( _ => _.AclGrantSet( ctx, 1, aclId: 8, idUser, "For Test", 42 ) ).Should().Throw<Exception>().WithInnerException<Exception>().WithMessage( "Security.ImmutableAclId" );
             }
         }
 
