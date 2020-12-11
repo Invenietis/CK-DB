@@ -19,7 +19,10 @@ create table CK.tAclConfig
 insert into CK.[tAclConfig](AclId,ActorId,GrantLevel) values(0,0,127);
 insert into CK.[tAclConfigMemory](AclId,ActorId,KeyReason,GrantLevel) values(0,0,'CK.StdAcl.Public',127);
 
--- The 1 Acl has no rights by default but it can be configured.
+-- The Acl n°1 is the "System Acl": it can be configured and by default, every member of the Administrator
+-- group (n°2) are "Administrator" on the System Acl.
+insert into CK.[tAclConfig](AclId,ActorId,GrantLevel) values(1,2,127);
+insert into CK.[tAclConfigMemory](AclId,ActorId,KeyReason,GrantLevel) values(1,2,'AdministratorsGroup',127);
 
 -- The 2 Acl can be used by anybody...
 insert into CK.[tAclConfig](AclId,ActorId,GrantLevel) values(2,0,8);
