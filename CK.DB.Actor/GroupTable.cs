@@ -8,7 +8,7 @@ namespace CK.DB.Actor
     /// This table holds Groups of User.
     /// </summary>
     [SqlTable( "tGroup", Package = typeof( Package ) )]
-    [Versions( "5.0.0, 5.0.1" )]
+    [Versions( "5.0.0, 5.0.1, 5.0.2" )]
     [SqlObjectItem( "vGroup" )]
     public abstract partial class GroupTable : SqlTable
     {

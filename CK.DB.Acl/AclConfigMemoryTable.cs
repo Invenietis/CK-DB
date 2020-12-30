@@ -8,7 +8,7 @@ namespace CK.DB.Acl
     /// of this information with the Acl, Actor and Max(GrantLevel) whatever the reasons are.
     /// </summary>
     [SqlTable( "tAclConfigMemory", Package = typeof( Package ) )]
-    [Versions( "1.0.1, 1.0.2" )]
+    [Versions( "1.0.1, 1.0.2, 1.0.3" )]
     [SqlObjectItem( "vAclConfigMemory" )]
     public abstract class AclConfigMemoryTable : SqlTable
     {

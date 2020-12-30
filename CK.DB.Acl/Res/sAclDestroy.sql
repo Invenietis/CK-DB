@@ -1,4 +1,4 @@
-﻿-- SetupConfig: {}
+-- SetupConfig: {}
 alter Procedure CK.sAclDestroy
 (
     @ActorId int,
@@ -7,6 +7,7 @@ alter Procedure CK.sAclDestroy
 as begin
 
 	if @ActorId <= 0 throw 50000, 'Security.AnonymousNotAllowed', 1;
+	if @AclId <= 8 throw 50000, 'Security.ReservedAclId', 1;
 
 	--[beginsp]
 

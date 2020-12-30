@@ -1,4 +1,4 @@
-﻿--[beginscript]
+--[beginscript]
 
 create table CK.tActorProfile
 (
@@ -14,5 +14,6 @@ create table CK.tActorProfile
 
 insert into CK.tActorProfile( ActorId, GroupId ) values( 0, 0 );
 insert into CK.tActorProfile( ActorId, GroupId ) values( 1, 1 );
+insert into CK.tActorProfile( ActorId, GroupId ) values( 2, 2 );
 
 --[endscript]

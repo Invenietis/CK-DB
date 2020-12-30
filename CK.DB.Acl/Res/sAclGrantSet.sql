@@ -12,9 +12,21 @@ as begin
 	-- System is never granted since it has by design full control on all ACL.
 	if @ActorIdToGrant = 1 return 0;
 
-	--[beginsp]
+    -- Only the "System Acl" (1) is mutable. But it is protected... by itself.
+    if @AclId = 1
+    begin
+        if CK.fAclGrantLevel( @ActorId, @AclId ) < 127 throw 50000, 'Security.SystemAclId.MustBe127OnItself', 1;
+    end
+    else
+    begin
+        if @AclId <= 8 throw 50000, 'Security.ImmutableAclId', 1;
+    end
 
 	if @KeyReason is null set @KeyReason = '';
+
+	--[beginsp]
+
+
 
 	--<PreMemoryUpdate revert />
 

@@ -9,7 +9,7 @@
     <ProjectReference Include="..\CK.DB.Actor\CK.DB.Actor.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="**\*.sql;**\*.tql;**\*.y4" Exclude="bin\**;obj\**;CodeCakeBuilder\**;packages\**;@(EmbeddedResource)" />
+    <EmbeddedResource Include="**\*.sql;**\*.tql;**\*.y4" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
