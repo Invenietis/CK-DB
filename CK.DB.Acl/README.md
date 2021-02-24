@@ -11,6 +11,22 @@ layer under a relational database (but not only: these are very general approach
 
 ## Security By Roles and Row Level Security
 
+Any Authorization Layer belong to one these 2 approaches:
+
+- **Security By Roles** : Roles are Groups of Users that define the authorization itself. 
+Roles are for instance: "Administrators", "ContentMaster", "Editor", "NewsLetterValidator", etc. 
+This is simple end effective for small systems (and you will find this Roles in numerous applications), but there
+is one major drawback: a Role protects a "feature" of the System, not individual items.
+
+Sql Server security itself works this way: one can define new [User defined Database Roles](https://docs.microsoft.com/en-us/sql/relational-databases/security/authentication-access/getting-started-with-database-engine-permissions?#user-defined-database-roles):
+and adds users to them. 
+
+And these roles are then granted or denied specific authorizations:
+
+
+
+
+- **Row Level Security** : In this approach, a mechanism protects . 
 
 
 ## The GrantLevel ladder
