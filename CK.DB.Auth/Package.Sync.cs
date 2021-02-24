@@ -57,7 +57,7 @@ namespace CK.DB.Auth
                         while( r.Read() );
                         info.Schemes = providers;
                     }
-                    else info.Schemes = Util.Array.Empty<UserAuthSchemeInfo>();
+                    else info.Schemes = Array.Empty<UserAuthSchemeInfo>();
                     return info;
                 }
             }
