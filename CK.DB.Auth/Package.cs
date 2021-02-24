@@ -3,6 +3,7 @@ using CK.SqlServer;
 using CK.Text;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading;
@@ -34,7 +35,7 @@ namespace CK.DB.Auth
                                     .OfType<IGenericAuthenticationProvider>()
                                     .ToDictionary( p => p.ProviderName, StringComparer.OrdinalIgnoreCase );
                 if( BasicProvider != null ) _allProviders.Add( BasicToGenericProviderAdapter.Name, new BasicToGenericProviderAdapter( BasicProvider ) );
-                _allProvidersValues = new CKReadOnlyCollectionOnICollection<IGenericAuthenticationProvider>( _allProviders.Values );
+                _allProvidersValues = _allProviders.Values.AsIReadOnlyCollection();
                 m.CloseGroup( $"{_allProviders.Count} providers: " + _allProviders.Keys.Concatenate() );
             }
         }
@@ -123,7 +124,7 @@ namespace CK.DB.Auth
                         while( await r.ReadAsync( t ).ConfigureAwait( false ) );
                         result.Schemes = schemes;
                     }
-                    else result.Schemes = Util.Array.Empty<UserAuthSchemeInfo>();
+                    else result.Schemes = Array.Empty<UserAuthSchemeInfo>();
                     return result;
                 }
             }

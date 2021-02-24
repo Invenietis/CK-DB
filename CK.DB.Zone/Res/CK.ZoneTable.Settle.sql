@@ -16,7 +16,7 @@ begin
                                 @ColumnName = 'ActorId', 
                                 @ExistingValue = @StrValue,    
                                 @NewValue = '3';
-    -- We move the 'Administrators' (Id=2) group into the PlatformZone, auto registrering its potential
+    -- We move the 'Administrators' (Id=2) group into the PlatformZone, auto registering its potential
     -- users in the PlatformZone.
     exec CK.sGroupMove 1, @GroupId = 2, @NewZoneId = 3, @Option = 2 /*AutoUserRegistration*/;
 
@@ -32,8 +32,8 @@ begin
     -- Requires CK.DB.Acl
     if object_id('CK.sAclGrantSet') is not null
     begin
-        -- Every member of the PlatformZone (Id=3) are "Viewer" on the System acl (n°1).
-        -- Note that this code is also in CK.DB.Acl.Package.Settle script: if the acl support
+        -- Every member of the PlatformZone (Id=3) are "Viewer" on the System Acl (n°1).
+        -- Note that this code is also in CK.DB.Acl.Package.Settle script: if the Acl support
         -- is installed after the Zone support, the Acl n°1 will also be configured like here.
         exec CK.sAclGrantSet 1, @AclId = 1, @ActorIdToGrant = 3, @KeyReason = 'PlatformZone', @GrantLevel = 16;
     end
