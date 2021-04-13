@@ -11,7 +11,7 @@ begin
 		--     This could be done here whenever a @GroupId is provided (when a rename must be done).
 		--     When no @GroupId is known (we are looking for a new group name from a 'Zone unaware' code),
 		--     the most conservative choice is to consider that a unique name must be found 
-		--     accross all the zones.
+		--     across all the zones.
 		-- 
 		-- 'Zone unaware code' that must find a new name for an existing Group: we automatically 
 		-- get the zone of the group => the result is accurate.
