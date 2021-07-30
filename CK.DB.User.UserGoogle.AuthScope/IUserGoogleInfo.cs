@@ -1,4 +1,4 @@
-﻿namespace CK.DB.User.UserGoogle.AuthScope
+namespace CK.DB.User.UserGoogle.AuthScope
 {
     /// <summary>
     /// Extends <see cref="UserGoogle.IUserGoogleInfo"/> with ScopeSet identifier.
@@ -11,6 +11,6 @@
         /// and set only when a new UserGoogle is created (by copy from 
         /// the default one - the ScopeSet of the UserGoogle 0).
         /// </summary>
-        int ScopeSetId { get; }
+        int ScopeSetId { get; set; }
     }
 }
