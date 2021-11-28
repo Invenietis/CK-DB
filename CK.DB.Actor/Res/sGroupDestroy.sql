@@ -10,7 +10,7 @@ create procedure CK.sGroupDestroy
 )
 as begin
     if @ActorId <= 0 throw 50000, 'Security.AnonymousNotAllowed', 1;
-    if @GroupId <= 1 throw 50000, 'Group.Undestroyable', 1;
+    if @GroupId <= 2 throw 50000, 'Group.Undestroyable', 1;
 
 	--[beginsp]
 	

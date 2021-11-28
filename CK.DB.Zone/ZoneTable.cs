@@ -8,7 +8,7 @@ namespace CK.DB.Zone
     /// This table defines Zones that contains Groups.
     /// </summary>
     [SqlTable( "tZone", Package = typeof( Package ) )]
-    [Versions( "5.0.0" )]
+    [Versions( "5.0.0,5.0.1" )]
     [SqlObjectItem( "vZone" )]
     public abstract partial class ZoneTable : SqlTable
     {

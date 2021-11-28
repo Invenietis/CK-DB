@@ -1,4 +1,4 @@
-﻿--[beginscript]
+--[beginscript]
 
 create table CK.tAclConfig
 (
@@ -19,7 +19,10 @@ create table CK.tAclConfig
 insert into CK.[tAclConfig](AclId,ActorId,GrantLevel) values(0,0,127);
 insert into CK.[tAclConfigMemory](AclId,ActorId,KeyReason,GrantLevel) values(0,0,'CK.StdAcl.Public',127);
 
--- The 1 Acl gives no rights to anybody...except Gods.
+-- The Acl n°1 is the "System Acl": it can be configured and by default, every member of the Administrator
+-- group (n°2) are "Administrator" on the System Acl.
+insert into CK.[tAclConfig](AclId,ActorId,GrantLevel) values(1,2,127);
+insert into CK.[tAclConfigMemory](AclId,ActorId,KeyReason,GrantLevel) values(1,2,'AdministratorsGroup',127);
 
 -- The 2 Acl can be used by anybody...
 insert into CK.[tAclConfig](AclId,ActorId,GrantLevel) values(2,0,8);
@@ -45,7 +48,6 @@ insert into CK.[tAclConfigMemory](AclId,ActorId,KeyReason,GrantLevel) values(6,0
 insert into CK.[tAclConfig](AclId,ActorId,GrantLevel) values(7,0,112)
 insert into CK.[tAclConfigMemory](AclId,ActorId,KeyReason,GrantLevel) values(7,0,'CK.StdAcl.SafeAdministrator',112);
 
--- The 8 Acl is reserved so that normal AclId starts at 9 and not 8.
--- Like 1, it gives no rights to anybody...except Gods.
+-- The 8 Acl has no configuration: it gives no rights to anybody...except Gods.
 
 --[endscript]

@@ -1,4 +1,4 @@
-﻿
+
 create table CK.tGroup
 (
   GroupId int not null,
@@ -9,4 +9,6 @@ create table CK.tGroup
 --
 insert into CK.tGroup( GroupId ) values( 0 );
 insert into CK.tGroup( GroupId ) values( 1 );
+-- The Administrators group is n°2.
+insert into CK.tGroup( GroupId ) values( 2 );
 
