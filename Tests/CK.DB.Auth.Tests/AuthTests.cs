@@ -128,7 +128,7 @@ namespace CK.DB.Auth.Tests
                         info.Schemes.Count.Should().Be( 1 );
                         info.Schemes[0].Name.Should().StartWith( g.ProviderName );
                         info.Schemes[0].Name.Should().BeEquivalentTo( schemeOrProviderName );
-                        info.Schemes[0].LastUsed.Should().BeCloseTo( DateTime.UtcNow, 1000 );
+                        info.Schemes[0].LastUsed.Should().BeCloseTo( DateTime.UtcNow, TimeSpan.FromSeconds( 1 ) );
 
                         g.DestroyUser( ctx, 1, userId );
                         info = auth.ReadUserAuthInfo( ctx, 1, userId );
@@ -147,7 +147,7 @@ namespace CK.DB.Auth.Tests
                         info.Schemes.Should().HaveCount( 1 );
                         info.Schemes[0].Name.Should().StartWith( g.ProviderName );
                         info.Schemes[0].Name.Should().BeEquivalentTo( schemeOrProviderName );
-                        info.Schemes[0].LastUsed.Should().BeCloseTo( DateTime.UtcNow, 1000 );
+                        info.Schemes[0].LastUsed.Should().BeCloseTo( DateTime.UtcNow, TimeSpan.FromSeconds( 1 ) );
 
                         g.LoginUser( ctx, payloadForLoginFail( userId, userName ) ).UserId.Should().Be( 0 );
 
@@ -220,7 +220,7 @@ namespace CK.DB.Auth.Tests
                         info.Schemes.Should().HaveCount( 1 );
                         info.Schemes[0].Name.Should().StartWith( g.ProviderName );
                         info.Schemes[0].Name.Should().BeEquivalentTo( schemeOrProviderName );
-                        info.Schemes[0].LastUsed.Should().BeCloseTo( DateTime.UtcNow, 1000 );
+                        info.Schemes[0].LastUsed.Should().BeCloseTo( DateTime.UtcNow, TimeSpan.FromSeconds( 1 ) );
 
                         await g.DestroyUserAsync( ctx, 1, userId );
                         info = await auth.ReadUserAuthInfoAsync( ctx, 1, userId );
@@ -239,7 +239,7 @@ namespace CK.DB.Auth.Tests
                         info.Schemes.Count.Should().Be( 1 );
                         info.Schemes[0].Name.Should().StartWith( g.ProviderName );
                         info.Schemes[0].Name.Should().BeEquivalentTo( schemeOrProviderName );
-                        info.Schemes[0].LastUsed.Should().BeCloseTo( DateTime.UtcNow, 1000 );
+                        info.Schemes[0].LastUsed.Should().BeCloseTo( DateTime.UtcNow, TimeSpan.FromSeconds( 1 ) );
 
                         (await g.LoginUserAsync( ctx, payloadForLoginFail( userId, userName ) )).UserId.Should().Be( 0 );
 
@@ -267,8 +267,8 @@ namespace CK.DB.Auth.Tests
                     }
                     using( TestHelper.Monitor.OpenInfo( "Invalid payload MUST throw an ArgumentException." ) )
                     {
-                        g.Awaiting( sut => sut.CreateOrUpdateUserAsync( ctx, 1, userId, DBNull.Value ) ).Should().Throw<ArgumentException>();
-                        g.Awaiting( sut => sut.LoginUserAsync( ctx, DBNull.Value ) ).Should().Throw<ArgumentException>();
+                        await g.Awaiting( sut => sut.CreateOrUpdateUserAsync( ctx, 1, userId, DBNull.Value ) ).Should().ThrowAsync<ArgumentException>();
+                        await g.Awaiting( sut => sut.LoginUserAsync( ctx, DBNull.Value ) ).Should().ThrowAsync<ArgumentException>();
                     }
                     using( TestHelper.Monitor.OpenInfo( "Injecting disabled user in sAuthUserOnLogin." ) )
                     using( auth.Database.TemporaryTransform( @"

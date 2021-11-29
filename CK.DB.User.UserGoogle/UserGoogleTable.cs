@@ -1,12 +1,11 @@
 using CK.SqlServer;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CK.Core;
 using System.Threading;
 using CK.DB.Auth;
-using CK.Text;
 
 namespace CK.DB.User.UserGoogle
 {

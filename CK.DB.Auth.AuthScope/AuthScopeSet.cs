@@ -1,8 +1,7 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using CK.Text;
 using CK.Core;
 
 namespace CK.DB.Auth.AuthScope
@@ -126,7 +125,7 @@ namespace CK.DB.Auth.AuthScope
         /// </summary>
         /// <param name="name">Scope name.</param>
         /// <returns>The scope or null.</returns>
-        public AuthScopeItem this[ string name ] => _wrapper.Scopes.GetValueWithDefault( name, null );
+        public AuthScopeItem this[ string name ] => _wrapper.Scopes.GetValueOrDefault( name, null );
 
         /// <summary>
         /// Removes the scope with the same <see cref="AuthScopeItem.ScopeName"/> and <see cref="AuthScopeItem.Status"/>.

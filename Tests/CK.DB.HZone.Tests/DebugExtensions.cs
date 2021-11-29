@@ -1,7 +1,7 @@
+using CK.Core;
 using CK.SqlServer;
-using CK.Text;
 using FluentAssertions;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using System.Text;
 
 namespace CK.DB.HZone.Tests
