@@ -1,10 +1,9 @@
 using CK.Core;
 using CK.SqlServer;
-using CK.Text;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,7 +18,7 @@ namespace CK.DB.Auth
     [SqlObjectItem( "vUserAuthProvider" )]
     public abstract partial class Package : SqlPackage, IAuthenticationDatabaseService
     {
-        IDictionary<string, IGenericAuthenticationProvider> _allProviders;
+        Dictionary<string, IGenericAuthenticationProvider> _allProviders;
         IReadOnlyCollection<IGenericAuthenticationProvider> _allProvidersValues;
 
         void StObjConstruct( Actor.Package actor )
@@ -67,7 +66,7 @@ namespace CK.DB.Auth
             if( string.IsNullOrEmpty( schemeOrProviderName ) ) return null;
             int idx = schemeOrProviderName.IndexOf( '.' );
             if( idx >= 0 ) schemeOrProviderName = schemeOrProviderName.Substring( 0, idx );
-            return _allProviders.GetValueWithDefault( schemeOrProviderName, null );
+            return _allProviders.GetValueOrDefault( schemeOrProviderName, null );
         }
 
         /// <summary>
@@ -103,7 +102,7 @@ namespace CK.DB.Auth
         /// <param name="actorId">The acting actor identifier.</param>
         /// <param name="userId">The user identifier.</param>
         /// <returns>The user information or null if the user identifier does not exist.</returns>
-        public Task<IUserAuthInfo> ReadUserAuthInfoAsync( ISqlCallContext ctx, int actorId, int userId )
+        public async Task<IUserAuthInfo> ReadUserAuthInfoAsync( ISqlCallContext ctx, int actorId, int userId )
         {
             async Task<IUserAuthInfo> ReadAsync( SqlCommand c, CancellationToken t )
             {
@@ -130,7 +129,7 @@ namespace CK.DB.Auth
             }
             using( var cmd = CmdReadUserAuthInfo( actorId, userId ) )
             {
-                return ctx[Database].ExecuteQueryAsync( cmd, ReadAsync );
+                return await ctx[Database].ExecuteQueryAsync( cmd, ReadAsync );
             }
         }
 

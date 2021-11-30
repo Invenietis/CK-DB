@@ -42,7 +42,7 @@ namespace CK.DB.User.UserSimpleCode.Tests
         }
 
         [Test]
-        public async Task create_SimpleCode_user_and_check_read_info_object_method_async()
+        public async Task create_SimpleCode_user_and_check_read_info_object_method_Async()
         {
             var u = TestHelper.StObjMap.StObjs.Obtain<UserSimpleCodeTable>();
             var user = TestHelper.StObjMap.StObjs.Obtain<UserTable>();

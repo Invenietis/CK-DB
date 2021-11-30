@@ -1,6 +1,6 @@
 using CK.SqlServer;
 using System.Threading.Tasks;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using CK.Core;
 
 namespace CK.DB.Actor
@@ -69,7 +69,7 @@ namespace CK.DB.Actor
             using( var cmd = new SqlCommand( "select UserId from CK.tUser where UserName=@Key" ) )
             {
                 cmd.Parameters.AddWithValue( "@Key", userName );
-                return (await ctx[Database].ExecuteScalarAsync( cmd )) is int id ? id : 0;
+                return (await ctx[Database].ExecuteScalarAsync( cmd ).ConfigureAwait( false )) is int id ? id : 0;
             }
         }
     }

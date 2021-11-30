@@ -13,7 +13,7 @@ namespace CK.DB.Acl.AclType.Tests
     public class AclTypeTests
     {
         [Test]
-        public async Task creating_and_destroying_type()
+        public async Task creating_and_destroying_type_Async()
         {
             var map = TestHelper.StObjMap;
             var aclType = map.StObjs.Obtain<AclTypeTable>();
@@ -35,7 +35,7 @@ namespace CK.DB.Acl.AclType.Tests
         }
 
         [Test]
-        public async Task constrained_levels_must_not_be_deny_and_0_and_127_can_not_be_removed()
+        public async Task constrained_levels_must_not_be_deny_and_0_and_127_can_not_be_removed_Async()
         {
             var map = TestHelper.StObjMap;
             var aclType = map.StObjs.Obtain<AclTypeTable>();
@@ -58,13 +58,13 @@ namespace CK.DB.Acl.AclType.Tests
                   .Should().Be( 4 );
 
                 // ...except if it is 0 or 127.
-                aclType.Awaiting( sut => sut.SetGrantLevelAsync( ctx, 1, id, 0, false ) ).Should().Throw<SqlDetailedException>();
-                aclType.Awaiting( sut => sut.SetGrantLevelAsync( ctx, 1, id, 127, false ) ).Should().Throw<SqlDetailedException>();
+                await aclType.Awaiting( sut => sut.SetGrantLevelAsync( ctx, 1, id, 0, false ) ).Should().ThrowAsync<SqlDetailedException>();
+                await aclType.Awaiting( sut => sut.SetGrantLevelAsync( ctx, 1, id, 127, false ) ).Should().ThrowAsync<SqlDetailedException>();
 
                 // Configured GrantLevel must not be deny level:
-                aclType.Awaiting( sut => sut.SetGrantLevelAsync( ctx, 1, id, 128, true ) ).Should().Throw<SqlDetailedException>();
-                aclType.Awaiting( sut => sut.SetGrantLevelAsync( ctx, 1, id, 255, true ) ).Should().Throw<SqlDetailedException>();
-                aclType.Awaiting( sut => sut.SetGrantLevelAsync( ctx, 1, id, 255, false ) ).Should().Throw<SqlDetailedException>();
+                await aclType.Awaiting( sut => sut.SetGrantLevelAsync( ctx, 1, id, 128, true ) ).Should().ThrowAsync<SqlDetailedException>();
+                await aclType.Awaiting( sut => sut.SetGrantLevelAsync( ctx, 1, id, 255, true ) ).Should().ThrowAsync<SqlDetailedException>();
+                await aclType.Awaiting( sut => sut.SetGrantLevelAsync( ctx, 1, id, 255, false ) ).Should().ThrowAsync<SqlDetailedException>();
 
                 await aclType.SetGrantLevelAsync( ctx, 1, id, 87, false );
                 db.ExecuteScalar( "select count(*) from CK.tAclTypeGrantLevel where AclTypeId = @0", id )
@@ -79,7 +79,7 @@ namespace CK.DB.Acl.AclType.Tests
         }
 
         [Test]
-        public async Task type_can_not_be_destroyed_when_typed_acl_exist()
+        public async Task type_can_not_be_destroyed_when_typed_acl_exist_Async()
         {
             var map = TestHelper.StObjMap;
             var acl = map.StObjs.Obtain<AclTable>();
@@ -91,8 +91,8 @@ namespace CK.DB.Acl.AclType.Tests
                 int idAcl = await aclType.CreateAclAsync( ctx, 1, idType );
                 db.ExecuteScalar( "select AclTypeId from CK.tAcl where AclId = @0", idAcl )
                   .Should().Be( idType );
-                aclType.Awaiting( sut => sut.DestroyAclTypeAsync( ctx, 1, idType ) ).Should().Throw<SqlDetailedException>();
-                acl.DestroyAcl( ctx, 1, idAcl );
+                await aclType.Awaiting( sut => sut.DestroyAclTypeAsync( ctx, 1, idType ) ).Should().ThrowAsync<SqlDetailedException>();
+                await acl.DestroyAclAsync( ctx, 1, idAcl );
                 await aclType.DestroyAclTypeAsync( ctx, 1, idType );
             }
         }

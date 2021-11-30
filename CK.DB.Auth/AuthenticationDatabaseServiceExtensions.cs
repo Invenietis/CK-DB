@@ -1,7 +1,7 @@
-using CK.Text;
 using System;
 using System.Linq;
 using System.Reflection;
+using CK.Core;
 
 namespace CK.DB.Auth
 {

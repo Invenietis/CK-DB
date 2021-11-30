@@ -8,6 +8,7 @@ using CK.DB.Auth;
 using CK.DB.Auth.AuthScope;
 using FluentAssertions;
 using static CK.Testing.DBSetupTestHelper;
+using System.Diagnostics;
 
 namespace CK.DB.User.UserGoogle.AuthScope.Tests
 {
@@ -16,7 +17,7 @@ namespace CK.DB.User.UserGoogle.AuthScope.Tests
     {
 
         [Test]
-        public async Task non_user_google_ScopeSet_is_null()
+        public async Task non_user_google_ScopeSet_is_null_Async()
         {
             var user = TestHelper.StObjMap.StObjs.Obtain<UserTable>();
             var p = TestHelper.StObjMap.StObjs.Obtain<Package>();
@@ -28,7 +29,7 @@ namespace CK.DB.User.UserGoogle.AuthScope.Tests
         }
 
         [Test]
-        public async Task setting_default_scopes_impact_new_users()
+        public async Task setting_default_scopes_impact_new_users_Async()
         {
             var user = TestHelper.StObjMap.StObjs.Obtain<UserTable>();
             var p = TestHelper.StObjMap.StObjs.Obtain<Package>();
@@ -46,6 +47,7 @@ namespace CK.DB.User.UserGoogle.AuthScope.Tests
                     userInfo.GoogleAccountId = Guid.NewGuid().ToString();
                     await p.UserGoogleTable.CreateOrUpdateGoogleUserAsync( ctx, 1, id, userInfo );
                     var info = await p.UserGoogleTable.FindKnownUserInfoAsync( ctx, userInfo.GoogleAccountId );
+                    Debug.Assert( info != null );
                     AuthScopeSet userSet = await p.ReadScopeSetAsync( ctx, info.UserId );
                     userSet.ToString().Should().Be( original.ToString() );
                 }
@@ -66,7 +68,7 @@ namespace CK.DB.User.UserGoogle.AuthScope.Tests
                     IUserGoogleInfo userInfo = p.UserGoogleTable.CreateUserInfo<IUserGoogleInfo>();
                     userInfo.GoogleAccountId = Guid.NewGuid().ToString();
                     await p.UserGoogleTable.CreateOrUpdateGoogleUserAsync( ctx, 1, id, userInfo, UCLMode.CreateOnly | UCLMode.UpdateOnly );
-                    userInfo = (IUserGoogleInfo)(await p.UserGoogleTable.FindKnownUserInfoAsync( ctx, userInfo.GoogleAccountId )).Info;
+                    userInfo = (IUserGoogleInfo)(await p.UserGoogleTable.FindKnownUserInfoAsync( ctx, userInfo.GoogleAccountId ))!.Info;
                     AuthScopeSet userSet = await p.ReadScopeSetAsync( ctx, id );
                     userSet.ToString().Should().Contain( "[W]thing" )
                                                .And.Contain( "[W]other" )
