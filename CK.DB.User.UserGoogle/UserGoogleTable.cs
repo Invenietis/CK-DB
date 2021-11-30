@@ -40,13 +40,13 @@ namespace CK.DB.User.UserGoogle
         /// <summary>
         /// Creates or updates a user entry for this provider. 
         /// This is the "binding account" feature since it binds an external identity to 
-        /// an already existing user that may already be registered into other authencation providers.
+        /// an already existing user that may already be registered into other authentication providers.
         /// </summary>
         /// <param name="ctx">The call context to use.</param>
         /// <param name="actorId">The acting actor identifier.</param>
         /// <param name="userId">The user identifier that must be registered.</param>
         /// <param name="info">Provider specific data: the <see cref="IUserGoogleInfo"/> poco.</param>
-        /// <param name="mode">Optionnaly configures Create, Update only or WithLogin behavior.</param>
+        /// <param name="mode">Optionally configures Create, Update only or WithLogin behavior.</param>
         /// <param name="cancellationToken">Optional cancellation token.</param>
         /// <returns>The result.</returns>
         public async Task<UCLResult> CreateOrUpdateGoogleUserAsync( ISqlCallContext ctx, int actorId, int userId, IUserGoogleInfo info, UCLMode mode = UCLMode.CreateOrUpdate, CancellationToken cancellationToken = default( CancellationToken ) )
@@ -110,16 +110,17 @@ namespace CK.DB.User.UserGoogle
         /// Returns null if no such user exists.
         /// </summary>
         /// <param name="ctx">The call context to use.</param>
-        /// <param name="googleAccountId">The google account identifier.</param>
+        /// <param name="googleAccountId">The Google account identifier.</param>
         /// <param name="cancellationToken">Optional cancellation token.</param>
         /// <returns>A <see cref="IdentifiedUserInfo{T}"/> object or null if not found.</returns>
-        public Task<IdentifiedUserInfo<IUserGoogleInfo>> FindKnownUserInfoAsync( ISqlCallContext ctx, string googleAccountId, CancellationToken cancellationToken = default( CancellationToken ) )
+        public async Task<IdentifiedUserInfo<IUserGoogleInfo>?> FindKnownUserInfoAsync( ISqlCallContext ctx, string googleAccountId, CancellationToken cancellationToken = default )
         {
             using( var c = CreateReaderCommand( googleAccountId ) )
             {
-                return ctx[Database].ExecuteSingleRowAsync( c, r => r == null
-                                                                    ? null
-                                                                    : DoCreateUserUnfo( googleAccountId, r ) );
+                return await ctx[Database].ExecuteSingleRowAsync( c, r => r == null
+                                                                           ? null
+                                                                           : DoCreateUserUnfo( googleAccountId, r ), cancellationToken )
+                                          .ConfigureAwait( false );
             }
         }
 

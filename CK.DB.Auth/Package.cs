@@ -102,7 +102,7 @@ namespace CK.DB.Auth
         /// <param name="actorId">The acting actor identifier.</param>
         /// <param name="userId">The user identifier.</param>
         /// <returns>The user information or null if the user identifier does not exist.</returns>
-        public Task<IUserAuthInfo> ReadUserAuthInfoAsync( ISqlCallContext ctx, int actorId, int userId )
+        public async Task<IUserAuthInfo> ReadUserAuthInfoAsync( ISqlCallContext ctx, int actorId, int userId )
         {
             async Task<IUserAuthInfo> ReadAsync( SqlCommand c, CancellationToken t )
             {
@@ -129,7 +129,7 @@ namespace CK.DB.Auth
             }
             using( var cmd = CmdReadUserAuthInfo( actorId, userId ) )
             {
-                return ctx[Database].ExecuteQueryAsync( cmd, ReadAsync );
+                return await ctx[Database].ExecuteQueryAsync( cmd, ReadAsync );
             }
         }
 

@@ -183,13 +183,11 @@ namespace CK.DB.Auth.Tests
             }
         }
 
-        static public async Task StandardTestForGenericAuthenticationProviderAsync(
-            Package auth,
-            string schemeOrProviderName,
-            Func<int, string, object> payloadForCreateOrUpdate,
-            Func<int, string, object> payloadForLogin,
-            Func<int, string, object> payloadForLoginFail
-            )
+        static public async Task StandardTestForGenericAuthenticationProviderAsync( Package auth,
+                                                                                    string schemeOrProviderName,
+                                                                                    Func<int, string, object> payloadForCreateOrUpdate,
+                                                                                    Func<int, string, object> payloadForLogin,
+                                                                                    Func<int, string, object> payloadForLoginFail )
         {
             var user = TestHelper.StObjMap.StObjs.Obtain<Actor.UserTable>();
             IGenericAuthenticationProvider g = auth.FindProvider( schemeOrProviderName );
