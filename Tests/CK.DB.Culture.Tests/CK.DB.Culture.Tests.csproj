@@ -9,7 +9,7 @@
     <ProjectReference Include="..\..\CK.DB.Culture\CK.DB.Culture.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="CK.DB.Tests.NUnit" Version="19.0.0-a00-00-0014-develop" />
+    <PackageReference Include="CK.DB.Tests.NUnit" Version="19.0.0-a00-00-0016-develop" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.0.0" />
     <PackageReference Include="NUnit" Version="3.13.2" />
     <PackageReference Include="NUnit3TestAdapter" Version="4.1.0" />
