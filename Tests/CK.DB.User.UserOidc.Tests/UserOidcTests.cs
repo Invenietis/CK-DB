@@ -122,7 +122,8 @@ namespace CK.DB.User.UserOidc.Tests
                 payloadForLogin: ( userId, userName ) => f.Create( i => { i.SchemeSuffix = schemeSuffix; i.Sub = "OidcAccountIdFor:" + userName; } ),
                 payloadForLoginFail: ( userId, userName ) => f.Create( i => { i.SchemeSuffix = schemeSuffix; i.Sub = "NO!" + userName; } )
                 );
-            // With a KeyValuePair.
+
+            // With KeyValuePairs.
             CK.DB.Auth.Tests.AuthTests.StandardTestForGenericAuthenticationProvider(
                 auth,
                 scheme,
@@ -140,8 +141,27 @@ namespace CK.DB.User.UserOidc.Tests
                 {
                     new KeyValuePair<string,object>( "Sub", ("IdFor:" + userName).ToUpperInvariant()),
                      new KeyValuePair<string,object>( "SchemeSuffix", schemeSuffix ),
-                }
-                );
+                } );
+
+            // With ValueTuples.
+            CK.DB.Auth.Tests.AuthTests.StandardTestForGenericAuthenticationProvider(
+                auth,
+                scheme,
+                payloadForCreateOrUpdate: ( userId, userName ) => new[]
+                {
+                    ( "SchemeSuffix", schemeSuffix ),
+                    ( "Sub", "IdFor:" + userName)
+                },
+                payloadForLogin: ( userId, userName ) => new[]
+                {
+                   ( "Sub", "IdFor:" + userName),
+                   ( "SchemeSuffix", schemeSuffix ),
+                },
+                payloadForLoginFail: ( userId, userName ) => new[]
+                {
+                    ( "Sub", ("IdFor:" + userName).ToUpperInvariant()),
+                    ( "SchemeSuffix", schemeSuffix ),
+                } );
         }
 
         [TestCase( "" )]

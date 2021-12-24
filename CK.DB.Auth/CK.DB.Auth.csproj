@@ -3,7 +3,6 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <Description>This package defines CK.tAuthProvider table and the CK.vUserAuthProvider.</Description>
-    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\CK.DB.Actor\CK.DB.Actor.csproj" />
