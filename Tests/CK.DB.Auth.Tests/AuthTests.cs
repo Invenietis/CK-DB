@@ -302,53 +302,92 @@ namespace CK.DB.Auth.Tests
             var auth = TestHelper.StObjMap.StObjs.Obtain<Package>();
             Assume.That( auth.BasicProvider != null );
 
-            // With Tuple (UserId, Password) payload.  
-            StandardTestForGenericAuthenticationProvider(
-                auth,
-                "Basic",
-                payloadForCreateOrUpdate: ( userId, userName ) => "password",
-                payloadForLogin: ( userId, userName ) => Tuple.Create( userId, "password" ),
-                payloadForLoginFail: ( userId, userName ) => Tuple.Create( userId, "wrong password" ) );
+            // With Tuple<UserId, Password> payload.  
+            StandardTestForGenericAuthenticationProvider( auth,
+                                                         "Basic",
+                                                          payloadForCreateOrUpdate: ( userId, userName ) => "password",
+                                                          payloadForLogin: ( userId, userName ) => Tuple.Create( userId, "password" ),
+                                                          payloadForLoginFail: ( userId, userName ) => Tuple.Create( userId, "wrong password" ) );
 
-            // With Tuple (UserName, Password) payload.  
-            StandardTestForGenericAuthenticationProvider(
-                auth,
-                "Basic",
-                payloadForCreateOrUpdate: ( userId, userName ) => "password",
-                payloadForLogin: ( userId, userName ) => Tuple.Create( userName, "password" ),
-                payloadForLoginFail: ( userId, userName ) => Tuple.Create( userName, "wrong password" ) );
+            // With ValueTuple (UserId, Password) payload.  
+            StandardTestForGenericAuthenticationProvider( auth,
+                                                         "Basic",
+                                                          payloadForCreateOrUpdate: ( userId, userName ) => "password",
+                                                          payloadForLogin: ( userId, userName ) => (userId, "password"),
+                                                          payloadForLoginFail: ( userId, userName ) => (userId, "wrong password") );
 
-            // With KeyValuePairs (UserName, Password) payload.  
-            StandardTestForGenericAuthenticationProvider(
-                auth,
-                "Basic",
-                payloadForCreateOrUpdate: ( userId, userName ) => "£$$µ+",
-                payloadForLogin: ( userId, userName ) => new[]
-                {
-                    new KeyValuePair<string, object>("username", userName),
-                    new KeyValuePair<string, object>("password", "£$$µ+")
-                },
-                payloadForLoginFail: ( userId, userName ) => new[]
-                {
-                    new KeyValuePair<string, object>("username", userName),
-                    new KeyValuePair<string, object>("password", "wrong password")
-                } );
+            // With Tuple<UserName, Password> payload.  
+            StandardTestForGenericAuthenticationProvider( auth,
+                                                          "Basic",
+                                                          payloadForCreateOrUpdate: ( userId, userName ) => "password",
+                                                          payloadForLogin: ( userId, userName ) => Tuple.Create( userName, "password" ),
+                                                          payloadForLoginFail: ( userId, userName ) => Tuple.Create( userName, "wrong password" ) );
 
-            // With KeyValuePairs (UserId, Password) payload.  
-            StandardTestForGenericAuthenticationProvider(
-                auth,
-                "Basic",
-                payloadForCreateOrUpdate: ( userId, userName ) => "MM£$$µ+",
-                payloadForLogin: ( userId, userName ) => new[]
-                {
-                    new KeyValuePair<string, object>("USERID", userId),
-                    new KeyValuePair<string, object>("PASSWORD", "MM£$$µ+")
-                },
-                payloadForLoginFail: ( userId, userName ) => new[]
-                {
-                    new KeyValuePair<string, object>("USERID", userId),
-                    new KeyValuePair<string, object>("PASSWORD", "wrong password")
-                } );
+            // With ValueTuple (UserName, Password) payload.  
+            StandardTestForGenericAuthenticationProvider( auth,
+                                                          "Basic",
+                                                          payloadForCreateOrUpdate: ( userId, userName ) => "password",
+                                                          payloadForLogin: ( userId, userName ) => (userName, "password"),
+                                                          payloadForLoginFail: ( userId, userName ) => (userName, "wrong password") );
+
+            // With KeyValuePairs payload.  
+            StandardTestForGenericAuthenticationProvider( auth,
+                                                          "Basic",
+                                                          payloadForCreateOrUpdate: ( userId, userName ) => "£$$µ+",
+                                                          payloadForLogin: ( userId, userName ) => new[]
+                                                          {
+                                                              new KeyValuePair<string, object>("username", userName),
+                                                              new KeyValuePair<string, object>("password", "£$$µ+")
+                                                          },
+                                                          payloadForLoginFail: ( userId, userName ) => new[]
+                                                          {
+                                                              new KeyValuePair<string, object>("username", userName),
+                                                              new KeyValuePair<string, object>("password", "wrong password")
+                                                          } );
+
+            // With ValueTuples payload.  
+            StandardTestForGenericAuthenticationProvider( auth,
+                                                          "Basic",
+                                                          payloadForCreateOrUpdate: ( userId, userName ) => "£$$µ+",
+                                                          payloadForLogin: ( userId, userName ) => new[]
+                                                          {
+                                                              ("username", userName),
+                                                              ("password", "£$$µ+")
+                                                          },
+                                                          payloadForLoginFail: ( userId, userName ) => new[]
+                                                          {
+                                                              ("username", userName),
+                                                              ("password", "wrong password")
+                                                          } );
+
+            // With KeyValuePairs payload.  
+            StandardTestForGenericAuthenticationProvider( auth,
+                                                          "Basic",
+                                                          payloadForCreateOrUpdate: ( userId, userName ) => "MM£$$µ+",
+                                                          payloadForLogin: ( userId, userName ) => new[]
+                                                          {
+                                                              new KeyValuePair<string, object>("USERID", userId),
+                                                              new KeyValuePair<string, object>("PASSWORD", "MM£$$µ+")
+                                                          },
+                                                          payloadForLoginFail: ( userId, userName ) => new[]
+                                                          {
+                                                              new KeyValuePair<string, object>("USERID", userId),
+                                                              new KeyValuePair<string, object>("PASSWORD", "wrong password")
+                                                          } );
+            // With ValueTuples payload.  
+            StandardTestForGenericAuthenticationProvider( auth,
+                                                          "Basic",
+                                                          payloadForCreateOrUpdate: ( userId, userName ) => "MM£$$µ+",
+                                                          payloadForLogin: ( userId, userName ) => new ValueTuple<string,object?>[]
+                                                          {
+                                                              ("USERID", userId),
+                                                              ("PASSWORD", "MM£$$µ+")
+                                                          },
+                                                          payloadForLoginFail: ( userId, userName ) => new ValueTuple<string, object?>[]
+                                                          {
+                                                              ("USERID", userId),
+                                                              ("PASSWORD", "wrong password")
+                                                          } );
         }
 
         [Test]
@@ -357,21 +396,33 @@ namespace CK.DB.Auth.Tests
             var auth = TestHelper.StObjMap.StObjs.Obtain<Package>();
             Assume.That( auth.BasicProvider != null );
 
-            // With (UserId, Password) payload.  
-            await StandardTestForGenericAuthenticationProviderAsync(
-                auth,
-                "Basic",
-                payloadForCreateOrUpdate: ( userId, userName ) => "password",
-                payloadForLogin: ( userId, userName ) => Tuple.Create( userId, "password" ),
-                payloadForLoginFail: ( userId, userName ) => Tuple.Create( userId, "wrong password" ) );
+            // With Tuple (UserId, Password) payload.  
+            await StandardTestForGenericAuthenticationProviderAsync( auth,
+                                                                     "Basic",
+                                                                     payloadForCreateOrUpdate: ( userId, userName ) => "password",
+                                                                     payloadForLogin: ( userId, userName ) => Tuple.Create( userId, "password" ),
+                                                                     payloadForLoginFail: ( userId, userName ) => Tuple.Create( userId, "wrong password" ) );
 
-            // With (UserName, Password) payload.  
-            await StandardTestForGenericAuthenticationProviderAsync(
-                auth,
-                "Basic",
-                payloadForCreateOrUpdate: ( userId, userName ) => "password",
-                payloadForLogin: ( userId, userName ) => Tuple.Create( userName, "password" ),
-                payloadForLoginFail: ( userId, userName ) => Tuple.Create( userName, "wrong password" ) );
+            // With ValueTuple (UserId, Password) payload.  
+            await StandardTestForGenericAuthenticationProviderAsync( auth,
+                                                                     "Basic",
+                                                                     payloadForCreateOrUpdate: ( userId, userName ) => "password",
+                                                                     payloadForLogin: ( userId, userName ) => (userId, "password"),
+                                                                     payloadForLoginFail: ( userId, userName ) => (userId, "wrong password") );
+
+            // With Tuple (UserName, Password) payload.  
+            await StandardTestForGenericAuthenticationProviderAsync( auth,
+                                                                    "Basic",
+                                                                     payloadForCreateOrUpdate: ( userId, userName ) => "password",
+                                                                     payloadForLogin: ( userId, userName ) => Tuple.Create( userName, "password" ),
+                                                                     payloadForLoginFail: ( userId, userName ) => Tuple.Create( userName, "wrong password" ) );
+
+            // With ValueTuple (UserName, Password) payload.  
+            await StandardTestForGenericAuthenticationProviderAsync( auth,
+                                                                    "Basic",
+                                                                     payloadForCreateOrUpdate: ( userId, userName ) => "password",
+                                                                     payloadForLogin: ( userId, userName ) => (userName, "password"),
+                                                                     payloadForLoginFail: ( userId, userName ) => (userName, "wrong password") );
         }
 
         /// <summary>

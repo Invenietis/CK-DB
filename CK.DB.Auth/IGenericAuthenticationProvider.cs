@@ -31,14 +31,14 @@ namespace CK.DB.Auth
     /// </para>
     /// <para>
     /// The untyped object payload is provider specific. <see cref="IBasicAuthenticationProvider"/> generic wrapper for 
-    /// instance accepts a Tuple&lt;int,string&gt; (for userId, password), a Tuple&lt;string,string&gt;; (for userName, password) or any 
-    /// IEnumerable&lt;KeyValuePair&lt;string,object&gt;&gt; into which it will lookup for a "Password" key with a string 
-    /// value and a "UserId" key with an int value or a "UserName" key with a string value.
+    /// instance accepts a Tuple or ValueTupe (int,string - for userId, password) or (string,string - for userName, password) or any 
+    /// IEnumerable&lt;KeyValuePair&lt;string,object?&gt;&gt; or IEnumerable&lt;(string,object?)&gt; into which it will lookup for a "Password"
+    /// key with a string value and a "UserId" key with an int value or a "UserName" key with a string value.
     /// </para>
     /// <para>
     /// Just like the basic one, providers SHOULD handle IDictionary&lt;string,object&gt; (or the more abstract IEnumerable&lt;KeyValuePair&lt;string,object&gt;&gt;)
     /// where the names of the keys match the names of their database columns.
-    /// The helper <see cref="PocoFactotyExtensions.ExtractPayload{T}(IPocoFactory{T}, object)"/> does just that (but does not check required
+    /// The helper <see cref="PocoFactoryExtensions.ExtractPayload{T}(IPocoFactory{T}, object)"/> does just that (but does not check required
     /// property, this is up to provider implementations).
     /// </para>
     /// <para>

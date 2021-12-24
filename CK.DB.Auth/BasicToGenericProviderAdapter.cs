@@ -1,7 +1,9 @@
+using CK.Core;
 using CK.SqlServer;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -66,7 +68,9 @@ namespace CK.DB.Auth
         {
             if( payload is Tuple<string, string> ) return payload;
             if( payload is Tuple<int, string> ) return payload;
-            var kindOfDic = payload as IEnumerable<KeyValuePair<string, object>>;
+            if( payload is ValueTuple<int, string> vt1 ) return Tuple.Create( vt1.Item1, vt1.Item2 );
+            if( payload is ValueTuple<string, string> vt2 ) return Tuple.Create( vt2.Item1, vt2.Item2 );
+            var kindOfDic = PocoFactoryExtensions.ToValueTuples( payload );
             if( kindOfDic != null )
             {
                 int? userId = null;
@@ -94,11 +98,13 @@ namespace CK.DB.Auth
                 {
                     if( userName != null ) return Tuple.Create( userName, password );
                     if( userId.HasValue ) return Tuple.Create( userId.Value, password );
-                    throw new ArgumentException( "Invalid payload. Missing 'UserId' -> int or 'UserName' -> string entry.", nameof( payload ) );
+                    Throw.ArgumentException( nameof( payload ), "Invalid payload. Missing 'UserId' -> int or 'UserName' -> string entry." );
                 }
-                throw new ArgumentException( "Invalid payload. Missing 'Password' -> string entry.", nameof( payload ) );
+                Throw.ArgumentException( nameof( payload ), "Invalid payload. Missing 'Password' -> string entry." );
             }
-            throw new ArgumentException( "Invalid payload. It must be either a Tuple<int,string>, a Tuple<string,string> or a IDictionary<string,object> or IEnumerable<KeyValuePair<string,object>> with 'Password' -> string and 'UserId' -> int or 'UserName' -> string entries.", nameof( payload ) );
+            Throw.ArgumentException( nameof( payload ), "Invalid payload. It must be either a Tuple or ValueTuple (int,string) or (string,string) or a IDictionary<string,object?> or IEnumerable<KeyValuePair<string,object?>> or IEnumerable<(string,object?)> with 'Password' -> string and 'UserId' -> int or 'UserName' -> string entries." );
+            // Wtf? Throw.ArgumentException is [DoesNotReturn] but this is ignored by Roslyn here :(
+            return null;
         }
 
     }
