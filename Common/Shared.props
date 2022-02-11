@@ -1,4 +1,4 @@
-<Project>
+﻿<Project>
   <!-- Exclude CKSetup-WorkingDir folder. -->
   <ItemGroup>
     <Compile Remove="CKSetup-WorkingDir\**" />
@@ -7,7 +7,7 @@
   </ItemGroup>
   <!--<SourceLink>: is enabled only for ContinuousIntegrationBuild build. -->
   <ItemGroup Condition=" '$(ContinuousIntegrationBuild)' == 'true' ">
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
   </ItemGroup>
   <!--</SourceLink>-->
   <!--<BasicDefinitions>: provides simple and useful definitions.-->
