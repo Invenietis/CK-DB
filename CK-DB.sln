@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29509.3
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32228.430
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CK.DB.Actor", "CK.DB.Actor\CK.DB.Actor.csproj", "{E441748E-CF3F-4B9C-8DC0-627439A4DA2D}"
 EndProject
@@ -119,6 +119,10 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CK.DB.User.UserGoogle.Profile", "CK.DB.User.UserGoogle.Profile\CK.DB.User.UserGoogle.Profile.csproj", "{125230A8-C66C-4304-9DB1-EC48DF92FB0A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CK.DB.User.UserGoogle.Profile.Tests", "Tests\CK.DB.User.UserGoogle.Profile.Tests\CK.DB.User.UserGoogle.Profile.Tests.csproj", "{64829492-90AA-4A5D-A152-A13B710A9CC1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CK.DB.User.NamedUser", "CK.DB.User.NamedUser\CK.DB.User.NamedUser.csproj", "{6516B73A-61F1-464B-B8D7-A6981E45008C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CK.DB.User.NamedUser.Tests", "Tests\CK.DB.User.NamedUser.Tests\CK.DB.User.NamedUser.Tests.csproj", "{19D2B58A-52BB-4EBC-A822-8FDF09EF9655}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -330,6 +334,14 @@ Global
 		{64829492-90AA-4A5D-A152-A13B710A9CC1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{64829492-90AA-4A5D-A152-A13B710A9CC1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{64829492-90AA-4A5D-A152-A13B710A9CC1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6516B73A-61F1-464B-B8D7-A6981E45008C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6516B73A-61F1-464B-B8D7-A6981E45008C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6516B73A-61F1-464B-B8D7-A6981E45008C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6516B73A-61F1-464B-B8D7-A6981E45008C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{19D2B58A-52BB-4EBC-A822-8FDF09EF9655}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{19D2B58A-52BB-4EBC-A822-8FDF09EF9655}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{19D2B58A-52BB-4EBC-A822-8FDF09EF9655}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{19D2B58A-52BB-4EBC-A822-8FDF09EF9655}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -360,6 +372,7 @@ Global
 		{F7DBC9AF-2CCB-4391-8B8B-A6FD5644B75D} = {5E754B9E-84B8-426A-95B0-858D3EDCC19B}
 		{F2BAAC22-0CBD-47A8-8947-BFBFDF68B6D7} = {5E754B9E-84B8-426A-95B0-858D3EDCC19B}
 		{64829492-90AA-4A5D-A152-A13B710A9CC1} = {5E754B9E-84B8-426A-95B0-858D3EDCC19B}
+		{19D2B58A-52BB-4EBC-A822-8FDF09EF9655} = {5E754B9E-84B8-426A-95B0-858D3EDCC19B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5044F9DA-815D-48CE-A4EE-9FA49432D361}

@@ -1,0 +1,14 @@
+-- SetupConfig: { }
+--
+create transformer on CK.sUserCreate
+as
+begin
+    add parameter @LastName nvarchar(255) = N'',
+                  @FirstName nvarchar(255) = N'';
+
+    in single part {insert into CK.tUser}
+    begin
+        add column LastName = @LastName,
+                   FirstName = @FirstName;
+    end
+end
