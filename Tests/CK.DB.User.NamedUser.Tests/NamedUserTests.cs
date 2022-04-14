@@ -46,6 +46,9 @@ namespace CK.DB.User.NamedUser.Tests
                     var lastName = Guid.NewGuid().ToString();
                     int userId = await u.CreateUserAsync( ctx, 1, userName, lastName, firstName );
 
+                    u.Database.ExecuteScalar( "select FirstName from CK.vUser where UserId = @0", userId ).Should().Be( firstName );
+                    u.Database.ExecuteScalar( "select LastName from CK.vUser where UserId = @0", userId ).Should().Be( lastName );
+
                     await u.EditNameAsync( ctx, 1, userId, "Mikado", "Domika" );
 
                     u.Database.ExecuteScalar( "select FirstName from CK.vUser where UserId = @0", userId ).Should().Be( "Mikado" );
