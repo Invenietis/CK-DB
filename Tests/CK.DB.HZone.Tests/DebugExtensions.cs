@@ -34,7 +34,7 @@ namespace CK.DB.HZone.Tests
         static public void CheckTree( this ZoneTable @this, ISqlCallContext ctx, int zoneId, string tree )
         {
             string dump = @this.DumpTree( ctx, zoneId ).TrimEnd();
-            tree = tree.Trim().NormalizeEOL().Replace( " ", string.Empty );
+            tree = tree.Trim().ReplaceLineEndings().Replace( " ", string.Empty );
             dump.Should().Be( tree );
         }
 
