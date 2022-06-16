@@ -6,9 +6,9 @@ namespace CK.DB.User.NamedUser
     [SqlTable( "tUser", Package = typeof( Package ))]
     [Versions( "1.0.0" )]
     [SqlObjectItem( "transform:vUser" )]
-    public abstract class UserTable : Actor.UserTable
+    public abstract class NamedUserTable : SqlTable
     {
-        void StObjConstruct() { }
+        void StObjConstruct( Actor.UserTable userTable ) { }
 
         /// <summary>
         /// Edits an existing user.
@@ -37,6 +37,5 @@ namespace CK.DB.User.NamedUser
                                                    string userName,
                                                    string lastName,
                                                    string firstName );
-
     }
 }

@@ -14,7 +14,7 @@ namespace CK.DB.User.NamedUser.Tests
         [Test]
         public async Task can_create_named_user_async()
         {
-            var u = TestHelper.StObjMap.StObjs.Obtain<UserTable>();
+            var u = TestHelper.StObjMap.StObjs.Obtain<NamedUserTable>();
 
             using( var ctx = new SqlStandardCallContext() )
             {
@@ -35,7 +35,7 @@ namespace CK.DB.User.NamedUser.Tests
         [Test]
         public async Task can_edit_named_user_async()
         {
-            var u = TestHelper.StObjMap.StObjs.Obtain<UserTable>();
+            var u = TestHelper.StObjMap.StObjs.Obtain<NamedUserTable>();
 
             using( var ctx = new SqlStandardCallContext() )
             {
