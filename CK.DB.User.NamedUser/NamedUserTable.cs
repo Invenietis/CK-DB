@@ -1,5 +1,6 @@
 using CK.Core;
 using CK.SqlServer;
+using System.Threading.Tasks;
 
 namespace CK.DB.User.NamedUser
 {
@@ -16,11 +17,11 @@ namespace CK.DB.User.NamedUser
         /// <param name="context">The call context.</param>
         /// <param name="actorId">The acting actor identifier.</param>
         /// <param name="userId">The user identifier.</param>
-        /// <param name="lastName">The last name. Must not be null.</param>
-        /// <param name="firstName">The first name. Must not be null.</param>
+        /// <param name="lastName">The last name. Null to skip the update.</param>
+        /// <param name="firstName">The first name. Null to skip the update.</param>
         /// <returns>The awaitable.</returns>
-        [SqlProcedure( "sNamedUserEdit" )]
-        public abstract Task EditNameAsync( ISqlCallContext context, int actorId, int userId, string firstName, string lastName );
+        [SqlProcedure( "sNamedUserSetNames" )]
+        public abstract Task SetNamesAsync( ISqlCallContext context, int actorId, int userId, string? firstName, string? lastName );
 
         /// <summary>
         /// Tries to create a new user. If the user name is not unique, returns -1.

@@ -12,7 +12,7 @@ namespace CK.DB.User.NamedUser.Tests
     public class NamedUserTests
     {
         [Test]
-        public async Task can_create_named_user_async()
+        public async Task can_create_named_user_Async()
         {
             var u = TestHelper.StObjMap.StObjs.Obtain<NamedUserTable>();
 
@@ -33,7 +33,7 @@ namespace CK.DB.User.NamedUser.Tests
         }
 
         [Test]
-        public async Task can_edit_named_user_async()
+        public async Task can_set_names_Async()
         {
             var u = TestHelper.StObjMap.StObjs.Obtain<NamedUserTable>();
 
@@ -49,10 +49,26 @@ namespace CK.DB.User.NamedUser.Tests
                     u.Database.ExecuteScalar( "select FirstName from CK.vUser where UserId = @0", userId ).Should().Be( firstName );
                     u.Database.ExecuteScalar( "select LastName from CK.vUser where UserId = @0", userId ).Should().Be( lastName );
 
-                    await u.EditNameAsync( ctx, 1, userId, "Mikado", "Domika" );
+                    await u.SetNamesAsync( ctx, 1, userId, "Mikado", "Domika" );
 
                     u.Database.ExecuteScalar( "select FirstName from CK.vUser where UserId = @0", userId ).Should().Be( "Mikado" );
                     u.Database.ExecuteScalar( "select LastName from CK.vUser where UserId = @0", userId ).Should().Be( "Domika" );
+
+                    await u.SetNamesAsync( ctx, 1, userId, null, "Einstein" );
+
+                    u.Database.ExecuteScalar( "select FirstName from CK.vUser where UserId = @0", userId ).Should().Be( "Mikado" );
+                    u.Database.ExecuteScalar( "select LastName from CK.vUser where UserId = @0", userId ).Should().Be( "Einstein" );
+
+                    await u.SetNamesAsync( ctx, 1, userId, "Albert", null );
+
+                    u.Database.ExecuteScalar( "select FirstName from CK.vUser where UserId = @0", userId ).Should().Be( "Albert" );
+                    u.Database.ExecuteScalar( "select LastName from CK.vUser where UserId = @0", userId ).Should().Be( "Einstein" );
+
+                    await u.SetNamesAsync( ctx, 1, userId, null, null );
+
+                    u.Database.ExecuteScalar( "select FirstName from CK.vUser where UserId = @0", userId ).Should().Be( "Albert" );
+                    u.Database.ExecuteScalar( "select LastName from CK.vUser where UserId = @0", userId ).Should().Be( "Einstein" );
+
                 }
             }
         }
