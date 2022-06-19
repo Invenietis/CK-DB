@@ -1,5 +1,4 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <Import Project="..\Common\Shared.props" />
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <Description>This package defines CK.tMCResString table with its procedures, functions and views.</Description>
