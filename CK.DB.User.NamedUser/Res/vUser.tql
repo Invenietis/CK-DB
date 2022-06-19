@@ -1,0 +1,8 @@
+-- SetupConfig : {}
+--
+create transformer on CK.vUser
+as
+begin
+    add column u.FirstName,
+               u.LastName,
+end
