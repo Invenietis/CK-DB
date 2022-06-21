@@ -8,7 +8,7 @@
     <ProjectReference Include="..\..\CK.DB.Res.MCResHtml\CK.DB.Res.MCResHtml.csproj" />
     <ProjectReference Include="..\CK.DB.Culture.Tests\CK.DB.Culture.Tests.csproj" />
     <ProjectReference Include="..\CK.DB.Res.Tests\CK.DB.Res.Tests.csproj" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.2.0" />
     <PackageReference Include="NUnit" Version="3.13.3" />
     <PackageReference Include="NUnit3TestAdapter" Version="4.2.1" />
   </ItemGroup>
