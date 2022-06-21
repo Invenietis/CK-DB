@@ -1,12 +1,11 @@
 using CK.SqlServer;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CK.Core;
 using System.Threading;
 using CK.DB.Auth;
-using CK.Text;
 
 namespace CK.DB.User.UserSimpleCode
 {
@@ -114,13 +113,14 @@ namespace CK.DB.User.UserSimpleCode
         /// <param name="simpleCode">The user code.</param>
         /// <param name="cancellationToken">Optional cancellation token.</param>
         /// <returns>A <see cref="IdentifiedUserInfo{T}"/> object or null if not found.</returns>
-        public Task<IdentifiedUserInfo<IUserSimpleCodeInfo>> FindKnownUserInfoAsync( ISqlCallContext ctx, string simpleCode, CancellationToken cancellationToken = default( CancellationToken ) )
+        public async Task<IdentifiedUserInfo<IUserSimpleCodeInfo>?> FindKnownUserInfoAsync( ISqlCallContext ctx, string simpleCode, CancellationToken cancellationToken = default )
         {
             using( var c = CreateReaderCommand( simpleCode ) )
             {
-                return ctx[Database].ExecuteSingleRowAsync( c, r => r == null
-                                                                ? null
-                                                                : DoCreateUserUnfo( simpleCode, r ) );
+                return await ctx[Database].ExecuteSingleRowAsync( c, r => r == null
+                                                                     ? null
+                                                                     : DoCreateUserUnfo( simpleCode, r ), cancellationToken )
+                                          .ConfigureAwait( false );
             }
         }
 

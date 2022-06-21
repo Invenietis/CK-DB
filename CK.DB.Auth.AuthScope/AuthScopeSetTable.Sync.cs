@@ -1,7 +1,7 @@
 using CK.Core;
 using CK.SqlServer;
 using System.Collections.Generic;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 
 namespace CK.DB.Auth.AuthScope
 {

@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <Import Project="..\..\Common\Shared.props" />
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp3.1</TargetFrameworks>
+    <TargetFramework>net6.0</TargetFramework>
     <Description>This package contains tests for CK.DB.Res.MCResHtml (uses CK.DB.Tests.NUnit).</Description>
     <IsPackable>True</IsPackable>
   </PropertyGroup>
@@ -9,8 +8,8 @@
     <ProjectReference Include="..\..\CK.DB.Res.MCResHtml\CK.DB.Res.MCResHtml.csproj" />
     <ProjectReference Include="..\CK.DB.Culture.Tests\CK.DB.Culture.Tests.csproj" />
     <ProjectReference Include="..\CK.DB.Res.Tests\CK.DB.Res.Tests.csproj" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.8.3" />
-    <PackageReference Include="NUnit" Version="3.12.0" />
-    <PackageReference Include="NUnit3TestAdapter" Version="3.17.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.2.0" />
+    <PackageReference Include="NUnit" Version="3.13.3" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.2.1" />
   </ItemGroup>
 </Project>
