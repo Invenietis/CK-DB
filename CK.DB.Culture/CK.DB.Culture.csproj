@@ -5,7 +5,7 @@
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="CK.SqlServer.Setup.Model" Version="20.0.1--0003-develop" />
+    <PackageReference Include="CK.SqlServer.Setup.Model" Version="20.0.1--0004-develop" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="**\*.sql;**\*.tql;**\*.y4" Exclude="bin\**;obj\**;CodeCakeBuilder\**;packages\**;@(EmbeddedResource)" />
