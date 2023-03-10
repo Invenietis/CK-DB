@@ -12,8 +12,10 @@ as begin
     if @ActorId <= 0 throw 50000, 'Security.AnonymousNotAllowed', 1;
     if @GroupId <= 0 throw 50000, 'Group.InvalidId', 1;
 
-    if not exists (select 1 from CK.tUser where UserId = @UserId)
+    if not exists(select 1 from CK.tUser where UserId = @UserId)
+    begin
         throw 50000, 'User.NotAUser', 1;
+    end
 
 	-- System is, somehow, already in all groups.
     if @UserId = 1 return 0;

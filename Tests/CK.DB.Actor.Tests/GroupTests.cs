@@ -198,6 +198,8 @@ namespace CK.DB.Actor.Tests
             {
                 var groupId = groupTable.CreateGroup( context, 1 );
 
+                // Directly call the sActorCreate procedure: it is not exposed on the C# side
+                // since there is no point to call it... except from tests.
                 var cmd = new SqlCommand( "CK.sActorCreate" );
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.Add( "@ActorId", SqlDbType.Int ).Value = 1;
