@@ -14,7 +14,7 @@ as begin
 
     if not exists(select 1 from CK.tUser where UserId = @UserId)
     begin
-        throw 50000, 'User.NotAUser', 1;
+        ;throw 50000, 'User.NotAUser', 1;
     end
 
 	-- System is, somehow, already in all groups.
