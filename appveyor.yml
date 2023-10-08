@@ -2,10 +2,6 @@ version: build{build}
 image: Visual Studio 2022
 clone_folder: C:\CKli-World\CK-Database-Projects\CK-DB
 services: mssql2017
-branches:
-  only:
-  - master
-  - develop
 environment:
   SqlServer/MasterConnectionString: Server=(local)\SQL2017;Database=master;User ID=sa;Password=Password12!
   CODECAKEBUILDER_SECRET_KEY:

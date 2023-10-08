@@ -6,6 +6,7 @@ using NUnit.Framework;
 using System.Globalization;
 using FluentAssertions;
 using static CK.Testing.DBSetupTestHelper;
+using System.Collections.Generic;
 
 namespace CK.DB.Culture.Tests
 {
@@ -142,21 +143,42 @@ namespace CK.DB.Culture.Tests
         [Explicit]
         public void display_all_available_Framework_cultures()
         {
-            var lcids = CultureInfo.GetCultures( CultureTypes.AllCultures );
-            Console.WriteLine( "MinLCID= {0}, MaxLCID={1}, Name.Max={2}, DisplayName.Max={3}, EnglishName.Max={4}, NativeName.Max={5}, HasCommaInNames={6}",
-                                lcids.Select( c => c.LCID ).Min(),
-                                lcids.Select( c => c.LCID ).Max(),
-                                lcids.Select( c => c.Name.Length ).Max(),
-                                lcids.Select( c => c.DisplayName.Length ).Max(),
-                                lcids.Select( c => c.EnglishName.Length ).Max(),
-                                lcids.Select( c => c.NativeName.Length ).Max(),
-                                lcids.Select( c => c.Name + c.EnglishName + c.NativeName ).Any( s => s.Contains( ',' ) ) );
-            Console.WriteLine( "LCID,  Parent,   EnglishName,       Native" );
+            var lcids = CultureInfo.GetCultures( CultureTypes.AllCultures )
+                                   .OrderBy( c => c.Name )
+                                   .Select( c => (C: c, Fallbacks: GetFallbacks( c) ) )
+                                   .ToList();
+            Console.WriteLine( "MinLCID= {0}, MaxLCID={1}, Name.Max={2}, DisplayName.Max={3}, EnglishName.Max={4}, NativeName.Max={5}, HasCommaInAnyName={6}, HasCommaInName={7}",
+                                lcids.Select( c => c.C.LCID ).Min(),
+                                lcids.Select( c => c.C.LCID ).Max(),
+                                lcids.Select( c => c.C.Name.Length ).Max(),
+                                lcids.Select( c => c.C.DisplayName.Length ).Max(),
+                                lcids.Select( c => c.C.EnglishName.Length ).Max(),
+                                lcids.Select( c => c.C.NativeName.Length ).Max(),
+                                lcids.Select( c => c.C.Name + c.C.EnglishName + c.C.NativeName ).Any( s => s.Contains( ',' ) ),
+                                lcids.Select( c => c.C.Name ).Any( s => s.Contains( ',' ) ) );
+            Console.WriteLine( "LCID,  Name,     Parent,   EnglishName,     FallbackPath,       Native" );
             foreach( var c in lcids )
             {
-                Console.WriteLine( "{0,-6} {1,-6} {2,-50} {3,-50}", c.LCID, c.Parent?.LCID, c.EnglishName, c.NativeName );
+                Console.WriteLine( "{0,-6} {1,-12} {2,-6} {3,-50} {4,-50} {5}",
+                                   c.C.LCID,
+                                   c.C.Name,
+                                   c.C.Parent?.Name,
+                                   c.C.EnglishName,
+                                   c.Fallbacks.Select( c => c.Name ).Concatenate(),
+                                   c.C.NativeName );
             }
+        }
 
+        List<CultureInfo> GetFallbacks( CultureInfo c )
+        {
+            var fallbacks = new List<CultureInfo>();
+            var p = c.Parent;
+            while( p != null && p != CultureInfo.InvariantCulture )
+            {
+                fallbacks.Add( p );
+                p = p.Parent;
+            }
+            return fallbacks;
         }
     }
 

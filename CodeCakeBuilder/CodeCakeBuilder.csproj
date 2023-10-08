@@ -9,10 +9,10 @@
     <Nullable>annotations</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="CK.Core" Version="16.1.1" />
+    <PackageReference Include="CK.Core" Version="17.0.1" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="NuGet.Credentials" Version="6.5.0" />
+    <PackageReference Include="NuGet.Credentials" Version="6.7.0" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="TestResult.xml" />

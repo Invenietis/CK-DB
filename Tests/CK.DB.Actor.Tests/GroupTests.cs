@@ -1,8 +1,11 @@
 using System;
+using System.Data;
+using System.Diagnostics;
 using NUnit.Framework;
 using CK.SqlServer;
 using CK.Core;
 using FluentAssertions;
+using Microsoft.Data.SqlClient;
 using static CK.Testing.DBSetupTestHelper;
 
 namespace CK.DB.Actor.Tests
@@ -180,6 +183,35 @@ namespace CK.DB.Actor.Tests
                 u.DestroyUser( ctx, 1, userId );
                 u.DestroyUser( ctx, 1, userId2 );
                 u.DestroyUser( ctx, 1, anotherUserId );
+            }
+        }
+
+        [Test]
+        public void sGroupUserAdd_should_throw_when_adding_an_actor_that_is_not_a_user()
+        {
+            var groupTable = TestHelper.StObjMap.StObjs.Obtain<GroupTable>();
+            var actorTable = TestHelper.StObjMap.StObjs.Obtain<ActorTable>();
+            Debug.Assert( groupTable != null, nameof( groupTable ) + " != null" );
+            Debug.Assert( actorTable != null, nameof( actorTable ) + " != null" );
+
+            using( var context = new SqlStandardCallContext() )
+            {
+                var groupId = groupTable.CreateGroup( context, 1 );
+
+                // Directly call the sActorCreate procedure: it is not exposed on the C# side
+                // since there is no point to call it... except from tests.
+                var cmd = new SqlCommand( "CK.sActorCreate" );
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.Add( "@ActorId", SqlDbType.Int ).Value = 1;
+                cmd.Parameters.Add( "@ActorIdResult", SqlDbType.Int ).Direction = ParameterDirection.Output;
+                actorTable.Database.ExecuteNonQuery( cmd );
+                var actorIdResult = Convert.ToInt32( cmd.Parameters["@ActorIdResult"].Value );
+
+                groupTable.Invoking( sut => sut.AddUser( context, 1, groupId, actorIdResult ) )
+                          .Should()
+                          .Throw<SqlDetailedException>()
+                          .WithInnerException<SqlException>()
+                          .WithMessage( "User.NotAUser" );
             }
         }
 
