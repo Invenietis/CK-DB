@@ -46,7 +46,7 @@ namespace CK.DB.User.UserOidc.Tests
 
         [TestCase( "" )]
         [TestCase( "IdSrv" )]
-        public async Task create_Oidc_user_and_check_read_info_object_method_async( string schemeSuffix )
+        public async Task create_Oidc_user_and_check_read_info_object_method_Async( string schemeSuffix )
         {
             var u = TestHelper.StObjMap.StObjs.Obtain<UserOidcTable>();
             var user = TestHelper.StObjMap.StObjs.Obtain<UserTable>();

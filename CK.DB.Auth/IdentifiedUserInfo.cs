@@ -5,7 +5,7 @@ namespace CK.DB.Auth
     /// <summary>
     /// Associates a user identifier to a user information.
     /// </summary>
-    public class IdentifiedUserInfo<T> where T : IPoco
+    public class IdentifiedUserInfo<T> where T : class, IPoco
     {
         /// <summary>
         /// Initializes a new <see cref="IdentifiedUserInfo{T}"/>.

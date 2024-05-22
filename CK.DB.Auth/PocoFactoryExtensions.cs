@@ -57,7 +57,7 @@ namespace CK.DB.Auth
 
 
         /// <summary>
-        /// Populates a new instance of <typeparamref name="T"/> with the provided set of (string, object?);.
+        /// Populates a new instance of <typeparamref name="T"/> with the provided set of (string, object?).
         /// </summary>
         /// <typeparam name="T">The POCO type.</typeparam>
         /// <param name="this">This POCO factory.</param>

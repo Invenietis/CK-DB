@@ -38,22 +38,23 @@ namespace CK.DB.Auth.AuthScope
         /// <param name="ctx">The call context.</param>
         /// <param name="cmd">The reader command.</param>
         /// <returns>The set of scopes or null.</returns>
-        public Task<AuthScopeSet> RawReadAuthScopeSetAsync(ISqlCallContext ctx, SqlCommand cmd)
+        public Task<AuthScopeSet> RawReadAuthScopeSetAsync( ISqlCallContext ctx, SqlCommand cmd )
         {
-            async Task<AuthScopeSet> ReadAsync( SqlCommand c, CancellationToken t )
+            return ctx[Database].ExecuteQueryAsync( cmd, DoReadAsync );
+        }
+
+        async Task<AuthScopeSet> DoReadAsync( SqlCommand c, CancellationToken t )
+        {
+            using( var r = await c.ExecuteReaderAsync( t ).ConfigureAwait( false ) )
             {
-                using( var r = await cmd.ExecuteReaderAsync().ConfigureAwait( false ) )
+                if( !await r.ReadAsync( t ).ConfigureAwait( false ) ) return null;
+                var result = new AuthScopeSet() { ScopeSetId = r.GetInt32( 0 ) };
+                if( await r.NextResultAsync( t ).ConfigureAwait( false ) )
                 {
-                    if( !await r.ReadAsync().ConfigureAwait( false ) ) return null;
-                    var result = new AuthScopeSet() { ScopeSetId = r.GetInt32( 0 ) };
-                    if( await r.NextResultAsync().ConfigureAwait( false ) )
-                    {
-                        while( await r.ReadAsync().ConfigureAwait( false ) ) result.Add( CreateAuthScope( r ) );
-                    }
-                    return result;
+                    while( await r.ReadAsync( t ).ConfigureAwait( false ) ) result.Add( CreateAuthScope( r ) );
                 }
+                return result;
             }
-            return ctx[Database].ExecuteQueryAsync( cmd, ReadAsync );
         }
 
         /// <summary>

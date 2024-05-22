@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using CK.Core;
 using System.Threading;
 using CK.DB.Auth;
+using System.Diagnostics.CodeAnalysis;
 
 namespace CK.DB.User.UserOidc
 {
@@ -17,6 +18,7 @@ namespace CK.DB.User.UserOidc
     [SqlObjectItem( "transform:sUserDestroy" )]
     public abstract partial class UserOidcTable : SqlTable, IGenericAuthenticationProvider<IUserOidcInfo>
     {
+        [AllowNull]
         IPocoFactory<IUserOidcInfo> _infoFactory;
 
         /// <summary>
@@ -51,7 +53,7 @@ namespace CK.DB.User.UserOidc
         /// <returns>The result.</returns>
         public async Task<UCLResult> CreateOrUpdateOidcUserAsync( ISqlCallContext ctx, int actorId, int userId, IUserOidcInfo info, UCLMode mode = UCLMode.CreateOrUpdate, CancellationToken cancellationToken = default( CancellationToken ) )
         {
-            var r = await UserOidcULC( ctx, actorId, userId, info, mode, cancellationToken ).ConfigureAwait( false );
+            var r = await UserOidcULCAsync( ctx, actorId, userId, info, mode, cancellationToken ).ConfigureAwait( false );
             return r;
         }
 
@@ -70,7 +72,7 @@ namespace CK.DB.User.UserOidc
             var mode = actualLogin
                         ? UCLMode.UpdateOnly | UCLMode.WithActualLogin
                         : UCLMode.UpdateOnly | UCLMode.WithCheckLogin;
-            var r = await UserOidcULC( ctx, 1, 0, info, mode, cancellationToken ).ConfigureAwait( false );
+            var r = await UserOidcULCAsync( ctx, 1, 0, info, mode, cancellationToken ).ConfigureAwait( false );
             return r.LoginResult;
         }
 
@@ -101,7 +103,7 @@ namespace CK.DB.User.UserOidc
         /// <param name="cancellationToken">Optional cancellation token.</param>
         /// <returns>The result.</returns>
         [SqlProcedure( "sUserOidcUCL" )]
-        protected abstract Task<UCLResult> UserOidcULC(
+        protected abstract Task<UCLResult> UserOidcULCAsync(
             ISqlCallContext ctx,
             int actorId,
             int userId,
@@ -118,7 +120,7 @@ namespace CK.DB.User.UserOidc
         /// <param name="sub">The sub that identifies the user in the <paramref name="schemeSuffix"/>.</param>
         /// <param name="cancellationToken">Optional cancellation token.</param>
         /// <returns>A <see cref="IdentifiedUserInfo{T}"/> object or null if not found.</returns>
-        public async Task<IdentifiedUserInfo<IUserOidcInfo?>> FindKnownUserInfoAsync( ISqlCallContext ctx, string schemeSuffix, string sub, CancellationToken cancellationToken = default )
+        public async Task<IdentifiedUserInfo<IUserOidcInfo>?> FindKnownUserInfoAsync( ISqlCallContext ctx, string schemeSuffix, string sub, CancellationToken cancellationToken = default )
         {
             using( var c = CreateReaderCommand( schemeSuffix, sub ) )
             {

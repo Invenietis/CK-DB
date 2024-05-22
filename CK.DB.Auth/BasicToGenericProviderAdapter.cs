@@ -61,7 +61,7 @@ namespace CK.DB.Auth
             Tuple<string, string> byName = payload as Tuple<string, string>;
             if( byName != null ) return await _basic.LoginUserAsync( ctx, byName.Item1, byName.Item2, actualLogin, cancellationToken );
             Tuple<int, string> byId = (Tuple<int, string>)payload;
-            return await _basic.LoginUserAsync( ctx, byId.Item1, byId.Item2, actualLogin );
+            return await _basic.LoginUserAsync( ctx, byId.Item1, byId.Item2, actualLogin, cancellationToken );
         }
 
         static object ExtractPayload( object payload )

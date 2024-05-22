@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace CK.DB.Auth
 {
@@ -13,7 +13,7 @@ namespace CK.DB.Auth
         /// </summary>
         /// <param name="s">Scheme name.</param>
         /// <param name="t">Last used time.</param>
-        public UserAuthSchemeInfo(string s, DateTime t)
+        public UserAuthSchemeInfo( string s, DateTime t )
         {
             Name = s;
             LastUsed = t;
