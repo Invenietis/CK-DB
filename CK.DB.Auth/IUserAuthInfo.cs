@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+using CK.Auth;
+using System.Collections.Generic;
 
 namespace CK.DB.Auth
 {
@@ -20,6 +21,6 @@ namespace CK.DB.Auth
         /// <summary>
         /// Gets the schemes information for this user.
         /// </summary>
-        IReadOnlyList<UserAuthSchemeInfo> Schemes { get; }
+        IReadOnlyList<StdUserSchemeInfo> Schemes { get; }
     }
 }

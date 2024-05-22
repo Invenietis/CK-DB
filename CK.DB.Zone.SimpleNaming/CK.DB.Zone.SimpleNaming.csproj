@@ -3,6 +3,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <Description>CK.tGroup.GrouName column from CK.DB.Group.SimpleNaming is globally unique. This package makes it
       unique in the scope of the group's Zone (from CK.DB.Zone).</Description>
+    <Nullable>enable</Nullable>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
   <ItemGroup>

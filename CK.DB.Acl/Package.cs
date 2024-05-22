@@ -1,4 +1,5 @@
 using CK.Core;
+using System.Diagnostics.CodeAnalysis;
 
 namespace CK.DB.Acl
 {
@@ -17,19 +18,19 @@ namespace CK.DB.Acl
         /// <summary>
         /// Gets the AclTable.
         /// </summary>
-        [InjectObject]
+        [InjectObject, AllowNull]
         public AclTable AclTable { get; protected set; }
 
         /// <summary>
         /// Gets the AclConfigTable.
         /// </summary>
-        [InjectObject] 
+        [InjectObject, AllowNull] 
         public AclConfigTable AclConfigTable { get; protected set; }
 
         /// <summary>
         /// Gets the AclConfigMemoryTable.
         /// </summary>
-        [InjectObject]
+        [InjectObject, AllowNull]
         public AclConfigMemoryTable AclConfigMemoryTable { get; protected set; }
 
     }

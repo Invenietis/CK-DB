@@ -7,6 +7,8 @@ using Microsoft.Data.SqlClient;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using CK.Auth;
+using System.Diagnostics.CodeAnalysis;
 
 namespace CK.DB.Auth
 {
@@ -18,7 +20,9 @@ namespace CK.DB.Auth
     [SqlObjectItem( "vUserAuthProvider" )]
     public abstract partial class Package : SqlPackage, IAuthenticationDatabaseService
     {
+        [AllowNull]
         Dictionary<string, IGenericAuthenticationProvider> _allProviders;
+        [AllowNull]
         IReadOnlyCollection<IGenericAuthenticationProvider> _allProvidersValues;
 
         void StObjConstruct( Actor.Package actor )
@@ -43,7 +47,7 @@ namespace CK.DB.Auth
         /// Gets the only <see cref="IBasicAuthenticationProvider"/> if it exists or null.
         /// </summary>
         [InjectObject( IsOptional = true )]
-        public IBasicAuthenticationProvider BasicProvider { get; protected set; }
+        public IBasicAuthenticationProvider? BasicProvider { get; protected set; }
 
         /// <summary>
         /// Gets the collection of existing providers, including an adapter of <see cref="IBasicAuthenticationProvider"/> 
@@ -61,12 +65,12 @@ namespace CK.DB.Auth
         /// The provider name (or ProviderName.SchemeSuffix) to find (lookup is case insensitive).
         /// </param>
         /// <returns>The provider or null.</returns>
-        public IGenericAuthenticationProvider FindProvider( string schemeOrProviderName )
+        public IGenericAuthenticationProvider? FindProvider( string schemeOrProviderName )
         {
             if( string.IsNullOrEmpty( schemeOrProviderName ) ) return null;
             int idx = schemeOrProviderName.IndexOf( '.' );
             if( idx >= 0 ) schemeOrProviderName = schemeOrProviderName.Substring( 0, idx );
-            return _allProviders.GetValueOrDefault( schemeOrProviderName, null );
+            return _allProviders.GetValueOrDefault( schemeOrProviderName );
         }
 
         /// <summary>
@@ -102,29 +106,27 @@ namespace CK.DB.Auth
         /// <param name="actorId">The acting actor identifier.</param>
         /// <param name="userId">The user identifier.</param>
         /// <returns>The user information or null if the user identifier does not exist.</returns>
-        public async Task<IUserAuthInfo> ReadUserAuthInfoAsync( ISqlCallContext ctx, int actorId, int userId )
+        public async Task<IUserAuthInfo?> ReadUserAuthInfoAsync( ISqlCallContext ctx, int actorId, int userId )
         {
-            async Task<IUserAuthInfo> ReadAsync( SqlCommand c, CancellationToken t )
+            static async Task<IUserAuthInfo?> ReadAsync( SqlCommand c, CancellationToken t )
             {
                 using( var r = await c.ExecuteReaderAsync( t ).ConfigureAwait( false ) )
                 {
                     if( !await r.ReadAsync( t ).ConfigureAwait( false ) ) return null;
-                    var result = new AuthInfo();
-                    result.UserId = r.GetInt32( 0 );
-                    result.UserName = r.GetString( 1 );
+                    var userId = r.GetInt32(0);
+                    var userName = r.GetString( 1 );
+                    List<StdUserSchemeInfo>? schemes = null;
                     if( await r.NextResultAsync( t ).ConfigureAwait( false )
                         && await r.ReadAsync( t ).ConfigureAwait( false ) )
                     {
-                        var schemes = new List<UserAuthSchemeInfo>();
+                        schemes = new List<StdUserSchemeInfo>();
                         do
                         {
-                            schemes.Add( new UserAuthSchemeInfo( r.GetString( 0 ), r.GetDateTime( 1 ) ) );
+                            schemes.Add( new StdUserSchemeInfo( r.GetString( 0 ), r.GetDateTime( 1 ) ) );
                         }
                         while( await r.ReadAsync( t ).ConfigureAwait( false ) );
-                        result.Schemes = schemes;
                     }
-                    else result.Schemes = Array.Empty<UserAuthSchemeInfo>();
-                    return result;
+                    return new AuthInfo( userId, userName, (IReadOnlyList<StdUserSchemeInfo>?)schemes ?? Array.Empty<StdUserSchemeInfo>() );
                 }
             }
             using( var cmd = CmdReadUserAuthInfo( actorId, userId ) )
@@ -132,6 +134,5 @@ namespace CK.DB.Auth
                 return await ctx[Database].ExecuteQueryAsync( cmd, ReadAsync );
             }
         }
-
     }
 }

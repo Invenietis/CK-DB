@@ -2,7 +2,6 @@ using System;
 
 namespace CK.DB.Auth
 {
-
     /// <summary>
     /// Encapsulates the result of a login.
     /// The stored procedure extension point CK.sAuthUserOnLogin can be used to centralize
@@ -11,6 +10,7 @@ namespace CK.DB.Auth
     public readonly struct LoginResult
     {
         readonly int _code;
+        readonly string? _failureReason;
 
         /// <summary>
         /// Initializes a new successful login with a positive user identifier.
@@ -20,7 +20,7 @@ namespace CK.DB.Auth
         {
             if( userId <= 0 ) throw new ArgumentException( "Must be positive.", nameof(userId) );
             _code = userId;
-            FailureReason = null;
+            _failureReason = null;
         }
 
         /// <summary>
@@ -33,7 +33,7 @@ namespace CK.DB.Auth
             if( failureCode < 1 ) throw new ArgumentException( "Must be greater or equal to 1.", nameof( failureCode ) );
             if( String.IsNullOrWhiteSpace( failureReason ) ) throw new ArgumentException( "Must not be empty.", nameof( failureReason ) );
             _code = ~failureCode;
-            FailureReason = failureReason;
+            _failureReason = failureReason;
         }
 
         /// <summary>
@@ -45,12 +45,12 @@ namespace CK.DB.Auth
             if( failureCode == KnownLoginFailureCode.None )
             {
                 _code = 0;
-                FailureReason = null;
+                _failureReason = null;
             }
             else
             {
                 _code = ~(int)failureCode;
-                FailureReason = failureCode.ToKnownString();
+                _failureReason = failureCode.ToKnownString();
             }
         }
 
@@ -73,7 +73,7 @@ namespace CK.DB.Auth
                 if( failureCode.Value == 0 )
                 {
                     _code = 0;
-                    FailureReason = null;
+                    _failureReason = null;
                     return;
                 }
             }
@@ -81,15 +81,15 @@ namespace CK.DB.Auth
             if( hasReason || failureCode.HasValue )
             {
                 _code = ~(failureCode ?? 1);
-                FailureReason = hasReason
+                _failureReason = hasReason
                                     ? failureReason
-                                    : KnownLoginFailureCodeExtensions.ToKnownString( failureCode.Value );
+                                    : KnownLoginFailureCodeExtensions.ToKnownString( failureCode.GetValueOrDefault() );
             }
             else
             {
                 if( userId < 0 ) throw new ArgumentException( "Must be zero or positive.", nameof( userId ) );
                 _code = userId;
-                FailureReason = null;
+                _failureReason = null;
             }
         }
 
@@ -113,7 +113,7 @@ namespace CK.DB.Auth
         /// <summary>
         /// Gets a reason for login failure.
         /// </summary>
-        public string FailureReason { get; }
+        public string? FailureReason => _failureReason;
 
         /// <summary>
         /// Gets whether the login is successful: <see cref="UserId"/> is greater than 0.

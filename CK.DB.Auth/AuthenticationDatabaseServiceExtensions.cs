@@ -19,14 +19,14 @@ namespace CK.DB.Auth
         /// <param name="this">This database service implementation.</param>
         /// <param name="scheme">The scheme to find.</param>
         /// <param name="mustHavePayload">
-        /// True if the provider must be able to create an instance of its payload (it must be a <see cref="IGenericAuthenticationProvider{T}"/>).
+        /// By default, the provider must be able to create an instance of its payload (<see cref="IGenericAuthenticationProvider.CanCreatePayload"/> must be true).
         /// </param>
         /// <returns>The provider.</returns>
         public static IGenericAuthenticationProvider FindRequiredProvider( this IAuthenticationDatabaseService @this, string scheme, bool mustHavePayload = true )
         {
-            IGenericAuthenticationProvider dbProvider = @this.FindProvider( scheme );
+            var dbProvider = @this.FindProvider( scheme );
             if( dbProvider == null ) throw new ArgumentException( $"Unable to find a database provider for scheme '{scheme}'. Available: {@this.AllProviders.Select( p => p.ProviderName ).Concatenate()}.", nameof( scheme ) );
-            if( mustHavePayload && !dbProvider.HasPayload() )
+            if( mustHavePayload && !dbProvider.CanCreatePayload )
             {
                 throw new ArgumentException( $"Database provider '{dbProvider.GetType().FullName}' does not handle generic payload." );
             }

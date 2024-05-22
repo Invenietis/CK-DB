@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using CK.Core;
 using System.Threading;
 using CK.DB.Auth;
+using System.Diagnostics.CodeAnalysis;
 
 namespace CK.DB.User.UserGoogle
 {
@@ -17,6 +18,7 @@ namespace CK.DB.User.UserGoogle
     [SqlObjectItem( "transform:sUserDestroy" )]
     public abstract partial class UserGoogleTable : SqlTable, IGenericAuthenticationProvider<IUserGoogleInfo>
     {
+        [AllowNull]
         IPocoFactory<IUserGoogleInfo> _infoFactory;
 
         /// <summary>
@@ -24,12 +26,16 @@ namespace CK.DB.User.UserGoogle
         /// </summary>
         public string ProviderName => "Google";
 
+        public bool CanCreatePayload => true;
+
+        object IGenericAuthenticationProvider.CreatePayload() => _infoFactory.Create();
+
+        IUserGoogleInfo IGenericAuthenticationProvider<IUserGoogleInfo>.CreatePayload() => _infoFactory.Create();
+
         void StObjConstruct( IPocoFactory<IUserGoogleInfo> infoFactory )
         {
             _infoFactory = infoFactory;
         }
-
-        IUserGoogleInfo IGenericAuthenticationProvider<IUserGoogleInfo>.CreatePayload() => _infoFactory.Create();
 
         /// <summary>
         /// Creates a <see cref="IUserGoogleInfo"/> poco.
@@ -49,7 +55,7 @@ namespace CK.DB.User.UserGoogle
         /// <param name="mode">Optionally configures Create, Update only or WithLogin behavior.</param>
         /// <param name="cancellationToken">Optional cancellation token.</param>
         /// <returns>The result.</returns>
-        public async Task<UCLResult> CreateOrUpdateGoogleUserAsync( ISqlCallContext ctx, int actorId, int userId, IUserGoogleInfo info, UCLMode mode = UCLMode.CreateOrUpdate, CancellationToken cancellationToken = default( CancellationToken ) )
+        public async Task<UCLResult> CreateOrUpdateGoogleUserAsync( ISqlCallContext ctx, int actorId, int userId, IUserGoogleInfo info, UCLMode mode = UCLMode.CreateOrUpdate, CancellationToken cancellationToken = default )
         {
             var r = await GoogleUserUCLAsync( ctx, actorId, userId, info, mode, cancellationToken ).ConfigureAwait( false );
             return r;
@@ -65,7 +71,7 @@ namespace CK.DB.User.UserGoogle
         /// <param name="actualLogin">Set it to false to avoid login side-effect (such as updating the LastLoginTime) on success.</param>
         /// <param name="cancellationToken">Optional cancellation token.</param>
         /// <returns>The <see cref="LoginResult"/>.</returns>
-        public async Task<LoginResult> LoginUserAsync( ISqlCallContext ctx, IUserGoogleInfo info, bool actualLogin = true, CancellationToken cancellationToken = default( CancellationToken ) )
+        public async Task<LoginResult> LoginUserAsync( ISqlCallContext ctx, IUserGoogleInfo info, bool actualLogin = true, CancellationToken cancellationToken = default )
         {
             var mode = actualLogin
                         ? UCLMode.UpdateOnly | UCLMode.WithActualLogin
@@ -83,7 +89,7 @@ namespace CK.DB.User.UserGoogle
         /// <param name="cancellationToken">Optional cancellation token.</param>
         /// <returns>The awaitable.</returns>
         [SqlProcedure( "sUserGoogleDestroy" )]
-        public abstract Task DestroyGoogleUserAsync( ISqlCallContext ctx, int actorId, int userId, CancellationToken cancellationToken = default( CancellationToken ) );
+        public abstract Task DestroyGoogleUserAsync( ISqlCallContext ctx, int actorId, int userId, CancellationToken cancellationToken = default );
 
         /// <summary>
         /// Raw call to manage GoogleUser. Since this should not be used directly, it is protected.
@@ -97,13 +103,12 @@ namespace CK.DB.User.UserGoogle
         /// <param name="cancellationToken">Optional cancellation token.</param>
         /// <returns>The result.</returns>
         [SqlProcedure( "sUserGoogleUCL" )]
-        protected abstract Task<UCLResult> GoogleUserUCLAsync(
-            ISqlCallContext ctx,
-            int actorId,
-            int userId,
-            [ParameterSource]IUserGoogleInfo info,
-            UCLMode mode,
-            CancellationToken cancellationToken );
+        protected abstract Task<UCLResult> GoogleUserUCLAsync( ISqlCallContext ctx,
+                                                               int actorId,
+                                                               int userId,
+                                                               [ParameterSource]IUserGoogleInfo info,
+                                                               UCLMode mode,
+                                                               CancellationToken cancellationToken );
 
         /// <summary>
         /// Finds a user by its Google account identifier.
@@ -201,12 +206,12 @@ namespace CK.DB.User.UserGoogle
             return LoginUserAsync( ctx, info, actualLogin, cancellationToken );
         }
 
-        void IGenericAuthenticationProvider.DestroyUser( ISqlCallContext ctx, int actorId, int userId, string schemeSuffix )
+        void IGenericAuthenticationProvider.DestroyUser( ISqlCallContext ctx, int actorId, int userId, string? schemeSuffix )
         {
             DestroyGoogleUser( ctx, actorId, userId );
         }
 
-        Task IGenericAuthenticationProvider.DestroyUserAsync( ISqlCallContext ctx, int actorId, int userId, string schemeSuffix, CancellationToken cancellationToken )
+        Task IGenericAuthenticationProvider.DestroyUserAsync( ISqlCallContext ctx, int actorId, int userId, string? schemeSuffix, CancellationToken cancellationToken )
         {
             return DestroyGoogleUserAsync( ctx, actorId, userId, cancellationToken );
         }

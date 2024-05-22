@@ -4,6 +4,7 @@
     <Description>
       This package defines tActor, tUser and tGroup tables.
     </Description>
+    <Nullable>enable</Nullable>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
   <ItemGroup>

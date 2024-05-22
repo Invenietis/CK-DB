@@ -21,16 +21,12 @@ is one major drawback: a Role protects a "feature" of the System, not individual
 Sql Server security itself works this way: one can define new [User defined Database Roles](https://docs.microsoft.com/en-us/sql/relational-databases/security/authentication-access/getting-started-with-database-engine-permissions?#user-defined-database-roles):
 and adds users to them. 
 
-And these roles are then granted or denied specific authorizations:
+And these roles are then granted or denied specific authorizations.
 
-
-
-
-- **Row Level Security** : In this approach, a mechanism protects . 
-
+- **Row Level Security** : In this approach, a mechanism protects any kind of "data islands" based on some information associated to the "island" to protect.
+This is more granular but unfortunately more complex to use than the SBR approach.
 
 ## The GrantLevel ladder
-
 
 
 ## The well-known Acl identifiers
@@ -54,7 +50,7 @@ The comments above are self-explanatory (They are configured in the [tAclConfig 
 
 Among them, the System AclId = 1 is the most interesting (since it is the only one that can be modified).
 - The "Administrators" group (ActorId = 2) is granted access level 127 (Administrator) on it.
-- If CK.DB.Zone is installed, then the "Platform Zone" (ActorId = 3) is has a "Viewer" access level on it.
+- If CK.DB.Zone is installed, then the "AdminZone" (ActorId = 3) has a "Viewer" access level on it.
 
 See here for a presentation of the well-known Actor identifiers: [CK.DB.Zone](../CK.DB.Zone).
 

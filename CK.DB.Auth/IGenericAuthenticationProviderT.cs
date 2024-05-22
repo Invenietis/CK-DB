@@ -1,4 +1,4 @@
-﻿namespace CK.DB.Auth
+namespace CK.DB.Auth
 {
 
     /// <summary>
@@ -12,6 +12,6 @@
         /// Creates an empty payload object.
         /// </summary>
         /// <returns>A payload object.</returns>
-        T CreatePayload();
+        new T CreatePayload();
     }
 }

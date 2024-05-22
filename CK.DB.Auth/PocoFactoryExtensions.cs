@@ -22,7 +22,7 @@ namespace CK.DB.Auth
         public static T ExtractPayload<T>( this IPocoFactory<T> @this, object payload ) where T : IPoco
         {
             if( payload == null ) throw new ArgumentNullException( nameof( payload ) );
-            if( payload is T ) return (T)payload;
+            if( payload is T expected ) return expected;
             var kindOfDic = ToValueTuples( payload );
             if( kindOfDic == null )
             {
@@ -31,26 +31,27 @@ namespace CK.DB.Auth
             return ExtractPayload( @this, kindOfDic );
         }
 
-        internal static IEnumerable<(string Key, object Value)>? ToValueTuples( object payload )
+        internal static IEnumerable<(string Key, object? Value)>? ToValueTuples( object payload )
         {
-            if( payload is not IEnumerable<(string Key, object? Value)> kindOfDic )
+            if( payload is IEnumerable<(string Key, object? Value)> kindOfDic )
             {
-                if( payload is IEnumerable<KeyValuePair<string, object?>> kv )
-                {
-                    kindOfDic = kv.Select( x => (x.Key, x.Value) );
-                }
-                else if( payload is IEnumerable<KeyValuePair<string, string?>> kvS )
-                {
-                    kindOfDic = kvS.Select( x => (x.Key, (object?)x.Value) );
-                }
-                else if( payload is IEnumerable<(string, string?)> vtS )
-                {
-                    kindOfDic = vtS.Select( x => (x.Item1, (object?)x.Item2) );
-                }
-                else
-                {
-                    kindOfDic = null;
-                }
+                return kindOfDic;
+            }
+            if( payload is IEnumerable<KeyValuePair<string, object?>> kv )
+            {
+                kindOfDic = kv.Select( x => (x.Key, x.Value) );
+            }
+            else if( payload is IEnumerable<KeyValuePair<string, string?>> kvS )
+            {
+                kindOfDic = kvS.Select( x => (x.Key, (object?)x.Value) );
+            }
+            else if( payload is IEnumerable<(string, string?)> vtS )
+            {
+                kindOfDic = vtS.Select( x => (x.Item1, (object?)x.Item2) );
+            }
+            else
+            {
+                return null;
             }
             return kindOfDic;
         }
@@ -77,7 +78,7 @@ namespace CK.DB.Auth
                     try
                     {
                         var targetType = property.PropertyType;
-                        var pType = targetType.GetTypeInfo();
+                        var pType = targetType.GetType();
                         if( pType.IsGenericType && (pType.GetGenericTypeDefinition() == typeof( Nullable<> )) )
                         {
                             if( kv.Value == null )
@@ -86,10 +87,11 @@ namespace CK.DB.Auth
                                 continue;
                             }
                             targetType = Nullable.GetUnderlyingType( targetType );
-                            pType = targetType.GetTypeInfo();
+                            Throw.DebugAssert( targetType != null );
+                            pType = targetType.GetType();
                         }
-                        object value;
-                        string stringValue;
+                        object? value;
+                        string? stringValue;
                         if( pType.IsEnum && (stringValue = kv.Value as string) != null )
                         {
                             value = Enum.Parse( targetType, stringValue );

@@ -2,6 +2,7 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <Description>This package contains tests for CK.DB.Auth (uses CK.DB.Tests.NUnit).</Description>
+    <Nullable>enable</Nullable>
     <IsPackable>True</IsPackable>
   </PropertyGroup>
   <ItemGroup>
