@@ -54,7 +54,7 @@ The comments above are self-explanatory (They are configured in the [tAclConfig 
 
 Among them, the System AclId = 1 is the most interesting (since it is the only one that can be modified).
 - The "Administrators" group (ActorId = 2) is granted access level 127 (Administrator) on it.
-- If CK.DB.Zone is installed, then the "Platform Zone" (ActorId = 3) is has a "Viewer" access level on it.
+- If CK.DB.Zone is installed, then the "AdminZone" (ActorId = 3) is has a "Viewer" access level on it.
 
 See here for a presentation of the well-known Actor identifiers: [CK.DB.Zone](../CK.DB.Zone).
 
