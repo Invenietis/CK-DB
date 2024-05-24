@@ -38,7 +38,7 @@ exec CKCore.sRefBazookation @SchemaName = 'CK',
                             @NewValue = '2';
 
 -- If an ActorId n°3 exists, we move it (whatever it is).
--- The n°3 is deleted: it is up to the CK.DB.Zone to set the "Platform Zone" here.
+-- The n°3 is deleted: it is up to the CK.DB.Zone to set the "AdminZone" here.
 if exists( select * from CK.tActor where ActorId = 3 )
 begin
     --
