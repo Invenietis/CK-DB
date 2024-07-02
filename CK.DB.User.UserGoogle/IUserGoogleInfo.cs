@@ -1,4 +1,4 @@
-﻿using CK.Core;
+using CK.Core;
 
 namespace CK.DB.User.UserGoogle
 {
@@ -10,7 +10,7 @@ namespace CK.DB.User.UserGoogle
         /// <summary>
         /// Gets or sets the Google account identifier.
         /// </summary>
-        string GoogleAccountId { get; set; }
+        string? GoogleAccountId { get; set; }
     }
 
 }
