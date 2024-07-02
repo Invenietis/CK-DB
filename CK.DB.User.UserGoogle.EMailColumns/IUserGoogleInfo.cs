@@ -1,4 +1,4 @@
-﻿
+
 namespace CK.DB.User.UserGoogle.EMailColumns
 {
     /// <summary>
@@ -9,7 +9,7 @@ namespace CK.DB.User.UserGoogle.EMailColumns
         /// <summary>
         /// Gets or sets the email address.
         /// </summary>
-        string EMail { get; set; }
+        string? EMail { get; set; }
 
         /// <summary>
         /// Gets or sets whether the email address has been verified by Google.
