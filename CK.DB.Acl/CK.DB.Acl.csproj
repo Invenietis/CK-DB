@@ -2,7 +2,6 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <Description>This package defines tAcl, tAclConfigMemory and tAclConfig tables.</Description>
-    <Nullable>enable</Nullable>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
   <ItemGroup>
