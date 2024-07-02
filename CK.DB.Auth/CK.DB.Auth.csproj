@@ -5,7 +5,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\CK.DB.Actor\CK.DB.Actor.csproj" />
-    <PackageReference Include="CK.Auth.Abstractions" Version="6.0.1--0012-develop" />
+    <PackageReference Include="CK.Auth.Abstractions" Version="6.0.1--0014-develop" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="**\*.sql;**\*.tql;**\*.y4" Exclude="bin\**;obj\**;CodeCakeBuilder\**;packages\**;@(EmbeddedResource)" />
