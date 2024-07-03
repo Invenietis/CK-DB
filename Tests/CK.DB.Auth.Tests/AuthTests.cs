@@ -19,6 +19,7 @@ namespace CK.DB.Auth.Tests
         {
             var auth = TestHelper.StObjMap.StObjs.Obtain<Package>();
             var user = TestHelper.StObjMap.StObjs.Obtain<Actor.UserTable>();
+            Throw.DebugAssert( auth != null && user != null );
             using( var ctx = new SqlStandardCallContext() )
             using( auth.Database.TemporaryTransform( @"
                     create transformer on CK.sAuthUserOnLogin
@@ -83,6 +84,7 @@ namespace CK.DB.Auth.Tests
         public void when_basic_provider_exists_it_is_registered_in_tAuthProvider_and_available_as_IGenericAuthenticationProvider()
         {
             var auth = TestHelper.StObjMap.StObjs.Obtain<Package>();
+            Throw.DebugAssert( auth != null );
             Assume.That( auth.BasicProvider != null );
 
             auth.AllProviders.Single( provider => provider.ProviderName == "Basic" ).Should().NotBeNull();
@@ -91,16 +93,15 @@ namespace CK.DB.Auth.Tests
             auth.FindRequiredProvider( "Basic", mustHavePayload: false ).Should().NotBeNull();
         }
 
-        static public void StandardTestForGenericAuthenticationProvider(
-            Package auth,
-            string schemeOrProviderName,
-            Func<int, string, object> payloadForCreateOrUpdate,
-            Func<int, string, object> payloadForLogin,
-            Func<int, string, object> payloadForLoginFail
-            )
+        static public void StandardTestForGenericAuthenticationProvider( Package auth,
+                                                                         string schemeOrProviderName,
+                                                                         Func<int, string, object> payloadForCreateOrUpdate,
+                                                                         Func<int, string, object> payloadForLogin,
+                                                                         Func<int, string, object> payloadForLoginFail )
         {
             var user = TestHelper.StObjMap.StObjs.Obtain<Actor.UserTable>();
-            IGenericAuthenticationProvider g = auth.FindProvider( schemeOrProviderName );
+            IGenericAuthenticationProvider? g = auth.FindProvider( schemeOrProviderName );
+            Throw.DebugAssert( user != null && g != null );
             using( var ctx = new SqlStandardCallContext() )
             {
                 string userName = Guid.NewGuid().ToString();
@@ -108,7 +109,8 @@ namespace CK.DB.Auth.Tests
                 using( TestHelper.Monitor.OpenInfo( $"StandardTest for generic {schemeOrProviderName} with userId:{userId} and userName:{userName}." ) )
                 {
 
-                    IUserAuthInfo info = auth.ReadUserAuthInfo( ctx, 1, userId );
+                    IUserAuthInfo? info = auth.ReadUserAuthInfo( ctx, 1, userId );
+                    Throw.DebugAssert( info != null );
                     info.UserId.Should().Be( userId );
                     info.UserName.Should().Be( userName );
                     info.Schemes.Should().BeEmpty();
@@ -117,14 +119,17 @@ namespace CK.DB.Auth.Tests
                     {
                         g.CreateOrUpdateUser( ctx, 1, userId, payloadForCreateOrUpdate( userId, userName ) ).OperationResult.Should().Be( UCResult.Created );
                         info = auth.ReadUserAuthInfo( ctx, 1, userId );
+                        Throw.DebugAssert( info != null );
                         info.Schemes.Count.Should().Be( 0, "Still no scheme since we did not use WithActualLogin." );
 
                         g.LoginUser( ctx, payloadForLogin( userId, userName ), actualLogin: false ).UserId.Should().Be( userId );
                         info = auth.ReadUserAuthInfo( ctx, 1, userId );
+                        Throw.DebugAssert( info != null );
                         info.Schemes.Should().BeEmpty( "Still no scheme since we challenge login but not use WithActualLogin." );
 
                         g.LoginUser( ctx, payloadForLogin( userId, userName ) ).UserId.Should().Be( userId );
                         info = auth.ReadUserAuthInfo( ctx, 1, userId );
+                        Throw.DebugAssert( info != null );
                         info.Schemes.Count.Should().Be( 1 );
                         info.Schemes[0].Name.Should().StartWith( g.ProviderName );
                         info.Schemes[0].Name.Should().BeEquivalentTo( schemeOrProviderName );
@@ -132,6 +137,7 @@ namespace CK.DB.Auth.Tests
 
                         g.DestroyUser( ctx, 1, userId );
                         info = auth.ReadUserAuthInfo( ctx, 1, userId );
+                        Throw.DebugAssert( info != null );
                         info.Schemes.Should().BeEmpty();
                     }
                     using( TestHelper.Monitor.OpenInfo( "CreateOrUpdateUser WithActualLogin" ) )
@@ -144,6 +150,7 @@ namespace CK.DB.Auth.Tests
                         result.OperationResult.Should().Be( UCResult.Created );
                         result.LoginResult.UserId.Should().Be( userId );
                         info = auth.ReadUserAuthInfo( ctx, 1, userId );
+                        Throw.DebugAssert( info != null );
                         info.Schemes.Should().HaveCount( 1 );
                         info.Schemes[0].Name.Should().StartWith( g.ProviderName );
                         info.Schemes[0].Name.Should().BeEquivalentTo( schemeOrProviderName );
@@ -153,6 +160,7 @@ namespace CK.DB.Auth.Tests
 
                         g.DestroyUser( ctx, 1, userId );
                         info = auth.ReadUserAuthInfo( ctx, 1, userId );
+                        Throw.DebugAssert( info != null );
                         info.Schemes.Should().BeEmpty();
                     }
                     using( TestHelper.Monitor.OpenInfo( "Login for an unregistered user." ) )
@@ -167,10 +175,12 @@ namespace CK.DB.Auth.Tests
                         result.FailureCode.Should().Be( (int)KnownLoginFailureCode.UnregisteredUser );
                         result.FailureReason.Should().Be( "Unregistered user." );
                         info = auth.ReadUserAuthInfo( ctx, 1, userId );
+                        Throw.DebugAssert( info != null );
                         info.Schemes.Should().BeEmpty();
 
                         g.DestroyUser( ctx, 1, userId );
                         info = auth.ReadUserAuthInfo( ctx, 1, userId );
+                        Throw.DebugAssert( info != null );
                         info.Schemes.Should().BeEmpty();
                     }
                     using( TestHelper.Monitor.OpenInfo( "Invalid payload MUST throw an ArgumentException." ) )
@@ -190,15 +200,16 @@ namespace CK.DB.Auth.Tests
                                                                                     Func<int, string, object> payloadForLoginFail )
         {
             var user = TestHelper.StObjMap.StObjs.Obtain<Actor.UserTable>();
-            IGenericAuthenticationProvider g = auth.FindProvider( schemeOrProviderName );
+            IGenericAuthenticationProvider? g = auth.FindProvider( schemeOrProviderName );
+            Throw.DebugAssert( user != null && g != null );
             using( var ctx = new SqlStandardCallContext() )
             {
                 string userName = Guid.NewGuid().ToString();
                 int userId = await user.CreateUserAsync( ctx, 1, userName );
                 using( TestHelper.Monitor.OpenInfo( $"StandardTestAsync for generic {schemeOrProviderName} with userId:{userId} and userName:{userName}." ) )
                 {
-                    IUserAuthInfo info = await auth.ReadUserAuthInfoAsync( ctx, 1, userId );
-
+                    IUserAuthInfo? info = await auth.ReadUserAuthInfoAsync( ctx, 1, userId );
+                    Throw.DebugAssert( info != null );
                     info.UserId.Should().Be( userId );
                     info.UserName.Should().Be( userName );
                     info.Schemes.Should().BeEmpty();
@@ -207,14 +218,17 @@ namespace CK.DB.Auth.Tests
                     {
                         (await g.CreateOrUpdateUserAsync( ctx, 1, userId, payloadForCreateOrUpdate( userId, userName ) )).OperationResult.Should().Be( UCResult.Created );
                         info = await auth.ReadUserAuthInfoAsync( ctx, 1, userId );
+                        Throw.DebugAssert( info != null );
                         info.Schemes.Should().BeEmpty( "Still no scheme since we did not use WithLogin." );
 
                         (await g.LoginUserAsync( ctx, payloadForLogin( userId, userName ), actualLogin: false )).UserId.Should().Be( userId );
                         info = await auth.ReadUserAuthInfoAsync( ctx, 1, userId );
+                        Throw.DebugAssert( info != null );
                         info.Schemes.Should().BeEmpty( "Still no scheme since we challenge login but not use WithLogin." );
 
                         (await g.LoginUserAsync( ctx, payloadForLogin( userId, userName ) )).UserId.Should().Be( userId );
                         info = await auth.ReadUserAuthInfoAsync( ctx, 1, userId );
+                        Throw.DebugAssert( info != null );
                         info.Schemes.Should().HaveCount( 1 );
                         info.Schemes[0].Name.Should().StartWith( g.ProviderName );
                         info.Schemes[0].Name.Should().BeEquivalentTo( schemeOrProviderName );
@@ -222,6 +236,7 @@ namespace CK.DB.Auth.Tests
 
                         await g.DestroyUserAsync( ctx, 1, userId );
                         info = await auth.ReadUserAuthInfoAsync( ctx, 1, userId );
+                        Throw.DebugAssert( info != null );
                         info.Schemes.Should().BeEmpty();
                     }
                     using( TestHelper.Monitor.OpenInfo( "CreateOrUpdateUser WithActualLogin." ) )
@@ -234,6 +249,7 @@ namespace CK.DB.Auth.Tests
                         result.OperationResult.Should().Be( UCResult.Created );
                         result.LoginResult.UserId.Should().Be( userId );
                         info = await auth.ReadUserAuthInfoAsync( ctx, 1, userId );
+                        Throw.DebugAssert( info != null );
                         info.Schemes.Count.Should().Be( 1 );
                         info.Schemes[0].Name.Should().StartWith( g.ProviderName );
                         info.Schemes[0].Name.Should().BeEquivalentTo( schemeOrProviderName );
@@ -243,6 +259,7 @@ namespace CK.DB.Auth.Tests
 
                         await g.DestroyUserAsync( ctx, 1, userId );
                         info = await auth.ReadUserAuthInfoAsync( ctx, 1, userId );
+                        Throw.DebugAssert( info != null );
                         info.Schemes.Should().BeEmpty();
                     }
                     using( TestHelper.Monitor.OpenInfo( "Login for an unregistered user." ) )
@@ -257,10 +274,12 @@ namespace CK.DB.Auth.Tests
                         result.FailureCode.Should().Be( (int)KnownLoginFailureCode.UnregisteredUser );
                         result.FailureReason.Should().Be( "Unregistered user." );
                         info = await auth.ReadUserAuthInfoAsync( ctx, 1, userId );
+                        Throw.DebugAssert( info != null );
                         info.Schemes.Should().BeEmpty();
 
                         await g.DestroyUserAsync( ctx, 1, userId );
                         info = await auth.ReadUserAuthInfoAsync( ctx, 1, userId );
+                        Throw.DebugAssert( info != null );
                         info.Schemes.Should().BeEmpty();
                     }
                     using( TestHelper.Monitor.OpenInfo( "Invalid payload MUST throw an ArgumentException." ) )
@@ -300,6 +319,7 @@ namespace CK.DB.Auth.Tests
         public void when_a_basic_provider_exists_its_IGenericAuthenticationProvider_adpater_accepts_UserId_or_UserName_based_login_payloads()
         {
             var auth = TestHelper.StObjMap.StObjs.Obtain<Package>();
+            Throw.DebugAssert( auth != null );
             Assume.That( auth.BasicProvider != null );
 
             // With Tuple<UserId, Password> payload.  
@@ -394,6 +414,7 @@ namespace CK.DB.Auth.Tests
         public async Task when_a_basic_provider_exists_its_IGenericAuthenticationProvider_adpater_accepts_UserId_or_UserName_based_login_payloads_Async()
         {
             var auth = TestHelper.StObjMap.StObjs.Obtain<Package>();
+            Throw.DebugAssert( auth != null );
             Assume.That( auth.BasicProvider != null );
 
             // With Tuple (UserId, Password) payload.  
@@ -432,6 +453,7 @@ namespace CK.DB.Auth.Tests
         public static void CheckProviderRegistration( string providerName )
         {
             var provider = TestHelper.StObjMap.StObjs.Obtain<AuthProviderTable>();
+            Throw.DebugAssert( provider != null );
             using( var ctx = new SqlStandardCallContext() )
             {
                 provider.Database.ExecuteScalar( "select count(*) from CK.tAuthProvider where ProviderName = @0", providerName )
@@ -443,9 +465,10 @@ namespace CK.DB.Auth.Tests
         public void reading_IUserAuthInfo_for_an_unexisting_user_or_Anonymous_returns_null()
         {
             var p = TestHelper.StObjMap.StObjs.Obtain<Package>();
+            Throw.DebugAssert( p != null );
             using( var ctx = new SqlStandardCallContext() )
             {
-                IUserAuthInfo info = p.ReadUserAuthInfo( ctx, 1, int.MaxValue );
+                IUserAuthInfo? info = p.ReadUserAuthInfo( ctx, 1, int.MaxValue );
                 info.Should().BeNull();
                 info = p.ReadUserAuthInfo( ctx, 1, 0 );
                 info.Should().BeNull();

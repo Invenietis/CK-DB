@@ -13,12 +13,5 @@ namespace CK.DB.User.UserSimpleCode
         void StObjConstruct( Actor.Package actorPackage, Auth.Package authPackage )
         {
         }
-
-        /// <summary>
-        /// Gets the UserSimpleCode table.
-        /// </summary>
-        [InjectObject]
-        public UserSimpleCodeTable UserSimpleCodeTable { get; protected set; }
-
     }
 }

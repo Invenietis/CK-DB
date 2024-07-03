@@ -13,12 +13,5 @@ namespace CK.DB.User.UserOidc
         void StObjConstruct( Actor.Package actorPackage, Auth.Package authPackage )
         {
         }
-
-        /// <summary>
-        /// Gets the user Oidc table.
-        /// </summary>
-        [InjectObject]
-        public UserOidcTable UserOidcTable { get; protected set; }
-
     }
 }

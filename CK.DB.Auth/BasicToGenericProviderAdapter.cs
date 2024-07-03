@@ -22,26 +22,28 @@ namespace CK.DB.Auth
 
         string IGenericAuthenticationProvider.ProviderName => Name;
 
+        bool IGenericAuthenticationProvider.CanCreatePayload => false;
+
+        object IGenericAuthenticationProvider.CreatePayload() => throw new InvalidOperationException( nameof( IGenericAuthenticationProvider.CanCreatePayload ) );
+
         UCLResult IGenericAuthenticationProvider.CreateOrUpdateUser( ISqlCallContext ctx, int actorId, int userId, object payload, UCLMode mode )
         {
-            string password = payload as string;
-            if( password == null ) throw new ArgumentException( "Must be a string (the password).", nameof( payload ) );
+            if( payload is not string password ) throw new ArgumentException( "Must be a string (the password).", nameof( payload ) );
             return _basic.CreateOrUpdatePasswordUser( ctx, actorId, userId, password, mode );
         }
 
         Task<UCLResult> IGenericAuthenticationProvider.CreateOrUpdateUserAsync( ISqlCallContext ctx, int actorId, int userId, object payload, UCLMode mode, CancellationToken cancellationToken )
         {
-            string password = payload as string;
-            if( password == null ) throw new ArgumentException( "Must be a string (the password).", nameof( payload ) );
+            if( payload is not string password ) throw new ArgumentException( "Must be a string (the password).", nameof( payload ) );
             return _basic.CreateOrUpdatePasswordUserAsync( ctx, actorId, userId, password, mode, cancellationToken );
         }
 
-        void IGenericAuthenticationProvider.DestroyUser( ISqlCallContext ctx, int actorId, int userId, string schemeSuffix )
+        void IGenericAuthenticationProvider.DestroyUser( ISqlCallContext ctx, int actorId, int userId, string? schemeSuffix )
         {
             _basic.DestroyPasswordUser( ctx, actorId, userId );
         }
 
-        Task IGenericAuthenticationProvider.DestroyUserAsync( ISqlCallContext ctx, int actorId, int userId, string schemeSuffix, CancellationToken cancellationToken )
+        Task IGenericAuthenticationProvider.DestroyUserAsync( ISqlCallContext ctx, int actorId, int userId, string? schemeSuffix, CancellationToken cancellationToken )
         {
             return _basic.DestroyPasswordUserAsync( ctx, actorId, userId, cancellationToken );
         }
@@ -49,8 +51,7 @@ namespace CK.DB.Auth
         LoginResult IGenericAuthenticationProvider.LoginUser( ISqlCallContext ctx, object payload, bool actualLogin )
         {
             payload = ExtractPayload( payload );
-            Tuple<string, string> byName = payload as Tuple<string, string>;
-            if( byName != null ) return _basic.LoginUser( ctx, byName.Item1, byName.Item2, actualLogin );
+            if( payload is Tuple<string, string> byName ) return _basic.LoginUser( ctx, byName.Item1, byName.Item2, actualLogin );
             var byId = (Tuple<int, string>)payload;
             return _basic.LoginUser( ctx, byId.Item1, byId.Item2, actualLogin );
         }
@@ -58,10 +59,9 @@ namespace CK.DB.Auth
         async Task<LoginResult> IGenericAuthenticationProvider.LoginUserAsync( ISqlCallContext ctx, object payload, bool actualLogin, CancellationToken cancellationToken )
         {
             payload = ExtractPayload( payload );
-            Tuple<string, string> byName = payload as Tuple<string, string>;
-            if( byName != null ) return await _basic.LoginUserAsync( ctx, byName.Item1, byName.Item2, actualLogin, cancellationToken );
+            if( payload is Tuple<string, string> byName ) return await _basic.LoginUserAsync( ctx, byName.Item1, byName.Item2, actualLogin, cancellationToken );
             Tuple<int, string> byId = (Tuple<int, string>)payload;
-            return await _basic.LoginUserAsync( ctx, byId.Item1, byId.Item2, actualLogin );
+            return await _basic.LoginUserAsync( ctx, byId.Item1, byId.Item2, actualLogin, cancellationToken );
         }
 
         static object ExtractPayload( object payload )
@@ -74,8 +74,8 @@ namespace CK.DB.Auth
             if( kindOfDic != null )
             {
                 int? userId = null;
-                string userName = null;
-                string password = null;
+                string? userName = null;
+                string? password = null;
                 foreach( var kv in kindOfDic )
                 {
                     if( StringComparer.OrdinalIgnoreCase.Equals( kv.Key, "UserId" ) )
@@ -103,7 +103,6 @@ namespace CK.DB.Auth
                 Throw.ArgumentException( nameof( payload ), "Invalid payload. Missing 'Password' -> string entry." );
             }
             Throw.ArgumentException( nameof( payload ), "Invalid payload. It must be either a Tuple or ValueTuple (int,string) or (string,string) or a IDictionary<string,object?> or IEnumerable<KeyValuePair<string,object?>> or IEnumerable<(string,object?)> with 'Password' -> string and 'UserId' -> int or 'UserName' -> string entries." );
-            // Wtf? Throw.ArgumentException is [DoesNotReturn] but this is ignored by Roslyn here :(
             return null;
         }
 

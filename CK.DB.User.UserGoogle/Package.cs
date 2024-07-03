@@ -19,11 +19,5 @@ namespace CK.DB.User.UserGoogle
         {
         }
 
-        /// <summary>
-        /// Gets the user Google table.
-        /// </summary>
-        [InjectObject]
-        public UserGoogleTable UserGoogleTable { get; protected set; }
-
     }
 }

@@ -1,4 +1,5 @@
 using CK.Core;
+using System.Diagnostics.CodeAnalysis;
 
 namespace CK.DB.Zone
 {
@@ -17,7 +18,7 @@ namespace CK.DB.Zone
         /// <summary>
         /// Gets the GroupTable that this package defines.
         /// </summary>
-        [InjectObject]
+        [InjectObject, AllowNull]
         public ZoneTable ZoneTable { get; protected set; }
 
     }

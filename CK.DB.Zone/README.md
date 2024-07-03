@@ -29,11 +29,11 @@ This group is the group of the global Administrators.
 Members of this group should have a lot of power on the platform, but are not necessarily as powerful as member
 of the System group (of course, if a user belongs to both groups, it is a God).
 
-### ActorId 3: The Platform Zone
+### ActorId 3: The AdminZone
 
 *Reminder:* A Zone is a Group (which is an Actor) that contains other Groups.
 
 When the **CK.DB.Zone** package is installed, the Zone table [Settle script](Res/CK.ZoneTable.Settle.sql)
-creates the "Platform Zone". This Zone must be used as generic Zone that defines/contains groups
+creates the "AdminZone". This Zone must be used as generic Zone that defines/contains groups
 that make sense for the whole system.
 

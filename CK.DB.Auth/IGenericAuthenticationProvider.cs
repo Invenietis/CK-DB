@@ -8,7 +8,7 @@ namespace CK.DB.Auth
 {
     /// <summary>
     /// Generalizes authentication provider.
-    /// An authentication provider can not create a new user by itself, it can only 
+    /// An authentication provider cannot create a new user by itself, it can only 
     /// register/bind to an existing user.
     /// <para>
     /// Direct registration (ie. without explicit intermediate steps as when you directly register on a site 
@@ -36,7 +36,7 @@ namespace CK.DB.Auth
     /// key with a string value and a "UserId" key with an int value or a "UserName" key with a string value.
     /// </para>
     /// <para>
-    /// Just like the basic one, providers SHOULD handle IDictionary&lt;string,object&gt; (or the more abstract IEnumerable&lt;KeyValuePair&lt;string,object&gt;&gt;)
+    /// Just like the basic one, providers SHOULD handle IDictionary&lt;string,object?&gt; (or the more abstract IEnumerable&lt;KeyValuePair&lt;string,object?&gt;&gt;)
     /// where the names of the keys match the names of their database columns.
     /// The helper <see cref="PocoFactoryExtensions.ExtractPayload{T}(IPocoFactory{T}, object)"/> does just that (but does not check required
     /// property, this is up to provider implementations).
@@ -55,6 +55,18 @@ namespace CK.DB.Auth
         /// and must be the one added to the CK.tAuthProvider table.
         /// </summary>
         string ProviderName { get; }
+
+        /// <summary>
+        /// Gets whether this provider is able to create an instance of its payload: <see cref="CreatePayload"/> can be called.
+        /// </summary>
+        bool CanCreatePayload { get; }
+
+        /// <summary>
+        /// Creates an empty payload object. <see cref="HasPayload"/> must be true otherwise 
+        /// an <see cref="InvalidOperationException"/> is thrown.
+        /// </summary>
+        /// <returns>An empty payload object.</returns>
+        object CreatePayload();
 
         /// <summary>
         /// Creates or updates a user entry for this provider and optionally logs the user. 
@@ -80,7 +92,7 @@ namespace CK.DB.Auth
         /// Optional scheme suffix for multi scheme providers.
         /// When null, all registrations for this provider regardless of the scheme suffix are deleted.
         /// </param>
-        void DestroyUser( ISqlCallContext ctx, int actorId, int userId, string schemeSuffix = null );
+        void DestroyUser( ISqlCallContext ctx, int actorId, int userId, string? schemeSuffix = null );
 
         /// <summary>
         /// Challenges provider dependent information to identify a user.
@@ -105,7 +117,7 @@ namespace CK.DB.Auth
         /// <param name="mode">Optionnaly configures Create, Update only or WithCheck/ActualLogin behavior.</param>
         /// <param name="cancellationToken">Optional cancellation token.</param>
         /// <returns>The result.</returns>
-        Task<UCLResult> CreateOrUpdateUserAsync( ISqlCallContext ctx, int actorId, int userId, object payload, UCLMode mode = UCLMode.CreateOrUpdate, CancellationToken cancellationToken = default( CancellationToken ) );
+        Task<UCLResult> CreateOrUpdateUserAsync( ISqlCallContext ctx, int actorId, int userId, object payload, UCLMode mode = UCLMode.CreateOrUpdate, CancellationToken cancellationToken = default );
 
         /// <summary>
         /// Destroys a registered user entry for this provider. 
@@ -119,7 +131,7 @@ namespace CK.DB.Auth
         /// When null, all registrations for this provider regardless of the scheme suffix are deleted.
         /// </param>
         /// <param name="cancellationToken">Optional cancellation token.</param>
-        Task DestroyUserAsync( ISqlCallContext ctx, int actorId, int userId, string schemeSuffix = null, CancellationToken cancellationToken = default( CancellationToken ) );
+        Task DestroyUserAsync( ISqlCallContext ctx, int actorId, int userId, string? schemeSuffix = null, CancellationToken cancellationToken = default );
 
         /// <summary>
         /// Challenges provider dependent information to locate a user.
@@ -131,7 +143,6 @@ namespace CK.DB.Auth
         /// <param name="actualLogin">Set it to false to avoid login side-effect (such as updating the LastLoginTime) on success.</param>
         /// <param name="cancellationToken">Optional cancellation token.</param>
         /// <returns>The login result.</returns>
-        Task<LoginResult> LoginUserAsync( ISqlCallContext ctx, object payload, bool actualLogin = true, CancellationToken cancellationToken = default( CancellationToken ) );
-
+        Task<LoginResult> LoginUserAsync( ISqlCallContext ctx, object payload, bool actualLogin = true, CancellationToken cancellationToken = default );
     }
 }

@@ -1,4 +1,4 @@
-﻿
+
 using System;
 
 namespace CK.DB.User.UserGoogle.RefreshToken
@@ -17,6 +17,6 @@ namespace CK.DB.User.UserGoogle.RefreshToken
         /// <summary>
         /// Gets or sets the refresh token.
         /// </summary>
-        string RefreshToken { get; set; }
+        string? RefreshToken { get; set; }
     }
 }

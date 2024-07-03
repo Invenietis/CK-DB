@@ -11,7 +11,7 @@ namespace CK.DB.Auth.AuthScope.Tests
     public class AuthScopeSetTests
     {
         [Test]
-        public async Task creating_simple_scope_set()
+        public async Task creating_simple_scope_set_Async()
         {
             var scopes = TestHelper.StObjMap.StObjs.Obtain<AuthScopeSetTable>();
             using( var ctx = new SqlStandardCallContext() )
@@ -27,7 +27,7 @@ namespace CK.DB.Auth.AuthScope.Tests
         }
 
         [Test]
-        public async Task setting_scopes_on_zero_ScopeSetId_is_an_error()
+        public async Task setting_scopes_on_zero_ScopeSetId_is_an_error_Async()
         {
             var scopes = TestHelper.StObjMap.StObjs.Obtain<AuthScopeSetTable>();
             using( var ctx = new SqlStandardCallContext() )
@@ -44,7 +44,7 @@ namespace CK.DB.Auth.AuthScope.Tests
         }
 
         [Test]
-        public async Task adding_and_removing_scopes_via_raw_strings()
+        public async Task adding_and_removing_scopes_via_raw_strings_Async()
         {
             var scopes = TestHelper.StObjMap.StObjs.Obtain<AuthScopeSetTable>();
             using( var ctx = new SqlStandardCallContext() )
@@ -82,7 +82,7 @@ namespace CK.DB.Auth.AuthScope.Tests
         }
 
         [Test]
-        public async Task AuthScopeSet_manipulation()
+        public async Task AuthScopeSet_manipulation_Async()
         {
             var scopes = TestHelper.StObjMap.StObjs.Obtain<AuthScopeSetTable>();
             using( var ctx = new SqlStandardCallContext() )

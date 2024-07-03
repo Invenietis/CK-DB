@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using CK.Core;
 using System.Threading;
 using CK.DB.Auth;
+using System.Diagnostics.CodeAnalysis;
 
 namespace CK.DB.User.UserOidc
 {
@@ -17,6 +18,7 @@ namespace CK.DB.User.UserOidc
     [SqlObjectItem( "transform:sUserDestroy" )]
     public abstract partial class UserOidcTable : SqlTable, IGenericAuthenticationProvider<IUserOidcInfo>
     {
+        [AllowNull]
         IPocoFactory<IUserOidcInfo> _infoFactory;
 
         /// <summary>
@@ -24,12 +26,16 @@ namespace CK.DB.User.UserOidc
         /// </summary>
         public string ProviderName => "Oidc";
 
+        public bool CanCreatePayload => true;
+
+        object IGenericAuthenticationProvider.CreatePayload() => _infoFactory.Create();
+
+        IUserOidcInfo IGenericAuthenticationProvider<IUserOidcInfo>.CreatePayload() => _infoFactory.Create();
+
         void StObjConstruct( IPocoFactory<IUserOidcInfo> infoFactory )
         {
             _infoFactory = infoFactory;
         }
-
-        IUserOidcInfo IGenericAuthenticationProvider<IUserOidcInfo>.CreatePayload() => _infoFactory.Create();
 
         /// <summary>
         /// Creates a <see cref="IUserOidcInfo"/> poco.
@@ -49,9 +55,9 @@ namespace CK.DB.User.UserOidc
         /// <param name="mode">Optionnaly configures Create, Update only or WithLogin behavior.</param>
         /// <param name="cancellationToken">Optional cancellation token.</param>
         /// <returns>The result.</returns>
-        public async Task<UCLResult> CreateOrUpdateOidcUserAsync( ISqlCallContext ctx, int actorId, int userId, IUserOidcInfo info, UCLMode mode = UCLMode.CreateOrUpdate, CancellationToken cancellationToken = default( CancellationToken ) )
+        public async Task<UCLResult> CreateOrUpdateOidcUserAsync( ISqlCallContext ctx, int actorId, int userId, IUserOidcInfo info, UCLMode mode = UCLMode.CreateOrUpdate, CancellationToken cancellationToken = default )
         {
-            var r = await UserOidcULC( ctx, actorId, userId, info, mode, cancellationToken ).ConfigureAwait( false );
+            var r = await UserOidcULCAsync( ctx, actorId, userId, info, mode, cancellationToken ).ConfigureAwait( false );
             return r;
         }
 
@@ -65,12 +71,12 @@ namespace CK.DB.User.UserOidc
         /// <param name="actualLogin">Set it to false to avoid login side-effect (such as updating the LastLoginTime) on success.</param>
         /// <param name="cancellationToken">Optional cancellation token.</param>
         /// <returns>The login result.</returns>
-        public async Task<LoginResult> LoginUserAsync( ISqlCallContext ctx, IUserOidcInfo info, bool actualLogin = true, CancellationToken cancellationToken = default( CancellationToken ) )
+        public async Task<LoginResult> LoginUserAsync( ISqlCallContext ctx, IUserOidcInfo info, bool actualLogin = true, CancellationToken cancellationToken = default )
         {
             var mode = actualLogin
                         ? UCLMode.UpdateOnly | UCLMode.WithActualLogin
                         : UCLMode.UpdateOnly | UCLMode.WithCheckLogin;
-            var r = await UserOidcULC( ctx, 1, 0, info, mode, cancellationToken ).ConfigureAwait( false );
+            var r = await UserOidcULCAsync( ctx, 1, 0, info, mode, cancellationToken ).ConfigureAwait( false );
             return r.LoginResult;
         }
 
@@ -87,7 +93,7 @@ namespace CK.DB.User.UserOidc
         /// <param name="cancellationToken">Optional cancellation token.</param>
         /// <returns>The awaitable.</returns>
         [SqlProcedure( "sUserOidcDestroy" )]
-        public abstract Task DestroyOidcUserAsync( ISqlCallContext ctx, int actorId, int userId, string schemeSuffix, CancellationToken cancellationToken = default( CancellationToken ) );
+        public abstract Task DestroyOidcUserAsync( ISqlCallContext ctx, int actorId, int userId, string? schemeSuffix, CancellationToken cancellationToken = default );
 
         /// <summary>
         /// Raw call to manage OidcUser. Since this should not be used directly, it is protected.
@@ -101,7 +107,7 @@ namespace CK.DB.User.UserOidc
         /// <param name="cancellationToken">Optional cancellation token.</param>
         /// <returns>The result.</returns>
         [SqlProcedure( "sUserOidcUCL" )]
-        protected abstract Task<UCLResult> UserOidcULC(
+        protected abstract Task<UCLResult> UserOidcULCAsync(
             ISqlCallContext ctx,
             int actorId,
             int userId,
@@ -118,7 +124,7 @@ namespace CK.DB.User.UserOidc
         /// <param name="sub">The sub that identifies the user in the <paramref name="schemeSuffix"/>.</param>
         /// <param name="cancellationToken">Optional cancellation token.</param>
         /// <returns>A <see cref="IdentifiedUserInfo{T}"/> object or null if not found.</returns>
-        public async Task<IdentifiedUserInfo<IUserOidcInfo?>> FindKnownUserInfoAsync( ISqlCallContext ctx, string schemeSuffix, string sub, CancellationToken cancellationToken = default )
+        public async Task<IdentifiedUserInfo<IUserOidcInfo>?> FindKnownUserInfoAsync( ISqlCallContext ctx, string schemeSuffix, string sub, CancellationToken cancellationToken = default )
         {
             using( var c = CreateReaderCommand( schemeSuffix, sub ) )
             {
@@ -137,7 +143,7 @@ namespace CK.DB.User.UserOidc
         /// <param name="schemeSuffix">The scheme suffix.</param>
         /// <param name="sub">The sub that identifies the user in the <paramref name="schemeSuffix"/>.</param>
         /// <returns>A ready to use reader command.</returns>
-        SqlCommand CreateReaderCommand( string schemeSuffix, string sub )
+        SqlCommand CreateReaderCommand( string? schemeSuffix, string sub )
         {
             StringBuilder b = new StringBuilder( "select " );
             AppendUserInfoColumns( b ).Append( " from CK.tUserOidc where SchemeSuffix=@S and Sub=@U" );
@@ -147,10 +153,10 @@ namespace CK.DB.User.UserOidc
             return c;
         }
 
-        IdentifiedUserInfo<IUserOidcInfo> DoCreateUserUnfo( string schemeSuffix, string sub, SqlDataRow r )
+        IdentifiedUserInfo<IUserOidcInfo> DoCreateUserUnfo( string? schemeSuffix, string sub, SqlDataRow r )
         {
             var info = _infoFactory.Create();
-            info.SchemeSuffix = schemeSuffix;
+            info.SchemeSuffix = schemeSuffix ?? string.Empty;
             info.Sub = sub;
             FillUserOidcInfo( info, r, 1 );
             var result = new IdentifiedUserInfo<IUserOidcInfo>( r.GetInt32( 0 ), info );
@@ -211,12 +217,12 @@ namespace CK.DB.User.UserOidc
             return LoginUserAsync( ctx, info, actualLogin, cancellationToken );
         }
 
-        void IGenericAuthenticationProvider.DestroyUser( ISqlCallContext ctx, int actorId, int userId, string schemeSuffix )
+        void IGenericAuthenticationProvider.DestroyUser( ISqlCallContext ctx, int actorId, int userId, string? schemeSuffix )
         {
             DestroyOidcUser( ctx, actorId, userId, schemeSuffix );
         }
 
-        Task IGenericAuthenticationProvider.DestroyUserAsync( ISqlCallContext ctx, int actorId, int userId, string schemeSuffix, CancellationToken cancellationToken )
+        Task IGenericAuthenticationProvider.DestroyUserAsync( ISqlCallContext ctx, int actorId, int userId, string? schemeSuffix, CancellationToken cancellationToken )
         {
             return DestroyOidcUserAsync( ctx, actorId, userId, schemeSuffix, cancellationToken );
         }

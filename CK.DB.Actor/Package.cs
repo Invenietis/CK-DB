@@ -1,4 +1,5 @@
 using CK.Core;
+using System.Diagnostics.CodeAnalysis;
 
 namespace CK.DB.Actor
 {
@@ -12,13 +13,13 @@ namespace CK.DB.Actor
         /// <summary>
         /// Gets the GroupTable.
         /// </summary>
-        [InjectObject]
+        [InjectObject, AllowNull]
         public GroupTable GroupTable { get; protected set; }
 
         /// <summary>
         /// Gets the UserTable.
         /// </summary>
-        [InjectObject]
+        [InjectObject, AllowNull]
         public UserTable UserTable { get; protected set; }
 
     }

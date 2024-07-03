@@ -52,7 +52,7 @@ namespace CK.DB.User.UserOidc
         /// </param>
         /// <returns>The awaitable.</returns>
         [SqlProcedure( "sUserOidcDestroy" )]
-        public abstract void DestroyOidcUser( ISqlCallContext ctx, int actorId, int userId, string schemeSuffix );
+        public abstract void DestroyOidcUser( ISqlCallContext ctx, int actorId, int userId, string? schemeSuffix );
 
         /// <summary>
         /// Finds a user by its Oidc account identifier.
@@ -62,7 +62,7 @@ namespace CK.DB.User.UserOidc
         /// <param name="schemeSuffix">The scheme suffix.</param>
         /// <param name="sub">The sub that identifies the user in the <paramref name="schemeSuffix"/>.</param>
         /// <returns>A <see cref="IdentifiedUserInfo{T}"/> or null if not found.</returns>
-        public IdentifiedUserInfo<IUserOidcInfo> FindKnownUserInfo( ISqlCallContext ctx, string schemeSuffix, string sub )
+        public IdentifiedUserInfo<IUserOidcInfo>? FindKnownUserInfo( ISqlCallContext ctx, string? schemeSuffix, string sub )
         {
             using( var c = CreateReaderCommand( schemeSuffix, sub ) )
             {

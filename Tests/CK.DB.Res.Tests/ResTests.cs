@@ -11,7 +11,7 @@ namespace CK.DB.Res.Tests
     public class ResTests
     {
         [Test]
-        public async Task creating_and_destroying_raw_resource()
+        public async Task creating_and_destroying_raw_resource_Async()
         {
             var r = TestHelper.StObjMap.StObjs.Obtain<ResTable>();
             using( var ctx = new SqlStandardCallContext() )

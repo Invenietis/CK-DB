@@ -57,7 +57,7 @@ namespace CK.DB.User.UserSimpleCode
         /// <param name="ctx">The call context to use.</param>
         /// <param name="simpleCode">The simple code.</param>
         /// <returns>A <see cref="IdentifiedUserInfo{T}"/> or null if not found.</returns>
-        public IdentifiedUserInfo<IUserSimpleCodeInfo> FindKnownUserInfo( ISqlCallContext ctx, string simpleCode )
+        public IdentifiedUserInfo<IUserSimpleCodeInfo>? FindKnownUserInfo( ISqlCallContext ctx, string simpleCode )
         {
             using( var c = CreateReaderCommand( simpleCode ) )
             {
@@ -78,12 +78,11 @@ namespace CK.DB.User.UserSimpleCode
         /// <param name="mode">Configures Create, Update only or WithCheck/ActualLogin behavior.</param>
         /// <returns>The user identifier (when <paramref name="userId"/> is 0, this is a login) and the operation result.</returns>
         [SqlProcedure( "sUserSimpleCodeUCL" )]
-        protected abstract UCLResult UserSimpleCodeUCL(
-            ISqlCallContext ctx,
-            int actorId,
-            int userId,
-            [ParameterSource]IUserSimpleCodeInfo info,
-            UCLMode mode );
+        protected abstract UCLResult UserSimpleCodeUCL( ISqlCallContext ctx,
+                                                        int actorId,
+                                                        int userId,
+                                                        [ParameterSource]IUserSimpleCodeInfo info,
+                                                        UCLMode mode );
 
 
     }

@@ -308,6 +308,5 @@ namespace CK.DB.Zone.Tests
                     .Should().Be( idUser );
             }
         }
-
     }
 }

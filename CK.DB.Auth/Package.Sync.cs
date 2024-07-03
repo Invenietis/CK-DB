@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using CK.SqlServer;
 using Microsoft.Data.SqlClient;
 using CK.Core;
+using CK.Auth;
 
 namespace CK.DB.Auth
 {
@@ -22,12 +23,7 @@ namespace CK.DB.Auth
         [SqlProcedure( "sAuthUserOnLogin" )]
         public abstract LoginResult OnUserLogin( ISqlCallContext ctx, string scheme, DateTime lastLoginTime, int userId, bool actualLogin, DateTime loginTimeNow );
 
-        class AuthInfo : IUserAuthInfo
-        {
-            public int UserId { get; set; }
-            public string UserName { get; set; }
-            public IReadOnlyList<UserAuthSchemeInfo> Schemes { get; set; }
-        }
+        record AuthInfo( int UserId, string UserName, IReadOnlyList<StdUserSchemeInfo> Schemes ) : IUserAuthInfo;
 
         /// <summary>
         /// Reads a <see cref="IUserAuthInfo"/> for a user.
@@ -37,33 +33,31 @@ namespace CK.DB.Auth
         /// <param name="actorId">The acting actor identifier.</param>
         /// <param name="userId">The user identifier.</param>
         /// <returns>The user information or null if the user identifier does not exist.</returns>
-        public IUserAuthInfo ReadUserAuthInfo( ISqlCallContext ctx, int actorId, int userId )
+        public IUserAuthInfo? ReadUserAuthInfo( ISqlCallContext ctx, int actorId, int userId )
         {
-            AuthInfo Read( SqlCommand c )
+            static AuthInfo? DoRead( SqlCommand c )
             {
                 using( var r = c.ExecuteReader() )
                 {
                     if( !r.Read() ) return null;
-                    var info = new AuthInfo();
-                    info.UserId = r.GetInt32( 0 );
-                    info.UserName = r.GetString( 1 );
+                    var userId = r.GetInt32( 0 );
+                    var userName = r.GetString( 1 );
+                    List<StdUserSchemeInfo>? schemes = null;
                     if( r.NextResult() && r.Read() )
                     {
-                        var providers = new List<UserAuthSchemeInfo>();
+                        schemes = new List<StdUserSchemeInfo>();
                         do
                         {
-                            providers.Add( new UserAuthSchemeInfo( r.GetString( 0 ), r.GetDateTime( 1 ) ) );
+                            schemes.Add( new StdUserSchemeInfo( r.GetString( 0 ), r.GetDateTime( 1 ) ) );
                         }
                         while( r.Read() );
-                        info.Schemes = providers;
                     }
-                    else info.Schemes = Array.Empty<UserAuthSchemeInfo>();
-                    return info;
+                    return new AuthInfo( userId, userName, (IReadOnlyList<StdUserSchemeInfo>?)schemes ?? Array.Empty<StdUserSchemeInfo>() );
                 }
             }
             using( var cmd = CmdReadUserAuthInfo( actorId, userId ) )
             {
-                return ctx[Database].ExecuteQuery( cmd, Read );
+                return ctx[Database].ExecuteQuery( cmd, DoRead );
             }
         }
 
