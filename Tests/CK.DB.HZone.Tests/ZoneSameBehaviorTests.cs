@@ -4,7 +4,7 @@ using CK.SqlServer;
 using NUnit.Framework;
 using System;
 using FluentAssertions;
-using static CK.Testing.DBSetupTestHelper;
+using static CK.Testing.MonitorTestHelper;
 
 namespace CK.DB.HZone.Tests
 {
@@ -14,14 +14,14 @@ namespace CK.DB.HZone.Tests
         [TearDown]
         public void CheckCKCoreInvariant()
         {
-            TestHelper.StObjMap.StObjs.Obtain<SqlDefaultDatabase>().GetCKCoreInvariantsViolations()
+            SharedEngine.Map.StObjs.Obtain<SqlDefaultDatabase>().GetCKCoreInvariantsViolations()
                 .Rows.Should().BeEmpty();
         }
 
         [Test]
         public void by_default_when_a_group_is_moved_all_of_its_users_must_be_already_registered_in_the_target_zone()
         {
-            var map = TestHelper.StObjMap;
+            var map = SharedEngine.Map;
             var g = map.StObjs.Obtain<GroupTable>();
             var z = map.StObjs.Obtain<ZoneTable>();
             var u = map.StObjs.Obtain<UserTable>();
@@ -57,7 +57,7 @@ namespace CK.DB.HZone.Tests
         [Test]
         public void with_option_Intersect_when_a_group_is_moved_its_users_not_already_registered_in_the_target_zone_are_removed()
         {
-            var map = TestHelper.StObjMap;
+            var map = SharedEngine.Map;
             var z = map.StObjs.Obtain<ZoneTable>();
             var u = map.StObjs.Obtain<UserTable>();
             using( var ctx = new SqlStandardCallContext() )
@@ -92,7 +92,7 @@ namespace CK.DB.HZone.Tests
         [Test]
         public void with_option_AutoUserRegistration_when_a_group_is_moved_its_users_not_already_registered_in_the_target_zone_are_automatically_registered()
         {
-            var map = TestHelper.StObjMap;
+            var map = SharedEngine.Map;
             var z = map.StObjs.Obtain<ZoneTable>();
             var u = map.StObjs.Obtain<UserTable>();
             using( var ctx = new SqlStandardCallContext() )

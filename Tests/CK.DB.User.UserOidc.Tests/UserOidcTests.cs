@@ -7,7 +7,7 @@ using NUnit.Framework;
 using CK.DB.Auth;
 using System.Collections.Generic;
 using FluentAssertions;
-using static CK.Testing.DBSetupTestHelper;
+using static CK.Testing.MonitorTestHelper;
 
 namespace CK.DB.User.UserOidc.Tests
 {
@@ -18,9 +18,9 @@ namespace CK.DB.User.UserOidc.Tests
         [TestCase( "IdSrv" )]
         public void create_Oidc_user_and_check_read_info_object_method( string schemeSuffix )
         {
-            var u = TestHelper.StObjMap.StObjs.Obtain<UserOidcTable>();
-            var user = TestHelper.StObjMap.StObjs.Obtain<UserTable>();
-            var infoFactory = TestHelper.StObjMap.StObjs.Obtain<IPocoFactory<IUserOidcInfo>>();
+            var u = SharedEngine.Map.StObjs.Obtain<UserOidcTable>();
+            var user = SharedEngine.Map.StObjs.Obtain<UserTable>();
+            var infoFactory = SharedEngine.Map.StObjs.Obtain<IPocoFactory<IUserOidcInfo>>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 var userName = Guid.NewGuid().ToString();
@@ -48,9 +48,9 @@ namespace CK.DB.User.UserOidc.Tests
         [TestCase( "IdSrv" )]
         public async Task create_Oidc_user_and_check_read_info_object_method_Async( string schemeSuffix )
         {
-            var u = TestHelper.StObjMap.StObjs.Obtain<UserOidcTable>();
-            var user = TestHelper.StObjMap.StObjs.Obtain<UserTable>();
-            var infoFactory = TestHelper.StObjMap.StObjs.Obtain<IPocoFactory<IUserOidcInfo>>();
+            var u = SharedEngine.Map.StObjs.Obtain<UserOidcTable>();
+            var user = SharedEngine.Map.StObjs.Obtain<UserTable>();
+            var infoFactory = SharedEngine.Map.StObjs.Obtain<IPocoFactory<IUserOidcInfo>>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 var userName = Guid.NewGuid().ToString();
@@ -85,8 +85,8 @@ namespace CK.DB.User.UserOidc.Tests
         public void vUserAuthProvider_reflects_the_user_Oidc_authentication( string schemeSuffix )
         {
             string scheme = schemeSuffix.Length > 0 ? "Oidc." + schemeSuffix : "Oidc";
-            var u = TestHelper.StObjMap.StObjs.Obtain<UserOidcTable>();
-            var user = TestHelper.StObjMap.StObjs.Obtain<UserTable>();
+            var u = SharedEngine.Map.StObjs.Obtain<UserOidcTable>();
+            var user = SharedEngine.Map.StObjs.Obtain<UserTable>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 string userName = "Oidc auth - " + Guid.NewGuid().ToString();
@@ -112,9 +112,9 @@ namespace CK.DB.User.UserOidc.Tests
         {
             string scheme = schemeSuffix.Length > 0 ? "Oidc." + schemeSuffix : "Oidc";
 
-            var auth = TestHelper.StObjMap.StObjs.Obtain<Auth.Package>();
+            var auth = SharedEngine.Map.StObjs.Obtain<Auth.Package>();
             // With IUserOidcInfo POCO.
-            var f = TestHelper.StObjMap.StObjs.Obtain<IPocoFactory<IUserOidcInfo>>();
+            var f = SharedEngine.Map.StObjs.Obtain<IPocoFactory<IUserOidcInfo>>();
             CK.DB.Auth.Tests.AuthTests.StandardTestForGenericAuthenticationProvider(
                 auth,
                 scheme,
@@ -169,8 +169,8 @@ namespace CK.DB.User.UserOidc.Tests
         public async Task standard_generic_tests_for_Oidc_provider_Async( string schemeSuffix )
         {
             string scheme = schemeSuffix.Length > 0 ? "Oidc." + schemeSuffix : "Oidc";
-            var auth = TestHelper.StObjMap.StObjs.Obtain<Auth.Package>();
-            var f = TestHelper.StObjMap.StObjs.Obtain<IPocoFactory<IUserOidcInfo>>();
+            var auth = SharedEngine.Map.StObjs.Obtain<Auth.Package>();
+            var f = SharedEngine.Map.StObjs.Obtain<IPocoFactory<IUserOidcInfo>>();
             await Auth.Tests.AuthTests.StandardTestForGenericAuthenticationProviderAsync(
                 auth,
                 scheme,

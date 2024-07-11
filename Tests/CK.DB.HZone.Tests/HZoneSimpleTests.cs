@@ -5,7 +5,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using FluentAssertions;
-using static CK.Testing.DBSetupTestHelper;
+using static CK.Testing.MonitorTestHelper;
 
 namespace CK.DB.HZone.Tests
 {
@@ -15,14 +15,14 @@ namespace CK.DB.HZone.Tests
         [TearDown]
         public void CheckCKCoreInvariant()
         {
-            TestHelper.StObjMap.StObjs.Obtain<SqlDefaultDatabase>().GetCKCoreInvariantsViolations()
+            SharedEngine.Map.StObjs.Obtain<SqlDefaultDatabase>().GetCKCoreInvariantsViolations()
                 .Rows.Should().BeEmpty();
         }
 
         [Test]
         public void adding_a_user_in_a_child_zone_support_AutoAddUserInParentZone()
         {
-            var map = TestHelper.StObjMap;
+            var map = SharedEngine.Map;
             var zone = map.StObjs.Obtain<ZoneTable>();
             var group = map.StObjs.Obtain<Zone.GroupTable>();
             var user = map.StObjs.Obtain<UserTable>();
@@ -56,7 +56,7 @@ namespace CK.DB.HZone.Tests
         [Test]
         public void removing_a_user_from_a_zone_removes_it_from_all_child_zones()
         {
-            var map = TestHelper.StObjMap;
+            var map = SharedEngine.Map;
             var zone = map.StObjs.Obtain<ZoneTable>();
             var group = map.StObjs.Obtain<Zone.GroupTable>();
             var user = map.StObjs.Obtain<UserTable>();
@@ -101,7 +101,7 @@ namespace CK.DB.HZone.Tests
         [Test]
         public void creating_and_destroying_zone_with_sub_zones_and_groups_when_ForceDestroy_is_true()
         {
-            var map = TestHelper.StObjMap;
+            var map = SharedEngine.Map;
             var zone = map.StObjs.Obtain<ZoneTable>();
             var group = map.StObjs.Obtain<Zone.GroupTable>();
             var user = map.StObjs.Obtain<UserTable>();
@@ -133,7 +133,7 @@ namespace CK.DB.HZone.Tests
         [Test]
         public void moving_a_zone_in_the_tree_can_specify_the_next_sibling_id()
         {
-            var map = TestHelper.StObjMap;
+            var map = SharedEngine.Map;
             var zone = map.StObjs.Obtain<ZoneTable>();
 
             using( var ctx = new SqlStandardCallContext() )
@@ -168,7 +168,7 @@ namespace CK.DB.HZone.Tests
         [Test]
         public void GroupMove_can_safely_be_called_instead_of_ZoneMove()
         {
-            var map = TestHelper.StObjMap;
+            var map = SharedEngine.Map;
             var zone = map.StObjs.Obtain<ZoneTable>();
             var group = map.StObjs.Obtain<Zone.GroupTable>();
 
@@ -202,7 +202,7 @@ namespace CK.DB.HZone.Tests
         [Test]
         public void moving_a_zone_in_a_child_zone_is_an_error()
         {
-            var map = TestHelper.StObjMap;
+            var map = SharedEngine.Map;
             var zone = map.StObjs.Obtain<ZoneTable>();
             using( var ctx = new SqlStandardCallContext() )
             {

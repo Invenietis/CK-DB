@@ -4,7 +4,7 @@ using CK.DB.Actor;
 using CK.SqlServer;
 using NUnit.Framework;
 using FluentAssertions;
-using static CK.Testing.DBSetupTestHelper;
+using static CK.Testing.MonitorTestHelper;
 
 namespace CK.DB.Zone.Tests
 {
@@ -14,14 +14,14 @@ namespace CK.DB.Zone.Tests
         [TearDown]
         public void CheckInvariants()
         {
-            TestHelper.StObjMap.StObjs.Obtain<SqlDefaultDatabase>().GetCKCoreInvariantsViolations()
+            SharedEngine.Map.StObjs.Obtain<SqlDefaultDatabase>().GetCKCoreInvariantsViolations()
                 .Rows.Should().BeEmpty();
         }
 
         [Test]
         public void zone_0_and_1_can_not_be_destroyed()
         {
-            var t = TestHelper.StObjMap.StObjs.Obtain<ZoneTable>();
+            var t = SharedEngine.Map.StObjs.Obtain<ZoneTable>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 t.Invoking( sut => sut.DestroyZone( ctx, 1, 0 ) ).Should().Throw<SqlDetailedException>();
@@ -32,7 +32,7 @@ namespace CK.DB.Zone.Tests
         [Test]
         public void zone_can_be_created_and_destroyed_by_System()
         {
-            var t = TestHelper.StObjMap.StObjs.Obtain<ZoneTable>();
+            var t = SharedEngine.Map.StObjs.Obtain<ZoneTable>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 int zoneId = t.CreateZone( ctx, 1 );
@@ -48,9 +48,9 @@ namespace CK.DB.Zone.Tests
         [Test]
         public void zone_with_existing_groups_can_be_destroyed_when_ForceDestroy_is_true()
         {
-            var t = TestHelper.StObjMap.StObjs.Obtain<ZoneTable>();
-            var g = TestHelper.StObjMap.StObjs.Obtain<GroupTable>();
-            var u = TestHelper.StObjMap.StObjs.Obtain<UserTable>();
+            var t = SharedEngine.Map.StObjs.Obtain<ZoneTable>();
+            var g = SharedEngine.Map.StObjs.Obtain<GroupTable>();
+            var u = SharedEngine.Map.StObjs.Obtain<UserTable>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 int zoneId = t.CreateZone( ctx, 1 );
@@ -76,7 +76,7 @@ namespace CK.DB.Zone.Tests
         [Test]
         public void Anonymous_cant_not_create_or_destroy_a_zone()
         {
-            var p = TestHelper.StObjMap.StObjs.Obtain<Zone.Package>();
+            var p = SharedEngine.Map.StObjs.Obtain<Zone.Package>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 p.Invoking( sut => sut.ZoneTable.CreateZone( ctx, 0 ) ).Should().Throw<SqlDetailedException>();
@@ -90,7 +90,7 @@ namespace CK.DB.Zone.Tests
         [Test]
         public void adding_a_user_to_a_group_when_he_is_not_registered_in_the_zone_is_an_error()
         {
-            var p = TestHelper.StObjMap.StObjs.Obtain<Zone.Package>();
+            var p = SharedEngine.Map.StObjs.Obtain<Zone.Package>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 int zoneId = p.ZoneTable.CreateZone( ctx, 1 );
@@ -112,7 +112,7 @@ namespace CK.DB.Zone.Tests
         [Test]
         public void by_default_destroying_a_zone_that_has_a_group_is_an_error_ie_when_ForceDestroy_is_false()
         {
-            var p = TestHelper.StObjMap.StObjs.Obtain<Zone.Package>();
+            var p = SharedEngine.Map.StObjs.Obtain<Zone.Package>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 int zoneId = p.ZoneTable.CreateZone( ctx, 1 );
@@ -131,7 +131,7 @@ namespace CK.DB.Zone.Tests
         [Test]
         public void removing_a_user_from_a_Zone_removes_him_from_all_groups()
         {
-            var p = TestHelper.StObjMap.StObjs.Obtain<Zone.Package>();
+            var p = SharedEngine.Map.StObjs.Obtain<Zone.Package>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 int zoneId = p.ZoneTable.CreateZone( ctx, 1 );
@@ -161,7 +161,7 @@ namespace CK.DB.Zone.Tests
         [Test]
         public void can_not_create_a_group_in_System_group()
         {
-            var map = TestHelper.StObjMap;
+            var map = SharedEngine.Map;
             var g = map.StObjs.Obtain<GroupTable>();
             using( var ctx = new SqlStandardCallContext() )
             {
@@ -172,7 +172,7 @@ namespace CK.DB.Zone.Tests
         [Test]
         public void groups_can_be_moved_from_its_zone_to_another_one()
         {
-            var map = TestHelper.StObjMap;
+            var map = SharedEngine.Map;
             var g = map.StObjs.Obtain<GroupTable>();
             var z = map.StObjs.Obtain<ZoneTable>();
             using( var ctx = new SqlStandardCallContext() )
@@ -204,7 +204,7 @@ namespace CK.DB.Zone.Tests
         [Test]
         public void by_default_when_a_group_is_moved_all_of_its_users_must_be_already_registered_in_the_target_zone()
         {
-            var map = TestHelper.StObjMap;
+            var map = SharedEngine.Map;
             var g = map.StObjs.Obtain<GroupTable>();
             var z = map.StObjs.Obtain<ZoneTable>();
             var u = map.StObjs.Obtain<UserTable>();
@@ -240,7 +240,7 @@ namespace CK.DB.Zone.Tests
         [Test]
         public void with_option_Intersect_when_a_group_is_moved_its_users_not_already_registered_in_the_target_zone_are_removed()
         {
-            var map = TestHelper.StObjMap;
+            var map = SharedEngine.Map;
             var g = map.StObjs.Obtain<GroupTable>();
             var z = map.StObjs.Obtain<ZoneTable>();
             var u = map.StObjs.Obtain<UserTable>();
@@ -276,7 +276,7 @@ namespace CK.DB.Zone.Tests
         [Test]
         public void with_option_AutoUserRegistration_when_a_group_is_moved_its_users_not_already_registered_in_the_target_zone_are_automatically_registered()
         {
-            var map = TestHelper.StObjMap;
+            var map = SharedEngine.Map;
             var g = map.StObjs.Obtain<GroupTable>();
             var z = map.StObjs.Obtain<ZoneTable>();
             var u = map.StObjs.Obtain<UserTable>();

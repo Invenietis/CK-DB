@@ -7,7 +7,7 @@ using NUnit.Framework;
 using CK.DB.Auth;
 using CK.DB.Auth.AuthScope;
 using FluentAssertions;
-using static CK.Testing.DBSetupTestHelper;
+using static CK.Testing.MonitorTestHelper;
 using System.Diagnostics;
 
 namespace CK.DB.User.UserGoogle.AuthScope.Tests
@@ -19,8 +19,8 @@ namespace CK.DB.User.UserGoogle.AuthScope.Tests
         [Test]
         public async Task non_user_google_ScopeSet_is_null_Async()
         {
-            var user = TestHelper.StObjMap.StObjs.Obtain<UserTable>();
-            var p = TestHelper.StObjMap.StObjs.Obtain<Package>();
+            var user = SharedEngine.Map.StObjs.Obtain<UserTable>();
+            var p = SharedEngine.Map.StObjs.Obtain<Package>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 var id = await user.CreateUserAsync( ctx, 1, Guid.NewGuid().ToString() );
@@ -31,9 +31,9 @@ namespace CK.DB.User.UserGoogle.AuthScope.Tests
         [Test]
         public async Task setting_default_scopes_impact_new_users_Async()
         {
-            var user = TestHelper.StObjMap.StObjs.Obtain<UserTable>();
-            var p = TestHelper.StObjMap.StObjs.Obtain<Package>();
-            var factory = TestHelper.StObjMap.StObjs.Obtain<IPocoFactory<IUserGoogleInfo>>();
+            var user = SharedEngine.Map.StObjs.Obtain<UserTable>();
+            var p = SharedEngine.Map.StObjs.Obtain<Package>();
+            var factory = SharedEngine.Map.StObjs.Obtain<IPocoFactory<IUserGoogleInfo>>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 AuthScopeSet original = await p.ReadDefaultScopeSetAsync( ctx );

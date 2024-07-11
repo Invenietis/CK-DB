@@ -6,7 +6,7 @@ using CK.SqlServer;
 using CK.Core;
 using FluentAssertions;
 using Microsoft.Data.SqlClient;
-using static CK.Testing.DBSetupTestHelper;
+using static CK.Testing.MonitorTestHelper;
 
 namespace CK.DB.Actor.Tests
 {
@@ -16,7 +16,7 @@ namespace CK.DB.Actor.Tests
         [Test]
         public void groups_can_be_created_and_destroyed_when_empty()
         {
-            var g = TestHelper.StObjMap.StObjs.Obtain<GroupTable>();
+            var g = SharedEngine.Map.StObjs.Obtain<GroupTable>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 int groupId = g.CreateGroup( ctx, 1 );
@@ -34,7 +34,7 @@ namespace CK.DB.Actor.Tests
         [Test]
         public void Anonymous_can_not_create_a_group()
         {
-            var g = TestHelper.StObjMap.StObjs.Obtain<GroupTable>();
+            var g = SharedEngine.Map.StObjs.Obtain<GroupTable>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 g.Invoking( sut => sut.CreateGroup( ctx, 0 ) ).Should().Throw<SqlDetailedException>();
@@ -44,7 +44,7 @@ namespace CK.DB.Actor.Tests
         [Test]
         public void Anonymous_can_not_destroy_a_group()
         {
-            var g = TestHelper.StObjMap.StObjs.Obtain<GroupTable>();
+            var g = SharedEngine.Map.StObjs.Obtain<GroupTable>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 int groupId = g.CreateGroup( ctx, 1 );
@@ -56,7 +56,7 @@ namespace CK.DB.Actor.Tests
         [Test]
         public void by_default_groups_can_not_be_destroyed_when_users_exist()
         {
-            var map = TestHelper.StObjMap;
+            var map = SharedEngine.Map;
             var g = map.StObjs.Obtain<GroupTable>();
             var u = map.StObjs.Obtain<UserTable>();
 
@@ -83,7 +83,7 @@ namespace CK.DB.Actor.Tests
         [Test]
         public void groups_are_destroyed_even_when_users_exist_when_ForceDestroy_is_true()
         {
-            var map = TestHelper.StObjMap;
+            var map = SharedEngine.Map;
             var g = map.StObjs.Obtain<GroupTable>();
             var u = map.StObjs.Obtain<UserTable>();
 
@@ -107,7 +107,7 @@ namespace CK.DB.Actor.Tests
         [Test]
         public void destroying_a_user_removes_it_from_all_the_groups_it_belongs_to()
         {
-            var map = TestHelper.StObjMap;
+            var map = SharedEngine.Map;
             var g = map.StObjs.Obtain<GroupTable>();
             var u = map.StObjs.Obtain<UserTable>();
             using( var ctx = new SqlStandardCallContext() )
@@ -134,7 +134,7 @@ namespace CK.DB.Actor.Tests
         [Test]
         public void only_system_users_can_add_or_remove_users_from_group_System()
         {
-            var map = TestHelper.StObjMap;
+            var map = SharedEngine.Map;
             var g = map.StObjs.Obtain<GroupTable>();
             var u = map.StObjs.Obtain<UserTable>();
             int userId;
@@ -189,8 +189,8 @@ namespace CK.DB.Actor.Tests
         [Test]
         public void sGroupUserAdd_should_throw_when_adding_an_actor_that_is_not_a_user()
         {
-            var groupTable = TestHelper.StObjMap.StObjs.Obtain<GroupTable>();
-            var actorTable = TestHelper.StObjMap.StObjs.Obtain<ActorTable>();
+            var groupTable = SharedEngine.Map.StObjs.Obtain<GroupTable>();
+            var actorTable = SharedEngine.Map.StObjs.Obtain<ActorTable>();
             Debug.Assert( groupTable != null, nameof( groupTable ) + " != null" );
             Debug.Assert( actorTable != null, nameof( actorTable ) + " != null" );
 

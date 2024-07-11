@@ -3,7 +3,7 @@ using NUnit.Framework;
 using CK.SqlServer;
 using CK.Core;
 using FluentAssertions;
-using static CK.Testing.DBSetupTestHelper;
+using static CK.Testing.MonitorTestHelper;
 using System.Threading.Tasks;
 
 namespace CK.DB.User.NamedUser.Tests
@@ -14,7 +14,7 @@ namespace CK.DB.User.NamedUser.Tests
         [Test]
         public async Task can_create_named_user_Async()
         {
-            var u = TestHelper.StObjMap.StObjs.Obtain<NamedUserTable>();
+            var u = SharedEngine.Map.StObjs.Obtain<NamedUserTable>();
 
             using( var ctx = new SqlStandardCallContext() )
             {
@@ -35,7 +35,7 @@ namespace CK.DB.User.NamedUser.Tests
         [Test]
         public async Task can_set_names_Async()
         {
-            var u = TestHelper.StObjMap.StObjs.Obtain<NamedUserTable>();
+            var u = SharedEngine.Map.StObjs.Obtain<NamedUserTable>();
 
             using( var ctx = new SqlStandardCallContext() )
             {

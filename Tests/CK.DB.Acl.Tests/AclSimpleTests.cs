@@ -4,7 +4,7 @@ using CK.SqlServer;
 using FluentAssertions;
 using NUnit.Framework;
 using System;
-using static CK.Testing.DBSetupTestHelper;
+using static CK.Testing.MonitorTestHelper;
 
 namespace CK.DB.Acl.Tests
 {
@@ -15,7 +15,7 @@ namespace CK.DB.Acl.Tests
         [Test]
         public void god_user_can_create_and_destroy_acls()
         {
-            var map = TestHelper.StObjMap;
+            var map = SharedEngine.Map;
             var acl = map.StObjs.Obtain<AclTable>();
             var user = map.StObjs.Obtain<UserTable>();
             var group = map.StObjs.Obtain<GroupTable>();
@@ -45,7 +45,7 @@ namespace CK.DB.Acl.Tests
         [Test]
         public void system_default_acls_from_0_to_8_cannot_be_destroyed()
         {
-            var acl = TestHelper.StObjMap.StObjs.Obtain<AclTable>();
+            var acl = SharedEngine.Map.StObjs.Obtain<AclTable>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 for( int idAcl = 0; idAcl <= 8; ++idAcl )
@@ -69,7 +69,7 @@ namespace CK.DB.Acl.Tests
         [TestCase( 8, 0, null )]
         public void challenging_system_default_acls_except_the_1_by_a_random_user( int idAcl, byte grantLevel, string keyReasonForAnonymous )
         {
-            var map = TestHelper.StObjMap;
+            var map = SharedEngine.Map;
             var acl = map.StObjs.Obtain<AclTable>();
             var user = map.StObjs.Obtain<UserTable>();
             using( var ctx = new SqlStandardCallContext() )
@@ -85,7 +85,7 @@ namespace CK.DB.Acl.Tests
         [Test]
         public void the_System_Acl_1_is_the_only_one_that_can_be_configured()
         {
-            var map = TestHelper.StObjMap;
+            var map = SharedEngine.Map;
             var acl = map.StObjs.Obtain<AclTable>();
             var user = map.StObjs.Obtain<UserTable>();
             using( var ctx = new SqlStandardCallContext() )
@@ -118,7 +118,7 @@ namespace CK.DB.Acl.Tests
         [Test]
         public void playing_with_a_user_in_two_groups()
         {
-            var map = TestHelper.StObjMap;
+            var map = SharedEngine.Map;
             var acl = map.StObjs.Obtain<AclTable>();
             var user = map.StObjs.Obtain<UserTable>();
             var group = map.StObjs.Obtain<GroupTable>();
@@ -173,7 +173,7 @@ namespace CK.DB.Acl.Tests
         [Test]
         public void destroying_actors_suppress_any_related_configurations()
         {
-            var map = TestHelper.StObjMap;
+            var map = SharedEngine.Map;
             var acl = map.StObjs.Obtain<AclTable>();
             var user = map.StObjs.Obtain<UserTable>();
             var group = map.StObjs.Obtain<GroupTable>();

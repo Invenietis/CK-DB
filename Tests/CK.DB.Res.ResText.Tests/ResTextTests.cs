@@ -2,7 +2,7 @@ using CK.Core;
 using CK.SqlServer;
 using FluentAssertions;
 using NUnit.Framework;
-using static CK.Testing.DBSetupTestHelper;
+using static CK.Testing.MonitorTestHelper;
 
 namespace CK.DB.Res.ResText.Tests
 {
@@ -12,7 +12,7 @@ namespace CK.DB.Res.ResText.Tests
         [Test]
         public void setting_and_clearing_resource_string()
         {
-            var t = TestHelper.StObjMap.StObjs.Obtain<ResTextTable>();
+            var t = SharedEngine.Map.StObjs.Obtain<ResTextTable>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 int resId = t.ResTable.Create( ctx );
@@ -32,7 +32,7 @@ namespace CK.DB.Res.ResText.Tests
         [Test]
         public void negative_resource_0_and_1_can_not_be_changed()
         {
-            var t = TestHelper.StObjMap.StObjs.Obtain<ResTextTable>();
+            var t = SharedEngine.Map.StObjs.Obtain<ResTextTable>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 t.Invoking( sut => sut.SetText( ctx, -1, "No way" ) ).Should().Throw<SqlDetailedException>();

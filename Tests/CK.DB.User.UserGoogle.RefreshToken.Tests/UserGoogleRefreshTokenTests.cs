@@ -5,7 +5,7 @@ using FluentAssertions;
 using NUnit.Framework;
 using System;
 using System.Threading;
-using static CK.Testing.DBSetupTestHelper;
+using static CK.Testing.MonitorTestHelper;
 
 namespace CK.DB.User.UserGoogle.RefreshToken.Tests
 {
@@ -15,8 +15,8 @@ namespace CK.DB.User.UserGoogle.RefreshToken.Tests
         [Test]
         public void RefreshToken_and_LastRefreshTokenTime_are_managed()
         {
-            var google = TestHelper.StObjMap.StObjs.Obtain<UserGoogleTable>();
-            var user = TestHelper.StObjMap.StObjs.Obtain<UserTable>();
+            var google = SharedEngine.Map.StObjs.Obtain<UserGoogleTable>();
+            var user = SharedEngine.Map.StObjs.Obtain<UserTable>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 string userName = "Google RefreshToken - " + Guid.NewGuid().ToString();

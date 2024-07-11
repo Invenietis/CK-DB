@@ -3,7 +3,7 @@ using CK.SqlServer;
 using FluentAssertions;
 using NUnit.Framework;
 using System;
-using static CK.Testing.DBSetupTestHelper;
+using static CK.Testing.MonitorTestHelper;
 
 namespace CK.DB.Zone.SimpleNaming.Tests
 {
@@ -13,7 +13,7 @@ namespace CK.DB.Zone.SimpleNaming.Tests
         [Test]
         public void groups_with_the_same_name_can_exist_in_different_zones()
         {
-            var map = TestHelper.StObjMap;
+            var map = SharedEngine.Map;
             var z = map.StObjs.Obtain<ZoneTable>();
             var g = map.StObjs.Obtain<GroupTable>();
             var gN = map.StObjs.Obtain<SimpleNaming.Package>();
@@ -40,7 +40,7 @@ namespace CK.DB.Zone.SimpleNaming.Tests
         [Test]
         public void when_groups_are_moved_name_clash_are_automatically_handled()
         {
-            var map = TestHelper.StObjMap;
+            var map = SharedEngine.Map;
             var z = map.StObjs.Obtain<ZoneTable>();
             var g = map.StObjs.Obtain<GroupTable>();
             var gN = map.StObjs.Obtain<SimpleNaming.Package>();

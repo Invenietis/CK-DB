@@ -4,7 +4,7 @@ using CK.SqlServer;
 using FluentAssertions;
 using NUnit.Framework;
 using System;
-using static CK.Testing.DBSetupTestHelper;
+using static CK.Testing.MonitorTestHelper;
 
 namespace CK.DB.User.UserGoogle.Profile.Tests
 {
@@ -14,8 +14,8 @@ namespace CK.DB.User.UserGoogle.Profile.Tests
         [Test]
         public void profile_properties_are_handled()
         {
-            var u = TestHelper.StObjMap.StObjs.Obtain<UserGoogleTable>();
-            var user = TestHelper.StObjMap.StObjs.Obtain<UserTable>();
+            var u = SharedEngine.Map.StObjs.Obtain<UserGoogleTable>();
+            var user = SharedEngine.Map.StObjs.Obtain<UserTable>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 var googleAccountId = Guid.NewGuid().ToString( "N" );

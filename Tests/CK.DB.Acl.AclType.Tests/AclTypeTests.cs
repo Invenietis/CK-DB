@@ -5,7 +5,7 @@ using FluentAssertions;
 using NUnit.Framework;
 using System;
 using System.Threading.Tasks;
-using static CK.Testing.DBSetupTestHelper;
+using static CK.Testing.MonitorTestHelper;
 
 namespace CK.DB.Acl.AclType.Tests
 {
@@ -15,7 +15,7 @@ namespace CK.DB.Acl.AclType.Tests
         [Test]
         public async Task creating_and_destroying_type_Async()
         {
-            var map = TestHelper.StObjMap;
+            var map = SharedEngine.Map;
             var aclType = map.StObjs.Obtain<AclTypeTable>();
             using( var ctx = new SqlStandardCallContext() )
             {
@@ -37,7 +37,7 @@ namespace CK.DB.Acl.AclType.Tests
         [Test]
         public async Task constrained_levels_must_not_be_deny_and_0_and_127_can_not_be_removed_Async()
         {
-            var map = TestHelper.StObjMap;
+            var map = SharedEngine.Map;
             var aclType = map.StObjs.Obtain<AclTypeTable>();
             using( var ctx = new SqlStandardCallContext() )
             {
@@ -81,7 +81,7 @@ namespace CK.DB.Acl.AclType.Tests
         [Test]
         public async Task type_can_not_be_destroyed_when_typed_acl_exist_Async()
         {
-            var map = TestHelper.StObjMap;
+            var map = SharedEngine.Map;
             var acl = map.StObjs.Obtain<AclTable>();
             var aclType = map.StObjs.Obtain<AclTypeTable>();
             using( var ctx = new SqlStandardCallContext() )
@@ -100,7 +100,7 @@ namespace CK.DB.Acl.AclType.Tests
         [Test]
         public void typed_acl_with_constrained_levels_control_their_grant_levels()
         {
-            var map = TestHelper.StObjMap;
+            var map = SharedEngine.Map;
             var user = map.StObjs.Obtain<UserTable>();
             var acl = map.StObjs.Obtain<AclTable>();
             var aclType = map.StObjs.Obtain<AclTypeTable>();
@@ -146,7 +146,7 @@ namespace CK.DB.Acl.AclType.Tests
         [Test]
         public void existing_level_prevents_set_constrained()
         {
-            var map = TestHelper.StObjMap;
+            var map = SharedEngine.Map;
             var aclType = map.StObjs.Obtain<AclTypeTable>();
             var acl = map.StObjs.Obtain<AclTable>();
             var user = map.StObjs.Obtain<UserTable>();

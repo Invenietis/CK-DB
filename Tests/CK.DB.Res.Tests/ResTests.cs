@@ -3,7 +3,7 @@ using CK.SqlServer;
 using FluentAssertions;
 using NUnit.Framework;
 using System.Threading.Tasks;
-using static CK.Testing.DBSetupTestHelper;
+using static CK.Testing.MonitorTestHelper;
 
 namespace CK.DB.Res.Tests
 {
@@ -13,7 +13,7 @@ namespace CK.DB.Res.Tests
         [Test]
         public async Task creating_and_destroying_raw_resource_Async()
         {
-            var r = TestHelper.StObjMap.StObjs.Obtain<ResTable>();
+            var r = SharedEngine.Map.StObjs.Obtain<ResTable>();
             using( var ctx = new SqlStandardCallContext() )
             {
                 int id = await r.CreateAsync( ctx );

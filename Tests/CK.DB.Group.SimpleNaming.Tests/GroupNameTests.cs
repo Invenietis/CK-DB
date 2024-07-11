@@ -6,7 +6,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using static CK.Testing.DBSetupTestHelper;
+using static CK.Testing.MonitorTestHelper;
 
 namespace CK.DB.Group.SimpleNaming.Tests
 {
@@ -16,7 +16,7 @@ namespace CK.DB.Group.SimpleNaming.Tests
         [Test]
         public void a_group_can_be_renamed()
         {
-            var map = TestHelper.StObjMap;
+            var map = SharedEngine.Map;
             var g = map.StObjs.Obtain<GroupTable>();
             var gN = map.StObjs.Obtain<SimpleNaming.Package>();
             using( var ctx = new SqlStandardCallContext() )
@@ -40,7 +40,7 @@ namespace CK.DB.Group.SimpleNaming.Tests
         [Test]
         public void renaming_a_group_with_an_already_conflicting_name_finds_the_hole()
         {
-            var map = TestHelper.StObjMap;
+            var map = SharedEngine.Map;
             var g = map.StObjs.Obtain<GroupTable>();
             var gN = map.StObjs.Obtain<SimpleNaming.Package>();
             using( var ctx = new SqlStandardCallContext() )
@@ -72,7 +72,7 @@ namespace CK.DB.Group.SimpleNaming.Tests
         [Test]
         public void group_names_are_unique_and_clash_are_atomatically_handled()
         {
-            var map = TestHelper.StObjMap;
+            var map = SharedEngine.Map;
             var g = map.StObjs.Obtain<GroupTable>();
             var gN = map.StObjs.Obtain<SimpleNaming.Package>();
             using( var ctx = new SqlStandardCallContext() )
@@ -110,7 +110,7 @@ namespace CK.DB.Group.SimpleNaming.Tests
         [Test]
         public void new_group_name_can_be_checked()
         {
-            var map = TestHelper.StObjMap;
+            var map = SharedEngine.Map;
             var g = map.StObjs.Obtain<GroupTable>();
             var gN = map.StObjs.Obtain<SimpleNaming.Package>();
             using( var ctx = new SqlStandardCallContext() )
@@ -136,7 +136,7 @@ namespace CK.DB.Group.SimpleNaming.Tests
         [Test]
         public void group_name_is_nvarchar_128()
         {
-            var map = TestHelper.StObjMap;
+            var map = SharedEngine.Map;
             var g = map.StObjs.Obtain<GroupTable>();
             var gN = map.StObjs.Obtain<SimpleNaming.Package>();
             using( var ctx = new SqlStandardCallContext() )
@@ -161,7 +161,7 @@ namespace CK.DB.Group.SimpleNaming.Tests
         [Test]
         public void when_there_is_no_more_room_for_rename_checking_group_name_returns_null()
         {
-            var map = TestHelper.StObjMap;
+            var map = SharedEngine.Map;
             var g = map.StObjs.Obtain<GroupTable>();
             var gN = map.StObjs.Obtain<SimpleNaming.Package>();
             using( var ctx = new SqlStandardCallContext() )

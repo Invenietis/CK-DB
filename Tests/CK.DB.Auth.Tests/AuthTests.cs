@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
-using static CK.Testing.DBSetupTestHelper;
+using static CK.Testing.MonitorTestHelper;
 
 namespace CK.DB.Auth.Tests
 {
@@ -17,8 +17,8 @@ namespace CK.DB.Auth.Tests
         [Test]
         public void calling_OnUserLogin_directlty_works_but_is_reserved_for_very_rare_scenarii()
         {
-            var auth = TestHelper.StObjMap.StObjs.Obtain<Package>();
-            var user = TestHelper.StObjMap.StObjs.Obtain<Actor.UserTable>();
+            var auth = SharedEngine.Map.StObjs.Obtain<Package>();
+            var user = SharedEngine.Map.StObjs.Obtain<Actor.UserTable>();
             Throw.DebugAssert( auth != null && user != null );
             using( var ctx = new SqlStandardCallContext() )
             using( auth.Database.TemporaryTransform( @"
@@ -83,7 +83,7 @@ namespace CK.DB.Auth.Tests
         [Test]
         public void when_basic_provider_exists_it_is_registered_in_tAuthProvider_and_available_as_IGenericAuthenticationProvider()
         {
-            var auth = TestHelper.StObjMap.StObjs.Obtain<Package>();
+            var auth = SharedEngine.Map.StObjs.Obtain<Package>();
             Throw.DebugAssert( auth != null );
             Assume.That( auth.BasicProvider != null );
 
@@ -99,7 +99,7 @@ namespace CK.DB.Auth.Tests
                                                                          Func<int, string, object> payloadForLogin,
                                                                          Func<int, string, object> payloadForLoginFail )
         {
-            var user = TestHelper.StObjMap.StObjs.Obtain<Actor.UserTable>();
+            var user = SharedEngine.Map.StObjs.Obtain<Actor.UserTable>();
             IGenericAuthenticationProvider? g = auth.FindProvider( schemeOrProviderName );
             Throw.DebugAssert( user != null && g != null );
             using( var ctx = new SqlStandardCallContext() )
@@ -199,7 +199,7 @@ namespace CK.DB.Auth.Tests
                                                                                     Func<int, string, object> payloadForLogin,
                                                                                     Func<int, string, object> payloadForLoginFail )
         {
-            var user = TestHelper.StObjMap.StObjs.Obtain<Actor.UserTable>();
+            var user = SharedEngine.Map.StObjs.Obtain<Actor.UserTable>();
             IGenericAuthenticationProvider? g = auth.FindProvider( schemeOrProviderName );
             Throw.DebugAssert( user != null && g != null );
             using( var ctx = new SqlStandardCallContext() )
@@ -318,7 +318,7 @@ namespace CK.DB.Auth.Tests
         [Test]
         public void when_a_basic_provider_exists_its_IGenericAuthenticationProvider_adpater_accepts_UserId_or_UserName_based_login_payloads()
         {
-            var auth = TestHelper.StObjMap.StObjs.Obtain<Package>();
+            var auth = SharedEngine.Map.StObjs.Obtain<Package>();
             Throw.DebugAssert( auth != null );
             Assume.That( auth.BasicProvider != null );
 
@@ -413,7 +413,7 @@ namespace CK.DB.Auth.Tests
         [Test]
         public async Task when_a_basic_provider_exists_its_IGenericAuthenticationProvider_adpater_accepts_UserId_or_UserName_based_login_payloads_Async()
         {
-            var auth = TestHelper.StObjMap.StObjs.Obtain<Package>();
+            var auth = SharedEngine.Map.StObjs.Obtain<Package>();
             Throw.DebugAssert( auth != null );
             Assume.That( auth.BasicProvider != null );
 
@@ -452,7 +452,7 @@ namespace CK.DB.Auth.Tests
         /// <param name="providerName">provider name that must be registered.</param>
         public static void CheckProviderRegistration( string providerName )
         {
-            var provider = TestHelper.StObjMap.StObjs.Obtain<AuthProviderTable>();
+            var provider = SharedEngine.Map.StObjs.Obtain<AuthProviderTable>();
             Throw.DebugAssert( provider != null );
             using( var ctx = new SqlStandardCallContext() )
             {
@@ -464,7 +464,7 @@ namespace CK.DB.Auth.Tests
         [Test]
         public void reading_IUserAuthInfo_for_an_unexisting_user_or_Anonymous_returns_null()
         {
-            var p = TestHelper.StObjMap.StObjs.Obtain<Package>();
+            var p = SharedEngine.Map.StObjs.Obtain<Package>();
             Throw.DebugAssert( p != null );
             using( var ctx = new SqlStandardCallContext() )
             {
