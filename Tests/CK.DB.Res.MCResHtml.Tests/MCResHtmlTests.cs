@@ -1,5 +1,6 @@
 using CK.Core;
 using CK.SqlServer;
+using CK.Testing;
 using FluentAssertions;
 using NUnit.Framework;
 using System;

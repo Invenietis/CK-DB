@@ -7,6 +7,7 @@ using System.Globalization;
 using FluentAssertions;
 using static CK.Testing.MonitorTestHelper;
 using System.Collections.Generic;
+using CK.Testing;
 
 namespace CK.DB.Culture.Tests
 {

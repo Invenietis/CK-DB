@@ -5,6 +5,7 @@ using CK.SqlServer;
 using NUnit.Framework;
 using FluentAssertions;
 using static CK.Testing.MonitorTestHelper;
+using CK.Testing;
 
 namespace CK.DB.Zone.Tests
 {

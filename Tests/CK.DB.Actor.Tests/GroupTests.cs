@@ -6,6 +6,7 @@ using CK.SqlServer;
 using CK.Core;
 using FluentAssertions;
 using Microsoft.Data.SqlClient;
+using CK.Testing;
 using static CK.Testing.MonitorTestHelper;
 
 namespace CK.DB.Actor.Tests

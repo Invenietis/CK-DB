@@ -5,6 +5,7 @@ using CK.Core;
 using FluentAssertions;
 using static CK.Testing.MonitorTestHelper;
 using System.Threading.Tasks;
+using CK.Testing;
 
 namespace CK.DB.User.NamedUser.Tests
 {

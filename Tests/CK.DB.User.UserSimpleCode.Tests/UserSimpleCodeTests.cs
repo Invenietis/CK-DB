@@ -8,6 +8,7 @@ using CK.DB.Auth;
 using System.Collections.Generic;
 using FluentAssertions;
 using static CK.Testing.MonitorTestHelper;
+using CK.Testing;
 
 namespace CK.DB.User.UserSimpleCode.Tests
 {

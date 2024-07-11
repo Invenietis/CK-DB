@@ -3,6 +3,7 @@ using NUnit.Framework;
 using CK.SqlServer;
 using CK.Core;
 using FluentAssertions;
+using CK.Testing;
 using static CK.Testing.MonitorTestHelper;
 
 namespace CK.DB.Actor.Tests

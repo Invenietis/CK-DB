@@ -7,6 +7,7 @@ using NUnit.Framework;
 using CK.DB.Auth;
 using System.Collections.Generic;
 using FluentAssertions;
+using CK.Testing;
 using static CK.Testing.MonitorTestHelper;
 
 namespace CK.DB.User.UserOidc.Tests

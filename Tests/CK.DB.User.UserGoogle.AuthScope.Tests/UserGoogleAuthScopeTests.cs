@@ -9,6 +9,7 @@ using CK.DB.Auth.AuthScope;
 using FluentAssertions;
 using static CK.Testing.MonitorTestHelper;
 using System.Diagnostics;
+using CK.Testing;
 
 namespace CK.DB.User.UserGoogle.AuthScope.Tests
 {

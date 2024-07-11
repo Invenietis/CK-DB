@@ -5,6 +5,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using FluentAssertions;
+using CK.Testing;
 using static CK.Testing.MonitorTestHelper;
 
 namespace CK.DB.HZone.Tests
