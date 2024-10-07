@@ -1,9 +1,8 @@
-﻿using NUnit.Framework;
+using NUnit.Framework;
 
-namespace CK.DB.Acl.AclType.Tests.FromAcl
+namespace CK.DB.Acl.AclType.Tests.FromAcl;
+
+[TestFixture]
+public class FromAclSimpleTests : CK.DB.Acl.Tests.AclSimpleTests
 {
-    [TestFixture]
-    public class FromAclSimpleTests : CK.DB.Acl.Tests.AclSimpleTests
-    {
-    }
 }
