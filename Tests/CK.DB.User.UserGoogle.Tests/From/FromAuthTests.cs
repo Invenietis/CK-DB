@@ -1,9 +1,8 @@
-﻿using NUnit.Framework;
+using NUnit.Framework;
 
-namespace CK.DB.User.UserGoogle.Tests.From
+namespace CK.DB.User.UserGoogle.Tests.From;
+
+[TestFixture]
+public class FromAuthTests : CK.DB.Auth.Tests.AuthTests
 {
-    [TestFixture]
-    public class FromAuthTests : CK.DB.Auth.Tests.AuthTests
-    {
-    }
 }

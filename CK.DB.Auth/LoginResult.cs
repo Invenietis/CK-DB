@@ -1,123 +1,122 @@
 using System;
 
-namespace CK.DB.Auth
-{
-    /// <summary>
-    /// Encapsulates the result of a login.
-    /// The stored procedure extension point CK.sAuthUserOnLogin can be used to centralize
-    /// all the checks related to login acceptance or rejection.
-    /// </summary>
-    public readonly struct LoginResult
-    {
-        readonly int _code;
-        readonly string? _failureReason;
+namespace CK.DB.Auth;
 
-        /// <summary>
-        /// Initializes a new successful login with a positive user identifier.
-        /// </summary>
-        /// <param name="userId">The logged in user: must be greater than 0.</param>
-        public LoginResult( int userId )
+/// <summary>
+/// Encapsulates the result of a login.
+/// The stored procedure extension point CK.sAuthUserOnLogin can be used to centralize
+/// all the checks related to login acceptance or rejection.
+/// </summary>
+public readonly struct LoginResult
+{
+    readonly int _code;
+    readonly string? _failureReason;
+
+    /// <summary>
+    /// Initializes a new successful login with a positive user identifier.
+    /// </summary>
+    /// <param name="userId">The logged in user: must be greater than 0.</param>
+    public LoginResult( int userId )
+    {
+        if( userId <= 0 ) throw new ArgumentException( "Must be positive.", nameof( userId ) );
+        _code = userId;
+        _failureReason = null;
+    }
+
+    /// <summary>
+    /// Initializes a new failed login with a non empty reason and an optional error code.
+    /// </summary>
+    /// <param name="failureReason">The reason of the failure. Must not be null or empty.</param>
+    /// <param name="failureCode">Optional error code. Must be greater or equal to 1.</param>
+    public LoginResult( string failureReason, int failureCode = 1 )
+    {
+        if( failureCode < 1 ) throw new ArgumentException( "Must be greater or equal to 1.", nameof( failureCode ) );
+        if( String.IsNullOrWhiteSpace( failureReason ) ) throw new ArgumentException( "Must not be empty.", nameof( failureReason ) );
+        _code = ~failureCode;
+        _failureReason = failureReason;
+    }
+
+    /// <summary>
+    /// Initializes a new failed login with a known error code.
+    /// </summary>
+    /// <param name="failureCode">Known error code.</param>
+    public LoginResult( KnownLoginFailureCode failureCode )
+    {
+        if( failureCode == KnownLoginFailureCode.None )
         {
-            if( userId <= 0 ) throw new ArgumentException( "Must be positive.", nameof(userId) );
-            _code = userId;
+            _code = 0;
             _failureReason = null;
         }
-
-        /// <summary>
-        /// Initializes a new failed login with a non empty reason and an optional error code.
-        /// </summary>
-        /// <param name="failureReason">The reason of the failure. Must not be null or empty.</param>
-        /// <param name="failureCode">Optional error code. Must be greater or equal to 1.</param>
-        public LoginResult( string failureReason, int failureCode = 1 )
+        else
         {
-            if( failureCode < 1 ) throw new ArgumentException( "Must be greater or equal to 1.", nameof( failureCode ) );
-            if( String.IsNullOrWhiteSpace( failureReason ) ) throw new ArgumentException( "Must not be empty.", nameof( failureReason ) );
-            _code = ~failureCode;
-            _failureReason = failureReason;
+            _code = ~(int)failureCode;
+            _failureReason = failureCode.ToKnownString();
         }
+    }
 
-        /// <summary>
-        /// Initializes a new failed login with a known error code.
-        /// </summary>
-        /// <param name="failureCode">Known error code.</param>
-        public LoginResult( KnownLoginFailureCode failureCode )
+    /// <summary>
+    /// Initializes a new login result. This is the constructor used by the database calls.
+    /// If <paramref name="failureReason"/> is not empty or <paramref name="failureCode"/> is not null,
+    /// the <see cref="IsSuccess"/> property is false and the <see cref="UserId"/> is
+    /// automatically set to 0.
+    /// Special case is when userId is zero and both failure reason
+    /// and failure code are null: this result <see cref="IsEmpty"/>.
+    /// </summary>
+    /// <param name="userId">The user identifier. Must be greater or equal to 0.</param>
+    /// <param name="failureReason">Reason can be null or empty.</param>
+    /// <param name="failureCode">Optional error code.</param>
+    public LoginResult( int userId, string failureReason, int? failureCode )
+    {
+        if( failureCode.HasValue )
         {
-            if( failureCode == KnownLoginFailureCode.None )
+            if( failureCode.Value < 0 ) throw new ArgumentException( "Must be zero or positive.", nameof( failureCode ) );
+            if( failureCode.Value == 0 )
             {
                 _code = 0;
                 _failureReason = null;
-            }
-            else
-            {
-                _code = ~(int)failureCode;
-                _failureReason = failureCode.ToKnownString();
+                return;
             }
         }
-
-        /// <summary>
-        /// Initializes a new login result. This is the constructor used by the database calls.
-        /// If <paramref name="failureReason"/> is not empty or <paramref name="failureCode"/> is not null,
-        /// the <see cref="IsSuccess"/> property is false and the <see cref="UserId"/> is
-        /// automatically set to 0.
-        /// Special case is when userId is zero and both failure reason
-        /// and failure code are null: this result <see cref="IsEmpty"/>.
-        /// </summary>
-        /// <param name="userId">The user identifier. Must be greater or equal to 0.</param>
-        /// <param name="failureReason">Reason can be null or empty.</param>
-        /// <param name="failureCode">Optional error code.</param>
-        public LoginResult( int userId, string failureReason, int? failureCode )
+        bool hasReason = !String.IsNullOrWhiteSpace( failureReason );
+        if( hasReason || failureCode.HasValue )
         {
-            if( failureCode.HasValue )
-            {
-                if( failureCode.Value < 0 ) throw new ArgumentException( "Must be zero or positive.", nameof( failureCode ) );
-                if( failureCode.Value == 0 )
-                {
-                    _code = 0;
-                    _failureReason = null;
-                    return;
-                }
-            }
-            bool hasReason = !String.IsNullOrWhiteSpace( failureReason );
-            if( hasReason || failureCode.HasValue )
-            {
-                _code = ~(failureCode ?? 1);
-                _failureReason = hasReason
-                                    ? failureReason
-                                    : KnownLoginFailureCodeExtensions.ToKnownString( failureCode.GetValueOrDefault() );
-            }
-            else
-            {
-                if( userId < 0 ) throw new ArgumentException( "Must be zero or positive.", nameof( userId ) );
-                _code = userId;
-                _failureReason = null;
-            }
+            _code = ~(failureCode ?? 1);
+            _failureReason = hasReason
+                                ? failureReason
+                                : KnownLoginFailureCodeExtensions.ToKnownString( failureCode.GetValueOrDefault() );
         }
-
-        /// <summary>
-        /// Gets whether this result is empty: it has not been challenged.
-        /// </summary>
-        public bool IsEmpty => _code == 0;
-
-        /// <summary>
-        /// Gets the user identifier.
-        /// Always 0 if login failed (<see cref="IsSuccess"/> is false).
-        /// </summary>
-        public int UserId => _code > 0 ? _code : 0;
-
-        /// <summary>
-        /// Gets an optional error code.
-        /// May be 0 even if <see cref="IsSuccess"/> is false.
-        /// </summary>
-        public int FailureCode => _code < 0 ? ~_code : 0;
-
-        /// <summary>
-        /// Gets a reason for login failure.
-        /// </summary>
-        public string? FailureReason => _failureReason;
-
-        /// <summary>
-        /// Gets whether the login is successful: <see cref="UserId"/> is greater than 0.
-        /// </summary>
-        public bool IsSuccess => UserId > 0;
+        else
+        {
+            if( userId < 0 ) throw new ArgumentException( "Must be zero or positive.", nameof( userId ) );
+            _code = userId;
+            _failureReason = null;
+        }
     }
+
+    /// <summary>
+    /// Gets whether this result is empty: it has not been challenged.
+    /// </summary>
+    public bool IsEmpty => _code == 0;
+
+    /// <summary>
+    /// Gets the user identifier.
+    /// Always 0 if login failed (<see cref="IsSuccess"/> is false).
+    /// </summary>
+    public int UserId => _code > 0 ? _code : 0;
+
+    /// <summary>
+    /// Gets an optional error code.
+    /// May be 0 even if <see cref="IsSuccess"/> is false.
+    /// </summary>
+    public int FailureCode => _code < 0 ? ~_code : 0;
+
+    /// <summary>
+    /// Gets a reason for login failure.
+    /// </summary>
+    public string? FailureReason => _failureReason;
+
+    /// <summary>
+    /// Gets whether the login is successful: <see cref="UserId"/> is greater than 0.
+    /// </summary>
+    public bool IsSuccess => UserId > 0;
 }

@@ -1,6 +1,6 @@
-﻿<RepositoryInfo>
+<RepositoryInfo>
   <!--<StartingVersionForCSemVer>v3.0.21-alpha</StartingVersionForCSemVer>-->
-  <SimpleGitVersion StartingVersion="14.0.0-alpha">
+  <SimpleGitVersion StartingVersion="22.0.0-alpha">
     <Branches>
       <Branch Name="develop" CIVersionMode="LastReleaseBased" VersionName="develop" />
     </Branches>

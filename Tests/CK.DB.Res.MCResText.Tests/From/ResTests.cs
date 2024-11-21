@@ -1,9 +1,8 @@
-﻿using NUnit.Framework;
+using NUnit.Framework;
 
-namespace CK.DB.MCResText.Tests.From
+namespace CK.DB.MCResText.Tests.From;
+
+[TestFixture]
+public class ResTests : CK.DB.Res.Tests.ResTests
 {
-    [TestFixture]
-    public class ResTests : CK.DB.Res.Tests.ResTests
-    {
-    }
 }

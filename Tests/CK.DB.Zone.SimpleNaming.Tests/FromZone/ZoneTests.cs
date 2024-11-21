@@ -1,9 +1,8 @@
-﻿using NUnit.Framework;
+using NUnit.Framework;
 
-namespace CK.DB.Zone.SimpleNaming.Tests.FromZone
+namespace CK.DB.Zone.SimpleNaming.Tests.FromZone;
+
+[TestFixture]
+public class ZoneTests : CK.DB.Zone.Tests.ZoneTests
 {
-    [TestFixture]
-    public class ZoneTests : CK.DB.Zone.Tests.ZoneTests
-    {
-    }
 }

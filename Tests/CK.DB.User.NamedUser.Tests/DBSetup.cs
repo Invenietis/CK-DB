@@ -1,10 +1,9 @@
 using NUnit.Framework;
 
 
-namespace DBSetup
+namespace DBSetup;
+
+[TestFixture]
+public class DBSetup : CK.DB.Tests.DBSetup
 {
-    [TestFixture]
-    public class DBSetup : CK.DB.Tests.DBSetup
-    {
-    }
 }

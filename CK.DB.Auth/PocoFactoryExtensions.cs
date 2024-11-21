@@ -4,109 +4,108 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace CK.DB.Auth
+namespace CK.DB.Auth;
+
+/// <summary>
+/// Helpers methods to convert authentication payload into typed POCO.
+/// </summary>
+static public class PocoFactoryExtensions
 {
     /// <summary>
-    /// Helpers methods to convert authentication payload into typed POCO.
+    /// Extracts payload by first checking whether <paramref name="payload"/> is already a <typeparamref name="T"/>
+    /// and then by trying <see cref="ExtractPayload{T}(IPocoFactory{T}, IEnumerable{KeyValuePair{string, object}})"/>.
     /// </summary>
-    static public class PocoFactoryExtensions
+    /// <typeparam name="T">The POCO type.</typeparam>
+    /// <param name="this">This POCO factory.</param>
+    /// <param name="payload">The payload. Must not be null.</param>
+    /// <returns>The resulting POCO.</returns>
+    public static T ExtractPayload<T>( this IPocoFactory<T> @this, object payload ) where T : IPoco
     {
-        /// <summary>
-        /// Extracts payload by first checking whether <paramref name="payload"/> is already a <typeparamref name="T"/>
-        /// and then by trying <see cref="ExtractPayload{T}(IPocoFactory{T}, IEnumerable{KeyValuePair{string, object}})"/>.
-        /// </summary>
-        /// <typeparam name="T">The POCO type.</typeparam>
-        /// <param name="this">This POCO factory.</param>
-        /// <param name="payload">The payload. Must not be null.</param>
-        /// <returns>The resulting POCO.</returns>
-        public static T ExtractPayload<T>( this IPocoFactory<T> @this, object payload ) where T : IPoco
+        if( payload == null ) throw new ArgumentNullException( nameof( payload ) );
+        if( payload is T expected ) return expected;
+        var kindOfDic = ToValueTuples( payload );
+        if( kindOfDic == null )
         {
-            if( payload == null ) throw new ArgumentNullException( nameof( payload ) );
-            if( payload is T expected ) return expected;
-            var kindOfDic = ToValueTuples( payload );
-            if( kindOfDic == null )
-            {
-                Throw.ArgumentException( nameof( payload ), $"Must be a '{typeof( T ).ToCSharpName()}' POCO, a IEnumerable<(string, object?)> or a IEnumerable<KeyValuePair<string, object?>>." );
-            }
-            return ExtractPayload( @this, kindOfDic );
+            Throw.ArgumentException( nameof( payload ), $"Must be a '{typeof( T ).ToCSharpName()}' POCO, a IEnumerable<(string, object?)> or a IEnumerable<KeyValuePair<string, object?>>." );
         }
+        return ExtractPayload( @this, kindOfDic );
+    }
 
-        internal static IEnumerable<(string Key, object? Value)>? ToValueTuples( object payload )
+    internal static IEnumerable<(string Key, object? Value)>? ToValueTuples( object payload )
+    {
+        if( payload is IEnumerable<(string Key, object? Value)> kindOfDic )
         {
-            if( payload is IEnumerable<(string Key, object? Value)> kindOfDic )
-            {
-                return kindOfDic;
-            }
-            if( payload is IEnumerable<KeyValuePair<string, object?>> kv )
-            {
-                kindOfDic = kv.Select( x => (x.Key, x.Value) );
-            }
-            else if( payload is IEnumerable<KeyValuePair<string, string?>> kvS )
-            {
-                kindOfDic = kvS.Select( x => (x.Key, (object?)x.Value) );
-            }
-            else if( payload is IEnumerable<(string, string?)> vtS )
-            {
-                kindOfDic = vtS.Select( x => (x.Item1, (object?)x.Item2) );
-            }
-            else
-            {
-                return null;
-            }
             return kindOfDic;
         }
-
-
-        /// <summary>
-        /// Populates a new instance of <typeparamref name="T"/> with the provided set of (string, object?).
-        /// </summary>
-        /// <typeparam name="T">The POCO type.</typeparam>
-        /// <param name="this">This POCO factory.</param>
-        /// <param name="payload">The payload. Must not be null.</param>
-        /// <returns>The resulting POCO.</returns>
-        public static T ExtractPayload<T>( this IPocoFactory<T> @this,
-                                           IEnumerable<(string Key, object? Value)> payload ) where T : IPoco
+        if( payload is IEnumerable<KeyValuePair<string, object?>> kv )
         {
-            Throw.CheckNotNullArgument( payload );
-            T info = @this.Create();
-            var properties = @this.PocoClassType.GetProperties( BindingFlags.Public | BindingFlags.Instance );
-            foreach( var kv in payload )
+            kindOfDic = kv.Select( x => (x.Key, x.Value) );
+        }
+        else if( payload is IEnumerable<KeyValuePair<string, string?>> kvS )
+        {
+            kindOfDic = kvS.Select( x => (x.Key, (object?)x.Value) );
+        }
+        else if( payload is IEnumerable<(string, string?)> vtS )
+        {
+            kindOfDic = vtS.Select( x => (x.Item1, (object?)x.Item2) );
+        }
+        else
+        {
+            return null;
+        }
+        return kindOfDic;
+    }
+
+
+    /// <summary>
+    /// Populates a new instance of <typeparamref name="T"/> with the provided set of (string, object?).
+    /// </summary>
+    /// <typeparam name="T">The POCO type.</typeparam>
+    /// <param name="this">This POCO factory.</param>
+    /// <param name="payload">The payload. Must not be null.</param>
+    /// <returns>The resulting POCO.</returns>
+    public static T ExtractPayload<T>( this IPocoFactory<T> @this,
+                                       IEnumerable<(string Key, object? Value)> payload ) where T : IPoco
+    {
+        Throw.CheckNotNullArgument( payload );
+        T info = @this.Create();
+        var properties = @this.PocoClassType.GetProperties( BindingFlags.Public | BindingFlags.Instance );
+        foreach( var kv in payload )
+        {
+            var property = properties.FirstOrDefault( p => StringComparer.OrdinalIgnoreCase.Equals( kv.Key, p.Name ) );
+            if( property != null )
             {
-                var property = properties.FirstOrDefault( p => StringComparer.OrdinalIgnoreCase.Equals( kv.Key, p.Name ) );
-                if( property != null )
+                try
                 {
-                    try
+                    var targetType = property.PropertyType;
+                    var pType = targetType.GetType();
+                    if( pType.IsGenericType && (pType.GetGenericTypeDefinition() == typeof( Nullable<> )) )
                     {
-                        var targetType = property.PropertyType;
-                        var pType = targetType.GetType();
-                        if( pType.IsGenericType && (pType.GetGenericTypeDefinition() == typeof( Nullable<> )) )
+                        if( kv.Value == null )
                         {
-                            if( kv.Value == null )
-                            {
-                                property.SetValue( info, null );
-                                continue;
-                            }
-                            targetType = Nullable.GetUnderlyingType( targetType );
-                            Throw.DebugAssert( targetType != null );
-                            pType = targetType.GetType();
+                            property.SetValue( info, null );
+                            continue;
                         }
-                        object? value;
-                        string? stringValue;
-                        if( pType.IsEnum && (stringValue = kv.Value as string) != null )
-                        {
-                            value = Enum.Parse( targetType, stringValue );
-                        }
-                        else value = Convert.ChangeType( kv.Value, targetType );
-                        property.SetValue( info, value );
+                        targetType = Nullable.GetUnderlyingType( targetType );
+                        Throw.DebugAssert( targetType != null );
+                        pType = targetType.GetType();
                     }
-                    catch( Exception ex )
+                    object? value;
+                    string? stringValue;
+                    if( pType.IsEnum && (stringValue = kv.Value as string) != null )
                     {
-                        throw new ArgumentException( $"Invalid payload. Unable to set '{property.Name}'. See inner exceptions for details.", nameof( payload ), ex );
+                        value = Enum.Parse( targetType, stringValue );
                     }
+                    else value = Convert.ChangeType( kv.Value, targetType );
+                    property.SetValue( info, value );
+                }
+                catch( Exception ex )
+                {
+                    throw new ArgumentException( $"Invalid payload. Unable to set '{property.Name}'. See inner exceptions for details.", nameof( payload ), ex );
                 }
             }
-            return info;
         }
-
+        return info;
     }
+
 }

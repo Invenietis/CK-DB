@@ -1,9 +1,8 @@
-﻿using NUnit.Framework;
+using NUnit.Framework;
 
-namespace CK.DB.Zone.Tests.FromActor
+namespace CK.DB.Zone.Tests.FromActor;
+
+[TestFixture]
+public class UserTests : CK.DB.Actor.Tests.UserTests
 {
-    [TestFixture]
-    public class UserTests : CK.DB.Actor.Tests.UserTests
-    {
-    }
 }
