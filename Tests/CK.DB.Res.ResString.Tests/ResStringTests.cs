@@ -1,9 +1,8 @@
 using CK.Core;
 using CK.SqlServer;
 using CK.Testing;
-using FluentAssertions;
+using Shouldly;
 using NUnit.Framework;
-using static CK.Testing.MonitorTestHelper;
 
 namespace CK.DB.Res.ResString.Tests;
 
@@ -18,13 +17,13 @@ public class ResStringTests
         {
             int resId = t.ResTable.Create( ctx );
             t.Database.ExecuteReader( "select * from CK.tResString where ResId = @0", resId )
-                .Rows.Should().BeEmpty();
+                .Rows.ShouldBeEmpty();
             t.SetString( ctx, resId, "Hello World!" );
             t.Database.ExecuteScalar( "select Value from CK.tResString where ResId = @0", resId )
-                .Should().Be( "Hello World!" );
+                .ShouldBe( "Hello World!" );
             t.SetString( ctx, resId, null );
             t.Database.ExecuteReader( "select * from CK.tResString where ResId = @0", resId )
-                .Rows.Should().BeEmpty();
+                .Rows.ShouldBeEmpty();
             t.SetString( ctx, resId, "Hello World!" );
             t.ResTable.Destroy( ctx, resId );
         }
@@ -36,9 +35,9 @@ public class ResStringTests
         var t = SharedEngine.Map.StObjs.Obtain<ResStringTable>();
         using( var ctx = new SqlStandardCallContext() )
         {
-            t.Invoking( sut => sut.SetString( ctx, -1, "No way" ) ).Should().Throw<SqlDetailedException>();
-            t.Invoking( sut => sut.SetString( ctx, 0, "No way" ) ).Should().Throw<SqlDetailedException>();
-            t.Invoking( sut => sut.SetString( ctx, 1, "Le Système" ) ).Should().NotThrow();
+            Util.Invokable( () => t.SetString( ctx, -1, "No way" ) ).ShouldThrow<SqlDetailedException>();
+            Util.Invokable( () => t.SetString( ctx, 0, "No way" ) ).ShouldThrow<SqlDetailedException>();
+            Util.Invokable( () => t.SetString( ctx, 1, "Le Système" ) ).ShouldNotThrow();
             t.SetString( ctx, 1, "System" );
         }
     }

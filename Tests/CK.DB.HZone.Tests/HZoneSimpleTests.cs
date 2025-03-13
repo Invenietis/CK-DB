@@ -4,9 +4,8 @@ using CK.SqlServer;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using FluentAssertions;
+using Shouldly;
 using CK.Testing;
-using static CK.Testing.MonitorTestHelper;
 
 namespace CK.DB.HZone.Tests;
 
@@ -17,7 +16,7 @@ public class HZoneSimpleTests
     public void CheckCKCoreInvariant()
     {
         SharedEngine.Map.StObjs.Obtain<SqlDefaultDatabase>().GetCKCoreInvariantsViolations()
-            .Rows.Should().BeEmpty();
+            .Rows.ShouldBeEmpty();
     }
 
     [Test]
@@ -39,16 +38,16 @@ public class HZoneSimpleTests
             allZones.Add( zone.CreateZone( ctx, 1, allZones[2] ) );
             int idGroup = group.CreateGroup( ctx, 1, allZones[3] );
 
-            zone.Invoking( sut => sut.AddUser( ctx, 1, allZones[3], idUser1, autoAddUserInParentZone: false ) ).Should().Throw<SqlDetailedException>();
+            Util.Invokable(() => zone.AddUser(ctx, 1, allZones[3], idUser1, autoAddUserInParentZone: false)).ShouldThrow<SqlDetailedException>();
             zone.AddUser( ctx, 1, allZones[3], idUser1, autoAddUserInParentZone: true );
 
-            group.Invoking( sut => sut.AddUser( ctx, 1, idGroup, idUser2, autoAddUserInZone: false ) ).Should().Throw<SqlDetailedException>();
+            Util.Invokable(() => group.AddUser(ctx, 1, idGroup, idUser2, autoAddUserInZone: false)).ShouldThrow<SqlDetailedException>();
             group.AddUser( ctx, 1, idGroup, idUser2, autoAddUserInZone: true );
 
             user.Database.ExecuteScalar( "select count(*) from CK.tActorProfile where ActorId <> GroupId and ActorId = @0", idUser1 )
-                .Should().Be( 4 );
+                .ShouldBe( 4 );
             user.Database.ExecuteScalar( "select count(*) from CK.tActorProfile where ActorId <> GroupId and ActorId = @0", idUser2 )
-                .Should().Be( 5 );
+                .ShouldBe( 5 );
 
             zone.DestroyZone( ctx, 1, allZones[0], forceDestroy: true );
         }
@@ -77,23 +76,23 @@ public class HZoneSimpleTests
             group.AddUser( ctx, 1, idGroup, idUser2, autoAddUserInZone: true );
 
             user.Database.ExecuteScalar( "select count(*) from CK.tActorProfile where ActorId <> GroupId and ActorId = @0", idUser1 )
-                .Should().Be( 4 );
+                .ShouldBe( 4 );
             user.Database.ExecuteScalar( "select count(*) from CK.tActorProfile where ActorId <> GroupId and ActorId = @0", idUser2 )
-                .Should().Be( 5 );
+                .ShouldBe( 5 );
 
             zone.RemoveUser( ctx, 1, allZones[2], idUser2 );
             user.Database.ExecuteScalar( "select count(*) from CK.tActorProfile where ActorId <> GroupId and ActorId = @0", idUser2 )
-                .Should().Be( 2 );
+                .ShouldBe( 2 );
             group.RemoveUser( ctx, 1, allZones[1], idUser2 );
             user.Database.ExecuteScalar( "select count(*) from CK.tActorProfile where ActorId <> GroupId and ActorId = @0", idUser2 )
-                .Should().Be( 1 );
+                .ShouldBe( 1 );
             group.RemoveUser( ctx, 1, allZones[0], idUser2 );
             user.Database.ExecuteScalar( "select count(*) from CK.tActorProfile where ActorId <> GroupId and ActorId = @0", idUser2 )
-                .Should().Be( 0 );
+                .ShouldBe( 0 );
 
             zone.RemoveUser( ctx, 1, allZones[0], idUser1 );
             user.Database.ExecuteScalar( "select count(*) from CK.tActorProfile where ActorId <> GroupId and ActorId = @0", idUser2 )
-                .Should().Be( 0 );
+                .ShouldBe( 0 );
 
             zone.DestroyZone( ctx, 1, allZones[0], forceDestroy: true );
         }
@@ -126,7 +125,7 @@ public class HZoneSimpleTests
             {
                 allGroups.Add( group.CreateGroup( ctx, 1, idZone ) );
             }
-            zone.Invoking( sut => sut.DestroyZone( ctx, 1, allZones[0], forceDestroy: false ) ).Should().Throw<SqlDetailedException>();
+            Util.Invokable(() => zone.DestroyZone(ctx, 1, allZones[0], forceDestroy: false)).ShouldThrow<SqlDetailedException>();
             zone.DestroyZone( ctx, 1, allZones[0], forceDestroy: true );
         }
     }
@@ -210,7 +209,7 @@ public class HZoneSimpleTests
             int idZone1 = zone.CreateZone( ctx, 1 );
             int idZone2 = zone.CreateZone( ctx, 1, idZone1 );
 
-            zone.Invoking( sut => sut.MoveZone( ctx, 1, idZone1, idZone2 ) ).Should().Throw<SqlDetailedException>();
+            Util.Invokable(() => zone.MoveZone(ctx, 1, idZone1, idZone2)).ShouldThrow<SqlDetailedException>();
         }
     }
 }

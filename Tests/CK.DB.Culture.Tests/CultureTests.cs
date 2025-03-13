@@ -4,8 +4,7 @@ using CK.Core;
 using CK.SqlServer;
 using NUnit.Framework;
 using System.Globalization;
-using FluentAssertions;
-using static CK.Testing.MonitorTestHelper;
+using Shouldly;
 using System.Collections.Generic;
 using CK.Testing;
 
@@ -22,29 +21,29 @@ public class CultureTests
         {
 
             p.Database.ExecuteScalar( "select count(*) from CK.tLCID where LCID in(9,12)" )
-                .Should().Be( 2 );
+                .ShouldBe( 2 );
             p.Database.ExecuteNonQuery( "update CK.tLCID set Name = @0, NativeName = @0, EnglishName = @0 where LCID = 9", "EN-ALTERED" )
-                .Should().Be( 1 );
+                .ShouldBe( 1 );
             p.Database.ExecuteNonQuery( "update CK.tLCID set Name = @0, NativeName = @0, EnglishName = @0 where LCID = 12", "FR-ALTERED" )
-                .Should().Be( 1 );
+                .ShouldBe( 1 );
 
             p.Register( ctx, 9, "en", "English", "English" );
             p.Database.ExecuteScalar( "select Name from CK.tLCID where LCID = 9" )
-                .Should().Be( "en" );
+                .ShouldBe( "en" );
             p.Database.ExecuteScalar( "select NativeName from CK.tLCID where LCID = 9" )
-                .Should().Be( "English" );
+                .ShouldBe( "English" );
             p.Database.ExecuteScalar( "select EnglishName from CK.tLCID where LCID = 9" )
-                .Should().Be( "English" );
+                .ShouldBe( "English" );
             p.Database.ExecuteScalar( "select Name from CK.tLCID where LCID = 12" )
-                .Should().Be( "FR-ALTERED" );
+                .ShouldBe( "FR-ALTERED" );
 
             p.Register( ctx, 12, "fr", "French", "Français" );
             p.Database.ExecuteScalar( "select Name from CK.tLCID where LCID = 12" )
-                .Should().Be( "fr" );
+                .ShouldBe( "fr" );
             p.Database.ExecuteScalar( "select NativeName from CK.tLCID where LCID = 12" )
-                .Should().Be( "Français" );
+                .ShouldBe( "Français" );
             p.Database.ExecuteScalar( "select EnglishName from CK.tLCID where LCID = 12" )
-                .Should().Be( "French" );
+                .ShouldBe( "French" );
         }
     }
 
@@ -58,25 +57,25 @@ public class CultureTests
             RestoreDatabaseToEnglishAndFrenchOnly( p );
 
             // We must find the "fr" and then "en".
-            var cultures = p.FindCultures( ctx, new[] { "nope", "FR", null, "az-not-yet", "EN-NIMP-X", "never" } );
-            cultures.Select( c => c.LCID ).Should().BeEquivalentTo( new[] { 12, 9 }, o => o.WithStrictOrdering() );
+            var cultures = p.FindCultures( ctx, ["nope", "FR", null!, "az-not-yet", "EN-NIMP-X", "never"] );
+            cultures.Select( c => c.LCID ).ShouldBe( [12, 9] );
 
             p.Register( ctx, 44, "az", "Azerbaijani", "Azərbaycan­ılı" );
             p.Register( ctx, 29740, "az-Cyrl", "Azerbaijani(Cyrillic)", "Азәрбајҹан дили" );
             p.Register( ctx, 2092, "az-Cyrl-AZ", "Azerbaijani(Cyrillic; Azerbaijan)", "Азәрбајҹан дили (Азәрбајҹан)" );
 
             // We must find the "fr", "az and then "en".
-            cultures = p.FindCultures( ctx, new[] { "nope", "FR", null, "az-not-yet", "EN-NIMP-X", "never" } );
-            cultures.Select( c => c.LCID ).Should().BeEquivalentTo( new[] { 12, 44, 9 }, o => o.WithStrictOrdering() );
+            cultures = p.FindCultures( ctx, ["nope", "FR", null!, "az-not-yet", "EN-NIMP-X", "never"] );
+            cultures.Select( c => c.LCID ).ShouldBe( [12, 44, 9] );
 
-            cultures = p.FindCultures( ctx, new[] { "nope", "FR", null, "az-Cyrl-AZ", "EN-NIMP-X", "never" } );
-            cultures.Select( c => c.LCID ).Should().BeEquivalentTo( new[] { 12, 2092, 9 }, o => o.WithStrictOrdering() );
+            cultures = p.FindCultures( ctx, ["nope", "FR", null!, "az-Cyrl-AZ", "EN-NIMP-X", "never"] );
+            cultures.Select( c => c.LCID ).ShouldBe( [12, 2092, 9] );
 
-            cultures = p.FindCultures( ctx, new[] { "AZ-Cyrl", "nope", "FR", null, "EN-NIMP-X", "never" } );
-            cultures.Select( c => c.LCID ).Should().BeEquivalentTo( new[] { 29740, 12, 9 }, o => o.WithStrictOrdering() );
+            cultures = p.FindCultures( ctx, ["AZ-Cyrl", "nope", "FR", null!, "EN-NIMP-X", "never"] );
+            cultures.Select( c => c.LCID ).ShouldBe( [29740, 12, 9] );
 
-            cultures = p.FindCultures( ctx, new[] { "az-Cyrl", "az", "az-Cyrl-AZ", "EN-NIMP-X", "FR" } );
-            cultures.Select( c => c.LCID ).Should().BeEquivalentTo( new[] { 29740, 44, 2092, 9, 12 }, o => o.WithStrictOrdering() );
+            cultures = p.FindCultures( ctx, ["az-Cyrl", "az", "az-Cyrl-AZ", "EN-NIMP-X", "FR"] );
+            cultures.Select( c => c.LCID ).ShouldBe( [29740, 44, 2092, 9, 12] );
         }
     }
 
@@ -98,23 +97,23 @@ public class CultureTests
             p.Register( ctx, 2092, "az-Cyrl-AZ", "Azerbaijani(Cyrillic; Azerbaijan)", "Азәрбајҹан дили (Азәрбајҹан)" );
 
             p.Database.ExecuteScalar( "select FallbacksLCID from CK.vXLCID where XLCID = 9" )
-                .Should().Be( "9,12,44,29740,2092" );
+                .ShouldBe( "9,12,44,29740,2092" );
             p.Database.ExecuteScalar( "select FallbacksLCID from CK.vXLCID where XLCID = 12" )
-                .Should().Be( "12,9,44,29740,2092" );
+                .ShouldBe( "12,9,44,29740,2092" );
 
             p.DestroyCulture( ctx, 2092 );
             p.Database.ExecuteScalar( "select FallbacksLCID from CK.vXLCID where XLCID = 9" )
-                .Should().Be( "9,12,44,29740" );
+                .ShouldBe( "9,12,44,29740" );
             p.Database.ExecuteScalar( "select FallbacksLCID from CK.vXLCID where XLCID = 12" )
-                .Should().Be( "12,9,44,29740" );
+                .ShouldBe( "12,9,44,29740" );
 
             p.DestroyCulture( ctx, 29740 );
             p.DestroyCulture( ctx, 44 );
 
             p.Database.ExecuteScalar( "select FallbacksLCID from CK.vXLCID where XLCID = 9" )
-                .Should().Be( "9,12" );
+                .ShouldBe( "9,12" );
             p.Database.ExecuteScalar( "select FallbacksLCID from CK.vXLCID where XLCID = 12" )
-                .Should().Be( "12,9" );
+                .ShouldBe( "12,9" );
         }
     }
 
@@ -135,8 +134,8 @@ public class CultureTests
         var p = SharedEngine.Map.StObjs.Obtain<Package>();
         using( var ctx = new SqlStandardCallContext() )
         {
-            p.Invoking( sut => sut.Register( ctx, 0, "xx", "XXX", "XXX" ) ).Should().Throw<ArgumentException>();
-            p.Invoking( sut => sut.Register( ctx, 0xFFFFF, "xx", "XXX", "XXX" ) ).Should().Throw<ArgumentException>();
+            Util.Invokable( () => p.Register( ctx, 0, "xx", "XXX", "XXX" ) ).ShouldThrow<ArgumentException>();
+            Util.Invokable(() => p.Register(ctx, 0xFFFFF, "xx", "XXX", "XXX")).ShouldThrow<ArgumentException>();
         }
     }
 

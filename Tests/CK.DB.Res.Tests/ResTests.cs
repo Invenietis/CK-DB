@@ -1,10 +1,9 @@
 using CK.Core;
 using CK.SqlServer;
 using CK.Testing;
-using FluentAssertions;
+using Shouldly;
 using NUnit.Framework;
 using System.Threading.Tasks;
-using static CK.Testing.MonitorTestHelper;
 
 namespace CK.DB.Res.Tests;
 
@@ -19,10 +18,10 @@ public class ResTests
         {
             int id = await r.CreateAsync( ctx );
             r.Database.ExecuteScalar( "select count(*) from CK.tRes where ResId = @0", id )
-                .Should().Be( 1 );
+                .ShouldBe( 1 );
             await r.DestroyAsync( ctx, id );
             r.Database.ExecuteScalar( "select count(*) from CK.tRes where ResId = @0", id )
-                .Should().Be( 0 );
+                .ShouldBe( 0 );
         }
     }
 }

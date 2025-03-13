@@ -1,10 +1,9 @@
 using CK.Core;
 using CK.SqlServer;
 using CK.Testing;
-using FluentAssertions;
+using Shouldly;
 using NUnit.Framework;
 using System;
-using static CK.Testing.MonitorTestHelper;
 
 namespace CK.DB.Res.ResName.Tests;
 
@@ -16,9 +15,9 @@ public class ResNameTests
     {
         var r = SharedEngine.Map.StObjs.Obtain<ResNameTable>();
         r.Database.ExecuteScalar( "select ResName from CK.vRes where ResId = 0" )
-            .Should().Be( "" );
+            .ShouldBe( "" );
         r.Database.ExecuteScalar( "select ResName from CK.vRes where ResId = 1" )
-            .Should().Be( "System" );
+            .ShouldBe( "System" );
     }
 
 
@@ -28,8 +27,8 @@ public class ResNameTests
         var p = SharedEngine.Map.StObjs.Obtain<Package>();
         using( var ctx = new SqlStandardCallContext() )
         {
-            p.Invoking( sut => sut.ResTable.Destroy( ctx, 0 ) ).Should().Throw<SqlDetailedException>();
-            p.Invoking( sut => sut.ResTable.Destroy( ctx, 1 ) ).Should().Throw<SqlDetailedException>();
+            Util.Invokable( () => p.ResTable.Destroy( ctx, 0 ) ).ShouldThrow<SqlDetailedException>();
+            Util.Invokable(() => p.ResTable.Destroy(ctx, 1)).ShouldThrow<SqlDetailedException>();
         }
     }
 
@@ -44,10 +43,10 @@ public class ResNameTests
             string resName2 = Guid.NewGuid().ToString();
             p.ResNameTable.CreateResName( ctx, resId, resName );
             // Creates where a name already exists.
-            p.Invoking( sut => sut.ResNameTable.CreateResName( ctx, resId, resName2 ) ).Should().Throw<SqlDetailedException>();
+            Util.Invokable(() => p.ResNameTable.CreateResName(ctx, resId, resName2)).ShouldThrow<SqlDetailedException>();
             // Creates with an already existing name.
             int resId2 = p.ResTable.Create( ctx );
-            p.Invoking( sut => sut.ResNameTable.CreateResName( ctx, resId2, resName ) ).Should().Throw<SqlDetailedException>();
+            Util.Invokable(() => p.ResNameTable.CreateResName(ctx, resId2, resName)).ShouldThrow<SqlDetailedException>();
             p.ResTable.Destroy( ctx, resId );
             p.ResTable.Destroy( ctx, resId2 );
         }
@@ -67,21 +66,21 @@ public class ResNameTests
 
             p.ResNameTable.Rename( ctx, n1, "Test.-Root-" );
             p.Database.ExecuteReader( "select * from CK.tResName where ResName like 'Test.Root%'" )
-                .Rows.Should().BeEmpty();
+                .Rows.ShouldBeEmpty();
             p.Database.ExecuteScalar( "select ResId from CK.tResName where ResName='Test.-Root-'" )
-                .Should().Be( n1 );
+                .ShouldBe( n1 );
             p.Database.ExecuteScalar( "select ResId from CK.tResName where ResName='Test.-Root-.1'" )
-                .Should().Be( n2 );
+                .ShouldBe( n2 );
             p.Database.ExecuteScalar( "select ResId from CK.tResName where ResName='Test.-Root-.1.1'" )
-                .Should().Be( n3 );
+                .ShouldBe( n3 );
 
             p.ResNameTable.Rename( ctx, n1, "Test.MovedTheRootOnly", withChildren: false );
             p.Database.ExecuteScalar( "select ResId from CK.tResName where ResName='Test.MovedTheRootOnly'" )
-                    .Should().Be( n1 );
+                    .ShouldBe( n1 );
             p.Database.ExecuteScalar( "select ResId from CK.tResName where ResName='Test.-Root-.1'" )
-                    .Should().Be( n2 );
+                    .ShouldBe( n2 );
             p.Database.ExecuteScalar( "select ResId from CK.tResName where ResName='Test.-Root-.1.1'" )
-                .Should().Be( n3 );
+                .ShouldBe( n3 );
         }
     }
 
@@ -99,21 +98,21 @@ public class ResNameTests
 
             p.ResNameTable.Rename( ctx, "Test.Root", "Test.-Root-" );
             p.Database.ExecuteReader( "select * from CK.tResName where ResName like 'Test.Root%'" )
-                .Rows.Should().BeEmpty();
+                .Rows.ShouldBeEmpty();
             p.Database.ExecuteScalar( "select ResId from CK.tResName where ResName='Test.-Root-'" )
-                .Should().Be( n1 );
+                .ShouldBe( n1 );
             p.Database.ExecuteScalar( "select ResId from CK.tResName where ResName='Test.-Root-.1'" )
-                .Should().Be( n2 );
+                .ShouldBe( n2 );
             p.Database.ExecuteScalar( "select ResId from CK.tResName where ResName='Test.-Root-.1.1'" )
-                .Should().Be( n3 );
+                .ShouldBe( n3 );
 
             p.ResNameTable.Rename( ctx, "Test.-Root-", "Test.MovedTheRootOnly", withChildren: false );
             p.Database.ExecuteScalar( "select ResId from CK.tResName where ResName='Test.MovedTheRootOnly'" )
-                    .Should().Be( n1 );
+                    .ShouldBe( n1 );
             p.Database.ExecuteScalar( "select ResId from CK.tResName where ResName='Test.-Root-.1'" )
-                    .Should().Be( n2 );
+                    .ShouldBe( n2 );
             p.Database.ExecuteScalar( "select ResId from CK.tResName where ResName='Test.-Root-.1.1'" )
-                .Should().Be( n3 );
+                .ShouldBe( n3 );
         }
     }
 
@@ -128,35 +127,35 @@ public class ResNameTests
             int n1 = p.ResNameTable.CreateWithResName( ctx, nameRoot + ".Test.Root" );
             int n2 = p.ResNameTable.CreateWithResName( ctx, nameRoot + ".Test.Root.1" );
             int n3 = p.ResNameTable.CreateWithResName( ctx, nameRoot + ".Test.Root.1.1" );
-            p.Database.ExecuteScalar( "select count(*) from CK.tResName where ResName like @0+'%'", nameRoot ).Should().Be( 3 );
+            p.Database.ExecuteScalar( "select count(*) from CK.tResName where ResName like @0+'%'", nameRoot ).ShouldBe( 3 );
 
             p.ResNameTable.DestroyByResName( ctx, nameRoot, withRoot: true, withChildren: true, resNameOnly: false );
-            p.Database.ExecuteScalar( "select count(*) from CK.tResName where ResName like @0 + '%'", nameRoot ).Should().Be( 0 );
-            p.Database.ExecuteScalar( "select count(*) from CK.tRes where ResId in (@0, @1, @2)", n1, n2, n3 ).Should().Be( 0 );
+            p.Database.ExecuteScalar( "select count(*) from CK.tResName where ResName like @0 + '%'", nameRoot ).ShouldBe( 0 );
+            p.Database.ExecuteScalar( "select count(*) from CK.tRes where ResId in (@0, @1, @2)", n1, n2, n3 ).ShouldBe( 0 );
 
             // Destroys root, keep children.
             n1 = p.ResNameTable.CreateWithResName( ctx, nameRoot + ".Test.Root" );
             n2 = p.ResNameTable.CreateWithResName( ctx, nameRoot + ".Test.Root.1" );
             n3 = p.ResNameTable.CreateWithResName( ctx, nameRoot + ".Test.Root.1.1" );
-            p.Database.ExecuteScalar( "select count(*) from CK.tResName where ResName like @0+'%'", nameRoot ).Should().Be( 3 );
+            p.Database.ExecuteScalar( "select count(*) from CK.tResName where ResName like @0+'%'", nameRoot ).ShouldBe( 3 );
 
             p.ResNameTable.DestroyByResName( ctx, nameRoot + ".Test.Root", withRoot: true, withChildren: false, resNameOnly: false );
-            p.Database.ExecuteScalar( "select count(*) from CK.tResName where ResName like @0+'%'", nameRoot ).Should().Be( 2 );
+            p.Database.ExecuteScalar( "select count(*) from CK.tResName where ResName like @0+'%'", nameRoot ).ShouldBe( 2 );
 
             p.ResNameTable.DestroyByResName( ctx, nameRoot + ".Test.Root", withRoot: true, withChildren: true, resNameOnly: false );
-            p.Database.ExecuteScalar( "select count(*) from CK.tResName where ResName like @0+'%'", nameRoot ).Should().Be( 0 );
+            p.Database.ExecuteScalar( "select count(*) from CK.tResName where ResName like @0+'%'", nameRoot ).ShouldBe( 0 );
 
             // Destroys children but keep the root.
             n1 = p.ResNameTable.CreateWithResName( ctx, nameRoot + ".Test.Root" );
             n2 = p.ResNameTable.CreateWithResName( ctx, nameRoot + ".Test.Root.1" );
             n3 = p.ResNameTable.CreateWithResName( ctx, nameRoot + ".Test.Root.1.1" );
-            p.Database.ExecuteScalar( "select count(*) from CK.tResName where ResName like @0+'%'", nameRoot ).Should().Be( 3 );
+            p.Database.ExecuteScalar( "select count(*) from CK.tResName where ResName like @0+'%'", nameRoot ).ShouldBe( 3 );
 
             p.ResNameTable.DestroyByResName( ctx, nameRoot + ".Test.Root", withRoot: false, withChildren: true, resNameOnly: false );
-            p.Database.ExecuteScalar( "select count(*) from CK.tResName where ResName like @0 + '%'", nameRoot ).Should().Be( 1 );
+            p.Database.ExecuteScalar( "select count(*) from CK.tResName where ResName like @0 + '%'", nameRoot ).ShouldBe( 1 );
 
             p.ResNameTable.DestroyByResName( ctx, nameRoot + ".Test.Root", withRoot: true, withChildren: false, resNameOnly: false );
-            p.Database.ExecuteScalar( "select count(*) from CK.tResName where ResName like @0 + '%'", nameRoot ).Should().Be( 0 );
+            p.Database.ExecuteScalar( "select count(*) from CK.tResName where ResName like @0 + '%'", nameRoot ).ShouldBe( 0 );
 
         }
     }

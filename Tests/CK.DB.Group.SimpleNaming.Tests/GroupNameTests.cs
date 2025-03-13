@@ -2,12 +2,11 @@ using CK.Core;
 using CK.DB.Actor;
 using CK.SqlServer;
 using CK.Testing;
-using FluentAssertions;
+using Shouldly;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using static CK.Testing.MonitorTestHelper;
 
 namespace CK.DB.Group.SimpleNaming.Tests;
 
@@ -25,16 +24,16 @@ public class GroupNameTests
             string uniquifierName = Guid.NewGuid().ToString();
             int groupId = g.CreateGroup( ctx, 1 );
             string name = gN.GroupRename( ctx, 1, groupId, uniquifierName + "Group" );
-            name.Should().Be( uniquifierName + "Group" );
+            name.ShouldBe( uniquifierName + "Group" );
             g.Database.ExecuteScalar( "select GroupName from CK.tGroup where GroupId = @0", groupId )
-                .Should().Be( name );
+                .ShouldBe( name );
             name = gN.GroupRename( ctx, 1, groupId, uniquifierName + "Another Group" );
-            name.Should().Be( uniquifierName + "Another Group" );
+            name.ShouldBe( uniquifierName + "Another Group" );
             g.Database.ExecuteScalar( "select GroupName from CK.tGroup where GroupId = @0", groupId )
-                .Should().Be( name );
+                .ShouldBe( name );
             g.DestroyGroup( ctx, 1, groupId );
             g.Database.ExecuteReader( "select * from CK.tGroup where GroupId = @0", groupId )
-                .Rows.Should().BeEmpty();
+                .Rows.ShouldBeEmpty();
         }
     }
 
@@ -50,20 +49,20 @@ public class GroupNameTests
             string name;
             int g1 = g.CreateGroup( ctx, 1 );
             name = gN.GroupRename( ctx, 1, g1, uniquifierName );
-            name.Should().Be( uniquifierName );
+            name.ShouldBe( uniquifierName );
             int g2 = g.CreateGroup( ctx, 1 );
             name = gN.GroupRename( ctx, 1, g2, uniquifierName );
-            name.Should().Be( uniquifierName + " (1)" );
+            name.ShouldBe( uniquifierName + " (1)" );
             int g3 = g.CreateGroup( ctx, 1 );
             name = gN.GroupRename( ctx, 1, g3, uniquifierName );
-            name.Should().Be( uniquifierName + " (2)" );
+            name.ShouldBe( uniquifierName + " (2)" );
 
             name = gN.GroupRename( ctx, 1, g3, uniquifierName );
-            name.Should().Be( uniquifierName + " (2)", "No change: found the (2) again." );
+            name.ShouldBe( uniquifierName + " (2)", "No change: found the (2) again." );
 
             g.DestroyGroup( ctx, 1, g2 );
             name = gN.GroupRename( ctx, 1, g3, uniquifierName );
-            name.Should().Be( uniquifierName + " (1)", "The (1) is found." );
+            name.ShouldBe( uniquifierName + " (1)", "The (1) is found." );
 
             g.DestroyGroup( ctx, 1, g1 );
             g.DestroyGroup( ctx, 1, g3 );
@@ -85,25 +84,25 @@ public class GroupNameTests
             {
                 groups[i] = g.CreateGroup( ctx, 1 );
                 newName = gN.GroupRename( ctx, 1, groups[i], names[i] );
-                newName.Should().Be( names[i] );
+                newName.ShouldBe( names[i] );
             }
 
             // Renaming all of them like the first one:
             for( int i = 1; i < names.Length; ++i )
             {
                 newName = gN.GroupRename( ctx, 1, groups[i], names[0] );
-                newName.Should().Be( names[0] + " (" + i + ")" );
+                newName.ShouldBe( names[0] + " (" + i + ")" );
             }
 
             // Renaming the first one with no change:
             newName = gN.GroupRename( ctx, 1, groups[0], names[0] );
-            newName.Should().Be( names[0] );
+            newName.ShouldBe( names[0] );
 
             // Renaming all of them in the opposite order: no clash.
             for( int i = 0; i < names.Length; ++i )
             {
                 newName = gN.GroupRename( ctx, 1, groups[i], names[names.Length - i - 1] );
-                newName.Should().Be( names[names.Length - i - 1] );
+                newName.ShouldBe( names[names.Length - i - 1] );
             }
         }
     }
@@ -122,15 +121,15 @@ public class GroupNameTests
 
             string newName;
             newName = gN.CheckUniqueNameForNewGroup( ctx, theGroupName );
-            newName.Should().Be( theGroupName + " (1)" );
+            newName.ShouldBe( theGroupName + " (1)" );
 
             newName = gN.CheckUniqueName( ctx, groupId, theGroupName );
-            newName.Should().Be( theGroupName );
+            newName.ShouldBe( theGroupName );
 
             g.DestroyGroup( ctx, 1, groupId );
 
             newName = gN.CheckUniqueNameForNewGroup( ctx, theGroupName );
-            newName.Should().Be( theGroupName );
+            newName.ShouldBe( theGroupName );
         }
     }
 
@@ -150,12 +149,12 @@ public class GroupNameTests
 
             string newName;
             newName = gN.CheckUniqueNameForNewGroup( ctx, theGroupName );
-            newName.Should().Be( theConflictNameRoot + " (1)" );
+            newName.ShouldBe( theConflictNameRoot + " (1)" );
 
             g.DestroyGroup( ctx, 1, groupId );
 
             newName = gN.CheckUniqueNameForNewGroup( ctx, theGroupName );
-            newName.Should().Be( theGroupName );
+            newName.ShouldBe( theGroupName );
         }
     }
 
@@ -169,19 +168,19 @@ public class GroupNameTests
         {
             string theGroupName = Guid.NewGuid().ToString();
             int idMain = g.CreateGroup( ctx, 1 );
-            gN.GroupRename( ctx, 1, idMain, theGroupName ).Should().Be( theGroupName );
+            gN.GroupRename( ctx, 1, idMain, theGroupName ).ShouldBe( theGroupName );
             var others = new List<int>();
             for( int i = 0; i < gN.MaxClashNumber; ++i )
             {
                 int id = g.CreateGroup( ctx, 1 );
                 string corrected = gN.GroupRename( ctx, 1, id, theGroupName );
-                corrected.Should().NotBe( theGroupName );
+                corrected.ShouldNotBe( theGroupName );
                 others.Add( id );
             }
             string clash = gN.CheckUniqueNameForNewGroup( ctx, theGroupName );
-            clash.Should().BeNull();
+            clash.ShouldBeNull();
             int idTooMuch = g.CreateGroup( ctx, 1 );
-            gN.Invoking( sut => sut.GroupRename( ctx, 1, idTooMuch, theGroupName ) ).Should().Throw<SqlDetailedException>();
+            Util.Invokable(() => gN.GroupRename(ctx, 1, idTooMuch, theGroupName)).ShouldThrow<SqlDetailedException>();
 
         }
     }

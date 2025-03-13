@@ -4,10 +4,9 @@ using System.Diagnostics;
 using NUnit.Framework;
 using CK.SqlServer;
 using CK.Core;
-using FluentAssertions;
+using Shouldly;
 using Microsoft.Data.SqlClient;
 using CK.Testing;
-using static CK.Testing.MonitorTestHelper;
 
 namespace CK.DB.Actor.Tests;
 
@@ -23,12 +22,12 @@ public class GroupTests
             int groupId = g.CreateGroup( ctx, 1 );
             Assert.That( groupId, Is.GreaterThan( 1 ) );
             g.Database.ExecuteScalar( "select GroupId from CK.tGroup where GroupId = @0", groupId )
-                .Should().Be( groupId );
+                .ShouldBe( groupId );
 
             g.DestroyGroup( ctx, 1, groupId );
 
             g.Database.ExecuteReader( "select * from CK.tGroup where GroupId = @0", groupId )
-                .Rows.Should().BeEmpty();
+                .Rows.ShouldBeEmpty();
         }
     }
 
@@ -38,7 +37,7 @@ public class GroupTests
         var g = SharedEngine.Map.StObjs.Obtain<GroupTable>();
         using( var ctx = new SqlStandardCallContext() )
         {
-            g.Invoking( sut => sut.CreateGroup( ctx, 0 ) ).Should().Throw<SqlDetailedException>();
+            Util.Invokable( () => g.CreateGroup( ctx, 0 ) ).ShouldThrow<SqlDetailedException>();
         }
     }
 
@@ -49,7 +48,7 @@ public class GroupTests
         using( var ctx = new SqlStandardCallContext() )
         {
             int groupId = g.CreateGroup( ctx, 1 );
-            g.Invoking( sut => sut.DestroyGroup( ctx, 0, groupId ) ).Should().Throw<SqlDetailedException>();
+            Util.Invokable(() => g.DestroyGroup(ctx, 0, groupId)).ShouldThrow<SqlDetailedException>();
             g.DestroyGroup( ctx, 1, groupId );
         }
     }
@@ -68,15 +67,15 @@ public class GroupTests
 
             g.AddUser( ctx, 1, groupId, userId );
 
-            g.Invoking( sut => sut.DestroyGroup( ctx, 1, groupId ) ).Should().Throw<SqlDetailedException>();
+            Util.Invokable(() => g.DestroyGroup(ctx, 1, groupId)).ShouldThrow<SqlDetailedException>();
 
             u.DestroyUser( ctx, 1, userId );
             g.DestroyGroup( ctx, 1, groupId );
 
             g.Database.ExecuteReader( "select * from CK.tUser where UserId = @0", userId )
-                .Rows.Should().BeEmpty();
+                .Rows.ShouldBeEmpty();
             g.Database.ExecuteReader( "select * from CK.tGroup where GroupId = @0", groupId )
-                .Rows.Should().BeEmpty();
+                .Rows.ShouldBeEmpty();
 
         }
     }
@@ -99,9 +98,9 @@ public class GroupTests
 
             u.DestroyUser( ctx, 1, userId );
             g.Database.ExecuteReader( "select * from CK.tUser where UserId = @0", userId )
-                .Rows.Should().BeEmpty();
+                .Rows.ShouldBeEmpty();
             g.Database.ExecuteReader( "select * from CK.tGroup where GroupId = @0", groupId )
-                .Rows.Should().BeEmpty();
+                .Rows.ShouldBeEmpty();
         }
     }
 
@@ -122,9 +121,9 @@ public class GroupTests
 
             u.DestroyUser( ctx, 1, userId );
             g.Database.ExecuteReader( "select * from CK.tActorProfile where ActorId = @0", userId )
-                .Rows.Should().BeEmpty();
+                .Rows.ShouldBeEmpty();
             g.Database.ExecuteReader( "select * from CK.tUser where UserId = @0", userId )
-                .Rows.Should().BeEmpty();
+                .Rows.ShouldBeEmpty();
 
 
             g.DestroyGroup( ctx, 1, groupId1 );
@@ -144,13 +143,13 @@ public class GroupTests
             userId = u.CreateUser( ctx, 1, Guid.NewGuid().ToString() );
             Assert.DoesNotThrow( () => g.AddUser( ctx, 1, 1, userId ) );
             g.Database.ExecuteScalar( "select count(*) from CK.tActorProfile where ActorId = @0 and GroupId <> @0", userId )
-                .Should().Be( 1 );
+                .ShouldBe( 1 );
             g.RemoveUser( ctx, 1, 1, userId );
             g.Database.ExecuteScalar( "select count(*) from CK.tActorProfile where ActorId = @0 and GroupId <> @0", userId )
-                .Should().Be( 0 );
+                .ShouldBe( 0 );
             g.AddUser( ctx, 1, 1, userId );
             g.Database.ExecuteScalar( "select count(*) from CK.tActorProfile where ActorId = @0 and GroupId <> @0", userId )
-                .Should().Be( 1 );
+                .ShouldBe( 1 );
         }
         int userId2;
         int anotherUserId;
@@ -159,24 +158,24 @@ public class GroupTests
             userId2 = u.CreateUser( ctx, 1, Guid.NewGuid().ToString() );
             g.AddUser( ctx, 1, 1, userId2 );
             g.Database.ExecuteScalar( "select count(*) from CK.tActorProfile where ActorId = @0 and GroupId <> @0", userId2 )
-                .Should().Be( 1 );
+                .ShouldBe( 1 );
             g.RemoveUser( ctx, 1, 1, userId2 );
             g.Database.ExecuteScalar( "select count(*) from CK.tActorProfile where ActorId = @0 and GroupId <> @0", userId2 )
-                .Should().Be( 0 );
+                .ShouldBe( 0 );
             anotherUserId = u.CreateUser( ctx, 1, Guid.NewGuid().ToString() );
         }
         // Using ActorId = userId2.
         using( var ctx = new SqlStandardCallContext() )
         {
-            g.Invoking( sut => sut.RemoveUser( ctx, userId2, 1, userId ) ).Should().Throw<SqlDetailedException>();
+            Util.Invokable(() => g.RemoveUser(ctx, userId2, 1, userId)).ShouldThrow<SqlDetailedException>();
             g.Database.ExecuteScalar( "select count(*) from CK.tActorProfile where ActorId = @0 and GroupId <> @0", userId )
-                .Should().Be( 1 );
+                .ShouldBe( 1 );
 
-            g.Invoking( sut => sut.AddUser( ctx, userId2, 1, anotherUserId ) ).Should().Throw<SqlDetailedException>();
+            Util.Invokable(() => g.AddUser(ctx, userId2, 1, anotherUserId)).ShouldThrow<SqlDetailedException>();
             g.Database.ExecuteScalar( "select count(*) from CK.tActorProfile where ActorId = @0 and GroupId <> @0", anotherUserId )
-                .Should().Be( 0 );
+                .ShouldBe( 0 );
 
-            g.Invoking( sut => sut.RemoveAllUsers( ctx, userId2, 1 ) ).Should().Throw<SqlDetailedException>();
+            Util.Invokable(() => g.RemoveAllUsers(ctx, userId2, 1)).ShouldThrow<SqlDetailedException>();
         }
 
         using( var ctx = new SqlStandardCallContext() )
@@ -208,11 +207,10 @@ public class GroupTests
             actorTable.Database.ExecuteNonQuery( cmd );
             var actorIdResult = Convert.ToInt32( cmd.Parameters["@ActorIdResult"].Value );
 
-            groupTable.Invoking( sut => sut.AddUser( context, 1, groupId, actorIdResult ) )
-                      .Should()
-                      .Throw<SqlDetailedException>()
-                      .WithInnerException<SqlException>()
-                      .WithMessage( "User.NotAUser" );
+            Util.Invokable( () => groupTable.AddUser( context, 1, groupId, actorIdResult ) )
+                      .ShouldThrow<SqlDetailedException>()
+                      .InnerException.ShouldBeOfType<SqlException>()
+                      .Message.ShouldBe( "User.NotAUser" );
         }
     }
 

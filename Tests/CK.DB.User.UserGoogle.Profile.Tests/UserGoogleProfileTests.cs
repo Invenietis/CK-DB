@@ -2,10 +2,9 @@ using CK.Core;
 using CK.DB.Actor;
 using CK.SqlServer;
 using CK.Testing;
-using FluentAssertions;
+using Shouldly;
 using NUnit.Framework;
 using System;
-using static CK.Testing.MonitorTestHelper;
 
 namespace CK.DB.User.UserGoogle.Profile.Tests;
 
@@ -28,19 +27,19 @@ public class UserGoogleEMailTests
             info.LastName = "Einstein";
             u.CreateOrUpdateGoogleUser( ctx, 1, idU, info );
             string rawSelect = $"select FirstName collate Latin1_General_BIN2+'|'+LastName  collate Latin1_General_BIN2+'|'+UserName  collate Latin1_General_BIN2+'|'+PictureUrl  collate Latin1_General_BIN2 from CK.tUserGoogle where UserId={idU}";
-            u.Database.ExecuteScalar( rawSelect ).Should().Be( "Albert|Einstein||" );
+            u.Database.ExecuteScalar( rawSelect ).ShouldBe( "Albert|Einstein||" );
             info.FirstName = null;
             info.LastName = null;
             info.UserName = "Bebert";
             info.PictureUrl = "url";
             u.CreateOrUpdateGoogleUser( ctx, 1, idU, info );
-            u.Database.ExecuteScalar( rawSelect ).Should().Be( "Albert|Einstein|Bebert|url" );
+            u.Database.ExecuteScalar( rawSelect ).ShouldBe( "Albert|Einstein|Bebert|url" );
 
             info = (Profile.IUserGoogleInfo)u.FindKnownUserInfo( ctx, googleAccountId ).Info;
-            info.FirstName.Should().Be( "Albert" );
-            info.LastName.Should().Be( "Einstein" );
-            info.UserName.Should().Be( "Bebert" );
-            info.PictureUrl.Should().Be( "url" );
+            info.FirstName.ShouldBe( "Albert" );
+            info.LastName.ShouldBe( "Einstein" );
+            info.UserName.ShouldBe( "Bebert" );
+            info.PictureUrl.ShouldBe( "url" );
         }
     }
 

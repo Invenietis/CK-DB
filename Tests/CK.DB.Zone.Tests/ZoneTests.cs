@@ -3,8 +3,7 @@ using CK.Core;
 using CK.DB.Actor;
 using CK.SqlServer;
 using NUnit.Framework;
-using FluentAssertions;
-using static CK.Testing.MonitorTestHelper;
+using Shouldly;
 using CK.Testing;
 
 namespace CK.DB.Zone.Tests;
@@ -16,7 +15,7 @@ public class ZoneTests
     public void CheckInvariants()
     {
         SharedEngine.Map.StObjs.Obtain<SqlDefaultDatabase>().GetCKCoreInvariantsViolations()
-            .Rows.Should().BeEmpty();
+            .Rows.ShouldBeEmpty();
     }
 
     [Test]
@@ -25,8 +24,8 @@ public class ZoneTests
         var t = SharedEngine.Map.StObjs.Obtain<ZoneTable>();
         using( var ctx = new SqlStandardCallContext() )
         {
-            t.Invoking( sut => sut.DestroyZone( ctx, 1, 0 ) ).Should().Throw<SqlDetailedException>();
-            t.Invoking( sut => sut.DestroyZone( ctx, 1, 1 ) ).Should().Throw<SqlDetailedException>();
+            Util.Invokable( () => t.DestroyZone( ctx, 1, 0 ) ).ShouldThrow<SqlDetailedException>();
+            Util.Invokable( () => t.DestroyZone( ctx, 1, 1 ) ).ShouldThrow<SqlDetailedException>();
         }
     }
 
@@ -39,10 +38,10 @@ public class ZoneTests
             int zoneId = t.CreateZone( ctx, 1 );
             Assert.That( zoneId, Is.GreaterThan( 1 ) );
             t.Database.ExecuteScalar( "select IsZone from CK.vGroup where GroupId=@0", zoneId )
-                .Should().Be( true );
+                .ShouldBe( true );
             t.DestroyZone( ctx, 1, zoneId );
             t.Database.ExecuteReader( "select * from CK.tZone where ZoneId=@0", zoneId )
-                .Rows.Should().BeEmpty();
+                .Rows.ShouldBeEmpty();
         }
     }
 
@@ -68,9 +67,9 @@ public class ZoneTests
             t.DestroyZone( ctx, 1, zoneId, true );
 
             t.Database.ExecuteReader( "select * from CK.tGroup where ZoneId=@0", zoneId )
-                .Rows.Should().BeEmpty();
+                .Rows.ShouldBeEmpty();
             t.Database.ExecuteReader( "select * from CK.tZone where ZoneId=@0", zoneId )
-                .Rows.Should().BeEmpty();
+                .Rows.ShouldBeEmpty();
         }
     }
 
@@ -80,10 +79,10 @@ public class ZoneTests
         var p = SharedEngine.Map.StObjs.Obtain<Zone.Package>();
         using( var ctx = new SqlStandardCallContext() )
         {
-            p.Invoking( sut => sut.ZoneTable.CreateZone( ctx, 0 ) ).Should().Throw<SqlDetailedException>();
+            Util.Invokable( () => p.ZoneTable.CreateZone( ctx, 0 ) ).ShouldThrow<SqlDetailedException>();
 
             int zoneId = p.ZoneTable.CreateZone( ctx, 1 );
-            p.Invoking( sut => sut.ZoneTable.DestroyZone( ctx, 0, zoneId ) ).Should().Throw<SqlDetailedException>();
+            Util.Invokable( () => p.ZoneTable.DestroyZone( ctx, 0, zoneId ) ).ShouldThrow<SqlDetailedException>();
             p.ZoneTable.DestroyZone( ctx, 1, zoneId );
         }
     }
@@ -98,13 +97,13 @@ public class ZoneTests
             int userId = p.UserTable.CreateUser( ctx, 1, Guid.NewGuid().ToString() );
             int groupId = p.GroupTable.CreateGroup( ctx, 1, zoneId );
 
-            p.Invoking( sut => sut.GroupTable.AddUser( ctx, 1, groupId, userId ) ).Should().Throw<SqlDetailedException>();
+            Util.Invokable( () => p.GroupTable.AddUser( ctx, 1, groupId, userId ) ).ShouldThrow<SqlDetailedException>();
 
-            p.Invoking( sut => sut.ZoneTable.AddUser( ctx, 1, zoneId, userId ) ).Should().NotThrow( "Adding the user to the zone." );
-            p.Invoking( sut => sut.GroupTable.AddUser( ctx, 1, groupId, userId ) ).Should().NotThrow( "Adding the user to group: now it works." );
+            Util.Invokable( () => p.ZoneTable.AddUser( ctx, 1, zoneId, userId ) ).ShouldNotThrow( "Adding the user to the zone." );
+            Util.Invokable( () => p.GroupTable.AddUser( ctx, 1, groupId, userId ) ).ShouldNotThrow( "Adding the user to group: now it works." );
 
-            p.Invoking( sut => sut.GroupTable.AddUser( ctx, 1, groupId, userId ) ).Should().NotThrow( "If the user already exists in the zone, it is okay." );
-            p.Invoking( sut => sut.ZoneTable.AddUser( ctx, 1, zoneId, userId ) ).Should().NotThrow( "Just like Groups: adding an already existing user to a Zone is okay." );
+            Util.Invokable( () => p.GroupTable.AddUser( ctx, 1, groupId, userId ) ).ShouldNotThrow( "If the user already exists in the zone, it is okay." );
+            Util.Invokable( () => p.ZoneTable.AddUser( ctx, 1, zoneId, userId ) ).ShouldNotThrow( "Just like Groups: adding an already existing user to a Zone is okay." );
 
             p.ZoneTable.DestroyZone( ctx, 1, zoneId, true );
         }
@@ -119,13 +118,13 @@ public class ZoneTests
             int zoneId = p.ZoneTable.CreateZone( ctx, 1 );
             int groupId = p.GroupTable.CreateGroup( ctx, 1, zoneId );
 
-            p.Invoking( sut => sut.ZoneTable.DestroyZone( ctx, 1, zoneId ) ).Should().Throw<SqlDetailedException>();
+            Util.Invokable( () => p.ZoneTable.DestroyZone( ctx, 1, zoneId ) ).ShouldThrow<SqlDetailedException>();
 
             p.GroupTable.DestroyGroup( ctx, 1, groupId );
             p.ZoneTable.DestroyZone( ctx, 1, zoneId );
 
             p.Database.ExecuteReader( "select * from CK.tZone where ZoneId=@0", zoneId )
-                .Rows.Should().BeEmpty();
+                .Rows.ShouldBeEmpty();
         }
     }
 
@@ -145,12 +144,12 @@ public class ZoneTests
             p.GroupTable.AddUser( ctx, 1, groupId2, userId );
 
             p.Database.ExecuteScalar( "select GroupCount = count(*)-1 from CK.tActorProfile where ActorId = @0", userId )
-                .Should().Be( 3 );
+                .ShouldBe( 3 );
 
             p.ZoneTable.RemoveUser( ctx, 1, zoneId, userId );
 
             p.Database.ExecuteScalar( "select GroupCount = count(*)-1 from CK.tActorProfile where ActorId = @0", userId )
-                .Should().Be( 0 );
+                .ShouldBe( 0 );
 
             p.GroupTable.DestroyGroup( ctx, 1, groupId1 );
             p.GroupTable.DestroyGroup( ctx, 1, groupId2 );
@@ -166,7 +165,7 @@ public class ZoneTests
         var g = map.StObjs.Obtain<GroupTable>();
         using( var ctx = new SqlStandardCallContext() )
         {
-            g.Invoking( sut => sut.CreateGroup( ctx, 1, 1 ) ).Should().Throw<SqlDetailedException>();
+            Util.Invokable( () => g.CreateGroup( ctx, 1, 1 ) ).ShouldThrow<SqlDetailedException>();
         }
     }
 
@@ -183,19 +182,19 @@ public class ZoneTests
             int idZone2 = z.CreateZone( ctx, 1 );
 
             g.Database.ExecuteScalar( "select ZoneId from CK.vGroup where GroupId=@0", idGroup )
-                .Should().Be( 0 );
+                .ShouldBe( 0 );
 
             g.MoveGroup( ctx, 1, idGroup, idZone1 );
             g.Database.ExecuteScalar( "select ZoneId from CK.vGroup where GroupId=@0", idGroup )
-                .Should().Be( idZone1 );
+                .ShouldBe( idZone1 );
 
             g.MoveGroup( ctx, 1, idGroup, idZone2 );
             g.Database.ExecuteScalar( "select ZoneId from CK.vGroup where GroupId=@0", idGroup )
-                .Should().Be( idZone2 );
+                .ShouldBe( idZone2 );
 
             g.MoveGroup( ctx, 1, idGroup, 0 );
             g.Database.ExecuteScalar( "select ZoneId from CK.vGroup where GroupId=@0", idGroup )
-                .Should().Be( 0 );
+                .ShouldBe( 0 );
             g.DestroyGroup( ctx, 1, idGroup );
             z.DestroyZone( ctx, 1, idZone1 );
             z.DestroyZone( ctx, 1, idZone2 );
@@ -222,19 +221,19 @@ public class ZoneTests
             g.MoveGroup( ctx, 1, idGroup, idZoneOK );
             // User is in the Group and in the ZoneOK.
             u.Database.ExecuteScalar( $"select ActorId from CK.tActorProfile where GroupId = {idGroup} and ActorId = {idUser}" )
-                 .Should().Be( idUser );
+                 .ShouldBe( idUser );
             u.Database.ExecuteScalar( $"select ActorId from CK.tActorProfile where GroupId = {idZoneOK} and ActorId = {idUser}" )
-                .Should().Be( idUser );
+                .ShouldBe( idUser );
 
             // This does not: ZoneEmpty does not contain the user.
             // This uses the default option: GroupMoveOption.None.
-            g.Invoking( sut => sut.MoveGroup( ctx, 1, idGroup, idZoneEmpty ) ).Should().Throw<SqlDetailedException>();
+            Util.Invokable( () => g.MoveGroup( ctx, 1, idGroup, idZoneEmpty ) ).ShouldThrow<SqlDetailedException>();
             // User is still in the Group.
             u.Database.ExecuteScalar( $"select ActorId from CK.tActorProfile where GroupId = {idGroup} and ActorId = {idUser}" )
-                .Should().Be( idUser );
+                .ShouldBe( idUser );
             // ...and still not in the ZoneEmpty.
             u.Database.ExecuteReader( $"select ActorId from CK.tActorProfile where GroupId = {idZoneEmpty} and ActorId = {idUser}" )
-                .Rows.Should().BeEmpty();
+                .Rows.ShouldBeEmpty();
         }
     }
 
@@ -258,19 +257,19 @@ public class ZoneTests
             g.MoveGroup( ctx, 1, idGroup, idZoneOK, GroupMoveOption.Intersect );
             // User is in the Group and in the ZoneOK.
             u.Database.ExecuteScalar( $"select ActorId from CK.tActorProfile where GroupId = {idGroup} and ActorId = {idUser}" )
-                .Should().Be( idUser );
+                .ShouldBe( idUser );
             u.Database.ExecuteScalar( $"select ActorId from CK.tActorProfile where GroupId = {idZoneOK} and ActorId = {idUser}" )
-                .Should().Be( idUser );
+                .ShouldBe( idUser );
 
             // This does work... But the user is removed from the group
             // to preserve the 'Group.UserNotInZone' invariant.
             g.MoveGroup( ctx, 1, idGroup, idZoneEmpty, GroupMoveOption.Intersect );
             // User is no more in the Group: it has been removed.
             u.Database.ExecuteReader( $"select ActorId from CK.tActorProfile where GroupId = {idGroup} and ActorId = {idUser}" )
-                .Rows.Should().BeEmpty();
+                .Rows.ShouldBeEmpty();
             // ...and still not in the ZoneEmpty.
             u.Database.ExecuteReader( $"select ActorId from CK.tActorProfile where GroupId = {idZoneEmpty} and ActorId = {idUser}" )
-                .Rows.Should().BeEmpty();
+                .Rows.ShouldBeEmpty();
         }
     }
 
@@ -294,19 +293,19 @@ public class ZoneTests
             g.MoveGroup( ctx, 1, idGroup, idZoneOK, GroupMoveOption.AutoUserRegistration );
             // User is in the Group and in the ZoneOK.
             u.Database.ExecuteScalar( $"select ActorId from CK.tActorProfile where GroupId = {idGroup} and ActorId = {idUser}" )
-                .Should().Be( idUser );
+                .ShouldBe( idUser );
             u.Database.ExecuteScalar( $"select ActorId from CK.tActorProfile where GroupId = {idZoneOK} and ActorId = {idUser}" )
-                .Should().Be( idUser );
+                .ShouldBe( idUser );
 
             // This does work: and the user is automatically added to the target Zone!
             // (the 'Group.UserNotInZone' invariant is preserved).
             g.MoveGroup( ctx, 1, idGroup, idZoneEmpty, GroupMoveOption.AutoUserRegistration );
             // User is no more in the Group: it has been removed.
             u.Database.ExecuteScalar( $"select ActorId from CK.tActorProfile where GroupId = {idGroup} and ActorId = {idUser}" )
-                .Should().Be( idUser );
+                .ShouldBe( idUser );
             // ...and still not in the ZoneEmpty.
             u.Database.ExecuteScalar( $"select ActorId from CK.tActorProfile where GroupId = {idZoneEmpty} and ActorId = {idUser}" )
-                .Should().Be( idUser );
+                .ShouldBe( idUser );
         }
     }
 }
