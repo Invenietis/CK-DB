@@ -1,10 +1,9 @@
 using CK.Core;
 using CK.SqlServer;
 using CK.Testing;
-using FluentAssertions;
+using Shouldly;
 using NUnit.Framework;
 using System;
-using static CK.Testing.MonitorTestHelper;
 
 namespace CK.DB.Zone.SimpleNaming.Tests;
 
@@ -28,9 +27,9 @@ public class ZoneNameTests
             int idGIn0 = g.CreateGroup( ctx, 1 );
             int idGIn1 = g.CreateGroup( ctx, 1, idZone1 );
             int idGIn2 = g.CreateGroup( ctx, 1, idZone2 );
-            gN.GroupRename( ctx, 1, idGIn0, name ).Should().Be( name );
-            gN.GroupRename( ctx, 1, idGIn1, name ).Should().Be( name );
-            gN.GroupRename( ctx, 1, idGIn2, name ).Should().Be( name );
+            gN.GroupRename( ctx, 1, idGIn0, name ).ShouldBe( name );
+            gN.GroupRename( ctx, 1, idGIn1, name ).ShouldBe( name );
+            gN.GroupRename( ctx, 1, idGIn2, name ).ShouldBe( name );
 
             g.DestroyGroup( ctx, 1, idGIn0 );
             z.DestroyZone( ctx, 1, idZone1, forceDestroy: true );
@@ -55,7 +54,7 @@ public class ZoneNameTests
             gN.GroupRename( ctx, 1, idGIn2, "Test" );
             g.MoveGroup( ctx, 1, idGIn1, idZone2 );
             g.Database.ExecuteScalar( "select GroupName from CK.vGroup where GroupId = @0", idGIn1 )
-                .Should().Be( "Test (1)" );
+                .ShouldBe( "Test (1)" );
         }
     }
 }

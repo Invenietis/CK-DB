@@ -1,10 +1,9 @@
 using CK.Core;
 using CK.SqlServer;
 using CK.Testing;
-using FluentAssertions;
+using Shouldly;
 using NUnit.Framework;
 using System;
-using static CK.Testing.MonitorTestHelper;
 
 namespace CK.DB.Res.MCResText.Tests;
 
@@ -90,9 +89,9 @@ public class MCResTextTests
     static void CheckString( Package p, int resId, int lcid, object expectedValue, object expectedLCID )
     {
         p.Database.ExecuteScalar( "select Value from CK.vMCResText where ResId=@0 and XLCID = @1", resId, lcid )
-            .Should().Be( expectedValue );
+            .ShouldBe( expectedValue );
         p.Database.ExecuteScalar( "select LCID from CK.vMCResText where ResId=@0 and XLCID = @1", resId, lcid )
-            .Should().Be( expectedLCID );
+            .ShouldBe( expectedLCID );
     }
 
     [Test]
@@ -104,11 +103,11 @@ public class MCResTextTests
             Culture.Tests.ExtendedCultureTests.RegisterSpanish( p.Culture, ctx );
             Culture.Tests.ExtendedCultureTests.RegisterArabic( p.Culture, ctx );
             int xlcid1 = p.Culture.AssumeXLCID( ctx, new[] { 1, 9, 10, 12 } );
-            xlcid1.Should().BeGreaterThan( 0xFFFF );
+            xlcid1.ShouldBeGreaterThan( 0xFFFF );
             int xlcid9 = p.Culture.AssumeXLCID( ctx, new[] { 9, 1, 12, 10 } );
-            xlcid9.Should().BeGreaterThan( 0xFFFF );
+            xlcid9.ShouldBeGreaterThan( 0xFFFF );
             int xlcid10 = p.Culture.AssumeXLCID( ctx, new[] { 10, 1, 9, 12 } );
-            xlcid10.Should().BeGreaterThan( 0xFFFF );
+            xlcid10.ShouldBeGreaterThan( 0xFFFF );
             int resId = p.ResTable.Create( ctx );
 
             CheckString( p, resId, 1, DBNull.Value, DBNull.Value );
@@ -192,7 +191,7 @@ public class MCResTextTests
             p.ResTable.Destroy( ctx, frId );
             p.ResTable.Destroy( ctx, bothId );
             p.Database.ExecuteReader( "select Value from CK.vMCResText where ResId=@0", bothId )
-                .Rows.Should().BeEmpty();
+                .Rows.ShouldBeEmpty();
 
             Assert.DoesNotThrow( () => p.MCResTextTable.SetText( ctx, bothId, 9, null ) );
         }

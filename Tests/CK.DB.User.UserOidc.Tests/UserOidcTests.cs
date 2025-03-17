@@ -6,9 +6,8 @@ using CK.SqlServer;
 using NUnit.Framework;
 using CK.DB.Auth;
 using System.Collections.Generic;
-using FluentAssertions;
+using Shouldly;
 using CK.Testing;
-using static CK.Testing.MonitorTestHelper;
 
 namespace CK.DB.User.UserOidc.Tests;
 
@@ -32,16 +31,16 @@ public class UserOidcTests
             info.SchemeSuffix = schemeSuffix;
             info.Sub = sub;
             var created = u.CreateOrUpdateOidcUser( ctx, 1, userId, info );
-            created.OperationResult.Should().Be( UCResult.Created );
+            created.OperationResult.ShouldBe( UCResult.Created );
             var info2 = u.FindKnownUserInfo( ctx, schemeSuffix, sub );
 
-            info2.UserId.Should().Be( userId );
-            info2.Info.SchemeSuffix.Should().Be( schemeSuffix );
-            info2.Info.Sub.Should().Be( sub );
+            info2.UserId.ShouldBe( userId );
+            info2.Info.SchemeSuffix.ShouldBe( schemeSuffix );
+            info2.Info.Sub.ShouldBe( sub );
 
-            u.FindKnownUserInfo( ctx, schemeSuffix, Guid.NewGuid().ToString() ).Should().BeNull();
+            u.FindKnownUserInfo( ctx, schemeSuffix, Guid.NewGuid().ToString() ).ShouldBeNull();
             user.DestroyUser( ctx, 1, userId );
-            u.FindKnownUserInfo( ctx, schemeSuffix, sub ).Should().BeNull();
+            u.FindKnownUserInfo( ctx, schemeSuffix, sub ).ShouldBeNull();
         }
     }
 
@@ -62,16 +61,16 @@ public class UserOidcTests
             info.SchemeSuffix = schemeSuffix;
             info.Sub = sub;
             var created = await u.CreateOrUpdateOidcUserAsync( ctx, 1, userId, info );
-            created.OperationResult.Should().Be( UCResult.Created );
+            created.OperationResult.ShouldBe( UCResult.Created );
             var info2 = await u.FindKnownUserInfoAsync( ctx, schemeSuffix, sub );
 
-            info2.UserId.Should().Be( userId );
-            info2.Info.SchemeSuffix.Should().Be( schemeSuffix );
-            info2.Info.Sub.Should().Be( sub );
+            info2.UserId.ShouldBe( userId );
+            info2.Info.SchemeSuffix.ShouldBe( schemeSuffix );
+            info2.Info.Sub.ShouldBe( sub );
 
-            (await u.FindKnownUserInfoAsync( ctx, schemeSuffix, Guid.NewGuid().ToString() )).Should().BeNull();
+            (await u.FindKnownUserInfoAsync( ctx, schemeSuffix, Guid.NewGuid().ToString() )).ShouldBeNull();
             await user.DestroyUserAsync( ctx, 1, userId );
-            (await u.FindKnownUserInfoAsync( ctx, schemeSuffix, sub )).Should().BeNull();
+            (await u.FindKnownUserInfoAsync( ctx, schemeSuffix, sub )).ShouldBeNull();
         }
     }
 
@@ -94,16 +93,16 @@ public class UserOidcTests
             var sub = Guid.NewGuid().ToString( "N" );
             var idU = user.CreateUser( ctx, 1, userName );
             u.Database.ExecuteReader( $"select * from CK.vUserAuthProvider where UserId={idU} and Scheme='{scheme}'" )
-                .Rows.Should().BeEmpty();
+                .Rows.ShouldBeEmpty();
             var info = u.CreateUserInfo<IUserOidcInfo>();
             info.SchemeSuffix = schemeSuffix;
             info.Sub = sub;
             u.CreateOrUpdateOidcUser( ctx, 1, idU, info );
             u.Database.ExecuteScalar( $"select count(*) from CK.vUserAuthProvider where UserId={idU} and Scheme='{scheme}'" )
-                .Should().Be( 1 );
+                .ShouldBe( 1 );
             u.DestroyOidcUser( ctx, 1, idU, schemeSuffix );
             u.Database.ExecuteReader( $"select * from CK.vUserAuthProvider where UserId={idU} and Scheme='{scheme}'" )
-                  .Rows.Should().BeEmpty();
+                  .Rows.ShouldBeEmpty();
         }
     }
 

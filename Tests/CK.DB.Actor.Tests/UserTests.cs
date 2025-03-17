@@ -2,9 +2,8 @@ using System;
 using NUnit.Framework;
 using CK.SqlServer;
 using CK.Core;
-using FluentAssertions;
+using Shouldly;
 using CK.Testing;
-using static CK.Testing.MonitorTestHelper;
 
 namespace CK.DB.Actor.Tests;
 
@@ -18,7 +17,7 @@ public class UserTests
         var u = SharedEngine.Map.StObjs.Obtain<UserTable>();
         using( var ctx = new SqlStandardCallContext() )
         {
-            u.Invoking( sut => sut.CreateUser( ctx, 0, Guid.NewGuid().ToString() ) ).Should().Throw<SqlDetailedException>();
+            Util.Invokable( () => u.CreateUser( ctx, 0, Guid.NewGuid().ToString() ) ).ShouldThrow<SqlDetailedException>();
         }
     }
 
@@ -56,7 +55,7 @@ public class UserTests
             u.DestroyUser( ctx, 1, id );
 
             u.Database.ExecuteReader( "select * from CK.tUser where UserName = @0", testName )
-                .Rows.Should().BeEmpty();
+                .Rows.ShouldBeEmpty();
         }
     }
 
@@ -73,17 +72,17 @@ public class UserTests
             int idExist = u.CreateUser( ctx, 1, existingName );
             int idUser = u.CreateUser( ctx, 1, userName );
 
-            u.UserNameSet( ctx, 1, idUser, existingName ).Should().BeFalse( "No rename on clash." );
-            u.UserNameSet( ctx, 1, idExist, userName ).Should().BeFalse( "No rename on clash." );
+            u.UserNameSet( ctx, 1, idUser, existingName ).ShouldBeFalse( "No rename on clash." );
+            u.UserNameSet( ctx, 1, idExist, userName ).ShouldBeFalse( "No rename on clash." );
 
-            u.UserNameSet( ctx, 1, idUser, userName ).Should().BeTrue( "One can always rename to the current name." );
-            u.UserNameSet( ctx, 1, idExist, existingName ).Should().BeTrue( "One can always rename to the current name." );
+            u.UserNameSet( ctx, 1, idUser, userName ).ShouldBeTrue( "One can always rename to the current name." );
+            u.UserNameSet( ctx, 1, idExist, existingName ).ShouldBeTrue( "One can always rename to the current name." );
 
             u.DestroyUser( ctx, 1, idExist );
             u.DestroyUser( ctx, 1, idUser );
 
             u.Database.ExecuteReader( "select * from CK.tUser where UserName = @0 or UserName = @1", existingName, userName )
-                .Rows.Should().BeEmpty();
+                .Rows.ShouldBeEmpty();
         }
     }
 

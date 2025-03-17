@@ -10,13 +10,13 @@ namespace CK.DB.Auth.AuthScope;
 /// Helper class to manipulate <see cref="AuthScopeItem"/>. 
 /// This set guaranties unicity of <see cref="AuthScopeItem.ScopeName"/>.
 /// </summary>
-public class AuthScopeSet
+public sealed class AuthScopeSet
 {
-    class Wrapper : IReadOnlyCollection<AuthScopeItem>
+    sealed class Wrapper : IReadOnlyCollection<AuthScopeItem>
     {
         public readonly Dictionary<string, AuthScopeItem> Scopes;
 
-        public Wrapper( IEnumerable<AuthScopeItem> scopes )
+        public Wrapper( IEnumerable<AuthScopeItem>? scopes )
         {
             Scopes = new Dictionary<string, AuthScopeItem>();
             if( scopes != null )
@@ -53,7 +53,7 @@ public class AuthScopeSet
     public AuthScopeSet( IEnumerable<AuthScopeItem> scopes )
         : this()
     {
-        if( scopes == null ) throw new ArgumentNullException( nameof( scopes ) );
+        Throw.CheckNotNullArgument( scopes );
         _wrapper = new Wrapper( scopes );
     }
 
@@ -125,7 +125,7 @@ public class AuthScopeSet
     /// </summary>
     /// <param name="name">Scope name.</param>
     /// <returns>The scope or null.</returns>
-    public AuthScopeItem this[string name] => _wrapper.Scopes.GetValueOrDefault( name, null );
+    public AuthScopeItem? this[string name] => _wrapper.Scopes.GetValueOrDefault( name );
 
     /// <summary>
     /// Removes the scope with the same <see cref="AuthScopeItem.ScopeName"/> and <see cref="AuthScopeItem.Status"/>.
@@ -134,9 +134,10 @@ public class AuthScopeSet
     /// <returns>True on success, false if not found.</returns>
     public bool Remove( AuthScopeItem scope )
     {
-        if( scope == null ) throw new ArgumentNullException( nameof( scope ) );
-        AuthScopeItem s;
-        return _wrapper.Scopes.TryGetValue( scope.ScopeName, out s ) && s.Status == scope.Status && _wrapper.Scopes.Remove( scope.ScopeName );
+        Throw.CheckNotNullArgument( scope );
+        return _wrapper.Scopes.TryGetValue( scope.ScopeName, out AuthScopeItem? s )
+               && s.Status == scope.Status
+               && _wrapper.Scopes.Remove( scope.ScopeName );
     }
 
     /// <summary>

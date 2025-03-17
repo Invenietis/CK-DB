@@ -1,9 +1,8 @@
 using CK.Core;
 using CK.SqlServer;
 using CK.Testing;
-using FluentAssertions;
+using Shouldly;
 using NUnit.Framework;
-using static CK.Testing.MonitorTestHelper;
 
 namespace CK.DB.Res.ResHtml.Tests;
 
@@ -18,13 +17,13 @@ public class ResHtmlTests
         {
             int resId = t.ResTable.Create( ctx );
             t.Database.ExecuteReader( "select * from CK.tResHtml where ResId = @0", resId )
-                .Rows.Should().BeEmpty();
+                .Rows.ShouldBeEmpty();
             t.SetHtml( ctx, resId, "Hello World!" );
             t.Database.ExecuteScalar( "select Value from CK.tResHtml where ResId = @0", resId )
-                .Should().Be( "Hello World!" );
+                .ShouldBe( "Hello World!" );
             t.SetHtml( ctx, resId, null );
             t.Database.ExecuteReader( "select * from CK.tResHtml where ResId = @0", resId )
-                .Rows.Should().BeEmpty();
+                .Rows.ShouldBeEmpty();
             t.SetHtml( ctx, resId, "Hello World!" );
             t.ResTable.Destroy( ctx, resId );
         }
@@ -36,9 +35,9 @@ public class ResHtmlTests
         var t = SharedEngine.Map.StObjs.Obtain<ResHtmlTable>();
         using( var ctx = new SqlStandardCallContext() )
         {
-            t.Invoking( sut => sut.SetHtml( ctx, -1, "No way" ) ).Should().Throw<SqlDetailedException>();
-            t.Invoking( sut => sut.SetHtml( ctx, 0, "No way" ) ).Should().Throw<SqlDetailedException>();
-            t.Invoking( sut => sut.SetHtml( ctx, 1, "No way" ) ).Should().Throw<SqlDetailedException>();
+            Util.Invokable( () => t.SetHtml( ctx, -1, "No way" ) ).ShouldThrow<SqlDetailedException>();
+            Util.Invokable( () => t.SetHtml( ctx, 0, "No way" ) ).ShouldThrow<SqlDetailedException>();
+            Util.Invokable( () => t.SetHtml( ctx, 1, "No way" ) ).ShouldThrow<SqlDetailedException>();
         }
     }
 }

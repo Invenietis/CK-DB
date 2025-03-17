@@ -1,6 +1,5 @@
-using CK.Core;
 using CK.SqlServer;
-using FluentAssertions;
+using Shouldly;
 using Microsoft.Data.SqlClient;
 using System.Text;
 
@@ -35,7 +34,7 @@ static public class DebugExtensions
     {
         string dump = @this.DumpTree( ctx, zoneId ).TrimEnd();
         tree = tree.Trim().ReplaceLineEndings().Replace( " ", string.Empty );
-        dump.Should().Be( tree );
+        dump.ShouldBe( tree );
     }
 
 }

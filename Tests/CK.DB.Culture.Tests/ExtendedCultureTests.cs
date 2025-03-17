@@ -2,9 +2,8 @@ using System.Linq;
 using CK.Core;
 using CK.SqlServer;
 using NUnit.Framework;
-using FluentAssertions;
+using Shouldly;
 using CK.Testing;
-using static CK.Testing.MonitorTestHelper;
 
 namespace CK.DB.Culture.Tests;
 
@@ -34,17 +33,17 @@ public class ExtendedCultureTests
             RegisterSampleCultures( p, ctx );
             {
                 var c = p.GetCulture( ctx, 10 );
-                c.LCID.Should().Be( 10 );
-                c.Name.Should().Be( "es" );
-                c.EnglishName.Should().Be( "Spanish" );
-                c.NativeName.Should().Be( "español" );
+                c.LCID.ShouldBe( 10 );
+                c.Name.ShouldBe( "es" );
+                c.EnglishName.ShouldBe( "Spanish" );
+                c.NativeName.ShouldBe( "español" );
             }
             {
                 var c = p.GetCulture( ctx, 1 );
-                c.LCID.Should().Be( 1 );
-                c.Name.Should().Be( "ar" );
-                c.EnglishName.Should().Be( "Arabic" );
-                c.NativeName.Should().Be( "العربية" );
+                c.LCID.ShouldBe( 1 );
+                c.Name.ShouldBe( "ar" );
+                c.EnglishName.ShouldBe( "Arabic" );
+                c.NativeName.ShouldBe( "العربية" );
             }
         }
     }
@@ -58,66 +57,66 @@ public class ExtendedCultureTests
             CultureTests.RestoreDatabaseToEnglishAndFrenchOnly( p );
             RegisterSampleCultures( p, ctx );
             var c = p.GetExtendedCulture( ctx, 10 );
-            c.XLCID.Should().Be( 10 );
-            c.PrimaryCulture.Should().NotBeNull();
-            c.PrimaryCulture.Should().BeSameAs( c.Fallbacks[0] );
+            c.XLCID.ShouldBe( 10 );
+            c.PrimaryCulture.ShouldNotBeNull();
+            c.PrimaryCulture.ShouldBeSameAs( c.Fallbacks[0] );
 
-            c.Fallbacks[0].LCID.Should().Be( 10 );
-            c.Fallbacks[0].Name.Should().Be( "es" );
-            c.Fallbacks[0].EnglishName.Should().Be( "Spanish" );
-            c.Fallbacks[0].NativeName.Should().Be( "español" );
+            c.Fallbacks[0].LCID.ShouldBe( 10 );
+            c.Fallbacks[0].Name.ShouldBe( "es" );
+            c.Fallbacks[0].EnglishName.ShouldBe( "Spanish" );
+            c.Fallbacks[0].NativeName.ShouldBe( "español" );
 
-            c.Fallbacks[1].LCID.Should().Be( 9 );
-            c.Fallbacks[1].Name.Should().Be( "en" );
-            c.Fallbacks[1].EnglishName.Should().Be( "English" );
-            c.Fallbacks[1].NativeName.Should().Be( "English" );
+            c.Fallbacks[1].LCID.ShouldBe( 9 );
+            c.Fallbacks[1].Name.ShouldBe( "en" );
+            c.Fallbacks[1].EnglishName.ShouldBe( "English" );
+            c.Fallbacks[1].NativeName.ShouldBe( "English" );
 
-            c.Fallbacks[2].LCID.Should().Be( 12 );
-            c.Fallbacks[2].Name.Should().Be( "fr" );
-            c.Fallbacks[2].EnglishName.Should().Be( "French" );
-            c.Fallbacks[2].NativeName.Should().Be( "Français" );
+            c.Fallbacks[2].LCID.ShouldBe( 12 );
+            c.Fallbacks[2].Name.ShouldBe( "fr" );
+            c.Fallbacks[2].EnglishName.ShouldBe( "French" );
+            c.Fallbacks[2].NativeName.ShouldBe( "Français" );
 
-            c.Fallbacks[3].LCID.Should().Be( 22538 );
-            c.Fallbacks[3].Name.Should().Be( "es-419" );
-            c.Fallbacks[3].EnglishName.Should().Be( "Spanish (Latin America)" );
-            c.Fallbacks[3].NativeName.Should().Be( "español (Latinoamérica)" );
+            c.Fallbacks[3].LCID.ShouldBe( 22538 );
+            c.Fallbacks[3].Name.ShouldBe( "es-419" );
+            c.Fallbacks[3].EnglishName.ShouldBe( "Spanish (Latin America)" );
+            c.Fallbacks[3].NativeName.ShouldBe( "español (Latinoamérica)" );
 
-            c.Fallbacks[4].LCID.Should().Be( 11274 );
-            c.Fallbacks[4].Name.Should().Be( "es-AR" );
-            c.Fallbacks[4].EnglishName.Should().Be( "Spanish (Argentina)" );
-            c.Fallbacks[4].NativeName.Should().Be( "español (Argentina)" );
+            c.Fallbacks[4].LCID.ShouldBe( 11274 );
+            c.Fallbacks[4].Name.ShouldBe( "es-AR" );
+            c.Fallbacks[4].EnglishName.ShouldBe( "Spanish (Argentina)" );
+            c.Fallbacks[4].NativeName.ShouldBe( "español (Argentina)" );
 
-            c.Fallbacks[5].LCID.Should().Be( 2060 );
-            c.Fallbacks[5].Name.Should().Be( "fr-BE" );
-            c.Fallbacks[5].EnglishName.Should().Be( "French (Belgium)" );
-            c.Fallbacks[5].NativeName.Should().Be( "français (Belgique)" );
+            c.Fallbacks[5].LCID.ShouldBe( 2060 );
+            c.Fallbacks[5].Name.ShouldBe( "fr-BE" );
+            c.Fallbacks[5].EnglishName.ShouldBe( "French (Belgium)" );
+            c.Fallbacks[5].NativeName.ShouldBe( "français (Belgique)" );
 
-            c.Fallbacks[6].LCID.Should().Be( 4096 );
-            c.Fallbacks[6].Name.Should().Be( "fr-BF" );
-            c.Fallbacks[6].EnglishName.Should().Be( "French (Burkina Faso)" );
-            c.Fallbacks[6].NativeName.Should().Be( "français (Burkina Faso)" );
+            c.Fallbacks[6].LCID.ShouldBe( 4096 );
+            c.Fallbacks[6].Name.ShouldBe( "fr-BF" );
+            c.Fallbacks[6].EnglishName.ShouldBe( "French (Burkina Faso)" );
+            c.Fallbacks[6].NativeName.ShouldBe( "français (Burkina Faso)" );
 
-            c.Fallbacks[7].LCID.Should().Be( 4097 );
-            c.Fallbacks[7].Name.Should().Be( "fr-BI" );
-            c.Fallbacks[7].EnglishName.Should().Be( "French (Burundi)" );
-            c.Fallbacks[7].NativeName.Should().Be( "français (Burundi)" );
+            c.Fallbacks[7].LCID.ShouldBe( 4097 );
+            c.Fallbacks[7].Name.ShouldBe( "fr-BI" );
+            c.Fallbacks[7].EnglishName.ShouldBe( "French (Burundi)" );
+            c.Fallbacks[7].NativeName.ShouldBe( "français (Burundi)" );
 
-            c.Fallbacks[8].LCID.Should().Be( 1 );
-            c.Fallbacks[8].Name.Should().Be( "ar" );
-            c.Fallbacks[8].EnglishName.Should().Be( "Arabic" );
-            c.Fallbacks[8].NativeName.Should().Be( "العربية" );
+            c.Fallbacks[8].LCID.ShouldBe( 1 );
+            c.Fallbacks[8].Name.ShouldBe( "ar" );
+            c.Fallbacks[8].EnglishName.ShouldBe( "Arabic" );
+            c.Fallbacks[8].NativeName.ShouldBe( "العربية" );
 
-            c.Fallbacks[9].LCID.Should().Be( 14337 );
-            c.Fallbacks[9].Name.Should().Be( "ar-AE" );
-            c.Fallbacks[9].EnglishName.Should().Be( "Arabic (United Arab Emirates)" );
-            c.Fallbacks[9].NativeName.Should().Be( "العربية الإمارات العربية المتحدة" );
+            c.Fallbacks[9].LCID.ShouldBe( 14337 );
+            c.Fallbacks[9].Name.ShouldBe( "ar-AE" );
+            c.Fallbacks[9].EnglishName.ShouldBe( "Arabic (United Arab Emirates)" );
+            c.Fallbacks[9].NativeName.ShouldBe( "العربية الإمارات العربية المتحدة" );
 
-            c.Fallbacks[10].LCID.Should().Be( 15361 );
-            c.Fallbacks[10].Name.Should().Be( "ar-BH" );
-            c.Fallbacks[10].EnglishName.Should().Be( "Arabic (Bahrain)" );
-            c.Fallbacks[10].NativeName.Should().Be( "العربية البحرين" );
+            c.Fallbacks[10].LCID.ShouldBe( 15361 );
+            c.Fallbacks[10].Name.ShouldBe( "ar-BH" );
+            c.Fallbacks[10].EnglishName.ShouldBe( "Arabic (Bahrain)" );
+            c.Fallbacks[10].NativeName.ShouldBe( "العربية البحرين" );
 
-            c.Fallbacks.Count.Should().Be( 11 );
+            c.Fallbacks.Count.ShouldBe( 11 );
         }
     }
 
@@ -127,8 +126,8 @@ public class ExtendedCultureTests
         var p = SharedEngine.Map.StObjs.Obtain<Package>();
         using( var ctx = new SqlStandardCallContext() )
         {
-            p.GetCulture( ctx, 3712 ).Should().BeNull();
-            p.GetExtendedCulture( ctx, 3712 ).Should().BeNull();
+            p.GetCulture( ctx, 3712 ).ShouldBeNull();
+            p.GetExtendedCulture( ctx, 3712 ).ShouldBeNull();
         }
     }
 
@@ -142,16 +141,16 @@ public class ExtendedCultureTests
             RegisterSpanish( p, ctx );
             RegisterArabic( p, ctx );
             p.GetExtendedCulture( ctx, 10 ).Fallbacks.Select( c => c.LCID )
-                .Should().BeEquivalentTo( new[] { 10, 9, 12, 1 }, o => o.WithStrictOrdering() );
-            p.SetLCIDFallbaks( ctx, 10, new[] { 10, 12 } );
+                .ShouldBe( [10, 9, 12, 1] );
+            p.SetLCIDFallbaks( ctx, 10, [10, 12] );
             p.GetExtendedCulture( ctx, 10 ).Fallbacks.Select( c => c.LCID )
-                .Should().BeEquivalentTo( new[] { 10, 12, 9, 1 }, o => o.WithStrictOrdering() );
-            p.SetLCIDFallbaks( ctx, 10, new[] { 10, 1 } );
+                .ShouldBe( [10, 12, 9, 1] );
+            p.SetLCIDFallbaks( ctx, 10, [10, 1] );
             p.GetExtendedCulture( ctx, 10 ).Fallbacks.Select( c => c.LCID )
-                .Should().BeEquivalentTo( new[] { 10, 1, 12, 9 }, o => o.WithStrictOrdering() );
-            p.SetLCIDFallbaks( ctx, 10, new[] { 10, 9, 1, 12 } );
+                .ShouldBe( [10, 1, 12, 9] );
+            p.SetLCIDFallbaks( ctx, 10, [10, 9, 1, 12] );
             p.GetExtendedCulture( ctx, 10 ).Fallbacks.Select( c => c.LCID )
-                .Should().BeEquivalentTo( new[] { 10, 9, 1, 12 }, o => o.WithStrictOrdering() );
+                .ShouldBe( [10, 9, 1, 12] );
         }
     }
 
@@ -165,21 +164,22 @@ public class ExtendedCultureTests
             RegisterSpanish( p, ctx );
             RegisterArabic( p, ctx );
             p.GetExtendedCulture( ctx, 10 ).Fallbacks.Select( c => c.LCID )
-                .Should().BeEquivalentTo( new[] { 10, 9, 12, 1 }, o => o.WithStrictOrdering() );
+                .ShouldBe( [10, 9, 12, 1] );
 
-            int xlcidSame = p.AssumeXLCID( ctx, new[] { 10, 9, 12, 1 }, allowLCIDMapping: true );
-            xlcidSame.Should().Be( 10, "The primary LCID is okay" );
+            int xlcidSame = p.AssumeXLCID( ctx, [10, 9, 12, 1], allowLCIDMapping: true );
+            xlcidSame.ShouldBe( 10, "The primary LCID is okay" );
 
-            int xlcid0 = p.AssumeXLCID( ctx, new[] { 10, 9, 12, 1 }, allowLCIDMapping: false );
-            xlcid0.Should().NotBe( 10 ).And.BeGreaterThan( 0x10000, "A XLCID has been created." );
+            int xlcid0 = p.AssumeXLCID( ctx, [10, 9, 12, 1], allowLCIDMapping: false );
+            xlcid0.ShouldNotBe( 10 );
+            xlcid0.ShouldBeGreaterThan( 0x10000, "A XLCID has been created." );
 
-            int xlcid1 = p.AssumeXLCID( ctx, new[] { 10, 1, 9, 12 } );
-            int xlcid2 = p.AssumeXLCID( ctx, new[] { 10, 12, 1, 9 } );
-            xlcid1.Should().NotBe( xlcid2 );
+            int xlcid1 = p.AssumeXLCID( ctx, [10, 1, 9, 12] );
+            int xlcid2 = p.AssumeXLCID( ctx, [10, 12, 1, 9] );
+            xlcid1.ShouldNotBe( xlcid2 );
             p.GetExtendedCulture( ctx, xlcid1 ).Fallbacks.Select( c => c.LCID )
-                .Should().BeEquivalentTo( new[] { 10, 1, 9, 12 }, o => o.WithStrictOrdering() );
+                .ShouldBe( [10, 1, 9, 12] );
             p.GetExtendedCulture( ctx, xlcid2 ).Fallbacks.Select( c => c.LCID )
-                .Should().BeEquivalentTo( new[] { 10, 12, 1, 9 }, o => o.WithStrictOrdering() );
+                .ShouldBe( [10, 12, 1, 9] );
         }
     }
 
@@ -193,17 +193,17 @@ public class ExtendedCultureTests
             RegisterSpanish( p, ctx );
             RegisterArabic( p, ctx );
             p.GetExtendedCulture( ctx, 12 ).Fallbacks.Select( c => c.LCID )
-                .Should().BeEquivalentTo( new[] { 12, 9, 10, 1 }, o => o.WithStrictOrdering() );
+                .ShouldBe( [12, 9, 10, 1] );
 
-            int xlcid12 = p.AssumeXLCID( ctx, new[] { 12, 1, 9, 10 } );
+            int xlcid12 = p.AssumeXLCID( ctx, [12, 1, 9, 10] );
             p.GetExtendedCulture( ctx, xlcid12 ).Fallbacks.Select( c => c.LCID )
-                .Should().BeEquivalentTo( new[] { 12, 1, 9, 10 }, o => o.WithStrictOrdering() );
+                .ShouldBe( [12, 1, 9, 10] );
 
             p.DestroyCulture( ctx, 1 );
             p.GetExtendedCulture( ctx, xlcid12 ).Fallbacks.Select( c => c.LCID )
-                .Should().BeEquivalentTo( new[] { 12, 9, 10 }, o => o.WithStrictOrdering() );
+                .ShouldBe( [12, 9, 10] );
             p.GetExtendedCulture( ctx, 12 ).Fallbacks.Select( c => c.LCID )
-                .Should().BeEquivalentTo( new[] { 12, 9, 10 }, o => o.WithStrictOrdering() );
+                .ShouldBe( [12, 9, 10] );
         }
     }
 
@@ -216,14 +216,14 @@ public class ExtendedCultureTests
             CultureTests.RestoreDatabaseToEnglishAndFrenchOnly( p );
             RegisterSpanish( p, ctx );
             RegisterArabic( p, ctx );
-            int xlcid1a = p.AssumeXLCID( ctx, new[] { 1, 9, 10, 12 } );
-            int xlcid1b = p.AssumeXLCID( ctx, new[] { 1, 10, 9, 12 } );
-            p.GetExtendedCulture( ctx, xlcid1a ).Should().NotBeNull();
-            p.GetExtendedCulture( ctx, xlcid1b ).Should().NotBeNull();
+            int xlcid1a = p.AssumeXLCID( ctx, [1, 9, 10, 12] );
+            int xlcid1b = p.AssumeXLCID( ctx, [1, 10, 9, 12] );
+            p.GetExtendedCulture( ctx, xlcid1a ).ShouldNotBeNull();
+            p.GetExtendedCulture( ctx, xlcid1b ).ShouldNotBeNull();
 
             p.DestroyCulture( ctx, 1 );
-            p.GetExtendedCulture( ctx, xlcid1a ).Should().BeNull();
-            p.GetExtendedCulture( ctx, xlcid1b ).Should().BeNull();
+            p.GetExtendedCulture( ctx, xlcid1a ).ShouldBeNull();
+            p.GetExtendedCulture( ctx, xlcid1b ).ShouldBeNull();
         }
     }
 
@@ -235,10 +235,10 @@ public class ExtendedCultureTests
         {
             RegisterSpanish( p, ctx );
             RegisterArabic( p, ctx );
-            int xlcid = p.AssumeXLCID( ctx, new[] { 1, 9, 10, 12 } );
+            int xlcid = p.AssumeXLCID( ctx, [1, 9, 10, 12] );
             p.DestroyCulture( ctx, xlcid );
-            int xlcid2 = p.AssumeXLCID( ctx, new[] { 1, 9, 10, 12 } );
-            xlcid2.Should().BeGreaterThan( xlcid );
+            int xlcid2 = p.AssumeXLCID( ctx, [1, 9, 10, 12] );
+            xlcid2.ShouldBeGreaterThan( xlcid );
         }
     }
 

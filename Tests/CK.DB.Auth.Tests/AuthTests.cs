@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using FluentAssertions;
+using Shouldly;
 using CK.Testing;
 using static CK.Testing.MonitorTestHelper;
 
@@ -50,34 +50,34 @@ public class AuthTests
         {
             int idUser = user.CreateUser( ctx, 1, Guid.NewGuid().ToString() );
             var result = auth.OnUserLogin( ctx, "test-success", Util.UtcMinValue, idUser, false, DateTime.UtcNow );
-            result.FailureCode.Should().Be( 0 );
-            result.FailureReason.Should().BeNull();
-            result.IsSuccess.Should().BeTrue();
-            result.UserId.Should().Be( idUser );
+            result.FailureCode.ShouldBe( 0 );
+            result.FailureReason.ShouldBeNull();
+            result.IsSuccess.ShouldBeTrue();
+            result.UserId.ShouldBe( idUser );
 
             result = auth.OnUserLogin( ctx, "test-fail", Util.UtcMinValue, idUser, false, DateTime.UtcNow );
-            result.FailureCode.Should().Be( 3712 );
-            result.FailureReason.Should().Be( "The failure" );
-            result.IsSuccess.Should().BeFalse();
-            result.UserId.Should().Be( 0 );
+            result.FailureCode.ShouldBe( 3712 );
+            result.FailureReason.ShouldBe( "The failure" );
+            result.IsSuccess.ShouldBeFalse();
+            result.UserId.ShouldBe( 0 );
 
             result = auth.OnUserLogin( ctx, "test-fail-reason-only", Util.UtcMinValue, idUser, false, DateTime.UtcNow );
-            result.FailureCode.Should().Be( (int)KnownLoginFailureCode.Unspecified );
-            result.FailureReason.Should().Be( "The failure text" );
-            result.IsSuccess.Should().BeFalse();
-            result.UserId.Should().Be( 0 );
+            result.FailureCode.ShouldBe( (int)KnownLoginFailureCode.Unspecified );
+            result.FailureReason.ShouldBe( "The failure text" );
+            result.IsSuccess.ShouldBeFalse();
+            result.UserId.ShouldBe( 0 );
 
             result = auth.OnUserLogin( ctx, "test-fail-reason-only-empty", Util.UtcMinValue, idUser, false, DateTime.UtcNow );
-            result.FailureCode.Should().Be( (int)KnownLoginFailureCode.Unspecified );
-            result.FailureReason.Should().Be( "Unspecified reason." );
-            result.IsSuccess.Should().BeFalse();
-            result.UserId.Should().Be( 0 );
+            result.FailureCode.ShouldBe( (int)KnownLoginFailureCode.Unspecified );
+            result.FailureReason.ShouldBe( "Unspecified reason." );
+            result.IsSuccess.ShouldBeFalse();
+            result.UserId.ShouldBe( 0 );
 
             result = auth.OnUserLogin( ctx, "test-fail-code-only", Util.UtcMinValue, idUser, false, DateTime.UtcNow );
-            result.FailureCode.Should().Be( 42 );
-            result.FailureReason.Should().Be( "Unspecified reason." );
-            result.IsSuccess.Should().BeFalse();
-            result.UserId.Should().Be( 0 );
+            result.FailureCode.ShouldBe( 42 );
+            result.FailureReason.ShouldBe( "Unspecified reason." );
+            result.IsSuccess.ShouldBeFalse();
+            result.UserId.ShouldBe( 0 );
         }
     }
 
@@ -88,10 +88,10 @@ public class AuthTests
         Throw.DebugAssert( auth != null );
         Assume.That( auth.BasicProvider != null );
 
-        auth.AllProviders.Single( provider => provider.ProviderName == "Basic" ).Should().NotBeNull();
-        auth.FindProvider( "Basic" ).Should().NotBeNull();
-        auth.FindProvider( "bASIC" ).Should().NotBeNull();
-        auth.FindRequiredProvider( "Basic", mustHavePayload: false ).Should().NotBeNull();
+        auth.AllProviders.Single( provider => provider.ProviderName == "Basic" ).ShouldNotBeNull();
+        auth.FindProvider( "Basic" ).ShouldNotBeNull();
+        auth.FindProvider( "bASIC" ).ShouldNotBeNull();
+        auth.FindRequiredProvider( "Basic", mustHavePayload: false ).ShouldNotBeNull();
     }
 
     static public void StandardTestForGenericAuthenticationProvider( Package auth,
@@ -112,82 +112,82 @@ public class AuthTests
 
                 IUserAuthInfo? info = auth.ReadUserAuthInfo( ctx, 1, userId );
                 Throw.DebugAssert( info != null );
-                info.UserId.Should().Be( userId );
-                info.UserName.Should().Be( userName );
-                info.Schemes.Should().BeEmpty();
+                info.UserId.ShouldBe( userId );
+                info.UserName.ShouldBe( userName );
+                info.Schemes.ShouldBeEmpty();
 
                 using( TestHelper.Monitor.OpenInfo( "CreateOrUpdateUser without login" ) )
                 {
-                    g.CreateOrUpdateUser( ctx, 1, userId, payloadForCreateOrUpdate( userId, userName ) ).OperationResult.Should().Be( UCResult.Created );
+                    g.CreateOrUpdateUser( ctx, 1, userId, payloadForCreateOrUpdate( userId, userName ) ).OperationResult.ShouldBe( UCResult.Created );
                     info = auth.ReadUserAuthInfo( ctx, 1, userId );
                     Throw.DebugAssert( info != null );
-                    info.Schemes.Count.Should().Be( 0, "Still no scheme since we did not use WithActualLogin." );
+                    info.Schemes.Count.ShouldBe( 0, "Still no scheme since we did not use WithActualLogin." );
 
-                    g.LoginUser( ctx, payloadForLogin( userId, userName ), actualLogin: false ).UserId.Should().Be( userId );
+                    g.LoginUser( ctx, payloadForLogin( userId, userName ), actualLogin: false ).UserId.ShouldBe( userId );
                     info = auth.ReadUserAuthInfo( ctx, 1, userId );
                     Throw.DebugAssert( info != null );
-                    info.Schemes.Should().BeEmpty( "Still no scheme since we challenge login but not use WithActualLogin." );
+                    info.Schemes.ShouldBeEmpty( "Still no scheme since we challenge login but not use WithActualLogin." );
 
-                    g.LoginUser( ctx, payloadForLogin( userId, userName ) ).UserId.Should().Be( userId );
+                    g.LoginUser( ctx, payloadForLogin( userId, userName ) ).UserId.ShouldBe( userId );
                     info = auth.ReadUserAuthInfo( ctx, 1, userId );
                     Throw.DebugAssert( info != null );
-                    info.Schemes.Count.Should().Be( 1 );
-                    info.Schemes[0].Name.Should().StartWith( g.ProviderName );
-                    info.Schemes[0].Name.Should().BeEquivalentTo( schemeOrProviderName );
-                    info.Schemes[0].LastUsed.Should().BeCloseTo( DateTime.UtcNow, TimeSpan.FromSeconds( 1 ) );
+                    info.Schemes.Count.ShouldBe( 1 );
+                    info.Schemes[0].Name.ShouldStartWith( g.ProviderName );
+                    info.Schemes[0].Name.ShouldBe( schemeOrProviderName );
+                    info.Schemes[0].LastUsed.ShouldBe( DateTime.UtcNow, tolerance: TimeSpan.FromSeconds( 1 ) );
 
                     g.DestroyUser( ctx, 1, userId );
                     info = auth.ReadUserAuthInfo( ctx, 1, userId );
                     Throw.DebugAssert( info != null );
-                    info.Schemes.Should().BeEmpty();
+                    info.Schemes.ShouldBeEmpty();
                 }
                 using( TestHelper.Monitor.OpenInfo( "CreateOrUpdateUser WithActualLogin" ) )
                 {
-                    info.UserId.Should().Be( userId );
-                    info.UserName.Should().Be( userName );
-                    info.Schemes.Should().BeEmpty();
+                    info.UserId.ShouldBe( userId );
+                    info.UserName.ShouldBe( userName );
+                    info.Schemes.ShouldBeEmpty();
 
                     var result = g.CreateOrUpdateUser( ctx, 1, userId, payloadForCreateOrUpdate( userId, userName ), UCLMode.CreateOnly | UCLMode.WithActualLogin );
-                    result.OperationResult.Should().Be( UCResult.Created );
-                    result.LoginResult.UserId.Should().Be( userId );
+                    result.OperationResult.ShouldBe( UCResult.Created );
+                    result.LoginResult.UserId.ShouldBe( userId );
                     info = auth.ReadUserAuthInfo( ctx, 1, userId );
                     Throw.DebugAssert( info != null );
-                    info.Schemes.Should().HaveCount( 1 );
-                    info.Schemes[0].Name.Should().StartWith( g.ProviderName );
-                    info.Schemes[0].Name.Should().BeEquivalentTo( schemeOrProviderName );
-                    info.Schemes[0].LastUsed.Should().BeCloseTo( DateTime.UtcNow, TimeSpan.FromSeconds( 1 ) );
+                    info.Schemes.Count.ShouldBe( 1 );
+                    info.Schemes[0].Name.ShouldStartWith( g.ProviderName );
+                    info.Schemes[0].Name.ShouldBe( schemeOrProviderName );
+                    info.Schemes[0].LastUsed.ShouldBe( DateTime.UtcNow, tolerance: TimeSpan.FromSeconds( 1 ) );
 
-                    g.LoginUser( ctx, payloadForLoginFail( userId, userName ) ).UserId.Should().Be( 0 );
+                    g.LoginUser( ctx, payloadForLoginFail( userId, userName ) ).UserId.ShouldBe( 0 );
 
                     g.DestroyUser( ctx, 1, userId );
                     info = auth.ReadUserAuthInfo( ctx, 1, userId );
                     Throw.DebugAssert( info != null );
-                    info.Schemes.Should().BeEmpty();
+                    info.Schemes.ShouldBeEmpty();
                 }
                 using( TestHelper.Monitor.OpenInfo( "Login for an unregistered user." ) )
                 {
-                    info.UserId.Should().Be( userId );
-                    info.UserName.Should().Be( userName );
-                    info.Schemes.Should().BeEmpty();
+                    info.UserId.ShouldBe( userId );
+                    info.UserName.ShouldBe( userName );
+                    info.Schemes.ShouldBeEmpty();
 
                     var result = g.LoginUser( ctx, payloadForLogin( userId, userName ) );
-                    result.IsSuccess.Should().BeFalse();
-                    result.UserId.Should().Be( 0 );
-                    result.FailureCode.Should().Be( (int)KnownLoginFailureCode.UnregisteredUser );
-                    result.FailureReason.Should().Be( "Unregistered user." );
+                    result.IsSuccess.ShouldBeFalse();
+                    result.UserId.ShouldBe( 0 );
+                    result.FailureCode.ShouldBe( (int)KnownLoginFailureCode.UnregisteredUser );
+                    result.FailureReason.ShouldBe( "Unregistered user." );
                     info = auth.ReadUserAuthInfo( ctx, 1, userId );
                     Throw.DebugAssert( info != null );
-                    info.Schemes.Should().BeEmpty();
+                    info.Schemes.ShouldBeEmpty();
 
                     g.DestroyUser( ctx, 1, userId );
                     info = auth.ReadUserAuthInfo( ctx, 1, userId );
                     Throw.DebugAssert( info != null );
-                    info.Schemes.Should().BeEmpty();
+                    info.Schemes.ShouldBeEmpty();
                 }
                 using( TestHelper.Monitor.OpenInfo( "Invalid payload MUST throw an ArgumentException." ) )
                 {
-                    g.Invoking( sut => sut.CreateOrUpdateUser( ctx, 1, userId, DBNull.Value ) ).Should().Throw<ArgumentException>();
-                    g.Invoking( sut => sut.LoginUser( ctx, DBNull.Value ) ).Should().Throw<ArgumentException>();
+                    Util.Invokable( () => g.CreateOrUpdateUser( ctx, 1, userId, DBNull.Value ) ).ShouldThrow<ArgumentException>();
+                    Util.Invokable( () => g.LoginUser( ctx, DBNull.Value ) ).ShouldThrow<ArgumentException>();
                 }
             }
             user.DestroyUser( ctx, 1, userId );
@@ -211,82 +211,82 @@ public class AuthTests
             {
                 IUserAuthInfo? info = await auth.ReadUserAuthInfoAsync( ctx, 1, userId );
                 Throw.DebugAssert( info != null );
-                info.UserId.Should().Be( userId );
-                info.UserName.Should().Be( userName );
-                info.Schemes.Should().BeEmpty();
+                info.UserId.ShouldBe( userId );
+                info.UserName.ShouldBe( userName );
+                info.Schemes.ShouldBeEmpty();
 
                 using( TestHelper.Monitor.OpenInfo( "CreateOrUpdateUser without login." ) )
                 {
-                    (await g.CreateOrUpdateUserAsync( ctx, 1, userId, payloadForCreateOrUpdate( userId, userName ) )).OperationResult.Should().Be( UCResult.Created );
+                    (await g.CreateOrUpdateUserAsync( ctx, 1, userId, payloadForCreateOrUpdate( userId, userName ) )).OperationResult.ShouldBe( UCResult.Created );
                     info = await auth.ReadUserAuthInfoAsync( ctx, 1, userId );
                     Throw.DebugAssert( info != null );
-                    info.Schemes.Should().BeEmpty( "Still no scheme since we did not use WithLogin." );
+                    info.Schemes.ShouldBeEmpty( "Still no scheme since we did not use WithLogin." );
 
-                    (await g.LoginUserAsync( ctx, payloadForLogin( userId, userName ), actualLogin: false )).UserId.Should().Be( userId );
+                    (await g.LoginUserAsync( ctx, payloadForLogin( userId, userName ), actualLogin: false )).UserId.ShouldBe( userId );
                     info = await auth.ReadUserAuthInfoAsync( ctx, 1, userId );
                     Throw.DebugAssert( info != null );
-                    info.Schemes.Should().BeEmpty( "Still no scheme since we challenge login but not use WithLogin." );
+                    info.Schemes.ShouldBeEmpty( "Still no scheme since we challenge login but not use WithLogin." );
 
-                    (await g.LoginUserAsync( ctx, payloadForLogin( userId, userName ) )).UserId.Should().Be( userId );
+                    (await g.LoginUserAsync( ctx, payloadForLogin( userId, userName ) )).UserId.ShouldBe( userId );
                     info = await auth.ReadUserAuthInfoAsync( ctx, 1, userId );
                     Throw.DebugAssert( info != null );
-                    info.Schemes.Should().HaveCount( 1 );
-                    info.Schemes[0].Name.Should().StartWith( g.ProviderName );
-                    info.Schemes[0].Name.Should().BeEquivalentTo( schemeOrProviderName );
-                    info.Schemes[0].LastUsed.Should().BeCloseTo( DateTime.UtcNow, TimeSpan.FromSeconds( 1 ) );
+                    info.Schemes.Count.ShouldBe( 1 );
+                    info.Schemes[0].Name.ShouldStartWith( g.ProviderName );
+                    info.Schemes[0].Name.ShouldBe( schemeOrProviderName );
+                    info.Schemes[0].LastUsed.ShouldBe( DateTime.UtcNow, tolerance: TimeSpan.FromSeconds( 1 ) );
 
                     await g.DestroyUserAsync( ctx, 1, userId );
                     info = await auth.ReadUserAuthInfoAsync( ctx, 1, userId );
                     Throw.DebugAssert( info != null );
-                    info.Schemes.Should().BeEmpty();
+                    info.Schemes.ShouldBeEmpty();
                 }
                 using( TestHelper.Monitor.OpenInfo( "CreateOrUpdateUser WithActualLogin." ) )
                 {
-                    info.UserId.Should().Be( userId );
-                    info.UserName.Should().Be( userName );
-                    info.Schemes.Should().BeEmpty();
+                    info.UserId.ShouldBe( userId );
+                    info.UserName.ShouldBe( userName );
+                    info.Schemes.ShouldBeEmpty();
 
                     var result = await g.CreateOrUpdateUserAsync( ctx, 1, userId, payloadForCreateOrUpdate( userId, userName ), UCLMode.CreateOnly | UCLMode.WithActualLogin );
-                    result.OperationResult.Should().Be( UCResult.Created );
-                    result.LoginResult.UserId.Should().Be( userId );
+                    result.OperationResult.ShouldBe( UCResult.Created );
+                    result.LoginResult.UserId.ShouldBe( userId );
                     info = await auth.ReadUserAuthInfoAsync( ctx, 1, userId );
                     Throw.DebugAssert( info != null );
-                    info.Schemes.Count.Should().Be( 1 );
-                    info.Schemes[0].Name.Should().StartWith( g.ProviderName );
-                    info.Schemes[0].Name.Should().BeEquivalentTo( schemeOrProviderName );
-                    info.Schemes[0].LastUsed.Should().BeCloseTo( DateTime.UtcNow, TimeSpan.FromSeconds( 1 ) );
+                    info.Schemes.Count.ShouldBe( 1 );
+                    info.Schemes[0].Name.ShouldStartWith( g.ProviderName );
+                    info.Schemes[0].Name.ShouldBe( schemeOrProviderName );
+                    info.Schemes[0].LastUsed.ShouldBe( DateTime.UtcNow, tolerance: TimeSpan.FromSeconds( 1 ) );
 
-                    (await g.LoginUserAsync( ctx, payloadForLoginFail( userId, userName ) )).UserId.Should().Be( 0 );
+                    (await g.LoginUserAsync( ctx, payloadForLoginFail( userId, userName ) )).UserId.ShouldBe( 0 );
 
                     await g.DestroyUserAsync( ctx, 1, userId );
                     info = await auth.ReadUserAuthInfoAsync( ctx, 1, userId );
                     Throw.DebugAssert( info != null );
-                    info.Schemes.Should().BeEmpty();
+                    info.Schemes.ShouldBeEmpty();
                 }
                 using( TestHelper.Monitor.OpenInfo( "Login for an unregistered user." ) )
                 {
-                    info.UserId.Should().Be( userId );
-                    info.UserName.Should().Be( userName );
-                    info.Schemes.Should().BeEmpty();
+                    info.UserId.ShouldBe( userId );
+                    info.UserName.ShouldBe( userName );
+                    info.Schemes.ShouldBeEmpty();
 
                     var result = await g.LoginUserAsync( ctx, payloadForLogin( userId, userName ) );
-                    result.IsSuccess.Should().BeFalse();
-                    result.UserId.Should().Be( 0 );
-                    result.FailureCode.Should().Be( (int)KnownLoginFailureCode.UnregisteredUser );
-                    result.FailureReason.Should().Be( "Unregistered user." );
+                    result.IsSuccess.ShouldBeFalse();
+                    result.UserId.ShouldBe( 0 );
+                    result.FailureCode.ShouldBe( (int)KnownLoginFailureCode.UnregisteredUser );
+                    result.FailureReason.ShouldBe( "Unregistered user." );
                     info = await auth.ReadUserAuthInfoAsync( ctx, 1, userId );
                     Throw.DebugAssert( info != null );
-                    info.Schemes.Should().BeEmpty();
+                    info.Schemes.ShouldBeEmpty();
 
                     await g.DestroyUserAsync( ctx, 1, userId );
                     info = await auth.ReadUserAuthInfoAsync( ctx, 1, userId );
                     Throw.DebugAssert( info != null );
-                    info.Schemes.Should().BeEmpty();
+                    info.Schemes.ShouldBeEmpty();
                 }
                 using( TestHelper.Monitor.OpenInfo( "Invalid payload MUST throw an ArgumentException." ) )
                 {
-                    await g.Awaiting( sut => sut.CreateOrUpdateUserAsync( ctx, 1, userId, DBNull.Value ) ).Should().ThrowAsync<ArgumentException>();
-                    await g.Awaiting( sut => sut.LoginUserAsync( ctx, DBNull.Value ) ).Should().ThrowAsync<ArgumentException>();
+                    await Util.Awaitable( () => g.CreateOrUpdateUserAsync( ctx, 1, userId, DBNull.Value ) ).ShouldThrowAsync<ArgumentException>();
+                    await Util.Invokable( () => g.LoginUserAsync( ctx, DBNull.Value ) ).ShouldThrowAsync<ArgumentException>();
                 }
                 using( TestHelper.Monitor.OpenInfo( "Injecting disabled user in sAuthUserOnLogin." ) )
                 using( auth.Database.TemporaryTransform( @"
@@ -298,18 +298,18 @@ public class AuthTests
                         " ) )
                 {
                     UCLResult result = await g.CreateOrUpdateUserAsync( ctx, 1, userId, payloadForCreateOrUpdate( userId, userName ), UCLMode.CreateOnly | UCLMode.WithActualLogin );
-                    result.OperationResult.Should().Be( UCResult.Created );
-                    result.LoginResult.UserId.Should().Be( 0 );
-                    result.LoginResult.IsSuccess.Should().BeFalse();
-                    result.LoginResult.FailureCode.Should().Be( (int)KnownLoginFailureCode.GloballyDisabledUser );
+                    result.OperationResult.ShouldBe( UCResult.Created );
+                    result.LoginResult.UserId.ShouldBe( 0 );
+                    result.LoginResult.IsSuccess.ShouldBeFalse();
+                    result.LoginResult.FailureCode.ShouldBe( (int)KnownLoginFailureCode.GloballyDisabledUser );
                     LoginResult login = await g.LoginUserAsync( ctx, payloadForLogin( userId, userName ) );
-                    login.IsSuccess.Should().BeFalse();
-                    login.UserId.Should().Be( 0 );
-                    login.FailureCode.Should().Be( (int)KnownLoginFailureCode.GloballyDisabledUser );
+                    login.IsSuccess.ShouldBeFalse();
+                    login.UserId.ShouldBe( 0 );
+                    login.FailureCode.ShouldBe( (int)KnownLoginFailureCode.GloballyDisabledUser );
                     login = await g.LoginUserAsync( ctx, payloadForLogin( userId, userName ), actualLogin: false );
-                    login.IsSuccess.Should().BeFalse();
-                    login.UserId.Should().Be( 0 );
-                    login.FailureCode.Should().Be( (int)KnownLoginFailureCode.GloballyDisabledUser );
+                    login.IsSuccess.ShouldBeFalse();
+                    login.UserId.ShouldBe( 0 );
+                    login.FailureCode.ShouldBe( (int)KnownLoginFailureCode.GloballyDisabledUser );
                 }
             }
             await user.DestroyUserAsync( ctx, 1, userId );
@@ -458,7 +458,7 @@ public class AuthTests
         using( var ctx = new SqlStandardCallContext() )
         {
             provider.Database.ExecuteScalar( "select count(*) from CK.tAuthProvider where ProviderName = @0", providerName )
-                .Should().Be( 1 );
+                .ShouldBe( 1 );
         }
     }
 
@@ -470,9 +470,9 @@ public class AuthTests
         using( var ctx = new SqlStandardCallContext() )
         {
             IUserAuthInfo? info = p.ReadUserAuthInfo( ctx, 1, int.MaxValue );
-            info.Should().BeNull();
+            info.ShouldBeNull();
             info = p.ReadUserAuthInfo( ctx, 1, 0 );
-            info.Should().BeNull();
+            info.ShouldBeNull();
         }
     }
 }

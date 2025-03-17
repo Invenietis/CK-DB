@@ -3,8 +3,7 @@ using CK.DB.Actor;
 using CK.SqlServer;
 using NUnit.Framework;
 using System;
-using FluentAssertions;
-using static CK.Testing.MonitorTestHelper;
+using Shouldly;
 using CK.Testing;
 
 namespace CK.DB.HZone.Tests;
@@ -16,7 +15,7 @@ public class ZoneSameBehaviorTests
     public void CheckCKCoreInvariant()
     {
         SharedEngine.Map.StObjs.Obtain<SqlDefaultDatabase>().GetCKCoreInvariantsViolations()
-            .Rows.Should().BeEmpty();
+            .Rows.ShouldBeEmpty();
     }
 
     [Test]
@@ -39,19 +38,19 @@ public class ZoneSameBehaviorTests
             z.MoveZone( ctx, 1, idSubZone, idZoneOK );
             // User is in the Group and in the ZoneOK.
             u.Database.ExecuteScalar( $"select ActorId from CK.tActorProfile where GroupId = {idSubZone} and ActorId = {idUser}" )
-                .Should().Be( idUser );
+                .ShouldBe( idUser );
             u.Database.ExecuteScalar( $"select ActorId from CK.tActorProfile where GroupId = {idZoneOK} and ActorId = {idUser}" )
-                .Should().Be( idUser );
+                .ShouldBe( idUser );
 
             // This does not: ZoneEmpty does not contain the user.
             // This uses the default option: GroupMoveOption.None.
-            z.Invoking( sut => sut.MoveZone( ctx, 1, idSubZone, idZoneEmpty ) ).Should().Throw<SqlDetailedException>();
+            Util.Invokable(() => z.MoveZone(ctx, 1, idSubZone, idZoneEmpty)).ShouldThrow<SqlDetailedException>();
             // User is still in the Group.
             u.Database.ExecuteScalar( $"select ActorId from CK.tActorProfile where GroupId = {idSubZone} and ActorId = {idUser}" )
-                .Should().Be( idUser );
+                .ShouldBe( idUser );
             // ...and still not in the ZoneEmpty.
             u.Database.ExecuteReader( $"select ActorId from CK.tActorProfile where GroupId = {idZoneEmpty} and ActorId = {idUser}" )
-                .Rows.Should().BeEmpty();
+                .Rows.ShouldBeEmpty();
         }
     }
 
@@ -74,19 +73,19 @@ public class ZoneSameBehaviorTests
             z.MoveZone( ctx, 1, idSubZone, idZoneOK, Zone.GroupMoveOption.Intersect );
             // User is in the Group and in the ZoneOK.
             u.Database.ExecuteScalar( $"select ActorId from CK.tActorProfile where GroupId = {idSubZone} and ActorId = {idUser}" )
-                .Should().Be( idUser );
+                .ShouldBe( idUser );
             u.Database.ExecuteScalar( $"select ActorId from CK.tActorProfile where GroupId = {idZoneOK} and ActorId = {idUser}" )
-                .Should().Be( idUser );
+                .ShouldBe( idUser );
 
             // This does work... But the user is removed from the group
             // to preserve the 'Group.UserNotInZone' invariant.
             z.MoveZone( ctx, 1, idSubZone, idZoneEmpty, Zone.GroupMoveOption.Intersect );
             // User is no more in the Group: it has been removed.
             u.Database.ExecuteReader( $"select ActorId from CK.tActorProfile where GroupId = {idSubZone} and ActorId = {idUser}" )
-                .Rows.Should().BeEmpty();
+                .Rows.ShouldBeEmpty();
             // ...and still not in the ZoneEmpty.
             u.Database.ExecuteReader( $"select ActorId from CK.tActorProfile where GroupId = {idZoneEmpty} and ActorId = {idUser}" )
-                .Rows.Should().BeEmpty();
+                .Rows.ShouldBeEmpty();
         }
     }
 
@@ -109,19 +108,19 @@ public class ZoneSameBehaviorTests
             z.MoveZone( ctx, 1, idSubZone, idZoneOK, Zone.GroupMoveOption.AutoUserRegistration );
             // User is in the Group and in the ZoneOK.
             u.Database.ExecuteScalar( $"select ActorId from CK.tActorProfile where GroupId = {idSubZone} and ActorId = {idUser}" )
-                .Should().Be( idUser );
+                .ShouldBe( idUser );
             u.Database.ExecuteScalar( $"select ActorId from CK.tActorProfile where GroupId = {idZoneOK} and ActorId = {idUser}" )
-                .Should().Be( idUser );
+                .ShouldBe( idUser );
 
             // This does work: and the user is automatically added to the target Zone!
             // (the 'Group.UserNotInZone' invariant is preserved).
             z.MoveZone( ctx, 1, idSubZone, idZoneEmpty, Zone.GroupMoveOption.AutoUserRegistration );
             // User is no more in the Group: it has been removed.
             u.Database.ExecuteScalar( $"select ActorId from CK.tActorProfile where GroupId = {idSubZone} and ActorId = {idUser}" )
-                .Should().Be( idUser );
+                .ShouldBe( idUser );
             // ...and still not in the ZoneEmpty.
             u.Database.ExecuteScalar( $"select ActorId from CK.tActorProfile where GroupId = {idZoneEmpty} and ActorId = {idUser}" )
-                 .Should().Be( idUser );
+                 .ShouldBe( idUser );
         }
     }
 

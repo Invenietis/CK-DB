@@ -2,7 +2,6 @@ using CK.Core;
 using CK.SqlServer;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using Microsoft.Data.SqlClient;
 using System.Linq;
 using System.Threading;
@@ -115,18 +114,18 @@ public abstract partial class Package : SqlPackage, IAuthenticationDatabaseServi
                 if( !await r.ReadAsync( t ).ConfigureAwait( false ) ) return null;
                 var userId = r.GetInt32( 0 );
                 var userName = r.GetString( 1 );
-                List<StdUserSchemeInfo>? schemes = null;
+                List<UserSchemeInfo>? schemes = null;
                 if( await r.NextResultAsync( t ).ConfigureAwait( false )
                     && await r.ReadAsync( t ).ConfigureAwait( false ) )
                 {
-                    schemes = new List<StdUserSchemeInfo>();
+                    schemes = new List<UserSchemeInfo>();
                     do
                     {
-                        schemes.Add( new StdUserSchemeInfo( r.GetString( 0 ), r.GetDateTime( 1 ) ) );
+                        schemes.Add( new UserSchemeInfo( r.GetString( 0 ), r.GetDateTime( 1 ) ) );
                     }
                     while( await r.ReadAsync( t ).ConfigureAwait( false ) );
                 }
-                return new AuthInfo( userId, userName, (IReadOnlyList<StdUserSchemeInfo>?)schemes ?? Array.Empty<StdUserSchemeInfo>() );
+                return new AuthInfo( userId, userName, (IReadOnlyList<UserSchemeInfo>?)schemes ?? Array.Empty<UserSchemeInfo>() );
             }
         }
         using( var cmd = CmdReadUserAuthInfo( actorId, userId ) )

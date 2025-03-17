@@ -2,10 +2,10 @@ using CK.Core;
 using CK.DB.Actor;
 using CK.SqlServer;
 using CK.Testing;
-using FluentAssertions;
+using Shouldly;
 using NUnit.Framework;
 using System;
-using static CK.Testing.MonitorTestHelper;
+using Microsoft.Data.SqlClient;
 
 namespace CK.DB.Acl.Tests;
 
@@ -30,15 +30,15 @@ public class AclSimpleTests
 
             Assert.That( idAcl >= 8, "Acl 0 to 7 are system-defined acls." );
             db.ExecuteScalar( "select AclId from CK.tAcl where AclId = @0", idAcl )
-              .Should().Be( idAcl );
+              .ShouldBe( idAcl );
 
-            acl.GetGrantLevel( ctx, 1, idAcl ).Should().Be( 127, "System user is administrator on any Acls." );
-            acl.GetGrantLevel( ctx, idGod, idAcl ).Should().Be( 127, "Members of System Group are administrators on any Acls." );
-            acl.GetGrantLevel( ctx, 0, idAcl ).Should().Be( 0, "Anonymous are Blind by default." );
+            acl.GetGrantLevel( ctx, 1, idAcl ).ShouldBe( 127, "System user is administrator on any Acls." );
+            acl.GetGrantLevel( ctx, idGod, idAcl ).ShouldBe( 127, "Members of System Group are administrators on any Acls." );
+            acl.GetGrantLevel( ctx, 0, idAcl ).ShouldBe( 0, "Anonymous are Blind by default." );
 
             acl.DestroyAcl( ctx, idGod, idAcl );
             db.ExecuteReader( "select AclId from CK.tAcl where AclId = @0", idAcl )
-              .Rows.Should().BeEmpty();
+              .Rows.ShouldBeEmpty();
             user.DestroyUser( ctx, 1, idGod );
         }
     }
@@ -51,10 +51,9 @@ public class AclSimpleTests
         {
             for( int idAcl = 0; idAcl <= 8; ++idAcl )
             {
-                acl.Invoking( _ => _.DestroyAcl( ctx, 1, idAcl ) )
-                    .Should().Throw<Exception>()
-                    .WithInnerException<Exception>()
-                    .WithMessage( "Security.ReservedAclId" );
+                Util.Invokable( () => acl.DestroyAcl( ctx, 1, idAcl ) )
+                    .ShouldThrow<Exception>()
+                    .InnerException.ShouldBeOfType<SqlException>().Message.ShouldBe( "Security.ReservedAclId" );
             }
         }
     }
@@ -76,10 +75,10 @@ public class AclSimpleTests
         using( var ctx = new SqlStandardCallContext() )
         {
             int idUser = user.CreateUser( ctx, 1, Guid.NewGuid().ToString() );
-            acl.GetGrantLevel( ctx, 0, idAcl ).Should().Be( grantLevel, "Reason: " + keyReasonForAnonymous );
-            acl.GetGrantLevel( ctx, idUser, idAcl ).Should().Be( grantLevel, "Reason: " + keyReasonForAnonymous );
+            acl.GetGrantLevel( ctx, 0, idAcl ).ShouldBe( grantLevel, "Reason: " + keyReasonForAnonymous );
+            acl.GetGrantLevel( ctx, idUser, idAcl ).ShouldBe( grantLevel, "Reason: " + keyReasonForAnonymous );
             acl.Database.ExecuteScalar( "select KeyReason from CK.tAclConfigMemory where ActorId = 0 and AclId=@0", idAcl )
-                .Should().Be( keyReasonForAnonymous );
+                .ShouldBe( keyReasonForAnonymous );
         }
     }
 
@@ -97,22 +96,30 @@ public class AclSimpleTests
 
             // Just challenge the registration here: the actual configuration may differ on a specialized deployment (if Anonymous is configured).
             acl.Database.ExecuteScalar( "select KeyReason from CK.tAclConfigMemory where ActorId = 0 and AclId=1" )
-                .Should().Be( "For Test" );
+                .ShouldBe( "For Test" );
             acl.Database.ExecuteScalar( "select KeyReason from CK.tAclConfigMemory where ActorId = @0 and AclId=1", idUser )
-                .Should().Be( "For Test" );
+                .ShouldBe( "For Test" );
 
             // Cleanup.
             acl.AclGrantSet( ctx, 1, aclId: 1, actorIdToGrant: 0, "For Test", 0 );
             acl.AclGrantSet( ctx, 1, aclId: 1, actorIdToGrant: idUser, "For Test", 0 );
 
-            acl.Invoking( _ => _.AclGrantSet( ctx, 1, aclId: 0, idUser, "For Test", 42 ) ).Should().Throw<Exception>().WithInnerException<Exception>().WithMessage( "Security.ImmutableAclId" );
-            acl.Invoking( _ => _.AclGrantSet( ctx, 1, aclId: 2, idUser, "For Test", 42 ) ).Should().Throw<Exception>().WithInnerException<Exception>().WithMessage( "Security.ImmutableAclId" );
-            acl.Invoking( _ => _.AclGrantSet( ctx, 1, aclId: 3, idUser, "For Test", 42 ) ).Should().Throw<Exception>().WithInnerException<Exception>().WithMessage( "Security.ImmutableAclId" );
-            acl.Invoking( _ => _.AclGrantSet( ctx, 1, aclId: 4, idUser, "For Test", 42 ) ).Should().Throw<Exception>().WithInnerException<Exception>().WithMessage( "Security.ImmutableAclId" );
-            acl.Invoking( _ => _.AclGrantSet( ctx, 1, aclId: 5, idUser, "For Test", 42 ) ).Should().Throw<Exception>().WithInnerException<Exception>().WithMessage( "Security.ImmutableAclId" );
-            acl.Invoking( _ => _.AclGrantSet( ctx, 1, aclId: 6, idUser, "For Test", 42 ) ).Should().Throw<Exception>().WithInnerException<Exception>().WithMessage( "Security.ImmutableAclId" );
-            acl.Invoking( _ => _.AclGrantSet( ctx, 1, aclId: 7, idUser, "For Test", 42 ) ).Should().Throw<Exception>().WithInnerException<Exception>().WithMessage( "Security.ImmutableAclId" );
-            acl.Invoking( _ => _.AclGrantSet( ctx, 1, aclId: 8, idUser, "For Test", 42 ) ).Should().Throw<Exception>().WithInnerException<Exception>().WithMessage( "Security.ImmutableAclId" );
+            Util.Invokable( () => acl.AclGrantSet( ctx, 1, aclId: 0, idUser, "For Test", 42 ) )
+                .ShouldThrow<Exception>().InnerException.ShouldBeOfType<SqlException>().Message.ShouldBe( "Security.ImmutableAclId" );
+            Util.Invokable( () => acl.AclGrantSet( ctx, 1, aclId: 2, idUser, "For Test", 42 ) )
+                .ShouldThrow<Exception>().InnerException.ShouldBeOfType<SqlException>().Message.ShouldBe( "Security.ImmutableAclId" );
+            Util.Invokable( () => acl.AclGrantSet( ctx, 1, aclId: 3, idUser, "For Test", 42 ) )
+                .ShouldThrow<Exception>().InnerException.ShouldBeOfType<SqlException>().Message.ShouldBe( "Security.ImmutableAclId" );
+            Util.Invokable( () => acl.AclGrantSet( ctx, 1, aclId: 4, idUser, "For Test", 42 ) )
+                .ShouldThrow<Exception>().InnerException.ShouldBeOfType<SqlException>().Message.ShouldBe( "Security.ImmutableAclId" );
+            Util.Invokable( () => acl.AclGrantSet( ctx, 1, aclId: 5, idUser, "For Test", 42 ) )
+                .ShouldThrow<Exception>().InnerException.ShouldBeOfType<SqlException>().Message.ShouldBe( "Security.ImmutableAclId" );
+            Util.Invokable( () => acl.AclGrantSet( ctx, 1, aclId: 6, idUser, "For Test", 42 ) )
+                .ShouldThrow<Exception>().InnerException.ShouldBeOfType<SqlException>().Message.ShouldBe( "Security.ImmutableAclId" );
+            Util.Invokable( () => acl.AclGrantSet( ctx, 1, aclId: 7, idUser, "For Test", 42 ) )
+                .ShouldThrow<Exception>().InnerException.ShouldBeOfType<SqlException>().Message.ShouldBe( "Security.ImmutableAclId" );
+            Util.Invokable( () => acl.AclGrantSet( ctx, 1, aclId: 8, idUser, "For Test", 42 ) )
+                .ShouldThrow<Exception>().InnerException.ShouldBeOfType<SqlException>().Message.ShouldBe( "Security.ImmutableAclId" );
         }
     }
 
@@ -166,7 +173,7 @@ public class AclSimpleTests
 
             acl.DestroyAcl( ctx, 1, idAcl );
             acl.Database.ExecuteReader( "select AclId from CK.tAcl where AclId = @0", idAcl )
-                .Rows.Should().BeEmpty();
+                .Rows.ShouldBeEmpty();
         }
     }
 
@@ -197,22 +204,22 @@ public class AclSimpleTests
             Assert.That( acl.GetGrantLevel( ctx, idUser, idAcl ), Is.EqualTo( 127 ) );
 
             db.ExecuteScalar( "select count(*) from CK.tAclConfig where AclId = @0 and ActorId=@1", idAcl, idGroup )
-              .Should().Be( 1 );
+              .ShouldBe( 1 );
             group.DestroyGroup( ctx, 1, idGroup, true );
             db.ExecuteReader( "select * from CK.tAclConfig where AclId = @0 and ActorId=@1", idAcl, idGroup )
-              .Rows.Should().BeEmpty();
+              .Rows.ShouldBeEmpty();
 
             Assert.That( acl.GetGrantLevel( ctx, idUser, idAcl ), Is.EqualTo( 92 ) );
 
             db.ExecuteScalar( "select count(*) from CK.tAclConfig where AclId = @0 and ActorId=@1", idAcl, idUser )
-              .Should().Be( 1 );
+              .ShouldBe( 1 );
             user.DestroyUser( ctx, 1, idUser );
             db.ExecuteReader( "select * from CK.tAclConfig where AclId = @0 and ActorId=@1", idAcl, idUser )
-              .Rows.Should().BeEmpty();
+              .Rows.ShouldBeEmpty();
 
             acl.DestroyAcl( ctx, 1, idAcl );
             db.ExecuteReader( "select AclId from CK.tAcl where AclId = @0", idAcl )
-              .Rows.Should().BeEmpty();
+              .Rows.ShouldBeEmpty();
 
         }
     }
